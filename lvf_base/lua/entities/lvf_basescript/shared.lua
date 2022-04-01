@@ -7,7 +7,7 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Framework - Basescript"
 ENT.Category = "[LVF]"
 
-ENT.Spawnable		= true
+ENT.Spawnable		= false
 ENT.AdminSpawnable  = false
 
 ENT.AutomaticFrameAdvance = true
@@ -17,20 +17,23 @@ ENT.Editable = true
 
 ENT.LVF = true
 
-ENT.MDL = "models/blu/cessna.mdl"
+ENT.MDL = "models/error.mdl"
 
-ENT.Mass = 500
+ENT.Mass = 50
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
 
 	self:NetworkVar( "Bool",0, "Active" )
-	self:NetworkVar( "Bool",1, "EngineActive" )
-	self:NetworkVar( "Bool",2, "lvfLockedStatus" )
+	self:NetworkVar( "Bool",1, "lvfLockedStatus" )
+
 	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
 
 	self:AddDataTables()
+end
+
+function ENT:CalcMainActivity( ply )
 end
 
 function ENT:AddDataTables()
