@@ -54,6 +54,8 @@ function ENT:PhysicsSimulate( phys, deltatime )
 end
 
 function ENT:RunOnSpawn()
+	self:InitPod( Vector(0,0,0), Angle(0,0,0) )
+	self:AddPassengerSeat( Vector(0,0,100), Angle(0,0,0) )
 end
 
 function ENT:Think()

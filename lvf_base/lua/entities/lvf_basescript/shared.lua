@@ -7,7 +7,7 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Framework - Basescript"
 ENT.Category = "[LVF]"
 
-ENT.Spawnable		= false
+ENT.Spawnable		= true
 ENT.AdminSpawnable  = false
 
 ENT.AutomaticFrameAdvance = true
@@ -17,7 +17,7 @@ ENT.Editable = true
 
 ENT.LVF = true
 
-ENT.MDL = "models/error.mdl"
+ENT.MDL = "models/Combine_Helicopter/helicopter_bomb01.mdl"
 
 ENT.Mass = 50
 

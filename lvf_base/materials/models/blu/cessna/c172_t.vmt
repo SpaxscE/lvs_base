@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$baseTexture" "models/blu/cessna/c172_t_b"
-	"$bumpmap" "models/blu/cessna/c172_t_bump"
-	"$halflambert" "1"
-}
