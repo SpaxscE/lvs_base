@@ -1,5 +1,3 @@
---DO NOT EDIT OR REUPLOAD THIS FILE
-
 ENT.Type            = "anim"
 
 ENT.PrintName = "basescript"
@@ -7,7 +5,7 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Framework - Basescript"
 ENT.Category = "[LVF]"
 
-ENT.Spawnable		= true
+ENT.Spawnable		= false
 ENT.AdminSpawnable  = false
 
 ENT.AutomaticFrameAdvance = true
@@ -17,11 +15,11 @@ ENT.Editable = true
 
 ENT.LVF = true
 
-ENT.MDL = "models/Combine_Helicopter/helicopter_bomb01.mdl"
+ENT.MDL = "models/error.mdl"
 
 ENT.Mass = 50
 
-function ENT:SetupDataTables()
+function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
 
@@ -29,14 +27,13 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Bool",1, "lvfLockedStatus" )
 
 	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
+end
 
-	self:AddDataTables()
+function ENT:SetupDataTables()
+	self:BaseDT()
 end
 
 function ENT:CalcMainActivity( ply )
-end
-
-function ENT:AddDataTables()
 end
 
 function ENT:GetPassengerSeats()

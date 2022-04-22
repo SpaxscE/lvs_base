@@ -1,5 +1,3 @@
---DO NOT EDIT OR REUPLOAD THIS FILE
-
 include("shared.lua")
 
 function ENT:LVFHudPaint( X, Y, ply )
