@@ -128,7 +128,7 @@ local function OpenMenu()
 end
 
 list.Set( "DesktopWindows", "LVFMenu", {
-	title = "[LVF] Settings",
+	title = "Settings",
 	icon = "icon64/iconlvf.png",
 	init = function( icon, window )
 		OpenMenu()
