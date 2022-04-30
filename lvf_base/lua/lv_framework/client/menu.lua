@@ -77,7 +77,7 @@ local function OpenMenu()
 			surface.SetMaterial( bgMat )
 			surface.DrawTexturedRect( 0, -50, w, w )
 
-			draw.DrawText( "v1", "LVF_FONT_PANEL", w - 15, h - 20, Color( 255, 191, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+			draw.DrawText( "wip", "LVF_FONT_PANEL", w - 15, h - 20, Color( 255, 191, 0, 255 ), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
 		end
 		globLVF.OpenClientSettings( Frame )
 
