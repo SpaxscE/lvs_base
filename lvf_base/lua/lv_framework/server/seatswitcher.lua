@@ -34,7 +34,7 @@ hook.Add( "PlayerButtonDown", "!!!lvfButtonDown", function( ply, button )
 	else
 		for _, Pod in pairs( vehicle:GetPassengerSeats() ) do
 			if IsValid( Pod ) then
-				if Pod:GetNWInt( "pPodIndex", 3 ) == globLVF.pSwitchKeys[ button ] then
+				if Pod:GetNWInt( "pPodIndex", 3 ) == LVF.pSwitchKeys[ button ] then
 					if not IsValid( Pod:GetDriver() ) then
 						ply:ExitVehicle()
 

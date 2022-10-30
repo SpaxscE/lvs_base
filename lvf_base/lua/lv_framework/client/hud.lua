@@ -63,7 +63,7 @@ local function PaintSeatSwitcher( ent, X, Y )
 		end
 	end
 
-	for _, v in pairs( globLVF.pSwitchKeysInv ) do
+	for _, v in pairs( LVF.pSwitchKeysInv ) do
 		if input.IsKeyDown(v) then
 			me.SwitcherTime = Time + 2
 		end
@@ -80,7 +80,7 @@ local function PaintSeatSwitcher( ent, X, Y )
 		local I = Pod:GetNWInt( "pPodIndex", -1 )
 		if I >= 0 then
 			if I == MySeat then
-				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(globLVF.ThemeColor.r, globLVF.ThemeColor.g, globLVF.ThemeColor.b,100 + 50 * smHider) )
+				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(LVF.ThemeColor.r, LVF.ThemeColor.g, LVF.ThemeColor.b,100 + 50 * smHider) )
 			else
 				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * smHider) )
 			end
