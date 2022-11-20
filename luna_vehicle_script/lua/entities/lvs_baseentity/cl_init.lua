@@ -1,13 +1,13 @@
 include("shared.lua")
 
-function ENT:LVFHudPaint( X, Y, ply )
+function ENT:LVSHudPaint( X, Y, ply )
 end
 
-function ENT:LVFCalcViewFirstPerson( view, ply )
+function ENT:LVSCalcViewFirstPerson( view, ply )
 	return view
 end
 
-function ENT:LVFCalcViewThirdPerson( view, ply )
+function ENT:LVSCalcViewThirdPerson( view, ply )
 	return view
 end
 
@@ -32,7 +32,7 @@ function ENT:GetCrosshairFilterEnts()
 		self.CrosshairFilterEnts = {self}
 
 		-- lets ask the server to build the filter for us because it has access to constraint.GetAllConstrainedEntities() 
-		net.Start( "lvf_player_request_filter" )
+		net.Start( "lvs_player_request_filter" )
 			net.WriteEntity( self )
 		net.SendToServer()
 	end

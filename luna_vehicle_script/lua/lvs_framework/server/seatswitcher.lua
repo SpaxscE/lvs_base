@@ -1,11 +1,11 @@
-hook.Add( "PlayerButtonDown", "!!!lvfButtonDown", function( ply, button )
-	local vehicle = ply:lvfGetVehicle()
+hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
+	local vehicle = ply:lvsGetVehicle()
 
 	if not IsValid( vehicle ) then return end
 
 	if button == KEY_1 then
 		if ply == vehicle:GetDriver() then
-			if vehicle:GetlvfLockedStatus() then
+			if vehicle:GetlvsLockedStatus() then
 				vehicle:UnLock()
 			else
 				vehicle:Lock()
@@ -34,7 +34,7 @@ hook.Add( "PlayerButtonDown", "!!!lvfButtonDown", function( ply, button )
 	else
 		for _, Pod in pairs( vehicle:GetPassengerSeats() ) do
 			if IsValid( Pod ) then
-				if Pod:GetNWInt( "pPodIndex", 3 ) == LVF.pSwitchKeys[ button ] then
+				if Pod:GetNWInt( "pPodIndex", 3 ) == LVS.pSwitchKeys[ button ] then
 					if not IsValid( Pod:GetDriver() ) then
 						ply:ExitVehicle()
 

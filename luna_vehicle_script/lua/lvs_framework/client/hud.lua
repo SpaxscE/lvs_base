@@ -1,5 +1,5 @@
 
-surface.CreateFont( "LVF_FONT_SWITCHER", {
+surface.CreateFont( "LVS_FONT_SWITCHER", {
 	font = "Verdana",
 	extended = false,
 	size = 16,
@@ -17,7 +17,7 @@ surface.CreateFont( "LVF_FONT_SWITCHER", {
 	outline = false,
 } )
 
-local LockText = Material( "lvf_locked.png" )
+local LockText = Material( "lvs_locked.png" )
 local smHider = 0
 local function PaintSeatSwitcher( ent, X, Y )
 	local me = LocalPlayer()
@@ -37,7 +37,7 @@ local function PaintSeatSwitcher( ent, X, Y )
 
 	local Passengers = {}
 	for _, ply in pairs( player.GetAll() ) do
-		if ply:lvfGetVehicle() == ent then
+		if ply:lvsGetVehicle() == ent then
 			local Pod = ply:GetVehicle()
 			Passengers[ Pod:GetNWInt( "pPodIndex", -1 ) ] = ply:GetName()
 		end
@@ -63,7 +63,7 @@ local function PaintSeatSwitcher( ent, X, Y )
 		end
 	end
 
-	for _, v in pairs( LVF.pSwitchKeysInv ) do
+	for _, v in pairs( LVS.pSwitchKeysInv ) do
 		if input.IsKeyDown(v) then
 			me.SwitcherTime = Time + 2
 		end
@@ -80,12 +80,12 @@ local function PaintSeatSwitcher( ent, X, Y )
 		local I = Pod:GetNWInt( "pPodIndex", -1 )
 		if I >= 0 then
 			if I == MySeat then
-				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(LVF.ThemeColor.r, LVF.ThemeColor.g, LVF.ThemeColor.b,100 + 50 * smHider) )
+				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * smHider) )
 			else
 				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * smHider) )
 			end
 			if I == SeatCount then
-				if ent:GetlvfLockedStatus() then
+				if ent:GetlvsLockedStatus() then
 					surface.SetDrawColor( 255, 255, 255, 255 )
 					surface.SetMaterial( LockText  )
 					surface.DrawTexturedRect( X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25 )
@@ -93,30 +93,30 @@ local function PaintSeatSwitcher( ent, X, Y )
 			end
 			if Hide then
 				if Passengers[I] then
-					draw.DrawText( Passengers[I], "LVF_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+					draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 				else
-					draw.DrawText( "-", "LVF_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+					draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 				end
 				
-				draw.DrawText( "["..I.."]", "LVF_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 			else
 				if Passengers[I] then
-					draw.DrawText( "[^"..I.."]", "LVF_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+					draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 				else
-					draw.DrawText( "["..I.."]", "LVF_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+					draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 				end
 			end
 		end
 	end
 end
 
-hook.Add( "HUDPaint", "!!!!!LVF_hud", function()
+hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	local ply = LocalPlayer()
 	
 	if ply:GetViewEntity() ~= ply then return end
 	
 	local Pod = ply:GetVehicle()
-	local Parent = ply:lvfGetVehicle()
+	local Parent = ply:lvsGetVehicle()
 
 	if not IsValid( Pod ) or not IsValid( Parent ) then 
 		ply.oldPassengers = {}
@@ -129,5 +129,5 @@ hook.Add( "HUDPaint", "!!!!!LVF_hud", function()
 
 	PaintSeatSwitcher( Parent, X, Y )
 
-	Parent:LVFHudPaint( X, Y, ply )
+	Parent:LVSHudPaint( X, Y, ply )
 end )

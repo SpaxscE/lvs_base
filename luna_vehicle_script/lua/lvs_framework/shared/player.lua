@@ -1,25 +1,25 @@
 local meta = FindMetaTable( "Player" )
 
-function meta:lvfGetVehicle()
+function meta:lvsGetVehicle()
 	if not self:InVehicle() then return NULL end
 
 	local Pod = self:GetVehicle()
 
 	if not IsValid( Pod ) then return NULL end
 
-	if Pod.LVFchecked then
+	if Pod.LVSchecked then
 
-		return Pod.LVFBaseEnt
+		return Pod.LVSBaseEnt
 
 	else
 		local Parent = Pod:GetParent()
 		
 		if not IsValid( Parent ) then return NULL end
 
-		if not Parent.LVF then return NULL end
+		if not Parent.LVS then return NULL end
 
-		Pod.LVFchecked = true
-		Pod.LVFBaseEnt = Parent
+		Pod.LVSchecked = true
+		Pod.LVSBaseEnt = Parent
 
 		return Parent
 	end

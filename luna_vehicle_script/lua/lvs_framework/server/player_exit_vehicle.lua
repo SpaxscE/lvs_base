@@ -1,11 +1,11 @@
 -- a very bad exit script
--- bscly a copy of simfphys exit script retrofitted to lfs and then retrofitted to lvf because im too lazy to recreate this piece of shit 
+-- bscly a copy of simfphys exit script retrofitted to lfs and then retrofitted to lvs because im too lazy to recreate this piece of shit 
 
-hook.Add( "PlayerLeaveVehicle", "!!LFV_Exit", function( ply, vehicle )
+hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, vehicle )
 	if not ply:IsPlayer() then return end
 
 	local Pod = ply:GetVehicle()
-	local Parent = ply:lvfGetVehicle()
+	local Parent = ply:lvsGetVehicle()
 
 	if not IsValid( Pod ) or not IsValid( Parent ) then return end
 

@@ -1,8 +1,8 @@
-hook.Add( "CalcView", "!!!!LVF_calcview", function(ply, pos, angles, fov)
+hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 	if ply:GetViewEntity() ~= ply then return end
 	
 	local Pod = ply:GetVehicle()
-	local Parent = ply:lvfGetVehicle()
+	local Parent = ply:lvsGetVehicle()
 	
 	if not IsValid( Pod ) or not IsValid( Parent ) then return end
 
@@ -16,7 +16,7 @@ hook.Add( "CalcView", "!!!!LVF_calcview", function(ply, pos, angles, fov)
 		
 		view.drawviewer = false
 		
-		return Parent:LVFCalcViewFirstPerson( view, ply )
+		return Parent:LVSCalcViewFirstPerson( view, ply )
 	end
 
 	local radius = 500
@@ -29,7 +29,7 @@ hook.Add( "CalcView", "!!!!LVF_calcview", function(ply, pos, angles, fov)
 		endpos = TargetOrigin,
 		filter = function( e )
 			local c = e:GetClass()
-			local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "player" ) and not e.LVF
+			local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "player" ) and not e.LVS
 
 			return collide
 		end,
@@ -43,5 +43,5 @@ hook.Add( "CalcView", "!!!!LVF_calcview", function(ply, pos, angles, fov)
 		view.origin = view.origin + tr.HitNormal * WallOffset
 	end
 
-	return Parent:LVFCalcViewThirdPerson( view, ply )
+	return Parent:LVSCalcViewThirdPerson( view, ply )
 end )

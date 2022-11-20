@@ -2,8 +2,8 @@ ENT.Type            = "anim"
 
 ENT.PrintName = "basescript"
 ENT.Author = "Luna"
-ENT.Information = "Luna's Vehicle Framework - Basescript"
-ENT.Category = "[LVF]"
+ENT.Information = "Luna's Vehicle Script"
+ENT.Category = "[LVS]"
 
 ENT.Spawnable		= true
 ENT.AdminSpawnable  = false
@@ -13,7 +13,7 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 
 ENT.Editable = true
 
-ENT.LVF = true
+ENT.LVS = true
 
 ENT.MDL = "models/props_c17/FurnitureBathtub001a.mdl" --models/error.mdl"
 
@@ -24,7 +24,7 @@ function ENT:BaseDT()
 	self:NetworkVar( "Entity",1, "DriverSeat" )
 
 	self:NetworkVar( "Bool",0, "Active" )
-	self:NetworkVar( "Bool",1, "lvfLockedStatus" )
+	self:NetworkVar( "Bool",1, "lvsLockedStatus" )
 
 	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
 end

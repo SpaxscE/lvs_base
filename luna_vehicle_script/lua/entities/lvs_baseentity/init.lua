@@ -30,7 +30,7 @@ function ENT:Initialize()
 	if not IsValid( PObj ) then 
 		self:Remove()
 
-		print("LVF: missing model. Vehicle terminated.")
+		print("LVS: missing model. Vehicle terminated.")
 
 		return
 	end
@@ -80,7 +80,7 @@ function ENT:HandleActive()
 	local Active = self:GetActive()
 
 	if Driver ~= self:GetDriver() then
-		if self:GetlvfLockedStatus() then
+		if self:GetlvsLockedStatus() then
 			self:UnLock()
 		end
 
@@ -112,19 +112,19 @@ function ENT:OnRemove()
 end
 
 function ENT:Lock()
-	self:SetlvfLockedStatus( true )
+	self:SetlvsLockedStatus( true )
 	self:EmitSound( "doors/latchlocked2.wav" )
 end
 
 function ENT:UnLock()
-	self:SetlvfLockedStatus( false )
+	self:SetlvsLockedStatus( false )
 	self:EmitSound( "doors/latchunlocked1.wav" )
 end
 
 function ENT:Use( ply )
 	if not IsValid( ply ) then return end
 
-	if self:GetlvfLockedStatus() then 
+	if self:GetlvsLockedStatus() then 
 
 		self:EmitSound( "doors/default_locked.wav" )
 
@@ -190,7 +190,7 @@ function ENT:InitPod( Pos, Ang )
 	if not IsValid( Pod ) then
 		self:Remove()
 
-		print("LVF: Failed to create driverseat. Vehicle terminated.")
+		print("LVS: Failed to create driverseat. Vehicle terminated.")
 
 		return
 	else
@@ -294,7 +294,7 @@ function ENT:UpdateTransmitState()
 end
 
 function ENT:StoreCPPI( owner )
-	self._OwnerEntLVF = owner
+	self._OwnerEntLVS = owner
 end
 
 function ENT:TransferCPPI( target )
@@ -302,7 +302,7 @@ function ENT:TransferCPPI( target )
 
 	if not CPPI then return end
 
-	local Owner = self._OwnerEntLVF
+	local Owner = self._OwnerEntLVS
 
 	if not IsEntity( Owner ) then return end
 
