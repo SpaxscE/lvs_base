@@ -1,0 +1,9 @@
+
+"VertexlitGeneric"
+{
+
+	$basetexture "models/blu/bf109/blur"
+	"$halflambert" "1"				
+	"$nocull" 1
+	"$translucent"     "1"
+}
