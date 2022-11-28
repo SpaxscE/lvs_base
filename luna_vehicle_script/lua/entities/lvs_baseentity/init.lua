@@ -35,25 +35,23 @@ function ENT:Initialize()
 		return
 	end
 
-	PObj:EnableDrag( false )
 	PObj:EnableMotion( false )
-	PObj:SetMass( self.Mass )
 
-	self:RunOnSpawn()
+	self:OnSpawn( PObj )
 
-	self:StartMotionController()
 	self.ShadowParams = {}
 
+	self:StartMotionController()
+
 	PObj:EnableMotion( true )
+
 	self:PhysWake()
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
 end
 
-function ENT:RunOnSpawn()
-	self:InitPod( Vector(0,0,0), Angle(0,0,0) )
-	self:AddPassengerSeat( Vector(0,0,0), Angle(0,0,0) )
+function ENT:OnSpawn()
 end
 
 function ENT:Think()
@@ -63,6 +61,9 @@ function ENT:Think()
 	self:NextThink( CurTime() )
 	
 	return true
+end
+
+function ENT:OnDriverChanged( VehicleIsActive, OldDriver, NewDriver )
 end
 
 function ENT:OnTick()
@@ -84,27 +85,14 @@ function ENT:HandleActive()
 			self:UnLock()
 		end
 
-		if self.HideDriver then
-			if IsValid( self:GetDriver() ) then
-				self:GetDriver():SetNoDraw( false )
-			end
-			if IsValid( Driver ) then
-				Driver:SetNoDraw( true )
-			end
-		end
+		local NewDriver = Driver
+		local OldDriver = self:GetDriver()
+		local IsActive = IsValid( Driver )
 
 		self:SetDriver( Driver )
-		self:SetActive( IsValid( Driver ) )
+		self:SetActive( IsActive )
 
-		if IsValid( Driver ) then
-			self:AlignView( Driver )
-		end
-
-		if Active then
-			self:EmitSound( "vehicles/atv_ammo_close.wav" )
-		else
-			self:EmitSound( "vehicles/atv_ammo_open.wav" )
-		end
+		self:OnDriverChanged( IsActive, OldDriver, NewDriver )
 	end
 end
 
@@ -182,7 +170,7 @@ function ENT:SetPassenger( ply )
 	end
 end
 
-function ENT:InitPod( Pos, Ang )
+function ENT:AddDriverSeat( Pos, Ang )
 	if IsValid( self:GetDriverSeat() ) then return end
 
 	local Pod = ents.Create( "prop_vehicle_prisoner_pod" )
