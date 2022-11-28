@@ -5,7 +5,7 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable		= true
+ENT.Spawnable		= false
 ENT.AdminSpawnable  = false
 
 ENT.AutomaticFrameAdvance = true
@@ -15,9 +15,7 @@ ENT.Editable = true
 
 ENT.LVS = true
 
-ENT.MDL = "models/props_c17/FurnitureBathtub001a.mdl" --models/error.mdl"
-
-ENT.Mass = 50
+ENT.MDL = "models/error.mdl"
 
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
