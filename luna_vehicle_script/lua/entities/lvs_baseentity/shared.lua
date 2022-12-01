@@ -23,8 +23,9 @@ function ENT:BaseDT()
 
 	self:NetworkVar( "Bool",0, "Active" )
 	self:NetworkVar( "Bool",1, "lvsLockedStatus" )
-
 	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
+
+	self:NetworkVar( "Vector", 1, "Steer" )
 end
 
 function ENT:SetupDataTables()
@@ -32,6 +33,41 @@ function ENT:SetupDataTables()
 end
 
 function ENT:CalcMainActivity( ply )
+end
+
+local function Sign( n )
+	if n > 0 then return 1 end
+
+	if n < 0 then return -1 end
+
+	return 0
+end
+
+function ENT:MouseDirectInput( ply, cmd )
+	local Delta = FrameTime()
+
+	local Cur = self:GetSteer()
+	local New = Cur + Vector( cmd:GetMouseX(), cmd:GetMouseY(), 0 ) * Delta * 0.25
+
+	local Dir = New:GetNormalized()
+
+	local Ax = math.acos( Vector(1,0,0):Dot( Dir ) )
+	local Ay = math.asin( Vector(0,1,0):Dot( Dir ) )
+
+	local Len = math.min( New:Length(), 1 )
+	Len = Len - Len * Delta * 0.025
+	Len = math.Clamp( math.abs( Len ) ^ 1.1 * Sign( Len ), -1, 1 )
+
+	local Fx = math.cos( Ax ) * Len
+	local Fy = math.sin( Ay ) * Len
+
+	self:SetSteer( Cur + (Vector( Fx, Fy, 0 ) - Cur) * Delta * 100 )
+end
+
+function ENT:StartCommand( ply, cmd )
+	if self:GetDriver() ~= ply then return end
+
+	self:MouseDirectInput( ply, cmd )
 end
 
 function ENT:GetPassengerSeats()

@@ -1,6 +1,10 @@
 include("shared.lua")
 
 function ENT:LVSHudPaint( X, Y, ply )
+	local R = 100
+	surface.DrawCircle( X * 0.5, Y * 0.5, R, Color( 255, 255, 255 ) )
+
+	surface.DrawCircle( X * 0.5 + self:GetSteer().x * R, Y * 0.5 + self:GetSteer().y * R, 5, Color( 255, 255, 255 ) )
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )
