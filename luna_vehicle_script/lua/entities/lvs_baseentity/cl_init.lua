@@ -12,6 +12,9 @@ function ENT:LVSCalcViewFirstPerson( view, ply )
 end
 
 function ENT:LVSCalcViewThirdPerson( view, ply )
+	view.origin = self:LocalToWorld( Vector(-500,0,250) )
+	view.angles = self:GetAngles()
+
 	return view
 end
 

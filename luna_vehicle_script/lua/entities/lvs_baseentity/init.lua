@@ -48,9 +48,6 @@ function ENT:Initialize()
 	self:PhysWake()
 end
 
-function ENT:PhysicsSimulate( phys, deltatime )
-end
-
 function ENT:OnSpawn()
 end
 
@@ -61,6 +58,32 @@ function ENT:Think()
 	self:NextThink( CurTime() )
 	
 	return true
+end
+
+function ENT:PhysicsSimulate( phys, deltatime )
+	phys:Wake()
+
+	local Steer = self:GetSteer()
+	local Pitch = Steer.y * 3
+	local Yaw = Steer.z * 1.5
+	local Roll = Steer.x * 13
+
+	local Angles = self:GetAngles()
+	local TargetAngle = self:LocalToWorldAngles( Angle( Pitch, Yaw, Roll ) )
+
+	self.ShadowParams = {}
+	self.ShadowParams.secondstoarrive = 1
+	self.ShadowParams.pos = self:GetPos() + Vector(0,0,9) - self:GetVelocity() + self:GetForward() * 500
+	self.ShadowParams.angle = TargetAngle
+	self.ShadowParams.maxangular = 1000
+	self.ShadowParams.maxangulardamp = 25
+	self.ShadowParams.maxspeed = 1000000
+	self.ShadowParams.maxspeeddamp = 0
+	self.ShadowParams.dampfactor = 0.05
+	self.ShadowParams.teleportdistance = 0
+	self.ShadowParams.deltatime = deltatime
+ 
+	phys:ComputeShadowControl( self.ShadowParams )
 end
 
 function ENT:OnDriverChanged( VehicleIsActive, OldDriver, NewDriver )

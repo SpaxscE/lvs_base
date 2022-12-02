@@ -35,33 +35,40 @@ end
 function ENT:CalcMainActivity( ply )
 end
 
-local function Sign( n )
-	if n > 0 then return 1 end
-
-	if n < 0 then return -1 end
-
-	return 0
-end
-
 function ENT:MouseDirectInput( ply, cmd )
 	local Delta = FrameTime()
 
-	local Cur = self:GetSteer()
-	local New = Cur + Vector( cmd:GetMouseX(), cmd:GetMouseY(), 0 ) * Delta * 0.25
+	local KeyLeft = cmd:KeyDown( IN_MOVERIGHT )
+	local KeyRight = cmd:KeyDown( IN_MOVELEFT )
 
-	local Dir = New:GetNormalized()
+	local KeyPitch = cmd:KeyDown( IN_SPEED )
+
+	local MouseY = KeyPitch and -10 or cmd:GetMouseY()
+
+	local Input = Vector( cmd:GetMouseX(), MouseY, 0 )
+
+	local Cur = self:GetSteer()
+
+	local Rate = Delta * 2.5
+
+	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5,-Rate,Rate), math.Clamp(Cur.y * Delta * 5,-Rate,Rate), 0)
+
+	local Target = New + Input * Delta * 0.8
+
+	local Dir = Target:GetNormalized()
 
 	local Ax = math.acos( Vector(1,0,0):Dot( Dir ) )
 	local Ay = math.asin( Vector(0,1,0):Dot( Dir ) )
 
-	local Len = math.min( New:Length(), 1 )
-	Len = Len - Len * Delta * 0.025
-	Len = math.Clamp( math.abs( Len ) ^ 1.1 * Sign( Len ), -1, 1 )
+	local Len = math.min( Target:Length(), 1 )
 
 	local Fx = math.cos( Ax ) * Len
 	local Fy = math.sin( Ay ) * Len
 
-	self:SetSteer( Cur + (Vector( Fx, Fy, 0 ) - Cur) * Delta * 100 )
+	local F = Cur + (Vector( Fx, Fy, 0 ) - Cur) * Delta * 100
+	F.z = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
+
+	self:SetSteer( F )
 end
 
 function ENT:StartCommand( ply, cmd )
