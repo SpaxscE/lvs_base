@@ -62,9 +62,9 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * math.Sign( YawPull ) * 0.5
 
 	local Steer = self:GetSteer()
-	local Pitch = math.Clamp(Steer.y * 5,-1,1) * self.TurnRatePitch * 3 - GravityPitch
-	local Yaw = math.Clamp(Steer.z * 5,-1,1) * self.TurnRateYaw * 0.75 + GravityYaw
-	local Roll = math.Clamp(Steer.x * 3,-1,1) * self.TurnRateRoll * 10
+	local Pitch = math.Clamp(Steer.y * 5 - GravityPitch,-1,1) * self.TurnRatePitch * 3
+	local Yaw = math.Clamp(Steer.z * 5 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75
+	local Roll = math.Clamp(Steer.x * 5,-1,1) * self.TurnRateRoll * 10
 
 	local Angles = self:GetAngles()
 	local TargetAngle = self:LocalToWorldAngles( Angle( Pitch, Yaw, Roll ) )
@@ -80,7 +80,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	self.ShadowParams = {}
 	self.ShadowParams.secondstoarrive = 1
-	self.ShadowParams.pos = phys:GetPos() + Vector(0,0,9) - Up * VelL.z * MulZ - Right * VelL.y * MulY + Forward * (1500 * self:GetThrottle() - VelL.x)
+	self.ShadowParams.pos = phys:GetPos() + Vector(0,0,9) - Up * VelL.z * MulZ - Right * VelL.y * MulY + Forward * 10 * self:GetThrottle()
 	--self.ShadowParams.pos = phys:GetPos() + Vector(0,0,9) - phys:GetVelocity() * 0.005 + self:GetForward() * 20 * self:GetThrottle()
 	self.ShadowParams.angle = TargetAngle
 	self.ShadowParams.maxangular = 10000
