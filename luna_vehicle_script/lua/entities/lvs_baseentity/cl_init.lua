@@ -20,7 +20,7 @@ function ENT:LVSCalcViewThirdPerson( view, ply )
 	local Dir = Sub:GetNormalized()
 	local Dist = Sub:Length()
 
-	self._lerpPos = self._lerpPos + (TargetPos - self:GetForward() * 750 - Dir * 250 - self._lerpPos) * Delta * 12
+	self._lerpPos = self._lerpPos + (TargetPos - self:GetForward() * 900 - Dir * 100 - self._lerpPos) * Delta * 12
 
 	local vel = self:GetVelocity()
 

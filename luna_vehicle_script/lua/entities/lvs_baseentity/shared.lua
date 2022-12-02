@@ -17,6 +17,13 @@ ENT.LVS = true
 
 ENT.MDL = "models/error.mdl"
 
+ENT.TurnRatePitch = 1
+ENT.TurnRateYaw = 1
+ENT.TurnRateRoll = 1
+
+ENT.MaxSlipAnglePitch = 16
+ENT.MaxSlipAngleYaw = 8
+
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
@@ -44,7 +51,7 @@ function ENT:MouseDirectInput( ply, cmd )
 
 	local KeyPitch = cmd:KeyDown( IN_SPEED )
 
-	local MouseY = KeyPitch and -15 or cmd:GetMouseY()
+	local MouseY = KeyPitch and -5 or cmd:GetMouseY()
 
 	local Input = Vector( cmd:GetMouseX(), MouseY, 0 ) * 0.25
 
