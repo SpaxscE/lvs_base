@@ -26,6 +26,7 @@ function ENT:BaseDT()
 	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
 
 	self:NetworkVar( "Vector", 1, "Steer" )
+	self:NetworkVar( "Float", 1, "Throttle" )
 end
 
 function ENT:SetupDataTables()
@@ -43,9 +44,9 @@ function ENT:MouseDirectInput( ply, cmd )
 
 	local KeyPitch = cmd:KeyDown( IN_SPEED )
 
-	local MouseY = KeyPitch and -10 or cmd:GetMouseY()
+	local MouseY = KeyPitch and -15 or cmd:GetMouseY()
 
-	local Input = Vector( cmd:GetMouseX(), MouseY, 0 )
+	local Input = Vector( cmd:GetMouseX(), MouseY, 0 ) * 0.25
 
 	local Cur = self:GetSteer()
 
@@ -55,20 +56,15 @@ function ENT:MouseDirectInput( ply, cmd )
 
 	local Target = New + Input * Delta * 0.8
 
-	local Dir = Target:GetNormalized()
-
-	local Ax = math.acos( Vector(1,0,0):Dot( Dir ) )
-	local Ay = math.asin( Vector(0,1,0):Dot( Dir ) )
-
-	local Len = math.min( Target:Length(), 1 )
-
-	local Fx = math.cos( Ax ) * Len
-	local Fy = math.sin( Ay ) * Len
+	local Fx = math.Clamp( Target.x, -1, 1 )
+	local Fy = math.Clamp( Target.y, -1, 1 )
 
 	local F = Cur + (Vector( Fx, Fy, 0 ) - Cur) * Delta * 100
 	F.z = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
 
 	self:SetSteer( F )
+
+	self:SetThrottle( (cmd:KeyDown( IN_FORWARD ) and 1 or 0.4) - (cmd:KeyDown( IN_BACK ) and 0.3 or 0) )
 end
 
 function ENT:StartCommand( ply, cmd )

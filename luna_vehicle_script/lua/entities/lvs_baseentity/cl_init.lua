@@ -1,18 +1,30 @@
 include("shared.lua")
 
 function ENT:LVSHudPaint( X, Y, ply )
-	local R = 100
-	surface.DrawCircle( X * 0.5, Y * 0.5, R, Color( 255, 255, 255 ) )
-
-	surface.DrawCircle( X * 0.5 + self:GetSteer().x * R, Y * 0.5 + self:GetSteer().y * R, 5, Color( 255, 255, 255 ) )
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )
-	return view
+	view.drawviewer = true
+
+	return self:LVSCalcViewThirdPerson( view, ply )
 end
 
 function ENT:LVSCalcViewThirdPerson( view, ply )
-	view.origin = self:LocalToWorld( Vector(-500,0,250) )
+	self._lerpPos = self._lerpPos or self:GetPos()
+
+	local Delta = RealFrameTime()
+
+	local TargetPos = self:LocalToWorld( Vector(500,0,250) )
+
+	local Sub = TargetPos - self._lerpPos
+	local Dir = Sub:GetNormalized()
+	local Dist = Sub:Length()
+
+	self._lerpPos = self._lerpPos + (TargetPos - self:GetForward() * 750 - Dir * 250 - self._lerpPos) * Delta * 12
+
+	local vel = self:GetVelocity()
+
+	view.origin = self._lerpPos
 	view.angles = self:GetAngles()
 
 	return view
