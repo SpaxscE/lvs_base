@@ -45,6 +45,18 @@ function ENT:Initialize()
 	PObj:EnableMotion( true )
 
 	self:PhysWake()
+
+	self:AutoAI()
+end
+
+function ENT:AutoAI()
+	if IsValid( self._OwnerEntLVS ) then
+		if self._OwnerEntLVS:InVehicle() then
+			if self._OwnerEntLVS:IsAdmin() then
+				self:SetAI( true )
+			end
+		end
+	end
 end
 
 function ENT:GetWorldGravity()
@@ -68,7 +80,7 @@ end
 function ENT:GetStability()
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
 
-	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1)
+	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1) ^ 2
 	local InvStability = 1 - Stability
 
 	return Stability, InvStability, ForwardVelocity
@@ -97,7 +109,8 @@ function ENT:CalcAero( phys, deltatime )
 	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * math.Sign( PitchPull ) * GravMul * 0.25
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * math.Sign( YawPull ) * GravMul * 0.25
 
-	local StallMul = math.min( -math.min(Vel.z + 200,0) / 20, 25 )
+	local StallMul = math.min( -math.min(Vel.z,0) / 1000, 1 ) * 10
+
 	local StallPitch = math.abs( PitchPull ) * math.Sign( PitchPull ) * GravMul * StallMul
 	local StallYaw = math.abs( YawPull ) * math.Sign( YawPull ) * GravMul * StallMul
 
@@ -378,4 +391,8 @@ function ENT:TransferCPPI( target )
 	if IsValid( Owner ) then
 		target:CPPISetOwner( Owner )
 	end
+end
+
+function ENT:GetMissileOffset()
+	return self:OBBCenter()
 end

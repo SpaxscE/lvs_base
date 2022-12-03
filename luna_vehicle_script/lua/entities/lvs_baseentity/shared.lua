@@ -17,8 +17,10 @@ ENT.LVS = true
 
 ENT.MDL = "models/error.mdl"
 
+ENT.AITEAM = 0
+
 ENT.MaxVelocity = 2500
-ENT.MaxPerfVelocity = 2000
+ENT.MaxPerfVelocity = 2200
 ENT.MaxThrust = 100
 
 ENT.TurnRatePitch = 1
@@ -33,16 +35,38 @@ ENT.ForceAngleDampingMultiplier = 1
 ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
+ENT.MaxHealth = 1000
+
+ENT.MaxPrimaryAmmo = -1
+ENT.MaxSecondaryAmmo = -1
+
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
+	self:NetworkVar( "Entity",2, "Gunner" )
+	self:NetworkVar( "Entity",3, "GunnerSeat" )
 
 	self:NetworkVar( "Bool",0, "Active" )
-	self:NetworkVar( "Bool",1, "lvsLockedStatus" )
-	self:NetworkVar( "Bool",3, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
+	self:NetworkVar( "Bool",1, "EngineActive" )
+	self:NetworkVar( "Bool",2, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
+	self:NetworkVar( "Bool",3, "lvsLockedStatus" )
 
-	self:NetworkVar( "Vector", 1, "Steer" )
-	self:NetworkVar( "Float", 1, "Throttle" )
+	self:NetworkVar( "Int", 0, "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
+
+	self:NetworkVar( "Vector", 0, "Steer" )
+
+	self:NetworkVar( "Float",0, "LGear" )
+	self:NetworkVar( "Float",1, "RGear" )
+	self:NetworkVar( "Float", 2, "Throttle" )
+
+	self:NetworkVar( "Float", 3, "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
+
+	if SERVER then
+		self:NetworkVarNotify( "AI", self.OnToggleAI )
+		
+		self:SetAITEAM( self.AITEAM )
+		self:SetHP( self.MaxHealth )
+	end
 end
 
 function ENT:SetupDataTables()
@@ -101,6 +125,10 @@ function ENT:StartCommand( ply, cmd )
 	self:CalcThrottle( ply, cmd )
 end
 
+function ENT:GetMaxHP()
+	return self.MaxHealth
+end
+
 function ENT:GetPassengerSeats()
 	if not istable( self.pSeats ) then
 		self.pSeats = {}
@@ -115,4 +143,21 @@ function ENT:GetPassengerSeats()
 	end
 
 	return self.pSeats
+end
+
+function ENT:GetPassenger( num )
+	if num == 1 then
+		return self:GetDriver()
+	else
+		for _, Pod in pairs( self:GetPassengerSeats() ) do
+			local id = Pod:GetNWInt( "pPodIndex", -1 )
+			if id == -1 then continue end
+
+			if id == num then
+				return Pod:GetDriver()
+			end
+		end
+
+		return NULL
+	end
 end
