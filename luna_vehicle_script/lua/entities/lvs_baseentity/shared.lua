@@ -19,14 +19,19 @@ ENT.MDL = "models/error.mdl"
 
 ENT.MaxVelocity = 2500
 ENT.MaxPerfVelocity = 2000
-ENT.MaxThrust = 10
+ENT.MaxThrust = 100
 
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
-ENT.MaxSlipAnglePitch = 16
-ENT.MaxSlipAngleYaw = 8
+ENT.ForceLinearMultiplier = 1
+
+ENT.ForceAngleMultiplier = 1
+ENT.ForceAngleDampingMultiplier = 1
+
+ENT.MaxSlipAnglePitch = 20
+ENT.MaxSlipAngleYaw = 10
 
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
@@ -55,13 +60,13 @@ function ENT:CalcSteer( ply, cmd )
 
 	local KeyPitch = cmd:KeyDown( IN_SPEED )
 
-	local MouseY = KeyPitch and -5 or cmd:GetMouseY()
+	local MouseY = KeyPitch and -10 or cmd:GetMouseY()
 
-	local Input = Vector( cmd:GetMouseX(), MouseY, 0 ) * 0.25
+	local Input = Vector( cmd:GetMouseX(), MouseY * 4, 0 ) * 0.25
 
 	local Cur = self:GetSteer()
 
-	local Rate = Delta * 2.5
+	local Rate = Delta * 2
 
 	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5,-Rate,Rate), math.Clamp(Cur.y * Delta * 5,-Rate,Rate), 0)
 
@@ -70,9 +75,10 @@ function ENT:CalcSteer( ply, cmd )
 	local Fx = math.Clamp( Target.x, -1, 1 )
 	local Fy = math.Clamp( Target.y, -1, 1 )
 
-	local F = Cur + (Vector( Fx, Fy, 0 ) - Cur) * math.min(Delta * 100,1)
-	
-	F.z = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
+	local TargetFz = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
+	local Fz = Cur.z + math.Clamp(TargetFz - Cur.z,-Rate * 3,Rate * 3)
+
+	local F = Cur + (Vector( Fx, Fy, Fz ) - Cur) * math.min(Delta * 100,1)
 
 	self:SetSteer( F )
 end
