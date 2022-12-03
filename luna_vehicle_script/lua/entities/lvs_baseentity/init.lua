@@ -67,25 +67,25 @@ end
 
 function ENT:GetStability()
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
-	local MaxPerfVelocity = 650
 
-	return math.Clamp(ForwardVelocity / MaxPerfVelocity,0,1) ^ 2
+	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1)
+	local InvStability = 1 - Stability
+
+	return Stability, InvStability
 end
 
 function ENT:CalcAero( phys, deltatime )
 	local WorldGravity = self:GetWorldGravity()
 	local WorldUp = self:GetWorldUp()
 
-	local Stability = self:GetStability()
+	local Stability, InvStability = self:GetStability()
 
-	local A90 = 90
-	
 	local Forward = self:GetForward()
 	local Left = -self:GetRight()
 	local Up = self:GetUp()
 
-	local PitchPull = math.max( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / A90, 0 )
-	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - A90) / A90
+	local PitchPull = math.max( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) /  90, 0 )
+	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
 	local GravMul = WorldGravity / 600
 	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * math.Sign( PitchPull ) * GravMul
@@ -101,14 +101,12 @@ function ENT:CalcAero( phys, deltatime )
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
-	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - self.MaxSlipAnglePitch * math.abs( Steer.y ), 0 ) / A90) * 0.3
-	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - A90 ) - self.MaxSlipAngleYaw * math.abs( Steer.z ), 0 ) / A90) * 0.3
+	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - self.MaxSlipAnglePitch * math.abs( Steer.y ), 0 ) / 90) * 0.3
+	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - 90 ) - self.MaxSlipAngleYaw * math.abs( Steer.z ), 0 ) / 90) * 0.3
 
-	local Lift = -math.min( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / 180,0) * (WorldGravity / (1 / deltatime)) * Stability
+	local Lift = -math.min( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) / 180,0) * (WorldGravity / (1 / deltatime))
 
-	PrintChat( math.Round(Lift,0).." @  "..math.Round(self:WorldToLocal( self:GetPos() + self:GetVelocity() ).z,0) )
-
-	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ),  Vector( Roll, Pitch, Yaw )
+	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ) * Stability,  Vector( Roll, Pitch, Yaw ) * Stability
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
@@ -117,7 +115,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	phys:Wake()
 
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
-	local TargetVelocity = 2000 * self:GetThrottle()
+	local TargetVelocity = self.MaxVelocity * self:GetThrottle()
 
 	local Thrust = Vector(math.max(TargetVelocity - ForwardVelocity,0),0,0) * 100
 

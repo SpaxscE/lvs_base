@@ -1,5 +1,23 @@
 include("shared.lua")
 
+	surface.CreateFont( "LFS_FONT", {
+		font = "Verdana",
+		extended = false,
+		size = 20,
+		weight = 2000,
+		blursize = 0,
+		scanlines = 0,
+		antialias = true,
+		underline = false,
+		italic = false,
+		strikeout = false,
+		symbol = false,
+		rotary = false,
+		shadow = true,
+		additive = false,
+		outline = false,
+	} )
+	
 function ENT:LVSHudPaint( X, Y, ply )
 	local Radius = 100
 
@@ -12,6 +30,11 @@ function ENT:LVSHudPaint( X, Y, ply )
 	surface.DrawCircle( X * 0.5, Y * 0.5, Radius, Color( 255, 0, 0 ) )
 
 	surface.DrawCircle( X * 0.5 + Test2Dir.x * math.abs(Test.x) * Radius, Y * 0.5 + Test2Dir.y * math.abs(Test.y) * Radius, 5, Color( 255, 0, 0 ) )
+
+	local Throttle = math.Round(self:GetThrottle() * 100,0)
+
+	draw.SimpleText( "THR", "LFS_FONT", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	draw.SimpleText( Throttle.."%" , "LFS_FONT", 120, 10, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )

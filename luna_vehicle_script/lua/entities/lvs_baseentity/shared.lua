@@ -18,7 +18,7 @@ ENT.LVS = true
 ENT.MDL = "models/error.mdl"
 
 ENT.MaxVelocity = 2500
-ENT.MaxPerfVelocity = 650
+ENT.MaxPerfVelocity = 2000
 ENT.MaxThrust = 10
 
 ENT.TurnRatePitch = 1
@@ -47,7 +47,7 @@ end
 function ENT:CalcMainActivity( ply )
 end
 
-function ENT:MouseDirectInput( ply, cmd )
+function ENT:CalcSteer( ply, cmd )
 	local Delta = FrameTime()
 
 	local KeyLeft = cmd:KeyDown( IN_MOVERIGHT )
@@ -75,14 +75,24 @@ function ENT:MouseDirectInput( ply, cmd )
 	F.z = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
 
 	self:SetSteer( F )
-
-	self:SetThrottle( (cmd:KeyDown( IN_FORWARD ) and 1 or 0.4) - (cmd:KeyDown( IN_BACK ) and 0.3 or 0) )
 end
 
-function ENT:StartCommand( ply, cmd, delta )
+function ENT:CalcThrottle( ply, cmd )
+	local Delta = FrameTime()
+
+	local ThrottleUp = cmd:KeyDown( IN_FORWARD ) and 1 or 0
+	local ThrottleDown = cmd:KeyDown( IN_BACK ) and -1 or 0
+
+	local Throttle = (ThrottleUp + ThrottleDown) * Delta
+
+	self:SetThrottle( math.Clamp(self:GetThrottle() + Throttle,0,1) )
+end
+
+function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	self:MouseDirectInput( ply, cmd, delta )
+	self:CalcSteer( ply, cmd )
+	self:CalcThrottle( ply, cmd )
 end
 
 function ENT:GetPassengerSeats()
