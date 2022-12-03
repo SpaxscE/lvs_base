@@ -36,6 +36,7 @@ function ENT:Initialize()
 	end
 
 	PObj:EnableMotion( false )
+	PObj:EnableDrag( false )
 
 	self:OnSpawn( PObj )
 
@@ -103,22 +104,27 @@ function ENT:CalcAero( phys, deltatime )
 	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - self.MaxSlipAnglePitch * math.abs( Steer.y ), 0 ) / A90) * 0.3
 	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - A90 ) - self.MaxSlipAngleYaw * math.abs( Steer.z ), 0 ) / A90) * 0.3
 
-	local Lift = -math.min( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / A90,0) * (WorldGravity / (1 / deltatime)) * Stability
+	local Lift = -math.min( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / 180,0) * (WorldGravity / (1 / deltatime)) * Stability
 
-	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ),  Angle( Pitch, Yaw, Roll )
+	PrintChat( math.Round(Lift,0).." @  "..math.Round(self:WorldToLocal( self:GetPos() + self:GetVelocity() ).z,0) )
+
+	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ),  Vector( Roll, Pitch, Yaw )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
-	local pos, ang = self:CalcAero( phys, deltatime )
-
-	pos.x = 10 * self:GetThrottle()
-
-	self.ShadowParams.pos = self:LocalToWorld( pos )
-	self.ShadowParams.angle = self:LocalToWorldAngles( ang )
-	self.ShadowParams.deltatime = deltatime
+	local Aero, Torque = self:CalcAero( phys, deltatime )
 
 	phys:Wake()
-	phys:ComputeShadowControl( self.ShadowParams )
+
+	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
+	local TargetVelocity = 2000 * self:GetThrottle()
+
+	local Thrust = Vector(math.max(TargetVelocity - ForwardVelocity,0),0,0) * 100
+
+	local ForceLinear = (Aero * 10000 + Thrust) * deltatime
+	local ForceAngle = (Torque * 25 - phys:GetAngleVelocity() * 1.5) * deltatime * 250
+
+	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
 end
 
 function ENT:OnSpawn()

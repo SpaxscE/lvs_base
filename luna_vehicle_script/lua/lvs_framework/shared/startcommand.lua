@@ -1,3 +1,4 @@
+
 hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 	local veh = ply:lvsGetVehicle()
 

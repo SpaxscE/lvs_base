@@ -28,16 +28,6 @@ ENT.TurnRateRoll = 1
 ENT.MaxSlipAnglePitch = 16
 ENT.MaxSlipAngleYaw = 8
 
-ENT.ShadowParams = {
-	secondstoarrive = 1,
-	maxangular = 10000,
-	maxangulardamp = 100,
-	maxspeed = 1000000,
-	maxspeeddamp = 0,
-	dampfactor = 0.05,
-	teleportdistance = 0,
-}
-
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
@@ -80,7 +70,8 @@ function ENT:MouseDirectInput( ply, cmd )
 	local Fx = math.Clamp( Target.x, -1, 1 )
 	local Fy = math.Clamp( Target.y, -1, 1 )
 
-	local F = Cur + (Vector( Fx, Fy, 0 ) - Cur) * Delta * 100
+	local F = Cur + (Vector( Fx, Fy, 0 ) - Cur) * math.min(Delta * 100,1)
+	
 	F.z = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
 
 	self:SetSteer( F )
@@ -88,10 +79,10 @@ function ENT:MouseDirectInput( ply, cmd )
 	self:SetThrottle( (cmd:KeyDown( IN_FORWARD ) and 1 or 0.4) - (cmd:KeyDown( IN_BACK ) and 0.3 or 0) )
 end
 
-function ENT:StartCommand( ply, cmd )
+function ENT:StartCommand( ply, cmd, delta )
 	if self:GetDriver() ~= ply then return end
 
-	self:MouseDirectInput( ply, cmd )
+	self:MouseDirectInput( ply, cmd, delta )
 end
 
 function ENT:GetPassengerSeats()

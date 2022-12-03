@@ -9,9 +9,9 @@ function ENT:LVSHudPaint( X, Y, ply )
 	local Test2Dir = Test2:GetNormalized()
 	local Test2Len = Test2:Length()
 
-	surface.DrawCircle( X * 0.5, Y * 0.5, Radius, Color( 255, 255, 255 ) )
+	surface.DrawCircle( X * 0.5, Y * 0.5, Radius, Color( 255, 0, 0 ) )
 
-	surface.DrawCircle( X * 0.5 + Test2Dir.x * math.abs(Test.x) * Radius, Y * 0.5 + Test2Dir.y * math.abs(Test.y) * Radius, 5, Color( 255, 255, 255 ) )
+	surface.DrawCircle( X * 0.5 + Test2Dir.x * math.abs(Test.x) * Radius, Y * 0.5 + Test2Dir.y * math.abs(Test.y) * Radius, 5, Color( 255, 0, 0 ) )
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )
