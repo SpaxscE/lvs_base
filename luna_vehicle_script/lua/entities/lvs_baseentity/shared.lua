@@ -17,12 +17,26 @@ ENT.LVS = true
 
 ENT.MDL = "models/error.mdl"
 
+ENT.MaxVelocity = 2500
+ENT.MaxPerfVelocity = 650
+ENT.MaxThrust = 10
+
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
 ENT.MaxSlipAnglePitch = 16
 ENT.MaxSlipAngleYaw = 8
+
+ENT.ShadowParams = {
+	secondstoarrive = 1,
+	maxangular = 10000,
+	maxangulardamp = 100,
+	maxspeed = 1000000,
+	maxspeeddamp = 0,
+	dampfactor = 0.05,
+	teleportdistance = 0,
+}
 
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )

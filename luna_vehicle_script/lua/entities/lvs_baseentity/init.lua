@@ -46,51 +46,78 @@ function ENT:Initialize()
 	self:PhysWake()
 end
 
-function ENT:PhysicsSimulate( phys, deltatime )
-	phys:Wake()
+function ENT:GetWorldGravity()
+	local PhysObj = self:GetPhysicsObject()
 
-	local WorldUp = Vector(0,0,1)
+	if not IsValid( PhysObj ) or not PhysObj:IsGravityEnabled() then return 0 end
 
-	local Right = -self:GetRight()
+	return physenv.GetGravity():Length()
+end
+
+function ENT:GetWorldUp()
+	local Gravity = physenv.GetGravity()
+
+	if Gravity:Length() > 0 then
+		return -Gravity:GetNormalized()
+	else
+		return Vector(0,0,1)
+	end
+end
+
+function ENT:GetStability()
+	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
+	local MaxPerfVelocity = 650
+
+	return math.Clamp(ForwardVelocity / MaxPerfVelocity,0,1) ^ 2
+end
+
+function ENT:CalcAero( phys, deltatime )
+	local WorldGravity = self:GetWorldGravity()
+	local WorldUp = self:GetWorldUp()
+
+	local Stability = self:GetStability()
+
+	local A90 = 90
+	
 	local Forward = self:GetForward()
+	local Left = -self:GetRight()
 	local Up = self:GetUp()
 
-	local PitchPull = math.max( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) / 90, 0 )
-	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Right ) ,-1,1) ) ) - 90) / 90
+	local PitchPull = math.max( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / A90, 0 )
+	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - A90) / A90
 
-	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * math.Sign( PitchPull ) * 0.5
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * math.Sign( YawPull ) * 0.5
+	local GravMul = WorldGravity / 600
+	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * math.Sign( PitchPull ) * GravMul
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * math.Sign( YawPull ) * GravMul
 
 	local Steer = self:GetSteer()
-	local Pitch = math.Clamp(Steer.y * 5 - GravityPitch,-1,1) * self.TurnRatePitch * 3
-	local Yaw = math.Clamp(Steer.z * 5 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75
-	local Roll = math.Clamp(Steer.x * 5,-1,1) * self.TurnRateRoll * 10
-
-	local Angles = self:GetAngles()
-	local TargetAngle = self:LocalToWorldAngles( Angle( Pitch, Yaw, Roll ) )
+	local Pitch = math.Clamp(Steer.y * 8 - GravityPitch,-1,1) * self.TurnRatePitch * 3
+	local Yaw = math.Clamp(Steer.z * 8 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75
+	local Roll = math.Clamp(Steer.x * 8,-1,1) * self.TurnRateRoll * 10
 
 	local Vel = self:GetVelocity()
 	local VelForward = Vel:GetNormalized()
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
-	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - self.MaxSlipAnglePitch * math.abs( Steer.y ), 0 ) / 90) * 0.1
+	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - self.MaxSlipAnglePitch * math.abs( Steer.y ), 0 ) / A90) * 0.3
+	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - A90 ) - self.MaxSlipAngleYaw * math.abs( Steer.z ), 0 ) / A90) * 0.3
 
-	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Right ) ,-1,1) ) ) - 90 ) - self.MaxSlipAngleYaw * math.abs( Steer.z ), 0 ) / 90) * 0.1
+	local Lift = -math.min( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - A90) / A90,0) * (WorldGravity / (1 / deltatime)) * Stability
 
-	self.ShadowParams = {}
-	self.ShadowParams.secondstoarrive = 1
-	self.ShadowParams.pos = phys:GetPos() + Vector(0,0,9) - Up * VelL.z * MulZ - Right * VelL.y * MulY + Forward * 10 * self:GetThrottle()
-	--self.ShadowParams.pos = phys:GetPos() + Vector(0,0,9) - phys:GetVelocity() * 0.005 + self:GetForward() * 20 * self:GetThrottle()
-	self.ShadowParams.angle = TargetAngle
-	self.ShadowParams.maxangular = 10000
-	self.ShadowParams.maxangulardamp = 100
-	self.ShadowParams.maxspeed = 1000000
-	self.ShadowParams.maxspeeddamp = 0
-	self.ShadowParams.dampfactor = 0.05
-	self.ShadowParams.teleportdistance = 0
+	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ),  Angle( Pitch, Yaw, Roll )
+end
+
+function ENT:PhysicsSimulate( phys, deltatime )
+	local pos, ang = self:CalcAero( phys, deltatime )
+
+	pos.x = 10 * self:GetThrottle()
+
+	self.ShadowParams.pos = self:LocalToWorld( pos )
+	self.ShadowParams.angle = self:LocalToWorldAngles( ang )
 	self.ShadowParams.deltatime = deltatime
 
+	phys:Wake()
 	phys:ComputeShadowControl( self.ShadowParams )
 end
 
