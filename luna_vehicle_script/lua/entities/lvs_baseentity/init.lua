@@ -152,6 +152,10 @@ function ENT:OnSpawn( PObj )
 	PObj:SetMass( 5000 )
 
 	self:AddDriverSeat( Vector(32,0,67.5), Angle(0,-90,0) )
+
+	self:AddPassengerSeat( Vector(32,200,67.5), Angle(0,-90,0) )
+
+	self:AddPassengerSeat( Vector(32,-200,67.5), Angle(0,-90,0) )
 end
 
 function ENT:Think()

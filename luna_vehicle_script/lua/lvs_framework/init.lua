@@ -6,26 +6,28 @@ LVS.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_
 
 LVS.ThemeColor = Color(60,60,60,255)
 
--- shared
-for _, filename in pairs( file.Find("lvs_framework/shared/*.lua", "LUA") ) do
-	if SERVER then
-		AddCSLuaFile("lvs_framework/shared/"..filename)
-	end
-	include("lvs_framework/shared/"..filename)
-end
+for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
+	if string.StartWith( filename, "sv_") then -- sv_ prefix only load serverside
+		if SERVER then
+			include("lvs_framework/autorun/"..filename)
+		end
 
--- server
-if SERVER then
-	for _, filename in pairs( file.Find("lvs_framework/server/*.lua", "LUA") ) do
-		include("lvs_framework/server/"..filename)
+		continue
 	end
-end
 
--- client
-for _, filename in pairs( file.Find("lvs_framework/client/*.lua", "LUA") ) do
-	if SERVER then
-		AddCSLuaFile("lvs_framework/client/"..filename)
-	else
-		include("lvs_framework/client/"..filename)
+	if string.StartWith( filename, "cl_") then -- cl_ prefix only load clientside
+		if SERVER then
+			AddCSLuaFile("lvs_framework/autorun/"..filename)
+		else
+			include("lvs_framework/autorun/"..filename)
+		end
+
+		continue
 	end
+
+	-- everything else is shared
+	if SERVER then
+		AddCSLuaFile("lvs_framework/autorun/"..filename)
+	end
+	include("lvs_framework/autorun/"..filename)
 end

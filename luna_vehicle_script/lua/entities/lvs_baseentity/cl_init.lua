@@ -1,40 +1,98 @@
 include("shared.lua")
 
-	surface.CreateFont( "LFS_FONT", {
-		font = "Verdana",
-		extended = false,
-		size = 20,
-		weight = 2000,
-		blursize = 0,
-		scanlines = 0,
-		antialias = true,
-		underline = false,
-		italic = false,
-		strikeout = false,
-		symbol = false,
-		rotary = false,
-		shadow = true,
-		additive = false,
-		outline = false,
-	} )
-	
+ENT.IconVehicleLocked = Material( "lvs_locked.png" )
+
 function ENT:LVSHudPaint( X, Y, ply )
-	local Radius = 100
+	self:LVSHudPaintSeatSwitcher( X, Y, ply )
+end
 
-	local Test = self:GetSteer()
+function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
+	local pSeats = self:GetPassengerSeats()
+	local SeatCount = table.Count( pSeats ) 
 
-	local Test2 = Vector( Test.x, Test.y, 0)
-	local Test2Dir = Test2:GetNormalized()
-	local Test2Len = Test2:Length()
+	if SeatCount <= 0 then return end
+	
+	pSeats[0] = self:GetDriverSeat()
 
-	surface.DrawCircle( X * 0.5, Y * 0.5, Radius, Color( 255, 0, 0 ) )
+	draw.NoTexture() 
 
-	surface.DrawCircle( X * 0.5 + Test2Dir.x * math.abs(Test.x) * Radius, Y * 0.5 + Test2Dir.y * math.abs(Test.y) * Radius, 5, Color( 255, 0, 0 ) )
+	local MySeat = ply:GetVehicle():GetNWInt( "pPodIndex", -1 )
 
-	local Throttle = math.Round(self:GetThrottle() * 100,0)
+	local Passengers = {}
+	for _, player in pairs( player.GetAll() ) do
+		if player:lvsGetVehicle() == self then
+			local Pod = player:GetVehicle()
+			Passengers[ Pod:GetNWInt( "pPodIndex", -1 ) ] = player:GetName()
+		end
+	end
+	if self:GetAI() then
+		Passengers[1] = "[AI] "..self.PrintName
+	end
+	
+	ply.SwitcherTime = ply.SwitcherTime or 0
+	ply.oldPassengers = ply.oldPassengers or {}
+	
+	local Time = CurTime()
+	for k, v in pairs( Passengers ) do
+		if ply.oldPassengers[k] ~= v then
+			ply.oldPassengers[k] = v
+			ply.SwitcherTime = Time + 2
+		end
+	end
+	for k, v in pairs( ply.oldPassengers ) do
+		if not Passengers[k] then
+			ply.oldPassengers[k] = nil
+			ply.SwitcherTime = Time + 2
+		end
+	end
 
-	draw.SimpleText( "THR", "LFS_FONT", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	draw.SimpleText( Throttle.."%" , "LFS_FONT", 120, 10, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	for _, v in pairs( LVS.pSwitchKeysInv ) do
+		if input.IsKeyDown(v) then
+			ply.SwitcherTime = Time + 2
+		end
+	end
+
+	local Hide = ply.SwitcherTime > Time
+
+	ply.smHider = ply.smHider and (ply.smHider + ((Hide and 1 or 0) - ply.smHider) * RealFrameTime() * 15) or 0
+
+	local Alpha1 = 135 + 110 * ply.smHider 
+	local HiderOffset = 300 * ply.smHider
+	local Offset = -50
+	local yPos = Y - (SeatCount + 1) * 30 - 10
+
+	for _, Pod in pairs( pSeats ) do
+		local I = Pod:GetNWInt( "pPodIndex", -1 )
+		if I >= 0 then
+			if I == MySeat then
+				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
+			else
+				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * ply.smHider) )
+			end
+			if I == SeatCount then
+				if self:GetlvsLockedStatus() then
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial( self.IconVehicleLocked  )
+					surface.DrawTexturedRect( X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25 )
+				end
+			end
+			if Hide then
+				if Passengers[I] then
+					draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+				else
+					draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+				end
+				
+				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+			else
+				if Passengers[I] then
+					draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+				else
+					draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+				end
+			end
+		end
+	end
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )

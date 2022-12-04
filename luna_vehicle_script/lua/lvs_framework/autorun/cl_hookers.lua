@@ -1,9 +1,32 @@
-hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
+
+hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
+	local ply = LocalPlayer()
+	
 	if ply:GetViewEntity() ~= ply then return end
 	
 	local Pod = ply:GetVehicle()
 	local Parent = ply:lvsGetVehicle()
-	
+
+	if not IsValid( Pod ) or not IsValid( Parent ) then 
+		ply.oldPassengers = {}
+		
+		return
+	end
+
+	local X = ScrW()
+	local Y = ScrH()
+
+	PaintSeatSwitcher( Parent, X, Y )
+
+	Parent:LVSHudPaint( X, Y, ply )
+end )
+
+hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
+	if ply:GetViewEntity() ~= ply then return end
+
+	local Pod = ply:GetVehicle()
+	local Parent = ply:lvsGetVehicle()
+
 	if not IsValid( Pod ) or not IsValid( Parent ) then return end
 
 	local view = {}
@@ -13,9 +36,9 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 	view.angles = ply:EyeAngles()
 
 	if not Pod:GetThirdPersonMode() then
-		
+
 		view.drawviewer = false
-		
+
 		return Parent:LVSCalcViewFirstPerson( view, ply )
 	end
 
@@ -36,7 +59,7 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 		mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
 		maxs = Vector( WallOffset, WallOffset, WallOffset ),
 	} )
-	
+
 	view.origin = tr.HitPos
 
 	if tr.Hit and not tr.StartSolid then
