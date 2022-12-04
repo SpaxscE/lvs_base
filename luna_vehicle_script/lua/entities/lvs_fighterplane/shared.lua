@@ -32,18 +32,17 @@ ENT.MaxSlipAngleYaw = 10
 ENT.MaxHealth = 1000
 
 function ENT:SetupDataTables()
-	self:SetupBaseDT()
+	self:CreateBaseDT()
 
-	self:NetworkVar( "Vector", 0, "Steer" )
-	self:NetworkVar( "Float", 1, "Throttle" )
+	self:AddDT( "Vector", "Steer" )
+	self:AddDT( "Float", "Throttle" )
 end
 
-function ENT:MouseDirectInput( ply, cmd )
+function ENT:PlayerDirectInput( ply, cmd )
 	local Delta = FrameTime()
 
 	local KeyLeft = cmd:KeyDown( IN_MOVERIGHT )
 	local KeyRight = cmd:KeyDown( IN_MOVELEFT )
-
 	local KeyPitch = cmd:KeyDown( IN_SPEED )
 
 	local MouseY = KeyPitch and -10 or cmd:GetMouseY()
@@ -69,6 +68,51 @@ function ENT:MouseDirectInput( ply, cmd )
 	self:SetSteer( F )
 end
 
+function ENT:PlayerMouseAim( ply, cmd )
+	if CLIENT then return end
+
+	local Pod = self:GetDriverSeat()
+
+	local PitchUp = cmd:KeyDown( IN_SPEED ) --Driver:lfsGetInput( "+PITCH" )
+	local PitchDown = false --Driver:lfsGetInput( "-PITCH" )
+	local YawRight = cmd:KeyDown( IN_ATTACK2 ) --Driver:lfsGetInput( "+YAW" )
+	local YawLeft = cmd:KeyDown( IN_ATTACK ) -- Driver:lfsGetInput( "-YAW" )
+	local RollRight = cmd:KeyDown( IN_MOVERIGHT )
+	local RollLeft = cmd:KeyDown( IN_MOVELEFT )
+
+	local EyeAngles = Pod:WorldToLocalAngles( ply:EyeAngles() )
+
+	if ply:KeyDown( IN_WALK ) then
+		if isangle( self.StoredEyeAngles ) then
+			EyeAngles = self.StoredEyeAngles
+		end
+	else
+		self.StoredEyeAngles = EyeAngles
+	end
+
+	local OverridePitch = 0
+	local OverrideYaw = 0
+	local OverrideRoll = (RollRight and 1 or 0) - (RollLeft and 1 or 0)
+
+	if PitchUp or PitchDown then
+		EyeAngles = self:GetAngles()
+
+		self.StoredEyeAngles = Angle(EyeAngles.p,EyeAngles.y,0)
+
+		OverridePitch = (PitchUp and 1 or 0) - (PitchDown and 1 or 0)
+	end
+
+	if YawRight or YawLeft then
+		EyeAngles = self:GetAngles()
+
+		self.StoredEyeAngles = Angle(EyeAngles.p,EyeAngles.y,0)
+
+		OverrideYaw = (YawRight and 1 or 0) - (YawLeft and 1 or 0) 
+	end
+
+	self:ApproachTargetAngle( EyeAngles, OverridePitch, OverrideYaw, OverrideRoll )
+end
+
 function ENT:CalcThrottle( ply, cmd )
 	local Delta = FrameTime()
 
@@ -83,6 +127,20 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	self:MouseDirectInput( ply, cmd )
+	if self:GetLockView() then
+		self:PlayerDirectInput( ply, cmd )
+	else
+		self:PlayerMouseAim( ply, cmd )
+	end
+
 	self:CalcThrottle( ply, cmd )
+end
+
+function ENT:GetStability()
+	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
+
+	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1) ^ 2
+	local InvStability = 1 - Stability
+
+	return Stability, InvStability, ForwardVelocity
 end

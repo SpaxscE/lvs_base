@@ -22,3 +22,22 @@ hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 
 	veh:StartCommand( ply, cmd )
 end )
+
+if CLIENT then
+	hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
+		local ply = LocalPlayer()
+
+		if ply:GetViewEntity() ~= ply then return end
+
+		local Pod = ply:GetVehicle()
+		local Parent = ply:lvsGetVehicle()
+
+		if not IsValid( Pod ) or not IsValid( Parent ) then
+			ply.oldPassengers = {}
+
+			return
+		end
+
+		Parent:LVSHudPaint( ScrW(), ScrH(), ply )
+	end )
+end

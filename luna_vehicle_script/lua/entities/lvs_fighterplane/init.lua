@@ -15,13 +15,38 @@ function ENT:OnSpawn( PObj )
 	self:AddPassengerSeat( Vector(32,-200,67.5), Angle(0,-90,0) )
 end
 
-function ENT:GetStability()
-	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
+function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll )
+	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
 
-	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1) ^ 2
-	local InvStability = 1 - Stability
+	local LocalAngPitch = LocalAngles.p
+	local LocalAngYaw = LocalAngles.y
+	local LocalAngRoll = LocalAngles.r
 
-	return Stability, InvStability, ForwardVelocity
+	local TargetForward = TargetAngle:Forward()
+	local Forward = self:GetForward()
+
+	local AngDiff = math.deg( math.acos( math.Clamp( Forward:Dot( TargetForward ) ,-1,1) ) )
+
+	local WingFinFadeOut = math.max( (90 - AngDiff ) / 90, 0 )
+	local RudderFadeOut = math.max( (60 - AngDiff ) / 60, 0 )
+
+	local Pitch = math.Clamp( -LocalAngPitch / 22 , -1, 1 )
+	local Yaw = math.Clamp( -LocalAngYaw / 10 ,-1,1) * RudderFadeOut
+	local Roll = math.Clamp( (-LocalAngYaw + LocalAngRoll * RudderFadeOut) * WingFinFadeOut / 180 , -1 , 1 )
+
+	if OverridePitch and OverridePitch ~= 0 then
+		Pitch = OverridePitch
+	end
+
+	if OverrideYaw and OverrideYaw ~= 0 then
+		Yaw = OverrideYaw
+	end
+	
+	if OverrideRoll and OverrideRoll ~= 0 then
+		Roll = OverrideRoll
+	end
+
+	self:SetSteer( Vector( Roll, -Pitch, -Yaw) )
 end
 
 function ENT:CalcAero( phys, deltatime )

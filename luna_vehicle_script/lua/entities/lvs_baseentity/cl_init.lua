@@ -96,29 +96,10 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 end
 
 function ENT:LVSCalcViewFirstPerson( view, ply )
-	view.drawviewer = true
-
-	return self:LVSCalcViewThirdPerson( view, ply )
+	return view
 end
 
 function ENT:LVSCalcViewThirdPerson( view, ply )
-	self._lerpPos = self._lerpPos or self:GetPos()
-
-	local Delta = RealFrameTime()
-
-	local TargetPos = self:LocalToWorld( Vector(500,0,250) )
-
-	local Sub = TargetPos - self._lerpPos
-	local Dir = Sub:GetNormalized()
-	local Dist = Sub:Length()
-
-	self._lerpPos = self._lerpPos + (TargetPos - self:GetForward() * 900 - Dir * 100 - self._lerpPos) * Delta * 12
-
-	local vel = self:GetVelocity()
-
-	view.origin = self._lerpPos
-	view.angles = self:GetAngles()
-
 	return view
 end
 

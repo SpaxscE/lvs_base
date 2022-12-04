@@ -21,20 +21,34 @@ ENT.AITEAM = 0
 
 ENT.MaxHealth = 1000
 
-function ENT:SetupBaseDT()
-	self:NetworkVar( "Entity",0, "Driver" )
-	self:NetworkVar( "Entity",1, "DriverSeat" )
-	self:NetworkVar( "Entity",2, "Gunner" )
-	self:NetworkVar( "Entity",3, "GunnerSeat" )
+function ENT:AddDT( type, name, data )
+	if not self.DTlist then self.DTlist = {} end
 
-	self:NetworkVar( "Bool",0, "Active" )
-	self:NetworkVar( "Bool",1, "EngineActive" )
-	self:NetworkVar( "Bool",2, "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
-	self:NetworkVar( "Bool",3, "lvsLockedStatus" )
+	if self.DTlist[ type ] then
+		self.DTlist[ type ] = self.DTlist[ type ] + 1
+	else
+		self.DTlist[ type ] = 0
+	end
 
-	self:NetworkVar( "Int", 0, "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
+	self:NetworkVar( type, self.DTlist[ type ], name, data )
+end
 
-	self:NetworkVar( "Float", 2, "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
+function ENT:CreateBaseDT()
+	self:AddDT( "Entity", "Driver" )
+	self:AddDT( "Entity", "DriverSeat" )
+	self:AddDT( "Entity", "Gunner" )
+	self:AddDT( "Entity", "GunnerSeat" )
+
+	self:AddDT( "Bool", "Active" )
+	self:AddDT( "Bool", "EngineActive" )
+	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
+	self:AddDT( "Bool", "lvsLockedStatus" )
+
+	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
+
+	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
+
+	self:AddDT( "Bool", "LockView",	{ KeyName = "lockview",	Edit = { type = "Boolean",	order = 3,	category = "Misc"} } )
 
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
@@ -47,7 +61,7 @@ function ENT:SetupBaseDT()
 end
 
 function ENT:SetupDataTables()
-	self:SetupBaseDT()
+	self:CreateBaseDT()
 end
 
 function ENT:OnSetupDataTables()
