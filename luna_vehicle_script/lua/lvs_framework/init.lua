@@ -6,14 +6,6 @@ LVS.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_
 
 LVS.ThemeColor = Color(60,60,60,255)
 
-math.Sign = function( n )
-	if n > 0 then return 1 end
-
-	if n < 0 then return -1 end
-
-	return 0
-end
-
 -- shared
 for _, filename in pairs( file.Find("lvs_framework/shared/*.lua", "LUA") ) do
 	if SERVER then

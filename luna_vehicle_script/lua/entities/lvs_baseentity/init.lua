@@ -106,18 +106,18 @@ function ENT:CalcAero( phys, deltatime )
 	local StallYawPull = (math.deg( math.acos( math.Clamp( -VelForward:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
 	local GravMul = WorldGravity / 600
-	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * math.Sign( PitchPull ) * GravMul * 0.25
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * math.Sign( YawPull ) * GravMul * 0.25
+	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul * 0.25
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul * 0.25
 
 	local StallMul = math.min( -math.min(Vel.z,0) / 1000, 1 ) * 10
 
-	local StallPitch = math.abs( PitchPull ) * math.Sign( PitchPull ) * GravMul * StallMul
-	local StallYaw = math.abs( YawPull ) * math.Sign( YawPull ) * GravMul * StallMul
+	local StallPitch = math.abs( PitchPull ) * self:Sign( PitchPull ) * GravMul * StallMul
+	local StallYaw = math.abs( YawPull ) * self:Sign( YawPull ) * GravMul * StallMul
 
 	local Steer = self:GetSteer()
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 3 * Stability - StallPitch * InvStability
 	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75 * Stability + StallYaw * InvStability
-	local Roll = math.Clamp( math.Sign( Steer.x ) * (math.abs( Steer.x ) ^ 1.5) * 22,-1,1) * self.TurnRateRoll * 12 * Stability
+	local Roll = math.Clamp( self:Sign( Steer.x ) * (math.abs( Steer.x ) ^ 1.5) * 22,-1,1) * self.TurnRateRoll * 12 * Stability
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
@@ -145,7 +145,13 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
 end
 
-function ENT:OnSpawn()
+function ENT:OnSpawn( PObj )
+	self:SetBodygroup( 14, 1 ) 
+	self:SetBodygroup( 13, 1 ) 
+
+	PObj:SetMass( 5000 )
+
+	self:AddDriverSeat( Vector(32,0,67.5), Angle(0,-90,0) )
 end
 
 function ENT:Think()
@@ -157,17 +163,33 @@ function ENT:Think()
 	return true
 end
 
-function ENT:OnDriverChanged( VehicleIsActive, OldDriver, NewDriver )
+function ENT:OnDriverChanged( Old, New, VehicleIsActive )
+end
+
+function ENT:OnGunnerChanged( Old, New )
 end
 
 function ENT:OnTick()
 end
 
 function ENT:HandleActive()
+	local gPod = self:GetGunnerSeat()
+
+	if IsValid( gPod ) then
+		local Gunner = gPod:GetDriver()
+		local OldGunner = self:GetGunner()
+
+		if Gunner ~= self:GetGunner() then
+			self:SetGunner( Gunner )
+			self:OnGunnerChanged( OldGunner, Gunner )
+		end
+	end
+
 	local Pod = self:GetDriverSeat()
 
 	if not IsValid( Pod ) then
 		self:SetActive( false )
+
 		return
 	end
 
@@ -186,7 +208,7 @@ function ENT:HandleActive()
 		self:SetDriver( Driver )
 		self:SetActive( IsActive )
 
-		self:OnDriverChanged( IsActive, OldDriver, NewDriver )
+		self:OnDriverChanged( OldDriver, NewDriver, IsActive )
 	end
 end
 
@@ -194,11 +216,15 @@ function ENT:OnRemove()
 end
 
 function ENT:Lock()
+	if self:GetlvsLockedStatus() then return end
+
 	self:SetlvsLockedStatus( true )
 	self:EmitSound( "doors/latchlocked2.wav" )
 end
 
 function ENT:UnLock()
+	if not self:GetlvsLockedStatus() then return end
+
 	self:SetlvsLockedStatus( false )
 	self:EmitSound( "doors/latchunlocked1.wav" )
 end

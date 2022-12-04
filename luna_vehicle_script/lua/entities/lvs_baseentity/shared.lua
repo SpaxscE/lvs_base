@@ -5,8 +5,8 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable		= false
-ENT.AdminSpawnable  = false
+ENT.Spawnable			= true
+ENT.AdminSpawnable		= false
 
 ENT.AutomaticFrameAdvance = true
 ENT.RenderGroup = RENDERGROUP_BOTH 
@@ -15,12 +15,12 @@ ENT.Editable = true
 
 ENT.LVS = true
 
-ENT.MDL = "models/error.mdl"
+ENT.MDL = "models/blu/bf109.mdl"
 
 ENT.AITEAM = 0
 
 ENT.MaxVelocity = 2500
-ENT.MaxPerfVelocity = 2200
+ENT.MaxPerfVelocity = 1500
 ENT.MaxThrust = 100
 
 ENT.TurnRatePitch = 1
@@ -36,9 +36,6 @@ ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 1000
-
-ENT.MaxPrimaryAmmo = -1
-ENT.MaxSecondaryAmmo = -1
 
 function ENT:BaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
@@ -76,7 +73,7 @@ end
 function ENT:CalcMainActivity( ply )
 end
 
-function ENT:CalcSteer( ply, cmd )
+function ENT:MouseDirectInput( ply, cmd )
 	local Delta = FrameTime()
 
 	local KeyLeft = cmd:KeyDown( IN_MOVERIGHT )
@@ -121,7 +118,7 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	self:CalcSteer( ply, cmd )
+	self:MouseDirectInput( ply, cmd )
 	self:CalcThrottle( ply, cmd )
 end
 
@@ -160,4 +157,12 @@ function ENT:GetPassenger( num )
 
 		return NULL
 	end
+end
+
+function ENT:Sign( n )
+	if n > 0 then return 1 end
+
+	if n < 0 then return -1 end
+
+	return 0
 end
