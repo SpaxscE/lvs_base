@@ -21,7 +21,7 @@ ENT.AITEAM = 0
 
 ENT.MaxHealth = 1000
 
-function ENT:BaseDT()
+function ENT:SetupBaseDT()
 	self:NetworkVar( "Entity",0, "Driver" )
 	self:NetworkVar( "Entity",1, "DriverSeat" )
 	self:NetworkVar( "Entity",2, "Gunner" )
@@ -34,9 +34,6 @@ function ENT:BaseDT()
 
 	self:NetworkVar( "Int", 0, "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
 
-	self:NetworkVar( "Vector", 0, "Steer" )
-
-	self:NetworkVar( "Float", 1, "Throttle" )
 	self:NetworkVar( "Float", 2, "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
 
 	if SERVER then
@@ -45,10 +42,15 @@ function ENT:BaseDT()
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
 	end
+
+	self:OnSetupDataTables()
 end
 
 function ENT:SetupDataTables()
-	self:BaseDT()
+	self:SetupBaseDT()
+end
+
+function ENT:OnSetupDataTables()
 end
 
 function ENT:CalcMainActivity( ply )

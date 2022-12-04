@@ -1,5 +1,5 @@
 
-DEFINE_BASECLASS( "lvs_baseentity" )
+ENT.Base = "lvs_baseentity"
 
 ENT.PrintName = "plane basescript"
 ENT.Author = "Luna"
@@ -30,6 +30,13 @@ ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 1000
+
+function ENT:SetupDataTables()
+	self:SetupBaseDT()
+
+	self:NetworkVar( "Vector", 0, "Steer" )
+	self:NetworkVar( "Float", 1, "Throttle" )
+end
 
 function ENT:MouseDirectInput( ply, cmd )
 	local Delta = FrameTime()
