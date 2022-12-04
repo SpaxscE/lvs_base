@@ -1,24 +1,19 @@
 
 hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	local ply = LocalPlayer()
-	
+
 	if ply:GetViewEntity() ~= ply then return end
-	
+
 	local Pod = ply:GetVehicle()
 	local Parent = ply:lvsGetVehicle()
 
-	if not IsValid( Pod ) or not IsValid( Parent ) then 
+	if not IsValid( Pod ) or not IsValid( Parent ) then
 		ply.oldPassengers = {}
-		
+
 		return
 	end
 
-	local X = ScrW()
-	local Y = ScrH()
-
-	PaintSeatSwitcher( Parent, X, Y )
-
-	Parent:LVSHudPaint( X, Y, ply )
+	Parent:LVSHudPaint( ScrW(), ScrH(), ply )
 end )
 
 hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
