@@ -75,8 +75,8 @@ function ENT:PlayerMouseAim( ply, cmd )
 
 	local PitchUp = cmd:KeyDown( IN_SPEED ) --Driver:lfsGetInput( "+PITCH" )
 	local PitchDown = false --Driver:lfsGetInput( "-PITCH" )
-	local YawRight = cmd:KeyDown( IN_ATTACK2 ) --Driver:lfsGetInput( "+YAW" )
-	local YawLeft = cmd:KeyDown( IN_ATTACK ) -- Driver:lfsGetInput( "-YAW" )
+	local YawRight = false --Driver:lfsGetInput( "+YAW" )
+	local YawLeft = false -- Driver:lfsGetInput( "-YAW" )
 	local RollRight = cmd:KeyDown( IN_MOVERIGHT )
 	local RollLeft = cmd:KeyDown( IN_MOVELEFT )
 

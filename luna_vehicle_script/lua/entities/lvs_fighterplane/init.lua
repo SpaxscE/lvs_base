@@ -28,7 +28,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local AngDiff = math.deg( math.acos( math.Clamp( Forward:Dot( TargetForward ) ,-1,1) ) )
 
 	local WingFinFadeOut = math.max( (90 - AngDiff ) / 90, 0 )
-	local RudderFadeOut = math.max( (60 - AngDiff ) / 60, 0 )
+	local RudderFadeOut = math.max( (120 - AngDiff ) / 120, 0 )
 
 	local Pitch = math.Clamp( -LocalAngPitch / 22 , -1, 1 )
 	local Yaw = math.Clamp( -LocalAngYaw / 10 ,-1,1) * RudderFadeOut
