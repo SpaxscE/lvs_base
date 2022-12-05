@@ -120,7 +120,12 @@ function ENT:HandleActive()
 
 		if Gunner ~= self:GetGunner() then
 			self:SetGunner( Gunner )
+
 			self:OnGunnerChanged( OldGunner, Gunner )
+
+			if IsValid( Gunner ) then
+				Gunner:lvsBuildControls()
+			end
 		end
 	end
 
@@ -148,6 +153,10 @@ function ENT:HandleActive()
 		self:SetActive( IsActive )
 
 		self:OnDriverChanged( OldDriver, NewDriver, IsActive )
+
+		if IsValid( Driver ) then
+			Driver:lvsBuildControls()
+		end
 	end
 end
 
@@ -334,6 +343,35 @@ function ENT:PlayAnimation( animation, playbackrate )
 	self:ResetSequence( sequence )
 	self:SetPlaybackRate( playbackrate )
 	self:SetSequence( sequence )
+end
+
+function ENT:CreateAI()
+end
+
+function ENT:RemoveAI()
+end
+
+function ENT:OnToggleAI( name, old, new)
+	if new == old then return end
+	
+	if new == true then
+		local Driver = self:GetDriver()
+		
+		if IsValid( Driver ) then
+			Driver:ExitVehicle()
+		end
+		
+		self:SetActive( true )
+		--self:StartEngine()
+		self.COL_GROUP_OLD = self:GetCollisionGroup()
+		self:SetCollisionGroup( COLLISION_GROUP_INTERACTIVE_DEBRIS )
+		self:CreateAI()
+	else
+		self:SetActive( false )
+		--self:StopEngine()
+		self:SetCollisionGroup( self.COL_GROUP_OLD or COLLISION_GROUP_NONE )
+		self:RemoveAI()
+	end
 end
 
 function ENT:UpdateTransmitState() 

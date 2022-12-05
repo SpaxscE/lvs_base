@@ -5,7 +5,7 @@ local function CalcViewDirectInput( ply, pos, angles, fov, pod, vehicle )
 	view.drawviewer = true
 	view.angles = vehicle:GetAngles()
 
-	local FreeLook = ply:KeyDown( IN_WALK )
+	local FreeLook = ply:lvsKeyDown( "FREELOOK" )
 
 	if not pod:GetThirdPersonMode() then
 
@@ -69,7 +69,7 @@ local smTran = 0
 local function CalcViewMouseAim( ply, pos, angles, fov, pod, vehicle )
 	local cvarFocus = 0 --math.Clamp( cvarCamFocus:GetFloat() , -1, 1 )
 
-	smTran = smTran + ((ply:KeyDown( IN_WALK ) and 0 or 1) - smTran) * RealFrameTime() * 10
+	smTran = smTran + ((ply:lvsKeyDown( "FREELOOK" ) and 0 or 1) - smTran) * RealFrameTime() * 10
 
 	local view = {}
 	view.origin = pos

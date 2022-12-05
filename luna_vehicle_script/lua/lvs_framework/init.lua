@@ -1,11 +1,4 @@
 
-LVS = istable( LVS ) and LVS or {}
-
-LVS.pSwitchKeys = {[KEY_1] = 1,[KEY_2] = 2,[KEY_3] = 3,[KEY_4] = 4,[KEY_5] = 5,[KEY_6] = 6,[KEY_7] = 7,[KEY_8] = 8,[KEY_9] = 9,[KEY_0] = 10}
-LVS.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_5,[6] = KEY_6,[7] = KEY_7,[8] = KEY_8,[9] = KEY_9,[10] = KEY_0}
-
-LVS.ThemeColor = Color(60,60,60,255)
-
 for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
 	if string.StartWith( filename, "sv_") then -- sv_ prefix only load serverside
 		if SERVER then
@@ -31,3 +24,42 @@ for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
 	end
 	include("lvs_framework/autorun/"..filename)
 end
+
+hook.Run( "LVS:Initialize" )
+
+if CLIENT then
+	hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
+		timer.Simple(20, function() LVS.CheckUpdates() end)
+	end )
+
+	return
+end
+
+function LVS:FixVelocity()
+	local tbl = physenv.GetPerformanceSettings()
+
+	if tbl.MaxVelocity < 4000 then
+		local OldVel = tbl.MaxVelocity
+
+		tbl.MaxVelocity = 4000
+		physenv.SetPerformanceSettings(tbl)
+
+		print("[LVS] Low MaxVelocity detected! Increasing! "..OldVel.." => 4000")
+	end
+
+	if tbl.MaxAngularVelocity < 7272 then
+		local OldAngVel = tbl.MaxAngularVelocity
+
+		tbl.MaxAngularVelocity = 7272
+		physenv.SetPerformanceSettings(tbl)
+
+		print("[LVS] Low MaxAngularVelocity detected! Increasing! "..OldAngVel.." => 7272")
+	end
+end
+
+hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
+	timer.Simple(20, function()
+		LVS:FixVelocity()
+		LVS.CheckUpdates()
+	end)
+end )

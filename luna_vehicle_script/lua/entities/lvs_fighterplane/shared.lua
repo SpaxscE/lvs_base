@@ -41,11 +41,15 @@ end
 function ENT:PlayerDirectInput( ply, cmd )
 	local Delta = FrameTime()
 
-	local KeyLeft = cmd:KeyDown( IN_MOVERIGHT )
-	local KeyRight = cmd:KeyDown( IN_MOVELEFT )
-	local KeyPitch = cmd:KeyDown( IN_SPEED )
+	local KeyLeft = ply:lvsKeyDown( "-ROLL" )
+	local KeyRight = ply:lvsKeyDown( "+ROLL" )
+	local KeyPitchUp = ply:lvsKeyDown( "+PITCH" )
+	local KeyPitchDown = ply:lvsKeyDown( "-PITCH" )
 
-	local MouseY = KeyPitch and -10 or cmd:GetMouseY()
+	local MouseY = cmd:GetMouseY()
+
+	if KeyPitchDown then MouseY = 10 end
+	if KeyPitchUp then MouseY = -10 end
 
 	local Input = Vector( cmd:GetMouseX(), MouseY * 4, 0 ) * 0.25
 
@@ -73,16 +77,16 @@ function ENT:PlayerMouseAim( ply, cmd )
 
 	local Pod = self:GetDriverSeat()
 
-	local PitchUp = cmd:KeyDown( IN_SPEED ) --Driver:lfsGetInput( "+PITCH" )
-	local PitchDown = false --Driver:lfsGetInput( "-PITCH" )
-	local YawRight = false --Driver:lfsGetInput( "+YAW" )
-	local YawLeft = false -- Driver:lfsGetInput( "-YAW" )
-	local RollRight = cmd:KeyDown( IN_MOVERIGHT )
-	local RollLeft = cmd:KeyDown( IN_MOVELEFT )
+	local PitchUp = ply:lvsKeyDown( "+PITCH" )
+	local PitchDown = ply:lvsKeyDown( "-PITCH" )
+	local YawRight =ply:lvsKeyDown( "+YAW" )
+	local YawLeft = ply:lvsKeyDown( "-YAW" )
+	local RollRight = ply:lvsKeyDown( "+ROLL" )
+	local RollLeft = ply:lvsKeyDown( "-ROLL" )
 
 	local EyeAngles = Pod:WorldToLocalAngles( ply:EyeAngles() )
 
-	if ply:KeyDown( IN_WALK ) then
+	if ply:lvsKeyDown( "FREELOOK" ) then
 		if isangle( self.StoredEyeAngles ) then
 			EyeAngles = self.StoredEyeAngles
 		end
@@ -116,8 +120,8 @@ end
 function ENT:CalcThrottle( ply, cmd )
 	local Delta = FrameTime()
 
-	local ThrottleUp = cmd:KeyDown( IN_FORWARD ) and 1 or 0
-	local ThrottleDown = cmd:KeyDown( IN_BACK ) and -1 or 0
+	local ThrottleUp =  ply:lvsKeyDown( "+THROTTLE" ) and 1 or 0
+	local ThrottleDown = ply:lvsKeyDown( "-THROTTLE" ) and -1 or 0
 
 	local Throttle = (ThrottleUp + ThrottleDown) * Delta
 
