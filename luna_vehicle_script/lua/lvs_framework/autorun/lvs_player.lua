@@ -33,18 +33,28 @@ function meta:lvsGetControls()
 	return self.LVS_BINDS
 end
 
+function meta:lvsMouseAim()
+	return self._lvsMouseAim
+end
+
 function meta:lvsBuildControls()
 	if istable( self.LVS_BINDS ) then
 		table.Empty( self.LVS_BINDS )
 	end
 
 	if SERVER then
+		self._lvsMouseAim = self:GetInfoNum( "lvs_mouseaim", 0 ) == 1
+
 		self.LVS_BINDS = table.Copy( LVS.KEYS_CATEGORIES )
 
 		for _,v in pairs( LVS.KEYS_REGISTERED ) do
 			self.LVS_BINDS[v.category][ self:GetInfoNum( v.cmd, 0 ) ] = v.id
 		end
+
+		net.Start( "lvs_buildcontrols" )
+		net.Send( self )
 	else
+		self._lvsMouseAim = GetConVar( "lvs_mouseaim" ):GetInt() == 1
 		self.LVS_BINDS = {}
 
 		local KeySpawnMenu = input.LookupBinding( "+menu" )
@@ -61,7 +71,7 @@ function meta:lvsBuildControls()
 		self._lvsDisableContextMenu = nil
 
 		for _,v in pairs( LVS.KEYS_REGISTERED ) do
-			local KeyCode =  GetConVar( v.cmd ):GetInt()
+			local KeyCode = GetConVar( v.cmd ):GetInt()
 
 			self.LVS_BINDS[ v.id ] = KeyCode
 
@@ -114,7 +124,15 @@ function meta:lvsKeyDown( name )
 	end
 end
 
-if CLIENT then return end
+if CLIENT then
+	net.Receive( "lvs_buildcontrols", function( len )
+		LocalPlayer():lvsBuildControls()
+	end )
+
+	return
+end
+
+util.AddNetworkString( "lvs_buildcontrols" )
 
 function meta:lvsSetInput( name, value )
 	if not self._lvsKeyDown then

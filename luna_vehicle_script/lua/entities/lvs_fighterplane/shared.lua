@@ -64,7 +64,7 @@ function ENT:PlayerDirectInput( ply, cmd )
 	local Fx = math.Clamp( Target.x, -1, 1 )
 	local Fy = math.Clamp( Target.y, -1, 1 )
 
-	local TargetFz = (KeyRight and 1 or 0) - (KeyLeft and 1 or 0)
+	local TargetFz = (KeyLeft and 1 or 0) - (KeyRight and 1 or 0)
 	local Fz = Cur.z + math.Clamp(TargetFz - Cur.z,-Rate * 3,Rate * 3)
 
 	local F = Cur + (Vector( Fx, Fy, Fz ) - Cur) * math.min(Delta * 100,1)
@@ -131,10 +131,10 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	if self:GetLockView() then
-		self:PlayerDirectInput( ply, cmd )
-	else
+	if ply:lvsMouseAim() then
 		self:PlayerMouseAim( ply, cmd )
+	else
+		self:PlayerDirectInput( ply, cmd )
 	end
 
 	self:CalcThrottle( ply, cmd )

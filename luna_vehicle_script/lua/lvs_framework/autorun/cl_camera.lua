@@ -1,4 +1,6 @@
 
+local cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
+
 local function CalcViewDirectInput( ply, pos, angles, fov, pod, vehicle )
 	local view = {}
 	view.fov = fov
@@ -67,7 +69,7 @@ end
 
 local smTran = 0
 local function CalcViewMouseAim( ply, pos, angles, fov, pod, vehicle )
-	local cvarFocus = 0 --math.Clamp( cvarCamFocus:GetFloat() , -1, 1 )
+	local cvarFocus = math.Clamp( cvarCamFocus:GetFloat() , -1, 1 )
 
 	smTran = smTran + ((ply:lvsKeyDown( "FREELOOK" ) and 0 or 1) - smTran) * RealFrameTime() * 10
 
@@ -123,10 +125,10 @@ local function CalcViewMouseAim( ply, pos, angles, fov, pod, vehicle )
 end
 
 local function CalcViewDriver( ply, pos, angles, fov, pod, vehicle )
-	if vehicle:GetLockView() then
-		return CalcViewDirectInput( ply, pos, angles, fov, pod, vehicle )
-	else
+	if ply:lvsMouseAim() then
 		return CalcViewMouseAim( ply, pos, angles, fov, pod, vehicle )
+	else
+		return CalcViewDirectInput( ply, pos, angles, fov, pod, vehicle )
 	end
 end
 

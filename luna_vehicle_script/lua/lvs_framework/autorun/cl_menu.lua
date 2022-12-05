@@ -1,4 +1,21 @@
 
+local cvarVolume = CreateClientConVar( "lvs_volume", 0.65, true, false)
+local cvarDirectInput = CreateClientConVar( "lvs_mouseaim", 0, true, true)
+
+local cvarShowPlaneIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
+local cvarHitMarker = CreateConVar( "lvs_hitmarker", 1, true, false)
+
+LVS.ShowPlaneIdent = cvarShowPlaneIdent and cvarShowPlaneIdent:GetBool() or true
+LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false
+
+cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
+	LVS.ShowPlaneIdent = tonumber( newValue ) ~=0
+end)
+
+cvars.AddChangeCallback( "lvs_hitmarker", function( convar, oldValue, newValue ) 
+	LVS.ShowHitMarker = tonumber( newValue ) ~=0
+end)
+
 local icon_load_version = Material("gui/html/refresh")
 local bgMat = Material( "lvs_controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
@@ -8,6 +25,51 @@ local FrameSizeX = 600
 local FrameSizeY = 400
 
 local function ClientSettings( Canvas )
+	local slider = vgui.Create( "DNumSlider", Canvas )
+	slider:DockMargin( 16, 32, 16, 4 )
+	slider:Dock( TOP )
+	slider:SetText( "Engine Volume" )
+	slider:SetMin( -1 )
+	slider:SetMax( 1 )
+	slider:SetDecimals( 2 )
+	slider:SetConVar( "lvs_volume" )
+
+	local DPanel = vgui.Create( "DPanel", Canvas )
+	DPanel:DockMargin( 16, 16, 16, 4 )
+	DPanel:SetSize( FrameSizeX, 30 )
+	DPanel:Dock( TOP )
+	DPanel.Paint = function(self, w, h ) 
+		draw.DrawText( "( -1 = Focus Mouse   1 = Focus Plane )", "LVS_FONT_PANEL", 0, 17, Color( 200, 200, 200, 255 ), TEXT_ALIGN_LEFT )
+	end
+
+	local slider = vgui.Create( "DNumSlider", DPanel )
+	slider:Dock( FILL )
+	slider:SetText( "Camera Focus" )
+	slider:SetMin( -1 )
+	slider:SetMax( 1 )
+	slider:SetDecimals( 2 )
+	slider:SetConVar( "lvs_camerafocus" )
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 4, 4, 44 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( BOTTOM )
+	CheckBox:SetText( "Use Mouse Aim when available" )
+	CheckBox:SetConVar("lvs_mouseaim") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 4, 4, 16 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( BOTTOM )
+	CheckBox:SetText( "Show Plane Identifier" )
+	CheckBox:SetConVar("lvs_show_identifier") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 4, 4, 16 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( BOTTOM )
+	CheckBox:SetText( "Show Hit/Kill Marker" )
+	CheckBox:SetConVar("lvs_hitmarker") 
 end
 
 local function ClientControls( Canvas )
@@ -16,7 +78,7 @@ local function ClientControls( Canvas )
 	TextHint:SetText("")
 	TextHint:Dock( TOP )
 	TextHint.Paint = function(self, w, h ) 
-		draw.DrawText( "You need to re-enter the vehicle in order for the changes to take effect!", "LFS_FONT_PANEL", w * 0.5, -1, Color( 255, 50, 50, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.DrawText( "You need to re-enter the vehicle in order for the changes to take effect!", "LVS_FONT_PANEL", w * 0.5, -1, Color( 255, 50, 50, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 
 	local DScrollPanel = vgui.Create("DScrollPanel", Canvas)
@@ -33,7 +95,7 @@ local function ClientControls( Canvas )
 			surface.SetDrawColor( 80, 80, 80, 255 )
 			surface.DrawTexturedRect( 0, 0, w, 1 )
 	
-			draw.DrawText( category, "LFS_FONT", 4, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+			draw.DrawText( category, "LVS_FONT", 4, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 		end
 
 		for _, entry in pairs( LVS.KEYS_REGISTERED ) do

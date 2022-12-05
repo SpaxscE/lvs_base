@@ -48,8 +48,6 @@ function ENT:CreateBaseDT()
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
 
-	self:AddDT( "Bool", "LockView",	{ KeyName = "lockview",	Edit = { type = "Boolean",	order = 3,	category = "Misc"} } )
-
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
 		
