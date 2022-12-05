@@ -125,6 +125,7 @@ function meta:lvsSetInput( name, value )
 end
 
 hook.Add( "PlayerButtonUp", "!!!lvsButtonUp", function( ply, button )
+
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
 		if KeyBind[ button ] then
 			ply:lvsSetInput( KeyBind[ button ], false )

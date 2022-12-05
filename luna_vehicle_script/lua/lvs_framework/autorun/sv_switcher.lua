@@ -1,4 +1,4 @@
-hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
+hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, button )
 	local vehicle = ply:lvsGetVehicle()
 
 	if not IsValid( vehicle ) then return end
