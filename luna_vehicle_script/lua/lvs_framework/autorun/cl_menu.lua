@@ -90,6 +90,8 @@ local function ClientControls( Canvas )
 		end
 
 		LocalPlayer():lvsBuildControls()
+
+		LVS:OpenClientControls()
 	end
 end
 
