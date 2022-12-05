@@ -2,6 +2,7 @@
 local icon_load_version = Material("gui/html/refresh")
 local bgMat = Material( "lvs_controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
+local gradient_mat = Material( "gui/gradient" )
 
 local FrameSizeX = 600
 local FrameSizeY = 400
@@ -10,6 +11,86 @@ local function ClientSettings( Canvas )
 end
 
 local function ClientControls( Canvas )
+	local TextHint = vgui.Create("DPanel", Canvas)
+	TextHint:DockMargin( 4, 20, 4, 2 )
+	TextHint:SetText("")
+	TextHint:Dock( TOP )
+	TextHint.Paint = function(self, w, h ) 
+		draw.DrawText( "You need to re-enter the vehicle in order for the changes to take effect!", "LFS_FONT_PANEL", w * 0.5, -1, Color( 255, 50, 50, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
+	local DScrollPanel = vgui.Create("DScrollPanel", Canvas)
+	DScrollPanel:DockMargin( 0, 0, 0, 24 )
+	DScrollPanel:Dock( FILL )
+
+	for category, _ in pairs( LVS.KEYS_CATEGORIES ) do
+		local Header = vgui.Create("DPanel", DScrollPanel )
+		Header:DockMargin( 0, 4, 4, 2 )
+		Header:SetText("")
+		Header:Dock( TOP )
+		Header.Paint = function(self, w, h ) 
+			surface.SetMaterial( gradient_mat )
+			surface.SetDrawColor( 80, 80, 80, 255 )
+			surface.DrawTexturedRect( 0, 0, w, 1 )
+	
+			draw.DrawText( category, "LFS_FONT", 4, 0, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		end
+
+		for _, entry in pairs( LVS.KEYS_REGISTERED ) do
+			if entry.category ~= category then continue end
+
+			local DPanel = vgui.Create( "DPanel", DScrollPanel )
+			DPanel.Paint = function(self, w, h ) end
+			DPanel:DockMargin( 4, 2, 4, 2 )
+			DPanel:SetSize( FrameSizeX, 25 )
+			DPanel:Dock( TOP )
+
+			local ConVar = GetConVar( entry.cmd )
+
+			local DLabel = vgui.Create("DLabel", DPanel)
+			DLabel:DockMargin( 16, 0, 0, 0 )
+			DLabel:SetText( entry.printname )
+			DLabel:SetSize( FrameSizeX * 0.5, 32 )
+			DLabel:Dock( LEFT )
+
+			local DBinder = vgui.Create("DBinder", DPanel)
+			DBinder:DockMargin( 0, 0, 0, 0 )
+			DBinder:SetValue( ConVar:GetInt() )
+			DBinder:SetSize( FrameSizeX * 0.5, 32 )
+			DBinder:Dock( RIGHT )
+			DBinder.ConVar = ConVar
+			DBinder.OnChange = function(self,iNum)
+				self.ConVar:SetInt(iNum)
+
+				LocalPlayer():lvsBuildControls()
+			end
+		end
+	end
+
+	local Header = vgui.Create("DPanel", DScrollPanel )
+	Header:DockMargin( 0, 16, 0, 0 )
+	Header:SetText("")
+	Header:Dock( TOP )
+	Header.Paint = function(self, w, h ) 
+		surface.SetMaterial( gradient_mat )
+		surface.SetDrawColor( 80, 80, 80, 255 )
+		surface.DrawTexturedRect( 0, 0, w, 1 )
+	end
+
+	local DButton = vgui.Create("DButton",DScrollPanel)
+	DButton:SetText("Reset")
+	DButton:DockMargin( 4, 0, 4, 4 )
+	DButton:SetSize( FrameSizeX, 32 )
+	DButton:Dock( TOP )
+	DButton.DoClick = function() 
+		surface.PlaySound( "buttons/button14.wav" )
+
+		for _, entry in pairs( LVS.KEYS_REGISTERED ) do
+			GetConVar( entry.cmd ):SetInt( entry.default ) 
+		end
+
+		LocalPlayer():lvsBuildControls()
+	end
 end
 
 local function ServerSettings( Canvas )

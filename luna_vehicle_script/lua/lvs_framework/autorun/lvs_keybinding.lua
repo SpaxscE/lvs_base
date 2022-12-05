@@ -33,53 +33,53 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 		},
 		{
 			name = "+THROTTLE",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Throttle Increase",
 			default = "+forward",
 			cmd = "lvs_throttle_up"
 		},
 		{
 			name = "-THROTTLE",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Throttle Decrease",
 			default = "+back",
 			cmd = "lvs_throttle_down"
 		},
 		{
 			name = "+PITCH",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Pitch Up",
 			default = "+speed",
 			cmd = "lvs_pitch_up"
 		},
 		{
 			name = "-PITCH",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Pitch Down",
 			cmd = "lvs_pitch_down"
 		},
 		{
 			name = "-YAW",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Yaw Left",
 			cmd = "lvs_yaw_left"
 		},
 		{
 			name = "+YAW",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Yaw Right",
 			cmd = "lvs_yaw_right"
 		},
 		{
 			name = "-ROLL",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Roll Left",
 			default = "+moveleft",
 			cmd = "lvs_roll_left"
 		},
 		{
 			name = "+ROLL",
-			category = "Plane",
+			category = "LFS-Plane",
 			name_menu = "Roll Right",
 			default = "+moveright",
 			cmd = "lvs_roll_right"

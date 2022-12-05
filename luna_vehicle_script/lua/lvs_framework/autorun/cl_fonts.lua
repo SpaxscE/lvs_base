@@ -24,3 +24,9 @@ surface.CreateFont( "LVS_FONT", THE_FONT )
 
 THE_FONT.size = 16
 surface.CreateFont( "LVS_FONT_SWITCHER", THE_FONT )
+
+THE_FONT.font = "Arial",
+THE_FONT.size = 14,
+THE_FONT.weight = 1,
+THE_FONT.shadow = false,
+surface.CreateFont( "LVS_FONT_PANEL", THE_FONT )
