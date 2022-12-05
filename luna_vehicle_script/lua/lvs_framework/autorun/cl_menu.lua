@@ -4,6 +4,7 @@ local cvarDirectInput = CreateClientConVar( "lvs_mouseaim", 0, true, true)
 
 local cvarShowPlaneIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
 local cvarHitMarker = CreateConVar( "lvs_hitmarker", 1, true, false)
+LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
 LVS.ShowPlaneIdent = cvarShowPlaneIdent and cvarShowPlaneIdent:GetBool() or true
 LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false

@@ -95,12 +95,8 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 	end
 end
 
-function ENT:LVSCalcViewFirstPerson( view, ply )
-	return view
-end
-
-function ENT:LVSCalcViewThirdPerson( view, ply )
-	return view
+function ENT:LVSCalcView( ply, pos, angles, fov, pod )
+	return LVS:CalcView( self, ply, pos, angles, fov, pod )
 end
 
 function ENT:Draw()
