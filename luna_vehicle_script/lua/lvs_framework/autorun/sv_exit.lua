@@ -1,5 +1,3 @@
--- a very bad exit script
--- bscly a copy of simfphys exit script retrofitted to lfs and then retrofitted to lvs because im too lazy to recreate this piece of shit 
 
 hook.Add( "PlayerUse", "!!!LVS_FIX_RE_ENTER", function( ply, ent )
 	if ent.LVS and (ply._lvsNextUse or 0) > CurTime() then return false end
@@ -15,122 +13,91 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 	ply._lvsNextUse = CurTime() + 0.25
 
 	local Center = Vehicle:LocalToWorld( Vehicle:OBBCenter() )
-	local vel = Vehicle:GetVelocity()
+	local Vel = Vehicle:GetVelocity()
 	local radius = Vehicle:BoundingRadius()
-	local HullSize = Vector(18,18,0)
-	local Filter1 = { Pod, ply }
-	local Filter2 = { Pod, ply, Vehicle }
+
+	local HullMin, HullMax = ply:GetHull()
+	local FilterPlayer = { Pod, ply }
+	local FilterAll = { Pod, ply, Vehicle }
 
 	for _, filterEntity in pairs( constraint.GetAllConstrainedEntities( Vehicle ) ) do
 		if IsValid( filterEntity ) then
-			table.insert( Filter2, filterEntity )
+			table.insert( FilterAll, filterEntity )
 		end
 	end
 
-	if vel:Length() > 250 then
-		local pos = Vehicle:GetPos()
-		local dir = vel:GetNormalized()
-		local targetpos = pos - dir *  (radius + 40)
-		
+	if Vel:Length() > 100 then
 		local tr = util.TraceHull( {
 			start = Center,
-			endpos = targetpos - Vector(0,0,10),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter2
+			endpos = Center - Vel:GetNormalized() *  (radius + 50),
+			maxs = HullMax,
+			mins = HullMin,
+			filter = FilterAll
 		} )
-		
+
 		local exitpoint = tr.HitPos + Vector(0,0,10)
-		
+
 		if util.IsInWorld( exitpoint ) then
-			ply:SetPos(exitpoint)
-			ply:SetEyeAngles((pos - exitpoint):Angle())
+			ply:SetPos( exitpoint )
+			ply:SetEyeAngles( (Center - exitpoint):Angle() )
 		end
 	else
-		local pos = Pod:GetPos()
-		local targetpos = (pos + Pod:GetRight() * 80)
-		
-		local tr1 = util.TraceLine( {
-			start = targetpos,
-			endpos = targetpos - Vector(0,0,100),
-			filter = {}
-		} )
-		local tr2 = util.TraceHull( {
-			start = targetpos,
-			endpos = targetpos + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = targetpos,filter = Filter2} )
-		
-		local HitGround = tr1.Hit
-		local HitWall = tr2.Hit or traceto.Hit
-		
-		local check0 = (HitWall == true or HitGround == false or util.IsInWorld( targetpos ) == false) and (pos - Pod:GetRight() * 80) or targetpos
-		local tr = util.TraceHull( {
-			start = check0,
-			endpos = check0 + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = check0,filter = Filter2} )
-		local HitWall = tr.Hit or traceto.hit
-		
-		local check1 = (HitWall == true or HitGround == false or util.IsInWorld( check0 ) == false) and (pos + Pod:GetUp() * 100) or check0
-		
-		local tr = util.TraceHull( {
-			start = check1,
-			endpos = check1 + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = check1,filter = Filter2} )
-		local HitWall = tr.Hit or traceto.hit
-		local check2 = (HitWall == true or util.IsInWorld( check1 ) == false) and (pos - Pod:GetUp() * 100) or check1
-		
-		local tr = util.TraceHull( {
-			start = check2,
-			endpos = check2 + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = check2,filter = Filter2} )
-		local HitWall = tr.Hit or traceto.hit
-		local check3 = (HitWall == true or util.IsInWorld( check2 ) == false) and Vehicle:LocalToWorld( Vector(0,radius,0) ) or check2
-		
-		local tr = util.TraceHull( {
-			start = check3,
-			endpos = check3 + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = check3,filter = Filter2} )
-		local HitWall = tr.Hit or traceto.hit
-		local check4 = (HitWall == true or util.IsInWorld( check3 ) == false) and Vehicle:LocalToWorld( Vector(0,-radius,0) ) or check3
-		
-		local tr = util.TraceHull( {
-			start = check4,
-			endpos = check4 + Vector(0,0,80),
-			maxs = HullSize,
-			mins = -HullSize,
-			filter = Filter1
-		} )
-		local traceto = util.TraceLine( {start = Center,endpos = check4,filter = Filter2} )
-		local HitWall = tr.Hit or traceto.hit
-		local exitpoint = (HitWall == true or util.IsInWorld( check4 ) == false) and Vehicle:LocalToWorld( Vector(0,0,0) ) or check4
-		
 		if isvector( Pod.ExitPos ) then
 			exitpoint = Vehicle:LocalToWorld( Pod.ExitPos )
 		end
 
 		if util.IsInWorld( exitpoint ) then
 			ply:SetPos( exitpoint )
-			ply:SetEyeAngles( (pos - exitpoint):Angle() )
+			ply:SetEyeAngles( (Pod:GetPos() - exitpoint):Angle() )
+
+			return
+		end
+
+		local PodPos = Pod:LocalToWorld( Vector(0,0,10) )
+
+		local PodDistance = 125
+		local AngleStep = 45
+
+		local W = ply:KeyDown( IN_FORWARD )
+		local A = ply:KeyDown( IN_MOVELEFT )
+		local S = ply:KeyDown( IN_BACK )
+		local D = ply:KeyDown( IN_MOVERIGHT )
+
+		local StartAngle = 135
+
+		if W or A or S or D then
+			if A then StartAngle = 180 end
+			if D then StartAngle = 0 end
+			if W then if D then StartAngle = -45 else StartAngle = 225 end end
+			if S then StartAngle = 45 end
+		end
+
+		for ang = StartAngle, (StartAngle + 360 - AngleStep), AngleStep do
+			local X = math.Round( math.cos( math.rad( -ang ) ) * PodDistance )
+			local Y = math.Round( math.sin( math.rad( -ang ) ) * PodDistance )
+
+			local EndPos = Pod:LocalToWorld( Vector(X,Y,10) )
+
+			local HitWall = util.TraceLine( {start = PodPos,endpos = EndPos,filter = FilterAll} ).Hit
+
+			if not util.IsInWorld( EndPos ) then continue end
+
+			if HitWall then continue end
+
+			local HitVehicle = util.TraceHull( {
+				start = EndPos,
+				endpos = EndPos + Vector(0,0,1),
+				maxs = HullMax,
+				mins = HullMin,
+				filter = FilterPlayer
+			} ).Hit
+
+			if HitVehicle then continue end
+
+			ply:SetPos( EndPos )
+			ply:SetEyeAngles( (Pod:GetPos() - EndPos):Angle() )
+
+			return
 		end
 	end
 end )
