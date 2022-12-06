@@ -38,6 +38,10 @@ if CLIENT then
 			return
 		end
 
-		Parent:LVSHudPaint( ScrW(), ScrH(), ply )
+		local X = ScrW()
+		local Y = ScrH()
+
+		Parent:LVSHudPaint( X, Y, ply )
+		Parent:LVSHudPaintSeatSwitcher( X, Y, ply )
 	end )
 end

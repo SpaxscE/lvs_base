@@ -3,7 +3,6 @@ include("shared.lua")
 ENT.IconVehicleLocked = Material( "lvs_locked.png" )
 
 function ENT:LVSHudPaint( X, Y, ply )
-	self:LVSHudPaintSeatSwitcher( X, Y, ply )
 end
 
 function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
@@ -11,7 +10,7 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 	local SeatCount = table.Count( pSeats ) 
 
 	if SeatCount <= 0 then return end
-	
+
 	pSeats[0] = self:GetDriverSeat()
 
 	draw.NoTexture() 
@@ -28,10 +27,10 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 	if self:GetAI() then
 		Passengers[1] = "[AI] "..self.PrintName
 	end
-	
+
 	ply.SwitcherTime = ply.SwitcherTime or 0
 	ply.oldPassengers = ply.oldPassengers or {}
-	
+
 	local Time = CurTime()
 	for k, v in pairs( Passengers ) do
 		if ply.oldPassengers[k] ~= v then
@@ -45,7 +44,6 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 			ply.SwitcherTime = Time + 2
 		end
 	end
-
 	for _, v in pairs( LVS.pSwitchKeysInv ) do
 		if input.IsKeyDown(v) then
 			ply.SwitcherTime = Time + 2

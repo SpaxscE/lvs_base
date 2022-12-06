@@ -20,6 +20,7 @@ ENT.MDL = "models/error.mdl"
 ENT.AITEAM = 0
 
 ENT.MaxHealth = 1000
+ENT.MaxShield = 150
 
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
@@ -47,12 +48,14 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
+	self:AddDT( "Float", "Shield" )
 
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
 		
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
+		self:SetShield( self.MaxShield )
 	end
 
 	self:OnSetupDataTables()
@@ -73,6 +76,10 @@ end
 
 function ENT:GetMaxHP()
 	return self.MaxHealth
+end
+
+function ENT:GetMaxShield()
+	return isnumber( self.MaxShield ) and self.MaxShield or 0
 end
 
 function ENT:GetPassengerSeats()
