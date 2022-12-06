@@ -239,7 +239,7 @@ function ENT:SetPassenger( ply )
 end
 
 function ENT:AddDriverSeat( Pos, Ang )
-	if IsValid( self:GetDriverSeat() ) then return end
+	if IsValid( self:GetDriverSeat() ) then return self:GetDriverSeat() end
 
 	local Pod = ents.Create( "prop_vehicle_prisoner_pod" )
 
@@ -281,6 +281,8 @@ function ENT:AddDriverSeat( Pos, Ang )
 
 		self:TransferCPPI( Pod )
 	end
+
+	return Pod
 end
 
 function ENT:AddPassengerSeat( Pos, Ang )
