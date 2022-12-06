@@ -99,5 +99,35 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 
 			return
 		end
+
+		local tr = util.TraceHull( {
+			start = PodPos,
+			endpos = PodPos - Vector(0,0,PodDistance + HullMax.z),
+			maxs = Vector(HullMax.x,HullMax.y,0),
+			mins = HullMin,
+			filter = FilterAll
+		} )
+
+		local exitpoint = tr.HitPos
+
+		if not tr.Hit and util.IsInWorld( exitpoint ) then
+			ply:SetPos( exitpoint )
+			ply:SetEyeAngles( (PodPos - exitpoint):Angle() )
+		else
+			local exitpoint = util.TraceHull( {
+				start = PodPos,
+				endpos = PodPos + Vector(0,0,PodDistance),
+				maxs = HullMax,
+				mins = HullMin,
+				filter = FilterAll
+			} ).HitPos
+
+			if util.IsInWorld( exitpoint ) then
+				ply:SetPos( exitpoint )
+				ply:SetEyeAngles( (PodPos - exitpoint):Angle() )
+			else
+				ply:SetPos( PodPos )
+			end
+		end
 	end
 end )
