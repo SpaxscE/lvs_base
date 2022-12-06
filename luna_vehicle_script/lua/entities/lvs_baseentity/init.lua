@@ -1,6 +1,7 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
+include("sv_ai.lua")
 
 function ENT:SpawnFunction( ply, tr, ClassName )
 
@@ -347,35 +348,6 @@ function ENT:PlayAnimation( animation, playbackrate )
 	self:SetSequence( sequence )
 end
 
-function ENT:CreateAI()
-end
-
-function ENT:RemoveAI()
-end
-
-function ENT:OnToggleAI( name, old, new)
-	if new == old then return end
-	
-	if new == true then
-		local Driver = self:GetDriver()
-		
-		if IsValid( Driver ) then
-			Driver:ExitVehicle()
-		end
-		
-		self:SetActive( true )
-		--self:StartEngine()
-		self.COL_GROUP_OLD = self:GetCollisionGroup()
-		self:SetCollisionGroup( COLLISION_GROUP_INTERACTIVE_DEBRIS )
-		self:CreateAI()
-	else
-		self:SetActive( false )
-		--self:StopEngine()
-		self:SetCollisionGroup( self.COL_GROUP_OLD or COLLISION_GROUP_NONE )
-		self:RemoveAI()
-	end
-end
-
 function ENT:UpdateTransmitState() 
 	return TRANSMIT_ALWAYS
 end
@@ -400,4 +372,26 @@ end
 
 function ENT:GetMissileOffset()
 	return self:OBBCenter()
+end
+
+function ENT:GetCrosshairFilterEnts()
+	if not istable( self.CrosshairFilterEnts ) then
+		self.CrosshairFilterEnts = {}
+
+		for _, Entity in pairs( constraint.GetAllConstrainedEntities( self ) ) do
+			if not IsValid( Entity ) then continue end
+
+			table.insert( self.CrosshairFilterEnts , Entity )
+		end
+
+		for _, Parent in pairs( self.CrosshairFilterEnts ) do
+			for _, Child in pairs( Parent:GetChildren() ) do
+				if not IsValid( Child ) then continue end
+
+				table.insert( self.CrosshairFilterEnts , Child )
+			end
+		end
+	end
+
+	return self.CrosshairFilterEnts
 end

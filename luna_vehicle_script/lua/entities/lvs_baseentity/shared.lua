@@ -1,6 +1,6 @@
 ENT.Type            = "anim"
 
-ENT.PrintName = "generic basescript"
+ENT.PrintName = "[LVS] Base Entity"
 ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"

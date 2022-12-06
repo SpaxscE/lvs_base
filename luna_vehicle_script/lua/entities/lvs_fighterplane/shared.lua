@@ -1,7 +1,7 @@
 
 ENT.Base = "lvs_baseentity"
 
-ENT.PrintName = "plane basescript"
+ENT.PrintName = "[LVS] Fighter Plane"
 ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
@@ -11,7 +11,7 @@ ENT.AdminSpawnable		= false
 
 ENT.MDL = "models/blu/bf109.mdl"
 
-ENT.AITEAM = 0
+ENT.AITEAM = 3
 
 ENT.MaxVelocity = 2500
 ENT.MaxPerfVelocity = 1500
