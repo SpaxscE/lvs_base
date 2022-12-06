@@ -33,7 +33,7 @@ if CLIENT then
 		local Parent = ply:lvsGetVehicle()
 
 		if not IsValid( Pod ) or not IsValid( Parent ) then
-			ply.oldPassengers = {}
+			ply._lvsoldPassengers = {}
 
 			return
 		end

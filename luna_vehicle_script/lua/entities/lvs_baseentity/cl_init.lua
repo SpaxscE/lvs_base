@@ -29,18 +29,18 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 	end
 
 	ply.SwitcherTime = ply.SwitcherTime or 0
-	ply.oldPassengers = ply.oldPassengers or {}
+	ply._lvsoldPassengers = ply._lvsoldPassengers or {}
 
 	local Time = CurTime()
 	for k, v in pairs( Passengers ) do
-		if ply.oldPassengers[k] ~= v then
-			ply.oldPassengers[k] = v
+		if ply._lvsoldPassengers[k] ~= v then
+			ply._lvsoldPassengers[k] = v
 			ply.SwitcherTime = Time + 2
 		end
 	end
-	for k, v in pairs( ply.oldPassengers ) do
+	for k, v in pairs( ply._lvsoldPassengers ) do
 		if not Passengers[k] then
-			ply.oldPassengers[k] = nil
+			ply._lvsoldPassengers[k] = nil
 			ply.SwitcherTime = Time + 2
 		end
 	end
