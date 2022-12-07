@@ -1,4 +1,5 @@
 include("shared.lua")
+include("sh_func.lua")
 
 ENT.IconVehicleLocked = Material( "lvs_locked.png" )
 

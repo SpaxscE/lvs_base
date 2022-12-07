@@ -1,4 +1,14 @@
 
+function ENT:AutoAI()
+	if IsValid( self._OwnerEntLVS ) then
+		if self._OwnerEntLVS:InVehicle() then
+			if self._OwnerEntLVS:IsAdmin() then
+				self:SetAI( true )
+			end
+		end
+	end
+end
+
 function ENT:OnCreateAI()
 end
 

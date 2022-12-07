@@ -1,12 +1,12 @@
 
-ENT.Base = "lvs_baseentity"
+ENT.Base = "lvs_base"
 
-ENT.PrintName = "[LVS] Fighter Plane"
+ENT.PrintName = "[LVS] Base Fighter Plane"
 ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable			= true
+ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
 ENT.MDL = "models/blu/bf109.mdl"
