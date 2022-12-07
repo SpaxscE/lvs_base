@@ -42,6 +42,7 @@ function ENT:Initialize()
 		return
 	end
 
+	PObj:SetMaterial( "default_silent" )
 	PObj:EnableMotion( false )
 	PObj:EnableDrag( false )
 
@@ -61,6 +62,8 @@ end
 
 function ENT:Think()
 	self:HandleActive()
+	self:HandleStart()
+	self:PhysicsThink()
 	self:OnTick()
 
 	self:NextThink( CurTime() )

@@ -3,6 +3,17 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_camera.lua" )
 include("shared.lua")
 
+function ENT:OnCreateAI()
+	self:StartEngine()
+	self.COL_GROUP_OLD = self:GetCollisionGroup()
+	self:SetCollisionGroup( COLLISION_GROUP_INTERACTIVE_DEBRIS )
+end
+
+function ENT:OnRemoveAI()
+	self:StopEngine()
+	self:SetCollisionGroup( self.COL_GROUP_OLD or COLLISION_GROUP_NONE )
+end
+
 function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll )
 	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
 

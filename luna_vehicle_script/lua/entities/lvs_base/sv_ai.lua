@@ -25,8 +25,10 @@ function ENT:OnToggleAI( name, old, new)
 			Driver:ExitVehicle()
 		end
 
+		self:SetActive( true )
 		self:OnCreateAI()
 	else
+		self:SetActive( false )
 		self:OnRemoveAI()
 	end
 end

@@ -10,3 +10,11 @@ function ENT:OnSpawn( PObj )
 
 	self:AddDriverSeat( Vector(32,0,67.5), Angle(0,-90,0) )
 end
+
+function ENT:OnEngineStarted()
+	self:EmitSound( "lvs/bf109/start.wav" )
+end
+
+function ENT:OnEngineStopped()
+	self:EmitSound( "lvs/bf109/stop.wav" )
+end

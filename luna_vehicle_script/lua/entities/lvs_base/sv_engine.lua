@@ -1,4 +1,20 @@
 
+function ENT:HandleStart()
+	local Driver = self:GetDriver()
+	
+	if IsValid( Driver ) then
+		local KeyReload = Driver:lvsKeyDown( "ENGINE" )
+		
+		if self.OldKeyReload ~= KeyReload then
+			self.OldKeyReload = KeyReload
+
+			if KeyReload then
+				self:ToggleEngine()
+			end
+		end
+	end
+end
+
 function ENT:ToggleEngine()
 	if self:GetEngineActive() then
 		self:StopEngine()
