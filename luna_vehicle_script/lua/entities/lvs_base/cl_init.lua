@@ -109,9 +109,39 @@ function ENT:Initialize()
 end
 
 function ENT:Think()
+	self:DoWindFX()
+end
+
+function ENT:DoWindFX()
+	if not IsValid( self:GetDriver() ) or self:GetVelocity():Length() < 1500 then return end
+
+	if (self.nextFX or 0) < CurTime() then
+		self.nextFX = CurTime() + 0.05
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:GetPos() )
+			effectdata:SetEntity( self )
+		util.Effect( "lvs_physics_wind", effectdata )
+	end
+end
+
+function ENT:GetParticleEmitter()
+	if not IsValid( self.Emitter ) then
+		self.Emitter = ParticleEmitter( self:GetPos(), false )
+	end
+
+	return self.Emitter
 end
 
 function ENT:OnRemove()
+	self:SoundStop()
+
+	if IsValid( self.Emitter ) then
+		self.Emitter:Finish()
+	end
+end
+
+function ENT:SoundStop()
 end
 
 function ENT:GetCrosshairFilterEnts()

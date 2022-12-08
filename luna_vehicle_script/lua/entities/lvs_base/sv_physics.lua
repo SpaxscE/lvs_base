@@ -75,12 +75,15 @@ function ENT:PhysicsThink()
 	local Vel = self:GetVelocity():Length()
 
 	if trace.Hit and Vel > 25 then
-		local effectdata = EffectData()
-		effectdata:SetOrigin( trace.HitPos )
-		effectdata:SetNormal( trace.HitNormal )
-		util.Effect( "stunstickimpact", effectdata, true, true )
+		local vol = math.min(math.max(Vel - 50,0) / 1000,1)
 
-		self._lvsScrapeData.sound:ChangeVolume( math.min(math.max(Vel - 50,0) / 1000,1), 0.1 )
+		local effectdata = EffectData()
+		effectdata:SetOrigin( trace.HitPos + trace.HitNormal )
+		effectdata:SetNormal( trace.HitNormal )
+		effectdata:SetMagnitude( vol )
+		util.Effect( "lvs_physics_scrape", effectdata, true, true )
+
+		self._lvsScrapeData.sound:ChangeVolume( vol, 0.1 )
 	else
 		self:PhysicsStopScape()
 	end
@@ -91,5 +94,25 @@ function ENT:PhysicsCollide( data, physobj )
 
 	if HitEnt and HitEnt:IsWorld() then
 		self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
+	end
+
+	if IsValid( data.HitEntity ) then
+		if data.HitEntity:IsPlayer() or data.HitEntity:IsNPC() then
+			return
+		end
+	end
+
+	if data.Speed > 60 and data.DeltaTime > 0.1 then
+		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
+
+		local effectdata = EffectData()
+		effectdata:SetOrigin( data.HitPos )
+		util.Effect( "lvs_physics_impact", effectdata, true, true )
+
+		if VelDif > 700 then
+			self:EmitSound( "lvs/physics/impact_hard.wav", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
+		else
+			self:EmitSound( "lvs/physics/impact_soft"..math.random(1,5)..".wav", 75, 100, math.min(0.1 + VelDif / 700,1) )
+		end
 	end
 end
