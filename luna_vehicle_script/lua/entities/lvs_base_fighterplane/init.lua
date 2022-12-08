@@ -3,6 +3,31 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_camera.lua" )
 include("shared.lua")
 
+function ENT:ToggleLandingGear()
+	self.LandingGearUp = not self.LandingGearUp
+	
+	self:OnLandingGearToggled( self.LandingGearUp )
+end
+
+function ENT:RaiseLandingGear()
+	if not self.LandingGearUp then
+		self.LandingGearUp = true
+		
+		self:OnLandingGearToggled( self.LandingGearUp )
+	end
+end
+
+function ENT:DeployLandingGear()
+	if self.LandingGearUp then
+		self.LandingGearUp = false
+		
+		self:OnLandingGearToggled( self.LandingGearUp )
+	end
+end
+
+function ENT:OnLandingGearToggled( IsDeployed )
+end
+
 function ENT:OnCreateAI()
 	self:StartEngine()
 	self.COL_GROUP_OLD = self:GetCollisionGroup()
