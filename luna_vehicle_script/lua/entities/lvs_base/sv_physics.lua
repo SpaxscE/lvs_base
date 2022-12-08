@@ -45,7 +45,7 @@ function ENT:PhysicsStartScrape( pos, dir )
 		if self._lvsScrapeData and self._lvsScrapeData.sound then
 			sound = self._lvsScrapeData.sound
 		else
-			sound = CreateSound( self, "lvs/physics/scrape_loop.wav" )
+			sound = CreateSound( self, "LVS.Physics.Scrape" )
 			sound:PlayEx( 0, 90 + math.min( (self:GetVelocity():Length() / 2000) * 10,10) )
 		end
 
@@ -89,12 +89,37 @@ function ENT:PhysicsThink()
 	end
 end
 
+sound.Add( {
+	name = "LVS.Physics.Scrape",
+	channel = CHAN_STATIC,
+	level = 85,
+	sound = "lvs/physics/scrape_loop.wav"
+} )
+
+sound.Add( {
+	name = "LVS.Physics.Impact",
+	channel = CHAN_STATIC,
+	level = 90,
+	sound = {
+		"lvs/physics/impact_soft1.wav",
+		"lvs/physics/impact_soft2.wav",
+		"lvs/physics/impact_soft3.wav",
+		"lvs/physics/impact_soft4.wav",
+		"lvs/physics/impact_soft5.wav",
+	}
+} )
+
+sound.Add( {
+	name = "LVS.Physics.Crash",
+	channel = CHAN_STATIC,
+	level = 90,
+	sound = "lvs/physics/impact_hard.wav",
+} )
+
 function ENT:PhysicsCollide( data, physobj )
 	local HitEnt = data.HitEntity
 
-	if HitEnt and HitEnt:IsWorld() then
-		self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
-	end
+	self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
 
 	if IsValid( data.HitEntity ) then
 		if data.HitEntity:IsPlayer() or data.HitEntity:IsNPC() then
@@ -102,7 +127,7 @@ function ENT:PhysicsCollide( data, physobj )
 		end
 	end
 
-	if data.Speed > 60 and data.DeltaTime > 0.1 then
+	if data.Speed > 60 and data.DeltaTime > 0.2 then
 		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
 
 		local effectdata = EffectData()
@@ -110,9 +135,9 @@ function ENT:PhysicsCollide( data, physobj )
 		util.Effect( "lvs_physics_impact", effectdata, true, true )
 
 		if VelDif > 700 then
-			self:EmitSound( "lvs/physics/impact_hard.wav", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
+			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 		else
-			self:EmitSound( "lvs/physics/impact_soft"..math.random(1,5)..".wav", 75, 100, math.min(0.1 + VelDif / 700,1) )
+			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
 		end
 	end
 end
