@@ -131,6 +131,16 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
+	local KeyJump = ply:lvsKeyDown( "VSPEC" )
+
+	if self._lvsOldKeyJump ~= KeyJump then
+		self._lvsOldKeyJump = KeyJump
+		if KeyJump then
+			self:ToggleLandingGear()
+			self:PhysWake()
+		end
+	end
+
 	if ply:lvsMouseAim() then
 		self:PlayerMouseAim( ply, cmd )
 	else
