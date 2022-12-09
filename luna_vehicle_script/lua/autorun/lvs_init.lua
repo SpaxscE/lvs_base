@@ -12,6 +12,11 @@ LVS.pSwitchKeysInv = {[1] = KEY_1,[2] = KEY_2,[3] = KEY_3,[4] = KEY_4,[5] = KEY_
 
 LVS.ThemeColor = Color(127,0,0,255)
 
+LVS.WHEEL_STANDARD = 1
+LVS.WHEEL_STEER_NONE = 2
+LVS.WHEEL_STEER_FRONT = 3
+LVS.WHEEL_STEER_REAR = 4
+
 function LVS:GetVersion()
 	return LVS.VERSION
 end
