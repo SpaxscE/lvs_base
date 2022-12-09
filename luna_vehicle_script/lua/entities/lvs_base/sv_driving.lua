@@ -59,7 +59,6 @@ function ENT:HandleActive()
 	end
 end
 
-
 function ENT:SetPassenger( ply )
 	if not IsValid( ply ) then return end
 
