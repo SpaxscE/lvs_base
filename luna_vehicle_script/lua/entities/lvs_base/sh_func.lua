@@ -1,4 +1,23 @@
 
+function ENT:HitGround()
+	if not isvector( self.obbvc ) or not isnumber( self.obbvm ) then
+		self.obbvc = self:OBBCenter() 
+		self.obbvm = self:OBBMins().z
+	end
+
+	local tr = util.TraceLine( {
+		start = self:LocalToWorld( self.obbvc ),
+		endpos = self:LocalToWorld( self.obbvc + Vector(0,0,self.obbvm - 100) ),
+		filter = function( ent ) 
+			if ( ent == self ) then 
+				return false
+			end
+		end
+	} )
+	
+	return tr.Hit 
+end
+
 function ENT:Sign( n )
 	if n > 0 then return 1 end
 
