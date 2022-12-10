@@ -70,7 +70,7 @@ function ENT:OnRemoveAI()
 	self:SetCollisionGroup( self.COL_GROUP_OLD or COLLISION_GROUP_NONE )
 end
 
-function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll )
+function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll, FreeMovement )
 	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
 
 	local LocalAngPitch = LocalAngles.p
@@ -88,6 +88,10 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local Pitch = math.Clamp( -LocalAngPitch / 22 , -1, 1 )
 	local Yaw = math.Clamp( -LocalAngYaw / 10 ,-1,1) * RudderFadeOut
 	local Roll = math.Clamp( (-LocalAngYaw + LocalAngRoll * RudderFadeOut) * WingFinFadeOut / 180 , -1 , 1 )
+
+	if FreeMovement then
+		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
+	end
 
 	if OverridePitch and OverridePitch ~= 0 then
 		Pitch = OverridePitch
@@ -144,7 +148,6 @@ function ENT:CalcAero( phys, deltatime )
 			StallYaw = StallYawPull * GravMul * StallMul
 		end
 	end
-
 
 	local Steer = self:GetSteer()
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 3 * Stability - StallPitch * InvStability

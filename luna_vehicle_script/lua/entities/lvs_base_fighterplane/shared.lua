@@ -89,9 +89,11 @@ function ENT:PlayerMouseAim( ply, cmd )
 	local RollRight = ply:lvsKeyDown( "+ROLL" )
 	local RollLeft = ply:lvsKeyDown( "-ROLL" )
 
+	local FreeLook = ply:lvsKeyDown( "FREELOOK" )
+
 	local EyeAngles = Pod:WorldToLocalAngles( ply:EyeAngles() )
 
-	if ply:lvsKeyDown( "FREELOOK" ) then
+	if FreeLook then
 		if isangle( self.StoredEyeAngles ) then
 			EyeAngles = self.StoredEyeAngles
 		end
@@ -119,7 +121,7 @@ function ENT:PlayerMouseAim( ply, cmd )
 		OverrideYaw = (YawRight and 1 or 0) - (YawLeft and 1 or 0) 
 	end
 
-	self:ApproachTargetAngle( EyeAngles, OverridePitch, OverrideYaw, OverrideRoll )
+	self:ApproachTargetAngle( EyeAngles, OverridePitch, OverrideYaw, OverrideRoll, FreeLook )
 end
 
 function ENT:CalcThrottle( ply, cmd )
