@@ -148,8 +148,6 @@ function ENT:StartCommand( ply, cmd )
 				self:PhysWake()
 			end
 		end
-
-		self:HandleLandingGear()
 	end
 
 	if ply:lvsMouseAim() then

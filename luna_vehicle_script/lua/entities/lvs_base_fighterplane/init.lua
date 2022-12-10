@@ -83,11 +83,11 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local AngDiff = math.deg( math.acos( math.Clamp( Forward:Dot( TargetForward ) ,-1,1) ) )
 
 	local WingFinFadeOut = math.max( (90 - AngDiff ) / 90, 0 )
-	local RudderFadeOut = math.max( (120 - AngDiff ) / 120, 0 )
+	local RudderFadeOut = math.min( math.max( (120 - AngDiff ) / 120, 0 ) * 3, 1 )
 
-	local Pitch = math.Clamp( -LocalAngPitch / 22 , -1, 1 )
-	local Yaw = math.Clamp( -LocalAngYaw / 10 ,-1,1) * RudderFadeOut
-	local Roll = math.Clamp( (-LocalAngYaw + LocalAngRoll * RudderFadeOut) * WingFinFadeOut / 180 , -1 , 1 )
+	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
+	local Yaw = math.Clamp( -LocalAngYaw / 8 ,-1,1) * RudderFadeOut
+	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 2,-90,90) + LocalAngRoll * RudderFadeOut * 0.25) * WingFinFadeOut / 180 , -1 , 1 )
 
 	if FreeMovement then
 		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
@@ -154,6 +154,7 @@ function ENT:CalcAero( phys, deltatime )
 	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75 * Stability + StallYaw * InvStability
 	local Roll = math.Clamp( self:Sign( Steer.x ) * (math.abs( Steer.x ) ^ 1.5) * 22,-1,1) * self.TurnRateRoll * 12 * Stability
 
+	self:HandleLandingGear()
 	self:SetWheelSteer( Steer.z * 45 )
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
