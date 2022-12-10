@@ -120,17 +120,31 @@ function ENT:CalcAero( phys, deltatime )
 	local PitchPull = math.max( (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) /  90, 0 )
 	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
-	local StallPitchPull = (math.deg( math.acos( math.Clamp( -VelForward:Dot( Up ) ,-1,1) ) ) - 90) / 90
-	local StallYawPull = (math.deg( math.acos( math.Clamp( -VelForward:Dot( Left ) ,-1,1) ) ) - 90) /  90
-
 	local GravMul = WorldGravity / 600
 	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul * 0.25
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul * 0.25
 
-	local StallMul = math.min( -math.min(Vel.z,0) / 1000, 1 ) * 10
+	local StallMul = math.min( -math.min(Vel.z + 150,0) / 100, 15 )
 
-	local StallPitch = math.abs( PitchPull ) * self:Sign( PitchPull ) * GravMul * StallMul
-	local StallYaw = math.abs( YawPull ) * self:Sign( YawPull ) * GravMul * StallMul
+	local StallPitch = 0
+	local StallYaw = 0
+
+	if StallMul > 0 then
+		if InvStability < 1 then
+			StallPitch = PitchPull* GravMul * StallMul
+			StallYaw = YawPull * GravMul * StallMul
+		else
+			local StallPitchDir = self:Sign( math.deg( math.acos( math.Clamp( -VelForward:Dot( Up ) ,-1,1) ) ) - 90 )
+			local StallYawDir =  self:Sign( math.deg( math.acos( math.Clamp( -VelForward:Dot( Left ) ,-1,1) ) ) - 90 )
+
+			local StallPitchPull = ((90 - math.abs( math.deg( math.acos( math.Clamp( -WorldUp:Dot( Up ) ,-1,1) ) ) - 90 )) / 90) * StallPitchDir
+			local StallYawPull =  ((90 - math.abs( math.deg( math.acos( math.Clamp( -WorldUp:Dot( Left ) ,-1,1) ) ) - 90 )) / 90) * StallYawDir * 0.5
+
+			StallPitch = StallPitchPull * GravMul * StallMul
+			StallYaw = StallYawPull * GravMul * StallMul
+		end
+	end
+
 
 	local Steer = self:GetSteer()
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 3 * Stability - StallPitch * InvStability

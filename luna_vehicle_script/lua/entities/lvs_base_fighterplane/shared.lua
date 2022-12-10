@@ -15,7 +15,7 @@ ENT.AITEAM = 3
 
 ENT.MaxVelocity = 2500
 ENT.MaxPerfVelocity = 1500
-ENT.MaxThrust = 100
+ENT.MaxThrust = 25
 
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
