@@ -1,6 +1,7 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "sh_func.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_trailsystem.lua" )
 include("shared.lua")
 include("sh_func.lua")
 include("sv_ai.lua")

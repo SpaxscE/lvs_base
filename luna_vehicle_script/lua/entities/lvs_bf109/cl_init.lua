@@ -1,5 +1,16 @@
 include("shared.lua")
 
+function ENT:OnSpawn()
+	self:RegisterTrail( Vector(40,200,70), 0, 12, 2, 1000, 400 )
+	self:RegisterTrail( Vector(40,-200,70), 0, 12, 2, 1000, 400 )
+end
+
+function ENT:OnTrail( active, id )
+end
+
+function ENT:StopSounds()
+end
+
 function ENT:OnFrame()
 	local FT = RealFrameTime()
 

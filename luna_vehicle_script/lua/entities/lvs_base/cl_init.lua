@@ -1,5 +1,6 @@
 include("shared.lua")
 include("sh_func.lua")
+include( "cl_trailsystem.lua" )
 
 ENT.IconVehicleLocked = Material( "lvs_locked.png" )
 
@@ -111,9 +112,14 @@ function ENT:Draw()
 end
 
 function ENT:DrawTranslucent()
+	self:DrawTrail()
 end
 
 function ENT:Initialize()
+	self:OnSpawn()
+end
+
+function ENT:OnSpawn()
 end
 
 function ENT:OnFrame()
@@ -121,6 +127,8 @@ end
 
 function ENT:OnActiveChanged( Active )
 	if Active then
+		if not IsValid( self:GetDriver() ) then return end
+
 		self:StartWindSounds()
 	else
 		self:StopWindSounds()
@@ -172,6 +180,7 @@ function ENT:Think()
 		self:DoVehicleFX()
 	end
 
+	self:HandleTrail()
 	self:OnFrame()
 end
 
