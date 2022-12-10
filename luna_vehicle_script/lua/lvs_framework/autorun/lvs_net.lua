@@ -28,7 +28,12 @@ else
 
 		if not IsValid( LVSent ) then return end
 
-		local Filter = net.ReadTable()
+		local Filter = {}
+
+		for _, entity in pairs( net.ReadTable() ) do
+			if not IsValid( entity ) then continue end
+			table.insert( Filter, entity )
+		end
 
 		LVSent.CrosshairFilterEnts = Filter
 	end )
