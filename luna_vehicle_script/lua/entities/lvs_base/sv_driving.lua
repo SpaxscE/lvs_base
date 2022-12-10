@@ -53,8 +53,13 @@ function ENT:HandleActive()
 
 		self:OnDriverChanged( OldDriver, NewDriver, IsActive )
 
-		if IsValid( Driver ) then
+		if IsActive then
 			Driver:lvsBuildControls()
+			self:AlignView( Driver )
+
+			self:EmitSound( "vehicles/atv_ammo_close.wav" )
+		else
+			self:EmitSound( "vehicles/atv_ammo_open.wav" )
 		end
 	end
 end
