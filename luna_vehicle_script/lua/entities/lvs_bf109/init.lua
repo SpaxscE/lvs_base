@@ -10,9 +10,9 @@ function ENT:OnSpawn( PObj )
 
 	self:AddDriverSeat( Vector(32,0,67.5), Angle(0,-90,0) )
 
-	self:AddWheel( Vector(78.12,55,15.16), 13, 1200 )
+	self:AddWheel( Vector(78.12,55,15.16), 13, 600 )
 	self:AddWheel( Vector(78.12,-55,15.16), 13, 600 )
-	self:AddWheel( Vector(-146.61,0,76), 13, 600, LVS.WHEEL_STEER_REAR )
+	self:AddWheel( Vector(-146.61,0,76), 13, 1200, LVS.WHEEL_STEER_REAR )
 end
 
 function ENT:OnEngineStarted()

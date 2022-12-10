@@ -80,14 +80,20 @@ function ENT:SetWheelSteer( SteerAngle )
 	self._lvsSteerPlateRear:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-SteerAngle,-45,45),0) ) )
 end
 
+function ENT:GetWheels()
+	if not istable( self._lvsWheels ) then self._lvsWheels = {} end
+
+	return self._lvsWheels
+end
+
 function ENT:AddWheel( pos, radius, mass, type )
 	if not isvector( pos ) or not isnumber( radius ) or not isnumber( mass ) then return end
 
 	if not type then
-		type = LVS.WHEEL_STANDARD
+		type = LVS.WHEEL_BRAKE
 	end
 
-	local wheel = ents.Create( "prop_physics" )
+	local wheel = ents.Create( "lvs_wheel_fighterplane" )
 
 	if not IsValid( wheel ) then
 		self:Remove()
@@ -97,19 +103,24 @@ function ENT:AddWheel( pos, radius, mass, type )
 		return
 	end
 
-	wheel:SetPos( self:LocalToWorld( pos ) )
-	wheel:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )
+	local WheelPos = self:LocalToWorld( pos )
+	local CenterPos = self:LocalToWorld( self:OBBCenter() )
 
-	wheel:SetModel( "models/props_vehicles/tire001c_car.mdl" )
+	debugoverlay.Sphere( WheelPos, radius, 5 )
+	debugoverlay.Line( CenterPos, WheelPos, 5 )
+
+	wheel:SetPos( WheelPos )
+	wheel:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )
 	wheel:Spawn()
 	wheel:Activate()
-
-	--wheel:SetNoDraw( true )
-	wheel:DrawShadow( false )
-	wheel.DoNotDuplicate = true
-
-	wheel:PhysicsInitSphere( radius, "jeeptire" )
-	wheel:SetCollisionBounds( Vector(-radius,-radius,-radius), Vector(radius,radius,radius) )
+	wheel:Define( 
+		{
+			physmat = "jeeptire",
+			radius = radius,
+			mass = mass,
+			brake = type == LVS.WHEEL_BRAKE,
+		}
+	)
 
 	local PhysObj = wheel:GetPhysicsObject()
 	if not IsValid( PhysObj ) then
@@ -120,7 +131,6 @@ function ENT:AddWheel( pos, radius, mass, type )
 	end
 
 	PhysObj:EnableMotion( false )
-	PhysObj:SetMass( mass )
 
 	self:DeleteOnRemove( wheel )
 	self:TransferCPPI( wheel )
@@ -129,8 +139,9 @@ function ENT:AddWheel( pos, radius, mass, type )
 		self:TransferCPPI( constraint.AdvBallsocket(wheel, self,0,0,Vector(0,0,0),Vector(0,0,0),0,0, -180, -180, -180, 180, 180, 180, 0, 0, 0, 0, 1) )
 	end
 
-	if type == LVS.WHEEL_STANDARD then
-		self:TransferCPPI( constraint.Axis( wheel, self, 0, 0, PhysObj:GetMassCenter(), wheel:GetPos(), 0, 0, 50, 0, Vector(1,0,0) , false ) )
+	if type == LVS.WHEEL_BRAKE then
+		self:TransferCPPI( constraint.Axis( wheel, self, 0, 0, PhysObj:GetMassCenter(), wheel:GetPos(), 0, 0, 0, 0, Vector(1,0,0) , false ) )
+		wheel:SetBrakes( true )
 	end
 
 	if type == LVS.WHEEL_STEER_FRONT then
@@ -158,6 +169,7 @@ function ENT:AddWheel( pos, radius, mass, type )
 
 	local WheelData = {
 		entity = wheel,
+		physobj = PhysObj,
 		mass = mass,
 	}
 

@@ -36,6 +36,11 @@ function ENT:SetupDataTables()
 
 	self:AddDT( "Vector", "Steer" )
 	self:AddDT( "Float", "Throttle" )
+	self:AddDT( "Float", "LandingGear" )
+
+	if SERVER then
+		self:SetLandingGear( 1 )
+	end
 end
 
 function ENT:PlayerDirectInput( ply, cmd )
@@ -141,6 +146,8 @@ function ENT:StartCommand( ply, cmd )
 				self:PhysWake()
 			end
 		end
+
+		self:HandleLandingGear()
 	end
 
 	if ply:lvsMouseAim() then
