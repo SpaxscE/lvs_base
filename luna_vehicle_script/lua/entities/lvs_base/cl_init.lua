@@ -5,14 +5,6 @@ include( "cl_trailsystem.lua" )
 ENT.IconVehicleLocked = Material( "lvs_locked.png" )
 
 function ENT:LVSHudPaint( X, Y, ply )
-	local Throttle = math.Round(self:GetThrottle() * 100,0)
-	local speed = math.Round( self:GetVelocity():Length() * 0.09144,0)
-
-	draw.SimpleText( "THR", "LVS_FONT", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	draw.SimpleText( Throttle.."%" , "LVS_FONT", 120, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
-	draw.SimpleText( "IAS", "LVS_FONT", 10, 35, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	draw.SimpleText( speed.."km/h", "LVS_FONT", 120, 35, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 end
 
 function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
