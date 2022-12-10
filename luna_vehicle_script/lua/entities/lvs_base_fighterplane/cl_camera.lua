@@ -102,8 +102,8 @@ function ENT:CalcViewMouseAim( ply, pos, angles, fov, pod )
 		endpos = TargetOrigin,
 		filter = function( e )
 			local c = e:GetClass()
-			local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "player" ) and not e.LVS
-			
+			local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "lvs_" ) and not c:StartWith( "player" ) and not e.LVS
+
 			return collide
 		end,
 		mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
