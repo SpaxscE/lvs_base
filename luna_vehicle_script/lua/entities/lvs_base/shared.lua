@@ -78,14 +78,14 @@ end
 sound.Add( {
 	name = "LVS.Physics.Scrape",
 	channel = CHAN_STATIC,
-	level = 85,
+	level = 80,
 	sound = "lvs/physics/scrape_loop.wav"
 } )
 
 sound.Add( {
 	name = "LVS.Physics.Impact",
 	channel = CHAN_STATIC,
-	level = 90,
+	level = 75,
 	sound = {
 		"lvs/physics/impact_soft1.wav",
 		"lvs/physics/impact_soft2.wav",
@@ -98,14 +98,14 @@ sound.Add( {
 sound.Add( {
 	name = "LVS.Physics.Crash",
 	channel = CHAN_STATIC,
-	level = 90,
+	level = 75,
 	sound = "lvs/physics/impact_hard.wav",
 } )
 
 sound.Add( {
 	name = "LVS.Physics.Wind",
 	channel = CHAN_STATIC,
-	level = 100,
+	level = 85,
 	sound = "lvs/physics/wind_loop.wav",
 } )
 
