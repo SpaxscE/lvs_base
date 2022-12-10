@@ -4,6 +4,36 @@ AddCSLuaFile( "cl_camera.lua" )
 include("shared.lua")
 include("sv_wheels.lua")
 
+function ENT:HandleLandingGear()
+	local Rate = FrameTime()
+
+	local EnableBrakes = self:GetThrottle() <= 0
+
+	local Cur = self:GetLandingGear()
+
+	local New = Cur + math.Clamp((self.LandingGearUp and 0 or 1) - Cur,-Rate,Rate)
+
+	local SetValue = Cur ~= New
+
+	if SetValue then
+		self:SetLandingGear( New )
+	end
+
+	for _, data in pairs( self:GetWheels() ) do
+		local wheel = data.entity
+		local mass = data.mass
+		local physobj = data.physobj
+
+		if not IsValid( wheel ) or not IsValid( physobj ) then continue end
+
+		wheel:SetBrakes( EnableBrakes )
+
+		if not SetValue then continue end
+
+		physobj:SetMass( 1 + (mass - 1) * New ^ 4 )
+	end
+end
+
 function ENT:ToggleLandingGear()
 	self.LandingGearUp = not self.LandingGearUp
 	
@@ -125,11 +155,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	phys:Wake()
 
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
-	local TargetVelocity = self.MaxVelocity * self:GetThrottle()
+	local TargetVelocity = self.MaxVelocity
 
-	local Thrust = Vector(math.max(TargetVelocity - ForwardVelocity,0),0,0) * self.MaxThrust
+	local Thrust = ( math.max(TargetVelocity - ForwardVelocity,0) / TargetVelocity) * self.MaxThrust * self:GetThrottle() * phys:GetMass()
 
-	local ForceLinear = (Aero * 10000 * self.ForceLinearMultiplier + Thrust) * deltatime
+	local ForceLinear = (Aero * 10000 * self.ForceLinearMultiplier + Vector(Thrust,0,0)) * deltatime
 	local ForceAngle = (Torque * 25 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250
 
 	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
