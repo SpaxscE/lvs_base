@@ -89,33 +89,6 @@ function ENT:PhysicsThink()
 	end
 end
 
-sound.Add( {
-	name = "LVS.Physics.Scrape",
-	channel = CHAN_STATIC,
-	level = 85,
-	sound = "lvs/physics/scrape_loop.wav"
-} )
-
-sound.Add( {
-	name = "LVS.Physics.Impact",
-	channel = CHAN_STATIC,
-	level = 90,
-	sound = {
-		"lvs/physics/impact_soft1.wav",
-		"lvs/physics/impact_soft2.wav",
-		"lvs/physics/impact_soft3.wav",
-		"lvs/physics/impact_soft4.wav",
-		"lvs/physics/impact_soft5.wav",
-	}
-} )
-
-sound.Add( {
-	name = "LVS.Physics.Crash",
-	channel = CHAN_STATIC,
-	level = 90,
-	sound = "lvs/physics/impact_hard.wav",
-} )
-
 function ENT:PhysicsCollide( data, physobj )
 	local HitEnt = data.HitEntity
 
