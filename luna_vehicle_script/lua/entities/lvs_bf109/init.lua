@@ -16,9 +16,13 @@ function ENT:OnSpawn( PObj )
 end
 
 function ENT:OnEngineStarted()
-	self:EmitSound( "lvs/bf109/start.wav" )
+	self:EmitSound( "lvs/vehicles/bf109/start.wav" )
 end
 
 function ENT:OnEngineStopped()
-	self:EmitSound( "lvs/bf109/stop.wav" )
+	self:EmitSound( "lvs/vehicles/bf109/stop.wav" )
+end
+
+function ENT:OnLandingGearToggled( IsDeployed )
+	self:EmitSound( "lvs/vehicles/bf109/gear.wav" )
 end

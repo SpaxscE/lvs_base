@@ -243,12 +243,30 @@ function ENT:GetParticleEmitter( Pos )
 end
 
 function ENT:OnRemove()
-	self:StopSounds()
 	self:StopEmitter()
 	self:StopWindSounds()
+
+	self:OnRemoved()
 end
 
-function ENT:StopSounds()
+function ENT:OnRemoved()
+end
+
+function ENT:CalcDoppler( Ent )
+	if not IsValid( Ent ) then return 0 end
+
+	local sVel = self:GetVelocity()
+	local oVel = Ent:GetVelocity()
+
+	local SubVel = oVel - sVel
+	local SubPos = self:GetPos() - Ent:GetPos()
+
+	local DirPos = SubPos:GetNormalized()
+	local DirVel = SubVel:GetNormalized()
+
+	local A = math.acos( math.Clamp( DirVel:Dot( DirPos ) ,-1,1) )
+
+	return (1 + math.cos( A ) * SubVel:Length() / 13503.9)
 end
 
 function ENT:StopEmitter()

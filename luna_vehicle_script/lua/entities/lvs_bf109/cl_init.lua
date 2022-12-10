@@ -5,10 +5,33 @@ function ENT:OnSpawn()
 	self:RegisterTrail( Vector(40,-200,70), 0, 12, 2, 1000, 400 )
 end
 
-function ENT:OnTrail( active, id )
+function ENT:OnEngineActiveChanged( Active )
+	if Active then
+		self:StartEngineSound()
+	else
+		self:StopEngineSound()
+	end
 end
 
-function ENT:StopSounds()
+function ENT:StartEngineSound()
+	if self.RPM then return end
+
+	self.RPM = CreateSound( self, "vehicles/airboat/fan_blade_fullthrottle_loop1.wav" )
+	self.RPM:PlayEx(1, 100)
+end
+
+function ENT:StopEngineSound()
+	if self.RPM then
+		self.RPM:Stop()
+		self.RPM = nil
+	end
+end
+
+function ENT:OnRemoved()
+	self:StopEngineSound()
+end
+
+function ENT:OnTrail( active, id )
 end
 
 function ENT:OnFrame()
@@ -17,6 +40,12 @@ function ENT:OnFrame()
 	self:AnimControlSurfaces( FT )
 	self:AnimLandingGear( FT )
 	self:AnimCabin( FT )
+
+	if self.RPM then
+		local P = self:CalcDoppler( LocalPlayer() )
+
+		self.RPM:ChangePitch( 100 * P, 0.5 )
+	end
 end
 
 function ENT:AnimControlSurfaces( frametime )
@@ -39,20 +68,6 @@ function ENT:AnimControlSurfaces( frametime )
 
 	self:ManipulateBoneAngles( 7, Angle( self.smYaw,0,0 ) )
 end
-
---[[
-function ENT:AnimRotor( frametime )
-	local RPM = self:GetRPM()
-	local PhysRot = RPM < 700
-	self.RPM = self.RPM and (self.RPM + RPM * frametime * (PhysRot and 3 or 1)) or 0
-	
-	local Rot = Angle( self.RPM,0,0)
-	Rot:Normalize() 
-	self:ManipulateBoneAngles( 10, -Rot )
-	
-	self:SetBodygroup( 14, PhysRot and 1 or 0 ) 
-end
-]]
 
 function ENT:AnimCabin( frametime )
 	local bOn = self:GetActive()
