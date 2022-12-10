@@ -5,6 +5,7 @@ ENT.Type            = "anim"
 ENT.Spawnable       = false
 ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
+ENT.lvsDoNotGrab = true
 
 function ENT:SetupDataTables()
 end

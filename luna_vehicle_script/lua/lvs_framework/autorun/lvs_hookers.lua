@@ -1,4 +1,8 @@
 
+hook.Add( "PhysgunPickup", "!!!!lvs_disable_wheel_grab", function( ply, ent )
+	if ent.lvsDoNotGrab then return false end
+end )
+
 hook.Add("CalcMainActivity", "!!!lvs_playeranimations", function(ply)
 	if not ply.lvsGetVehicle then return end
 
