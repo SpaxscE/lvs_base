@@ -64,6 +64,9 @@ function ENT:Think()
 	self:HandleActive()
 	self:HandleStart()
 	self:PhysicsThink()
+
+	if self:GetAI() then self:RunAI() end
+
 	self:OnTick()
 
 	self:NextThink( CurTime() )

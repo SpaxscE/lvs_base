@@ -1,4 +1,7 @@
 
+function ENT:RunAI()
+end
+
 function ENT:AutoAI()
 	if IsValid( self._OwnerEntLVS ) then
 		if self._OwnerEntLVS:InVehicle() then
