@@ -15,14 +15,6 @@ function ENT:OnSpawn( PObj )
 	self:AddWheel( Vector(-146.61,0,76), 13, 1200, LVS.WHEEL_STEER_REAR )
 end
 
-function ENT:OnEngineStarted()
-	self:EmitSound( "lvs/vehicles/bf109/start.wav" )
-end
-
-function ENT:OnEngineStopped()
-	self:EmitSound( "lvs/vehicles/bf109/stop.wav" )
-end
-
 function ENT:OnLandingGearToggled( IsDeployed )
 	self:EmitSound( "lvs/vehicles/bf109/gear.wav" )
 end

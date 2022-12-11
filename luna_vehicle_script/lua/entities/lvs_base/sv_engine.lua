@@ -29,22 +29,19 @@ function ENT:IsEngineStartAllowed()
 	return true
 end
 
-function ENT:OnEngineStarted()
-end
-
-function ENT:OnEngineStopped()
+function ENT:OnEngineActiveChanged( Active )
 end
 
 function ENT:StartEngine()
 	if self:GetEngineActive() or not self:IsEngineStartAllowed() then return end
 
 	self:SetEngineActive( true )
-	self:OnEngineStarted()
+	self:OnEngineActiveChanged( true )
 end
 
 function ENT:StopEngine()
 	if not self:GetEngineActive() then return end
 
 	self:SetEngineActive( false )
-	self:OnEngineStopped()
+	self:OnEngineActiveChanged( false )
 end
