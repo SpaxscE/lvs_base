@@ -1,37 +1,8 @@
 include("shared.lua")
 
 function ENT:OnSpawn()
-	self:RegisterTrail( Vector(40,200,70), 0, 12, 2, 1000, 400 )
-	self:RegisterTrail( Vector(40,-200,70), 0, 12, 2, 1000, 400 )
-end
-
-function ENT:OnEngineActiveChanged( Active )
-	if Active then
-		self:StartEngineSound()
-	else
-		self:StopEngineSound()
-	end
-end
-
-function ENT:StartEngineSound()
-	if self.RPM then return end
-
-	self.RPM = CreateSound( self, "vehicles/airboat/fan_blade_fullthrottle_loop1.wav" )
-	self.RPM:PlayEx(1, 100)
-end
-
-function ENT:StopEngineSound()
-	if self.RPM then
-		self.RPM:Stop()
-		self.RPM = nil
-	end
-end
-
-function ENT:OnRemoved()
-	self:StopEngineSound()
-end
-
-function ENT:OnTrail( active, id )
+	self:RegisterTrail( Vector(40,200,70), 0, 20, 2, 1000, 400 )
+	self:RegisterTrail( Vector(40,-200,70), 0, 20, 2, 1000, 400 )
 end
 
 function ENT:OnFrame()

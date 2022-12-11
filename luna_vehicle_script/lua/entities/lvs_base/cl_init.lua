@@ -3,6 +3,7 @@ include("sh_func.lua")
 include( "cl_effects.lua" )
 include( "cl_hud.lua" )
 include( "cl_trailsystem.lua" )
+include( "cl_sounds.lua" )
 
 function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
@@ -52,6 +53,9 @@ function ENT:OnActiveChanged( Active )
 		self:StopWindSounds()
 	end
 end
+
+ENT._oldActive = false
+ENT._oldEnActive = false
 
 function ENT:HandleActive()
 	local Active = self:GetActive()

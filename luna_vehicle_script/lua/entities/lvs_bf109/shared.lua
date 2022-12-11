@@ -30,3 +30,35 @@ ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 1000
+
+sound.Add( {
+	name = "LVS.BF109.Engine.Low",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 100,
+	sound = "lvs/vehicles/bf109/engine_low.wav"
+} )
+
+sound.Add( {
+	name = "LVS.BF109.Engine.High",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 100,
+	sound = "lvs/vehicles/bf109/engine_high.wav"
+} )
+
+sound.Add( {
+	name = "LVS.BF109.Engine.Dist",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 125,
+	sound = "^lvs/vehicles/bf109/dist.wav"
+} )
+
+sound.Add( {
+	name = "LVS.BF109.FlyBy",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 110,
+	sound = "lvs/vehicles/bf109/flyby.wav"
+} )
