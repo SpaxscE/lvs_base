@@ -120,9 +120,8 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	phys:Wake()
 
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
-	local TargetVelocity = self.MaxVelocity
 
-	local Thrust = ( math.max(TargetVelocity - ForwardVelocity,0) / TargetVelocity) * self.MaxThrust * self:GetThrottle() * phys:GetMass()
+	local Thrust = ( math.max(self.MaxVelocity - ForwardVelocity,0) / self.MaxVelocity) * self.MaxThrust * self:GetThrottle() * phys:GetMass()
 
 	local ForceLinear = (Aero * 10000 * self.ForceLinearMultiplier + Vector(Thrust,0,0)) * deltatime
 	local ForceAngle = (Torque * 25 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250
