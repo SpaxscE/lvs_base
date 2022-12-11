@@ -33,101 +33,74 @@ ENT.MaxHealth = 1000
 
 ENT.EngineSounds = {
 	{
-		SoundPath = "LFS_BF109_RPM1",
-		StartPitch = 100,
-		MinPitch = 0,
-		MaxPitch = 255,
+		sound = "^lvs/vehicles/bf109/dist.wav",
+		sound_int = "",
+		Pitch = 80,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 40,
+		FadeIn = 0.35,
+		FadeOut = 1,
+		FadeSpeed = 1.5,
+		UseDoppler = true,
+		VolumeMin = 0,
+		VolumeMax = 1,
+		SoundLevel = 110,
+	},
+	{
+		sound = "lvs/vehicles/bf109/engine_compressor.wav",
+		sound_int = "",
+		Pitch = 50,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 60,
+		FadeIn = 0.35,
+		FadeOut = 1,
+		FadeSpeed = 5,
+		UseDoppler = true,
+		VolumeMin = 0,
+		VolumeMax = 0.15,
+		SoundLevel = 120,
+	},
+	{
+		sound = "lvs/vehicles/bf109/engine_low.wav",
+		Pitch = 80,
+		PitchMin = 0,
+		PitchMax = 255,
 		PitchMul = 300,
-		UseDoppler = true,
 		FadeIn = 0,
-		FadeOut = 0.2,
+		FadeOut = 0.15,
 		FadeSpeed = 1.5,
+		UseDoppler = false,
 	},
 	{
-		SoundPath = "LFS_BF109_RPM2",
-		StartPitch = 20,
-		MinPitch = 0,
-		MaxPitch = 160,
-		PitchMul = 280,
-		UseDoppler = true,
-		FadeIn = 0.2,
-		FadeOut = 0.4,
+		sound = "lvs/vehicles/bf109/engine_mid.wav",
+		Pitch = 80,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 80,
+		FadeIn = 0.15,
+		FadeOut = 0.35,
 		FadeSpeed = 1.5,
+		UseDoppler = true,
 	},
 	{
-		SoundPath = "LFS_BF109_RPM3",
-		StartPitch = 60,
-		MinPitch = 0,
-		MaxPitch = 255,
-		PitchMul = 110,
-		UseDoppler = true,
-		FadeIn = 0.4,
-		FadeOut = 0.65,
-		FadeSpeed = 1.5,
-	},
-	{
-		SoundPath = "LFS_BF109_RPM4",
-		StartPitch = 75,
-		MinPitch = 0,
-		MaxPitch = 255,
-		PitchMul = 50,
-		UseDoppler = true,
-		FadeIn = 0.65,
+		sound = "lvs/vehicles/bf109/engine_high.wav",
+		sound_int = "lvs/vehicles/bf109/engine_high_int.wav",
+		Pitch = 50,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 60,
+		FadeIn = 0.35,
 		FadeOut = 1,
 		FadeSpeed = 1,
+		UseDoppler = true,
 	},
 }
-
-sound.Add( {
-	name = "LVS.BF109.Engine.Low",
-	channel = CHAN_STATIC,
-	volume = 1,
-	level = 100,
-	sound = "lvs/vehicles/bf109/engine_low.wav"
-} )
-
-sound.Add( {
-	name = "LVS.BF109.Engine.High",
-	channel = CHAN_STATIC,
-	volume = 1,
-	level = 100,
-	sound = "lvs/vehicles/bf109/engine_high.wav"
-} )
-
-sound.Add( {
-	name = "LVS.BF109.Engine.Dist",
-	channel = CHAN_STATIC,
-	volume = 1,
-	level = 125,
-	sound = "^lvs/vehicles/bf109/dist.wav"
-} )
 
 sound.Add( {
 	name = "LVS.BF109.FlyBy",
 	channel = CHAN_STATIC,
 	level = 100,
 	sound = "lvs/vehicles/bf109/flyby.wav"
-} )
-
-sound.Add( {
-	name = "LFS_BF109_RPM1",
-	channel = CHAN_STATIC,
-	sound = "^lfs/bf109/rpm_1.wav"
-} )
-
-sound.Add( {
-	name = "LFS_BF109_RPM2",
-	channel = CHAN_STATIC,
-	sound = "^lfs/bf109/rpm_2.wav"
-} )
-
-sound.Add( {
-	name = "LFS_BF109_RPM3",
-	channel = CHAN_STATIC,
-	sound = "^lfs/bf109/rpm_3.wav"
-} )
-
-sound.Add( {
-	name = "LFS_BF109_RPM4",
-	sound = "^lfs/bf109/rpm_4.wav"
 } )

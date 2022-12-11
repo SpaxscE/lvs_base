@@ -11,13 +11,25 @@ function ENT:OnFrame()
 	self:AnimControlSurfaces( FT )
 	self:AnimLandingGear( FT )
 	self:AnimCabin( FT )
+	self:AnimRotor( FT )
+end
 
+function ENT:AnimRotor( frametime )
+	local Throttle = self:GetThrottle()
 
-	if self.RPM then
-		local P = self:CalcDoppler( LocalPlayer() )
+	local TargetRPM = self:GetEngineActive() and (300 + Throttle * 500) or 0
 
-		self.RPM:ChangePitch( 100 * P, 0.5 )
-	end
+	self._smRPM = self._smRPM and self._smRPM + (TargetRPM - self._smRPM) * frametime or 0
+
+	local PhysRot = self._smRPM < 470
+
+	self._rRPM = self._rRPM and (self._rRPM + self._smRPM *  frametime * (PhysRot and 4 or 1)) or 0
+
+	local Rot = Angle( self._rRPM,0,0)
+	Rot:Normalize() 
+	self:ManipulateBoneAngles( 10, -Rot )
+
+	self:SetBodygroup( 14, PhysRot and 1 or 0 ) 
 end
 
 function ENT:AnimControlSurfaces( frametime )

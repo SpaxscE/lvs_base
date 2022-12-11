@@ -38,14 +38,45 @@ end
 
 function ENT:StopSounds()
 	for id, sound in pairs( self._ActiveSounds ) do
-		sound:Stop()
+		if istable( sound ) then
+			for _, snd in pairs( sound ) do
+				if snd then
+					snd:Stop()
+				end
+			end
+		else
+			sound:Stop()
+		end
 		self._ActiveSounds[ id ] = nil
 	end
 end
 
 function ENT:HandleEngineSounds( vehicle )
+	local ply = LocalPlayer()
+	local pod = ply:GetVehicle()
 	local Throttle = vehicle:GetThrottle()
-	local Doppler = vehicle:CalcDoppler( LocalPlayer() )
+	local Doppler = vehicle:CalcDoppler( ply )
+
+	local DrivingMe = ply:lvsGetVehicle() == vehicle
+
+	local VolumeSetNow = false
+
+	local FirstPerson = false
+	if IsValid( pod ) then
+		local ThirdPerson = pod:GetThirdPersonMode()
+
+		if ThirdPerson ~= self._lvsoldTP then
+			self._lvsoldTP = ThirdPerson
+			VolumeSetNow = DrivingMe
+		end
+
+		FirstPerson = DrivingMe and not ThirdPerson
+	end
+
+	if DrivingMe ~= self._lvsoldDrivingMe then
+		VolumeSetNow = true
+		self._lvsoldDrivingMe = DrivingMe
+	end
 
 	local FT = RealFrameTime()
 
@@ -56,35 +87,75 @@ function ENT:HandleEngineSounds( vehicle )
 
 		local data = self.EngineSounds[ id ]
 
-		local Pitch = math.Clamp( data.StartPitch + self._smTHR * data.PitchMul, data.MinPitch, data.MaxPitch )
-		local Volume = (self._smTHR > data.FadeOut or self._smTHR < data.FadeIn) and 0 or LVS.EngineVolume
-
+		local Pitch = math.Clamp( data.Pitch + self._smTHR * data.PitchMul, data.PitchMin, data.PitchMax )
 		local PitchMul = data.UseDoppler and Doppler or 1
 
-		sound:ChangePitch( math.Clamp( Pitch * PitchMul, 0, 255 ), 0.2 )
-		sound:ChangeVolume( Volume, data.FadeSpeed )
+		local InActive = self._smTHR > data.FadeOut or self._smTHR < data.FadeIn
+
+		local Volume = InActive and 0 or LVS.EngineVolume
+
+		if data.VolumeMin and data.VolumeMax and not InActive then
+			Volume = math.max(self._smTHR - data.VolumeMin,0) / (1 - data.VolumeMin) * data.VolumeMax * LVS.EngineVolume
+		end
+
+		if istable( sound ) then
+			sound.ext:ChangePitch( math.Clamp( Pitch * PitchMul, 0, 255 ), 0.2 )
+			if sound.int then sound.int:ChangePitch( math.Clamp( Pitch, 0, 255 ), 0.2 ) end
+
+			local fadespeed = VolumeSetNow and 0 or data.FadeSpeed
+
+			if FirstPerson then
+				sound.ext:ChangeVolume( 0, 0 )
+				if sound.int then sound.int:ChangeVolume( Volume, fadespeed ) end
+			else
+				sound.ext:ChangeVolume( Volume, fadespeed )
+				if sound.int then sound.int:ChangeVolume( 0, 0 ) end
+			end
+		else
+			sound:ChangePitch( math.Clamp( Pitch * PitchMul, 0, 255 ), 0.2 )
+			sound:ChangeVolume( Volume, data.FadeSpeed )
+		end
 	end
 end
 
 function ENT:OnEngineActiveChanged( Active )
 	if Active then
 		for id, data in pairs( self.EngineSounds ) do
-			if not isstring( data.SoundPath ) then continue end
+			if not isstring( data.sound ) then continue end
 
-			self.EngineSounds[ id ].StartPitch = data.StartPitch or 80
-			self.EngineSounds[ id ].MinPitch = data.MinPitch or 0
-			self.EngineSounds[ id ].MaxPitch = data.MaxPitch or 255
+			self.EngineSounds[ id ].Pitch = data.Pitch or 80
+			self.EngineSounds[ id ].PitchMin = data.PitchMin or 0
+			self.EngineSounds[ id ].PitchMax = data.PitchMax or 255
 			self.EngineSounds[ id ].PitchMul = data.PitchMul or 100
 			self.EngineSounds[ id ].UseDoppler = data.UseDoppler ~= false
 			self.EngineSounds[ id ].FadeIn = data.FadeIn or 0
 			self.EngineSounds[ id ].FadeOut = data.FadeOut or 1
 			self.EngineSounds[ id ].FadeSpeed = data.FadeSpeed or 1.5
+			self.EngineSounds[ id ].SoundLevel = data.SoundLevel or 85
 
-			local sound = CreateSound( self, data.SoundPath )
-			sound:SetSoundLevel( 140 )
+			local sound = CreateSound( self, data.sound )
+			sound:SetSoundLevel( data.SoundLevel )
 			sound:PlayEx(0,100)
 
-			self._ActiveSounds[ id ] = sound
+			if data.sound_int and data.sound_int ~= data.sound then
+				if data.sound_int == "" then
+					self._ActiveSounds[ id ] = {
+						ext = sound,
+						int = false,
+					}
+				else
+					local sound_interior = CreateSound( self, data.sound_int )
+					sound_interior:SetSoundLevel( 85 )
+					sound_interior:PlayEx(0,100)
+
+					self._ActiveSounds[ id ] = {
+						ext = sound,
+						int = sound_interior,
+					}
+				end
+			else
+				self._ActiveSounds[ id ] = sound
+			end
 		end
 	else
 		self:StopSounds()

@@ -17,6 +17,9 @@ ENT.MaxVelocity = 2500
 ENT.MaxPerfVelocity = 1500
 ENT.MaxThrust = 25
 
+ENT.ThrottleRateUp = 0.6
+ENT.ThrottleRateDown = 0.2
+
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
@@ -127,8 +130,8 @@ end
 function ENT:CalcThrottle( ply, cmd )
 	local Delta = FrameTime()
 
-	local ThrottleUp =  ply:lvsKeyDown( "+THROTTLE" ) and 1 or 0
-	local ThrottleDown = ply:lvsKeyDown( "-THROTTLE" ) and -1 or 0
+	local ThrottleUp =  ply:lvsKeyDown( "+THROTTLE" ) and self.ThrottleRateUp or 0
+	local ThrottleDown = ply:lvsKeyDown( "-THROTTLE" ) and -self.ThrottleRateDown or 0
 
 	local Throttle = (ThrottleUp + ThrottleDown) * Delta
 
