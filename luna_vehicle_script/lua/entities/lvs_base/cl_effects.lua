@@ -33,7 +33,10 @@ function ENT:DoVehicleFX()
 	if (self.nextFX or 0) < CurTime() then
 		self.nextFX = CurTime() + 0.05
 
-		local CenterPos = self:LocalToWorld( self:OBBCenter() )
+		local LCenter = self:OBBCenter()
+		LCenter.z = self:OBBMins().z
+
+		local CenterPos = self:LocalToWorld( LCenter )
 
 		local trace = util.TraceLine( {
 			start = CenterPos + Vector(0,0,25),
@@ -48,13 +51,15 @@ function ENT:DoVehicleFX()
 			mask = MASK_WATER,
 		} )
 
+		if self._WaterSFX then self._WaterSFX:ChangePitch( math.Clamp((Vel / 1000) * 50,80,150), 0.5 ) end
+
 		if traceWater.Hit and trace.HitPos.z < traceWater.HitPos.z then 
 			local effectdata = EffectData()
 				effectdata:SetOrigin( traceWater.HitPos )
 				effectdata:SetEntity( self )
 			util.Effect( "lvs_physics_water", effectdata )
 
-			if self._WaterSFX then self._WaterSFX:ChangeVolume( 1, 1 ) end
+			if self._WaterSFX then self._WaterSFX:ChangeVolume( 1 - math.Clamp(traceWater.Fraction,0,1), 0.5 ) end
 		else
 			if self._WaterSFX then self._WaterSFX:ChangeVolume( 0, 0.25 ) end
 		end

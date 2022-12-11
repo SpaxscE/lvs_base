@@ -5,30 +5,12 @@ ENT.Type            = "anim"
 ENT.Spawnable       = false
 ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
-ENT.EngineSounds = {}
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
 end
 
-local function AddEngineSound( ent, data )
-	if not data or not isstring( data.SoundPath ) then return false end
-
-	data.StartPitch = data.StartPitch or 80
-	data.MinPitch = data.MinPitch or 0
-	data.MaxPitch = data.MaxPitch or 255
-	data.PitchMul = data.PitchMul or 100
-	data.UseDoppler = data.UseDoppler ~= false
-	data.FadeIn = data.FadeIn or 0
-	data.FadeOut = data.FadeOut or 1
-	data.FadeSpeed = data.FadeSpeed or 1.5
-
-	table.insert( ent.EngineSounds, data )
-end
-
 if SERVER then
-	util.AddNetworkString( "lvs_engine_sounds" )
-
 	function ENT:Initialize()	
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
@@ -37,78 +19,22 @@ if SERVER then
 		debugoverlay.Cross( self:GetPos(), 50, 5, Color( 0, 255, 255 ), true )
 	end
 
-	function ENT:AddSound( user_data )
-		AddEngineSound( self, user_data )
-	end
-
 	function ENT:Think()
 		return false
-	end
-
-	function ENT:SendSoundsTo( ply )
-		for _, data in pairs( self.EngineSounds ) do
-			net.Start( "lvs_engine_sounds" )
-				net.WriteEntity( self )
-				net.WriteString( data.SoundPath )
-				net.WriteInt( data.StartPitch, 9 )
-				net.WriteInt( data.MinPitch, 9 )
-				net.WriteInt( data.MaxPitch, 9 )
-				net.WriteFloat( data.PitchMul )
-				net.WriteBool( data.UseDoppler )
-				net.WriteFloat( data.FadeIn )
-				net.WriteFloat( data.FadeOut )
-				net.WriteFloat( data.FadeSpeed )
-			net.Send( ply )
-		end
 	end
 
 	function ENT:UpdateTransmitState() 
 		return TRANSMIT_ALWAYS
 	end
 
-	net.Receive( "lvs_engine_sounds", function( len, ply )
-		local Engine = net.ReadEntity()
-
-		if not IsValid( Engine ) or not IsValid( ply ) then return end
-
-		Engine:SendSoundsTo( ply )
-	end )
-
 	return
 end
 
-function ENT:Initialize()
-	net.Start("lvs_engine_sounds")
-		net.WriteEntity( self )
-	net.SendToServer()
-end
-
-function ENT:AddSound( data )
-	AddEngineSound( self, data )
-end
-
-net.Receive( "lvs_engine_sounds", function( len )
-	local Engine = net.ReadEntity()
-
-	if not IsValid( Engine ) then return end
-
-	local data = {
-		SoundPath = net.ReadString(),
-		StartPitch = net.ReadInt( 9 ),
-		MinPitch = net.ReadInt( 9 ),
-		MaxPitch = net.ReadInt( 9 ),
-		PitchMul = net.ReadFloat(),
-		UseDoppler = net.ReadBool(),
-		FadeIn = net.ReadFloat(),
-		FadeOut = net.ReadFloat(),
-		FadeSpeed = net.ReadFloat(),
-	}
-
-	Engine:AddSound( data )
-end )
-
 ENT._oldEnActive = false
 ENT._ActiveSounds = {}
+
+function ENT:Initialize()
+end
 
 function ENT:StopSounds()
 	for id, sound in pairs( self._ActiveSounds ) do
@@ -131,7 +57,7 @@ function ENT:HandleEngineSounds( vehicle )
 		local data = self.EngineSounds[ id ]
 
 		local Pitch = math.Clamp( data.StartPitch + self._smTHR * data.PitchMul, data.MinPitch, data.MaxPitch )
-		local Volume = (self._smTHR > data.FadeOut or self._smTHR < data.FadeIn) and 0 or 1
+		local Volume = (self._smTHR > data.FadeOut or self._smTHR < data.FadeIn) and 0 or 0.25
 
 		local PitchMul = data.UseDoppler and Doppler or 1
 
@@ -143,7 +69,19 @@ end
 function ENT:OnEngineActiveChanged( Active )
 	if Active then
 		for id, data in pairs( self.EngineSounds ) do
+			if not isstring( data.SoundPath ) then continue end
+
+			self.EngineSounds[ id ].StartPitch = data.StartPitch or 80
+			self.EngineSounds[ id ].MinPitch = data.MinPitch or 0
+			self.EngineSounds[ id ].MaxPitch = data.MaxPitch or 255
+			self.EngineSounds[ id ].PitchMul = data.PitchMul or 100
+			self.EngineSounds[ id ].UseDoppler = data.UseDoppler ~= false
+			self.EngineSounds[ id ].FadeIn = data.FadeIn or 0
+			self.EngineSounds[ id ].FadeOut = data.FadeOut or 1
+			self.EngineSounds[ id ].FadeSpeed = data.FadeSpeed or 1.5
+
 			local sound = CreateSound( self, data.SoundPath )
+			sound:SetSoundLevel( 140 )
 			sound:PlayEx(0,100)
 
 			self._ActiveSounds[ id ] = sound
@@ -157,6 +95,12 @@ function ENT:Think()
 	local vehicle = self:GetBase()
 
 	if not IsValid( vehicle ) then return end
+
+	if not self.EngineSounds then
+		self.EngineSounds = vehicle.EngineSounds
+
+		return
+	end
 
 	local EngineActive = vehicle:GetEngineActive()
 

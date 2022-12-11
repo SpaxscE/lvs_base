@@ -106,13 +106,13 @@ sound.Add( {
 sound.Add( {
 	name = "LVS.Physics.Wind",
 	channel = CHAN_STATIC,
-	level = 85,
+	level = 140,
 	sound = "lvs/physics/wind_loop.wav",
 } )
 
 sound.Add( {
 	name = "LVS.Physics.Water",
 	channel = CHAN_STATIC,
-	level = 75,
+	level = 140,
 	sound = "lvs/physics/water_loop.wav",
 } )
