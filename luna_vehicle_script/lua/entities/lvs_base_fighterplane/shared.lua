@@ -35,7 +35,7 @@ function ENT:SetupDataTables()
 	self:CreateBaseDT()
 
 	self:AddDT( "Vector", "Steer" )
-	self:AddDT( "Float", "Throttle" )
+	self:AddDT( "Float", "NWThrottle" )
 	self:AddDT( "Float", "LandingGear" )
 
 	if SERVER then
@@ -132,7 +132,23 @@ function ENT:CalcThrottle( ply, cmd )
 
 	local Throttle = (ThrottleUp + ThrottleDown) * Delta
 
-	self:SetThrottle( math.Clamp(self:GetThrottle() + Throttle,0,1) )
+	self:SetThrottle( self:GetThrottle() + Throttle )
+end
+
+function ENT:SetThrottle( NewThrottle )
+	if self:GetEngineActive() then
+		self:SetNWThrottle( math.Clamp(NewThrottle,0,1) )
+	else
+		self:SetNWThrottle( 0 )
+	end
+end
+
+function ENT:GetThrottle()
+	if self:GetEngineActive() then
+		return self:GetNWThrottle()
+	else
+		return 0
+	end
 end
 
 function ENT:StartCommand( ply, cmd )
