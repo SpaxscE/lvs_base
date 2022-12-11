@@ -7,9 +7,6 @@ ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
 ENT.lvsDoNotGrab = true
 
-function ENT:SetupDataTables()
-end
-
 if SERVER then
 	function ENT:Initialize()	
 		self:SetModel( "models/props_vehicles/tire001c_car.mdl" )

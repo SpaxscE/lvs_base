@@ -75,9 +75,7 @@ function ENT:GetParticleEmitter( Pos )
 		end
 	end
 
-	if IsValid( self.Emitter ) then
-		self.Emitter:Finish()
-	end
+	self:StopEmitter()
 
 	self.Emitter = ParticleEmitter( Pos, false )
 	self.EmitterTime = CurTime() + 2

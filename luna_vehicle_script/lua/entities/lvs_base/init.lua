@@ -4,7 +4,6 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_effects.lua" )
 AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_trailsystem.lua" )
-AddCSLuaFile( "cl_sounds.lua" )
 include("shared.lua")
 include("sh_func.lua")
 include("sv_ai.lua")
@@ -54,7 +53,9 @@ function ENT:Initialize()
 
 	self:StartMotionController()
 
-	PObj:EnableMotion( true )
+	if GetConVar( "developer" ):GetInt() ~= 1 then
+		PObj:EnableMotion( true )
+	end
 
 	self:PhysWake()
 

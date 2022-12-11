@@ -14,7 +14,7 @@ ENT.MDL = "models/blu/bf109.mdl"
 ENT.AITEAM = 1
 
 ENT.MaxVelocity = 2500
-ENT.MaxPerfVelocity = 1500
+ENT.MaxPerfVelocity = 1800
 ENT.MaxThrust = 25
 
 ENT.TurnRatePitch = 1
@@ -58,7 +58,33 @@ sound.Add( {
 sound.Add( {
 	name = "LVS.BF109.FlyBy",
 	channel = CHAN_STATIC,
-	volume = 1,
-	level = 110,
+	level = 100,
 	sound = "lvs/vehicles/bf109/flyby.wav"
+} )
+
+sound.Add( {
+	name = "LFS_BF109_RPM1",
+	channel = CHAN_STATIC,
+	level = 75,
+	sound = "^lfs/bf109/rpm_1.wav"
+} )
+
+sound.Add( {
+	name = "LFS_BF109_RPM2",
+	channel = CHAN_STATIC,
+	level = 75,
+	sound = "^lfs/bf109/rpm_2.wav"
+} )
+
+sound.Add( {
+	name = "LFS_BF109_RPM3",
+	channel = CHAN_STATIC,
+	level = 75,
+	sound = "^lfs/bf109/rpm_3.wav"
+} )
+
+sound.Add( {
+	name = "LFS_BF109_RPM4",
+	level = 75,
+	sound = "^lfs/bf109/rpm_4.wav"
 } )

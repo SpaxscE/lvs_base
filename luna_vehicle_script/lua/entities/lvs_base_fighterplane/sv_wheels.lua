@@ -93,7 +93,7 @@ function ENT:AddWheel( pos, radius, mass, type )
 		type = LVS.WHEEL_BRAKE
 	end
 
-	local wheel = ents.Create( "lvs_wheel_fighterplane" )
+	local wheel = ents.Create( "lvs_wheel" )
 
 	if not IsValid( wheel ) then
 		self:Remove()
@@ -106,8 +106,8 @@ function ENT:AddWheel( pos, radius, mass, type )
 	local WheelPos = self:LocalToWorld( pos )
 	local CenterPos = self:LocalToWorld( self:OBBCenter() )
 
-	debugoverlay.Sphere( WheelPos, radius, 5 )
-	debugoverlay.Line( CenterPos, WheelPos, 5 )
+	debugoverlay.Sphere( WheelPos, radius, 5, Color(150,150,150), true )
+	debugoverlay.Line( CenterPos, WheelPos, 5, Color(150,150,150), true )
 
 	wheel:SetPos( WheelPos )
 	wheel:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )

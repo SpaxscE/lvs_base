@@ -24,7 +24,7 @@ function EFFECT:Init( data )
 	local emitter = ParticleEmitter( pos, false )
 
 	for i = 0,4 do
-		local particle = emitter:Add( Materials[ math.random(1,table.Count( Materials )) ], pos )
+		local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
 		
 		local vel = VectorRand() * 200
 		

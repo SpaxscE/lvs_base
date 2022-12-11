@@ -40,6 +40,8 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Entity", "Gunner" )
 	self:AddDT( "Entity", "GunnerSeat" )
 
+	self:AddDT( "Entity", "Engine" )
+
 	self:AddDT( "Bool", "Active" )
 	self:AddDT( "Bool", "EngineActive" )
 	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
