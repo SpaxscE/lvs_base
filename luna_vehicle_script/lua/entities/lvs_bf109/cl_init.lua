@@ -41,6 +41,7 @@ function ENT:OnFrame()
 	self:AnimLandingGear( FT )
 	self:AnimCabin( FT )
 
+
 	if self.RPM then
 		local P = self:CalcDoppler( LocalPlayer() )
 

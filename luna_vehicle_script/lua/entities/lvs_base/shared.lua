@@ -74,7 +74,6 @@ end
 function ENT:StartCommand( ply, cmd )
 end
 
-
 sound.Add( {
 	name = "LVS.Physics.Scrape",
 	channel = CHAN_STATIC,
