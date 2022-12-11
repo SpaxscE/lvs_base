@@ -57,7 +57,7 @@ function ENT:HandleEngineSounds( vehicle )
 		local data = self.EngineSounds[ id ]
 
 		local Pitch = math.Clamp( data.StartPitch + self._smTHR * data.PitchMul, data.MinPitch, data.MaxPitch )
-		local Volume = (self._smTHR > data.FadeOut or self._smTHR < data.FadeIn) and 0 or 0.25
+		local Volume = (self._smTHR > data.FadeOut or self._smTHR < data.FadeIn) and 0 or LVS.EngineVolume
 
 		local PitchMul = data.UseDoppler and Doppler or 1
 

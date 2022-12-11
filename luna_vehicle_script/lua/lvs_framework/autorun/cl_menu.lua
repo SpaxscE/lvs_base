@@ -1,5 +1,5 @@
 
-local cvarVolume = CreateClientConVar( "lvs_volume", 0.65, true, false)
+local cvarVolume = CreateClientConVar( "lvs_volume", 0.25, true, false)
 local cvarDirectInput = CreateClientConVar( "lvs_mouseaim", 0, true, true)
 
 local cvarShowPlaneIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
@@ -8,6 +8,11 @@ LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
 LVS.ShowPlaneIdent = cvarShowPlaneIdent and cvarShowPlaneIdent:GetBool() or true
 LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false
+LVS.EngineVolume = cvarVolume and cvarVolume:GetFloat() or 0.25
+
+cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 
+	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
+end)
 
 cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
 	LVS.ShowPlaneIdent = tonumber( newValue ) ~=0
@@ -30,7 +35,7 @@ local function ClientSettings( Canvas )
 	slider:DockMargin( 16, 32, 16, 4 )
 	slider:Dock( TOP )
 	slider:SetText( "Engine Volume" )
-	slider:SetMin( -1 )
+	slider:SetMin( 0 )
 	slider:SetMax( 1 )
 	slider:SetDecimals( 2 )
 	slider:SetConVar( "lvs_volume" )
