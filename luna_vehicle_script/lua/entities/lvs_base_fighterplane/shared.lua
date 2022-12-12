@@ -186,3 +186,9 @@ function ENT:GetStability()
 
 	return Stability, InvStability, ForwardVelocity
 end
+
+function ENT:GetThrustStrenght()
+	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
+
+	return (self.MaxVelocity - ForwardVelocity) * self:GetThrottle() / self.MaxVelocity
+end

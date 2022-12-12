@@ -15,6 +15,8 @@ function ENT:OnSpawn( PObj )
 	self:AddWheel( Vector(-146.61,0,76), 13, 1200, LVS.WHEEL_STEER_REAR )
 
 	self:AddEngine( Vector(115,0,75) )
+
+	self:AddRotor( Vector(160,0,75) )
 end
 
 function ENT:OnLandingGearToggled( IsDeployed )

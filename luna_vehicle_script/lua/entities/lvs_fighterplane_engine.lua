@@ -54,7 +54,7 @@ end
 function ENT:HandleEngineSounds( vehicle )
 	local ply = LocalPlayer()
 	local pod = ply:GetVehicle()
-	local Throttle = vehicle:GetThrottle()
+	local Throttle = vehicle:GetThrottle() - math.Clamp(vehicle:GetThrustStrenght() * vehicle:GetThrottle(),-0.33,0.33)
 	local Doppler = vehicle:CalcDoppler( ply )
 
 	local DrivingMe = ply:lvsGetVehicle() == vehicle
@@ -91,6 +91,9 @@ function ENT:HandleEngineSounds( vehicle )
 		local PitchMul = data.UseDoppler and Doppler or 1
 
 		local InActive = self._smTHR > data.FadeOut or self._smTHR < data.FadeIn
+		if data.FadeOut >= 1 and self._smTHR > 1 then
+			InActive = false
+		end
 
 		local Volume = InActive and 0 or LVS.EngineVolume
 
@@ -119,46 +122,44 @@ function ENT:HandleEngineSounds( vehicle )
 end
 
 function ENT:OnEngineActiveChanged( Active )
-	if Active then
-		for id, data in pairs( self.EngineSounds ) do
-			if not isstring( data.sound ) then continue end
+	if not Active then self:StopSounds() end
 
-			self.EngineSounds[ id ].Pitch = data.Pitch or 80
-			self.EngineSounds[ id ].PitchMin = data.PitchMin or 0
-			self.EngineSounds[ id ].PitchMax = data.PitchMax or 255
-			self.EngineSounds[ id ].PitchMul = data.PitchMul or 100
-			self.EngineSounds[ id ].UseDoppler = data.UseDoppler ~= false
-			self.EngineSounds[ id ].FadeIn = data.FadeIn or 0
-			self.EngineSounds[ id ].FadeOut = data.FadeOut or 1
-			self.EngineSounds[ id ].FadeSpeed = data.FadeSpeed or 1.5
-			self.EngineSounds[ id ].SoundLevel = data.SoundLevel or 85
+	for id, data in pairs( self.EngineSounds ) do
+		if not isstring( data.sound ) then continue end
 
-			local sound = CreateSound( self, data.sound )
-			sound:SetSoundLevel( data.SoundLevel )
-			sound:PlayEx(0,100)
+		self.EngineSounds[ id ].Pitch = data.Pitch or 80
+		self.EngineSounds[ id ].PitchMin = data.PitchMin or 0
+		self.EngineSounds[ id ].PitchMax = data.PitchMax or 255
+		self.EngineSounds[ id ].PitchMul = data.PitchMul or 100
+		self.EngineSounds[ id ].UseDoppler = data.UseDoppler ~= false
+		self.EngineSounds[ id ].FadeIn = data.FadeIn or 0
+		self.EngineSounds[ id ].FadeOut = data.FadeOut or 1
+		self.EngineSounds[ id ].FadeSpeed = data.FadeSpeed or 1.5
+		self.EngineSounds[ id ].SoundLevel = data.SoundLevel or 85
 
-			if data.sound_int and data.sound_int ~= data.sound then
-				if data.sound_int == "" then
-					self._ActiveSounds[ id ] = {
-						ext = sound,
-						int = false,
-					}
-				else
-					local sound_interior = CreateSound( self, data.sound_int )
-					sound_interior:SetSoundLevel( 85 )
-					sound_interior:PlayEx(0,100)
+		local sound = CreateSound( self, data.sound )
+		sound:SetSoundLevel( data.SoundLevel )
+		sound:PlayEx(0,100)
 
-					self._ActiveSounds[ id ] = {
-						ext = sound,
-						int = sound_interior,
-					}
-				end
+		if data.sound_int and data.sound_int ~= data.sound then
+			if data.sound_int == "" then
+				self._ActiveSounds[ id ] = {
+					ext = sound,
+					int = false,
+				}
 			else
-				self._ActiveSounds[ id ] = sound
+				local sound_interior = CreateSound( self, data.sound_int )
+				sound_interior:SetSoundLevel( data.SoundLevel )
+				sound_interior:PlayEx(0,100)
+
+				self._ActiveSounds[ id ] = {
+					ext = sound,
+					int = sound_interior,
+				}
 			end
+		else
+			self._ActiveSounds[ id ] = sound
 		end
-	else
-		self:StopSounds()
 	end
 end
 
