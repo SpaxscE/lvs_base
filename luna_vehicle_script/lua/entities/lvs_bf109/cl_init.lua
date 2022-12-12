@@ -15,15 +15,11 @@ function ENT:OnFrame()
 end
 
 function ENT:AnimRotor( frametime )
-	local Throttle = self:GetThrottle()
+	if not self.RotorRPM then return end
 
-	local TargetRPM = self:GetEngineActive() and (300 + Throttle * 500) or 0
+	local PhysRot = self.RotorRPM < 470
 
-	self._smRPM = self._smRPM and self._smRPM + (TargetRPM - self._smRPM) * frametime or 0
-
-	local PhysRot = self._smRPM < 470
-
-	self._rRPM = self._rRPM and (self._rRPM + self._smRPM *  frametime * (PhysRot and 4 or 1)) or 0
+	self._rRPM = self._rRPM and (self._rRPM + self.RotorRPM *  RealFrameTime() * (PhysRot and 4 or 1)) or 0
 
 	local Rot = Angle( self._rRPM,0,0)
 	Rot:Normalize() 

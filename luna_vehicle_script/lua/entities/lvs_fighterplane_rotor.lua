@@ -52,7 +52,7 @@ function ENT:OnActiveChanged( Active )
 	self:StopSounds()
 
 	self._RotorSound1 = CreateSound( self, "lvs/vehicles/generic/propeller.wav" )
-	self._RotorSound1:SetSoundLevel( 140 )
+	self._RotorSound1:SetSoundLevel( 70 )
 	self._RotorSound1:PlayEx(0,100)
 
 	self._RotorSound2 = CreateSound( self, "lvs/vehicles/generic/propeller_strain.wav" )
@@ -60,23 +60,24 @@ function ENT:OnActiveChanged( Active )
 	self._RotorSound2:PlayEx(0,100)
 end
 
-function ENT:HandleSounds( vehicle )
-	local throttle = vehicle:GetThrottle()
+function ENT:HandleSounds( vehicle, rpm, throttle )
 
-	self._smTHR = self._smTHR and self._smTHR + (throttle - self._smTHR) * RealFrameTime() or 0
+	local rotor_load = vehicle:GetThrustStrenght()
 
-	local thrust = vehicle:GetThrustStrenght() * self._smTHR
+	local mul = math.max( rpm - 470, 0 ) / 330
 
-	local volume1 = math.max(thrust,0) * self._smTHR ^ 3
-	local volume2 = math.max(-thrust,0) * self._smTHR ^ 3
+	local volume = mul * 0.6 + rotor_load * 0.4 * throttle
 
-	local pitch = math.max(95 + math.abs( thrust ) * 30,100)
+	local pitch = 80 + mul * 30 - rotor_load * 20 * throttle
 
-	self._RotorSound1:ChangeVolume( volume1, 1 )
+	local pitch2 = 100 - rotor_load * 50 * throttle
+	local volume2 = math.max(-rotor_load,0) * mul * throttle ^ 2
+
+	self._RotorSound1:ChangeVolume( volume, 2 )
 	self._RotorSound1:ChangePitch( pitch, 0.5 )
 
-	self._RotorSound2:ChangeVolume( volume2, 1 )
-	self._RotorSound2:ChangePitch( pitch, 0.5 )
+	self._RotorSound2:ChangeVolume( volume2, 0.5 )
+	self._RotorSound2:ChangePitch( pitch2, 0 )
 end
 
 function ENT:Think()
@@ -91,8 +92,14 @@ function ENT:Think()
 		self:OnActiveChanged( Active )
 	end
 
+	local Throttle = vehicle:GetThrottle()
+
+	local TargetRPM = vehicle:GetEngineActive() and (300 + Throttle * 500) or 0
+
+	vehicle.RotorRPM = vehicle.RotorRPM and vehicle.RotorRPM + (TargetRPM - vehicle.RotorRPM) * RealFrameTime() or 0
+
 	if Active then
-		self:HandleSounds( vehicle )
+		self:HandleSounds( vehicle, vehicle.RotorRPM, Throttle )
 	end
 end
 
