@@ -6,6 +6,31 @@ include("shared.lua")
 include("sv_wheels.lua")
 include("sv_landinggear.lua")
 
+function ENT:AddEngine( pos )
+	local Engine = ents.Create( "lvs_fighterplane_engine" )
+
+	if not IsValid( Engine ) then
+		self:Remove()
+
+		print("LVS: Failed to create engine point entity. Vehicle terminated.")
+
+		return
+	end
+
+	Engine:SetPos( self:LocalToWorld( pos ) )
+	Engine:SetAngles( self:GetAngles() )
+	Engine:Spawn()
+	Engine:Activate()
+	Engine:SetParent( self )
+	Engine:SetBase( self )
+
+	self:DeleteOnRemove( Engine )
+
+	self:TransferCPPI( Engine )
+
+	return Engine
+end
+
 function ENT:OnCreateAI()
 	self:StartEngine()
 	self.COL_GROUP_OLD = self:GetCollisionGroup()
