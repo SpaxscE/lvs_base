@@ -97,6 +97,7 @@ function ENT:Think()
 end
 
 function ENT:OnRemove()
+	self:StopSounds()
 end
 
 function ENT:Draw()
