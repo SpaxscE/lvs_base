@@ -54,12 +54,20 @@ function ENT:PlayerDirectInput( ply, cmd )
 	local KeyPitchUp = ply:lvsKeyDown( "+PITCH" )
 	local KeyPitchDown = ply:lvsKeyDown( "-PITCH" )
 
+	local MouseX = cmd:GetMouseX()
 	local MouseY = cmd:GetMouseY()
+
+	if ply:lvsKeyDown( "FREELOOK" ) then
+		MouseX = 0
+		MouseY = 0
+	else
+		ply:SetEyeAngles( Angle(0,90,0) )
+	end
 
 	if KeyPitchDown then MouseY = 10 end
 	if KeyPitchUp then MouseY = -10 end
 
-	local Input = Vector( cmd:GetMouseX(), MouseY * 4, 0 ) * 0.25
+	local Input = Vector( MouseX, MouseY * 4, 0 ) * 0.25
 
 	local Cur = self:GetSteer()
 

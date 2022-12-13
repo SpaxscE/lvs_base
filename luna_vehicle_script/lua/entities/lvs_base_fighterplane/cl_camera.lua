@@ -11,6 +11,10 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 
 	if not pod:GetThirdPersonMode() then
 
+		if FreeLook then
+			view.angles = pod:LocalToWorldAngles( ply:EyeAngles() )
+		end
+
 		local velL = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
 
 		local Dividor = math.abs( velL.x )
