@@ -11,6 +11,20 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 			cmd = "lvs_exit"
 		},
 		{
+			name = "VIEWDIST",
+			category = "Misc",
+			name_menu = "Enable Mouse-Wheel Set-Camera-Distance",
+			default = MOUSE_MIDDLE,
+			cmd = "lvs_viewzoom"
+		},
+		{
+			name = "THIRDPERSON",
+			category = "Misc",
+			name_menu = "Toggle Thirdperson",
+			default = "+duck",
+			cmd = "lvs_thirdperson"
+		},
+		{
 			name = "FREELOOK",
 			category = "Misc",
 			name_menu = "Freelook (Hold)",
