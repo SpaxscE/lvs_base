@@ -103,7 +103,7 @@ function ENT:CalcAero( phys, deltatime )
 	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75 * Stability + StallYaw * InvStability
 	local Roll = math.Clamp( self:Sign( Steer.x ) * (math.abs( Steer.x ) ^ 1.5) * 22,-1,1) * self.TurnRateRoll * 12 * Stability
 
-	self:HandleLandingGear()
+	self:HandleLandingGear( deltatime )
 	self:SetWheelSteer( Steer.z * 45 )
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )

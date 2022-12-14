@@ -1,7 +1,5 @@
 
-function ENT:HandleLandingGear()
-	local Rate = FrameTime()
-
+function ENT:HandleLandingGear( Rate )
 	local EnableBrakes = self:GetThrottle() <= 0
 
 	local Cur = self:GetLandingGear()
