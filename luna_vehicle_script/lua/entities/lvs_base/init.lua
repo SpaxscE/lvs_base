@@ -11,7 +11,7 @@ include("sv_cppi.lua")
 include("sv_pod.lua")
 include("sv_engine.lua")
 include("sv_physics.lua")
-include("sv_bullets.lua")
+include("sv_weapons.lua")
 
 function ENT:SpawnFunction( ply, tr, ClassName )
 

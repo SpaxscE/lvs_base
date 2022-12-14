@@ -7,7 +7,6 @@ include("sv_wheels.lua")
 include("sv_landinggear.lua")
 include("sv_components.lua")
 include("sv_ai.lua")
-include("sv_weapons.lua")
 
 function ENT:OnCreateAI()
 	self:StartEngine()
