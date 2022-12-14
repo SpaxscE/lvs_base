@@ -58,6 +58,14 @@ hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 end )
 
 if CLIENT then
+	hook.Add( "PlayerBindPress", "!!!!_LVS_HideZOOM", function( ply, bind, pressed )
+		if not ply.lvsGetVehicle or not IsValid( ply:lvsGetVehicle() ) then return end
+
+		if string.find( bind, "+zoom" ) then
+			return true
+		end
+	end )
+
 	hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 		local ply = LocalPlayer()
 

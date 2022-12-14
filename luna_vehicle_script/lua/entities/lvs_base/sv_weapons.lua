@@ -1,11 +1,21 @@
 
+
 function ENT:SetNextPrimary( delay )
 	self.NextPrimary = CurTime() + delay
+end
+
+function ENT:SetNextSecondary( delay )
+	self.NextSecondary = CurTime() + delay
 end
 
 function ENT:CanPrimaryAttack()
 	self.NextPrimary = self.NextPrimary or 0
 	return self.NextPrimary < CurTime()
+end
+
+function ENT:CanSecondaryAttack()
+	self.NextSecondary = self.NextSecondary or 0
+	return self.NextSecondary < CurTime()
 end
 
 function ENT:PrimaryAttack()
@@ -17,7 +27,7 @@ function ENT:PrimaryAttack()
 
 	local Mirror = self.MirrorPrimary and -1 or 1
 
-	self:EmitSound("test.wav",75,100 + math.Rand(-5,5),1,CHAN_WEAPON)
+	self:EmitSound("^test_dist.wav",105,105 + math.cos( CurTime() ) * 10 + math.Rand(-5,5),1,CHAN_WEAPON)
 
 	local bullet = {}
 	bullet.Num 	= 1
@@ -34,6 +44,12 @@ function ENT:PrimaryAttack()
 	end
 
 	self:FireBullet( bullet )
+end
+
+function ENT:SecondaryAttack()
+	if not self:CanSecondaryAttack() then return end
+	
+	self:SetNextSecondary( 0.15 )
 end
 
 function ENT:FireBullet( data )
