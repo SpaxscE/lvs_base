@@ -47,6 +47,8 @@ function ENT:SetupDataTables()
 end
 
 function ENT:PlayerDirectInput( ply, cmd )
+	local Pod = self:GetDriverSeat()
+
 	local Delta = FrameTime()
 
 	local KeyLeft = ply:lvsKeyDown( "-ROLL" )
@@ -57,7 +59,7 @@ function ENT:PlayerDirectInput( ply, cmd )
 	local MouseX = cmd:GetMouseX()
 	local MouseY = cmd:GetMouseY()
 
-	if ply:lvsKeyDown( "FREELOOK" ) then
+	if ply:lvsKeyDown( "FREELOOK" ) and not Pod:GetThirdPersonMode() then
 		MouseX = 0
 		MouseY = 0
 	else
@@ -174,6 +176,10 @@ function ENT:StartCommand( ply, cmd )
 				self:ToggleLandingGear()
 				self:PhysWake()
 			end
+		end
+
+		if ply:KeyDown( IN_ATTACK ) then
+			self:PrimaryAttack()
 		end
 	end
 
