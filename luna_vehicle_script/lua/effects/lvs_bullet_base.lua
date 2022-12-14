@@ -1,6 +1,6 @@
 
 EFFECT.MatBeam = Material( "effects/lvs_base/spark" )
-EFFECT.MatSprite = Material( "effects/lvs_base/glow" )
+EFFECT.MatSprite = Material( "sprites/light_glow02_add" )
 
 function EFFECT:Init( data )
 	local pos  = data:GetOrigin()
@@ -12,28 +12,26 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Think()
-	if not LVS._ActiveBullets then return false end
-
-	local bullet = LVS._ActiveBullets[ self.ID ]
-
-	if not bullet then return false end
+	if not LVS:GetBullet( self.ID ) then return false end
 
 	return true
 end
 
 function EFFECT:Render()
-	local bullet = LVS._ActiveBullets[ self.ID ]
+	local bullet = LVS:GetBullet( self.ID )
 
-	local endpos = bullet.curpos or bullet.Src
-	local dir = bullet.Dir
+	local endpos = bullet:GetPos()
+	local dir = bullet:GetDir()
 
-	local len = 2500 * math.min((CurTime() - bullet.StartTime) * 16,1)
+	local len = 2500 * bullet:GetLength()
 
 	render.SetMaterial( self.MatBeam )
 
 	render.DrawBeam( endpos - dir * len, endpos + dir * len * 0.1, 10, 1, 0, Color( 255, 100, 0, 255 ) )
+	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1,  7, 1, 0, Color( 255, 225, 0, 255 ) )
+	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1, 5, 1, 0, Color( 255, 225, 0, 255 ) )
+	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1, 5, 1, 0, Color( 255, 255, 0, 255 ) )
 
-	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1,  7, 1, 0, Color( 255, 200, 0, 255 ) )
-	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1, 5, 1, 0, Color( 255, 200, 0, 255 ) )
-	render.DrawBeam( endpos - dir * len * 0.5, endpos + dir * len * 0.1, 5, 1, 0, Color( 255, 255, 00, 255 ) )
+	render.SetMaterial( self.MatSprite ) 
+	render.DrawSprite( endpos, 400, 400, Color( 125, 50, 0, 255 ) )
 end

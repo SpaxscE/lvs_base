@@ -11,6 +11,7 @@ include("sv_cppi.lua")
 include("sv_pod.lua")
 include("sv_engine.lua")
 include("sv_physics.lua")
+include("sv_bullets.lua")
 
 function ENT:SpawnFunction( ply, tr, ClassName )
 
@@ -150,12 +151,4 @@ function ENT:GetCrosshairFilterEnts()
 	end
 
 	return self.CrosshairFilterEnts
-end
-
-function ENT:FireBullet( data )
-	data.Entity = self
-	data.Velocity = data.Velocity + self:GetVelocity():Length()
-	data.SrcEntity = self:WorldToLocal( data.Src )
-
-	LVS:FireBullet( data )
 end

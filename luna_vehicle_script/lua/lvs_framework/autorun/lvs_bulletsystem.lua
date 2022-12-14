@@ -1,31 +1,69 @@
 
 LVS._ActiveBullets = {}
 
+function LVS:GetBullet( index )
+	if not LVS._ActiveBullets then return end
+
+	return LVS._ActiveBullets[ index ]
+end
+
+local NewBullet = {}
+NewBullet.__index = NewBullet 
+
+function NewBullet:SetPos( pos )
+	self.curpos = pos
+end
+
+function NewBullet:GetPos()
+	if not self.curpos then return self.Src end
+
+	return self.curpos
+end
+
+function NewBullet:GetDir()
+	return self.Dir or Vector(0,0,0)
+end
+
+function NewBullet:GetTimeAlive()
+	return CurTime() - self.StartTime
+end
+
+function NewBullet:GetSpawnTime()
+	if SERVER then
+		return self.StartTime
+	else
+		return self.StartTimeCL
+	end
+end
+
+function NewBullet:GetLength()
+	return math.min((CurTime() - self:GetSpawnTime()) * 14,1)
+end
+
 local function HandleBullets()
 	local T = CurTime()
 	local FT = FrameTime()
 
 	for id, bullet in pairs( LVS._ActiveBullets ) do
-		if bullet.StartTime + 5 < T then
+		if bullet:GetSpawnTime() + 5 < T then
 			LVS._ActiveBullets[ id ] = nil
-
 			continue
 		end
 
 		local start = bullet.Src
 		local dir = bullet.Dir
-		local pos = dir * (T - bullet.StartTime) * bullet.Velocity
+		local pos = dir * bullet:GetTimeAlive() * bullet.Velocity
+		local mul = bullet:GetLength()
 
 		if SERVER then
-			LVS._ActiveBullets[ id ].curpos = start + pos
+			bullet:SetPos( start + pos )
 		else
 			if IsValid( bullet.Entity ) then
-				local mul = math.min( (T - bullet.StartTimeCL),1)
 				local inv = 1 - mul
 
-				LVS._ActiveBullets[ id ].curpos = start * mul + bullet.Entity:LocalToWorld( bullet.SrcEntity ) * inv + pos
+				bullet:SetPos( start * mul + bullet.Entity:LocalToWorld( bullet.SrcEntity ) * inv + pos )
 			else
-				LVS._ActiveBullets[ id ].curpos = start + pos
+				bullet:SetPos( start + pos )
 			end
 		end
 
@@ -43,9 +81,56 @@ local function HandleBullets()
 			mask = MASK_SHOT_HULL
 		} )
 
+		if CLIENT then
+			if mul == 1 then
+				local effectdata = EffectData()
+				effectdata:SetOrigin( bullet:GetPos() )
+				effectdata:SetFlags( 2 )
+				util.Effect( "TracerSound", effectdata )
+			end
+
+			local traceWater = util.TraceLine( {
+				start = start + pos - dir,
+				endpos = start + pos + dir * bullet.Velocity * FT,
+				filter = Filter,
+				mask = MASK_WATER,
+			} )
+
+			if traceWater.Hit then
+				if traceWater.Fraction > 0 then
+					local effectdata = EffectData()
+					effectdata:SetOrigin( traceWater.HitPos )
+					effectdata:SetScale( 10 * bullet.HullSize * 0.1 )
+					effectdata:SetFlags( 2 )
+					util.Effect( "WaterSplash", effectdata, true, true )
+				end
+			end
+		end
+
 		if trace.Hit then
-			if SERVER and bullet.Callback then
-				bullet.Callback( bullet.Attacker, trace, dmginfo )
+			if SERVER then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( bullet.Damage )
+				dmginfo:SetAttacker( bullet.Attacker )
+				dmginfo:SetDamageType( DMG_BULLET )
+				dmginfo:SetInflictor( bullet.Entity ) 
+				dmginfo:SetDamagePosition( trace.HitPos ) 
+				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
+
+				if bullet.Callback then
+					bullet.Callback( bullet.Attacker, trace, dmginfo )
+				end
+
+				trace.Entity:TakeDamageInfo( dmginfo )
+
+			else
+				local effectdata = EffectData()
+				effectdata:SetOrigin( trace.HitPos )
+				effectdata:SetEntity( trace.Entity )
+				effectdata:SetStart( start )
+				effectdata:SetNormal( trace.HitNormal )
+				effectdata:SetSurfaceProp( trace.SurfaceProps )
+				util.Effect( "Impact", effectdata )
 			end
 
 			LVS._ActiveBullets[ id ] = nil
@@ -62,6 +147,9 @@ if SERVER then
 
 	function LVS:FireBullet( data )
 		local bullet = {}
+
+		setmetatable( bullet, NewBullet )
+
 		bullet.TracerName = data.TracerName or "lvs_bullet_base"
 		bullet.Src = data.Src or Vector(0,0,0)
 		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or Vector(0,0,0)) * 0.5):GetNormalized()
@@ -69,6 +157,7 @@ if SERVER then
 		bullet.HullSize = data.HullSize or 5
 		bullet.Velocity = data.Velocity or 2500
 		bullet.Attacker = data.Attacker or NULL
+		bullet.Damage = data.Damage or 10
 		bullet.Entity = data.Entity
 		bullet.Filter = data.Filter or bullet.Entity
 		bullet.SrcEntity = data.SrcEntity or Vector(0,0,0)
@@ -95,6 +184,9 @@ if SERVER then
 else
 	net.Receive( "lvs_fire_bullet", function( length )
 		local bullet = {}
+
+		setmetatable( bullet, NewBullet )
+
 		bullet.TracerName = net.ReadString()
 		bullet.Src = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Dir = net.ReadAngle():Forward()
