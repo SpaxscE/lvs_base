@@ -32,7 +32,7 @@ function NewBullet:GetSpawnTime()
 	if SERVER then
 		return self.StartTime
 	else
-		return self.StartTimeCL
+		return self.StartTimeCL -- time when the bullet is received on client
 	end
 end
 
@@ -44,8 +44,8 @@ local function HandleBullets()
 	local T = CurTime()
 	local FT = FrameTime()
 
-	for id, bullet in pairs( LVS._ActiveBullets ) do
-		if bullet:GetSpawnTime() + 5 < T then
+	for id, bullet in pairs( LVS._ActiveBullets ) do -- loop through bullet table
+		if bullet:GetSpawnTime() + 5 < T then -- destroy all bullets older than 5 seconds
 			LVS._ActiveBullets[ id ] = nil
 			continue
 		end
@@ -55,12 +55,15 @@ local function HandleBullets()
 		local pos = dir * bullet:GetTimeAlive() * bullet.Velocity
 		local mul = bullet:GetLength()
 
+		-- startpos, direction and curtime of creation is networked to client. 
+		-- The Bullet position is simulated by doing startpos + dir * time * velocity
 		if SERVER then
 			bullet:SetPos( start + pos )
 		else
-			if IsValid( bullet.Entity ) then
+			if IsValid( bullet.Entity ) then -- if the vehicle entity is valid...
 				local inv = 1 - mul
 
+				-- ..."parent" the bullet to the vehicle for a very short of time. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
 				bullet:SetPos( start * mul + bullet.Entity:LocalToWorld( bullet.SrcEntity ) * inv + pos )
 			else
 				bullet:SetPos( start + pos )
@@ -69,7 +72,7 @@ local function HandleBullets()
 
 		local Filter
 		if IsValid( bullet.Entity ) then
-			Filter = bullet.Entity:GetCrosshairFilterEnts()
+			Filter = bullet.Entity:GetCrosshairFilterEnts() -- auto filter all entities that are attached to the vehicle
 		end
 
 		local trace = util.TraceHull( {
@@ -83,6 +86,7 @@ local function HandleBullets()
 
 		if CLIENT then
 			if mul == 1 then
+				-- whats more expensive, spamming this effect or doing distance checks to localplayer for each bullet think? Alternative method?
 				local effectdata = EffectData()
 				effectdata:SetOrigin( bullet:GetPos() )
 				effectdata:SetFlags( 2 )
@@ -124,6 +128,8 @@ local function HandleBullets()
 				trace.Entity:TakeDamageInfo( dmginfo )
 
 			else
+				-- hulltrace doesnt hit the wall due to its hullsize...
+				-- so this needs an extra trace line
 				local traceFx = util.TraceLine( {
 					start = start + pos - dir,
 					endpos = start + pos + dir * bullet.Velocity * FT,
@@ -140,7 +146,7 @@ local function HandleBullets()
 				util.Effect( "Impact", effectdata )
 			end
 
-			LVS._ActiveBullets[ id ] = nil
+			LVS._ActiveBullets[ id ] = nil -- delete bullet if trace.hit
 		end
 	end
 end
@@ -148,7 +154,7 @@ end
 if SERVER then
 	util.AddNetworkString( "lvs_fire_bullet" )
 
-	hook.Add( "Tick", "!!!!lvs_bullet_handler", function( ply, ent )
+	hook.Add( "Tick", "!!!!lvs_bullet_handler", function( ply, ent ) -- from what i understand, think can "skip" on lag, while tick still simulates all steps
 		HandleBullets()
 	end )
 
@@ -171,6 +177,8 @@ if SERVER then
 		bullet.Callback = data.Callback
 		bullet.StartTime = CurTime()
 
+		-- net.WriteVector isnt accurate enough. Instead we split into 3 floats per vector
+		-- i dont know how this can be optimized while achieving the same?
 		net.Start( "lvs_fire_bullet", true )
 			net.WriteString( bullet.TracerName )
 			net.WriteFloat( bullet.Src.x )
