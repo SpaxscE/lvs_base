@@ -124,8 +124,15 @@ local function HandleBullets()
 				trace.Entity:TakeDamageInfo( dmginfo )
 
 			else
+				local traceFx = util.TraceLine( {
+					start = start + pos - dir,
+					endpos = start + pos + dir * bullet.Velocity * FT,
+					filter = Filter,
+					mask = MASK_SHOT_HULL
+				} )
+
 				local effectdata = EffectData()
-				effectdata:SetOrigin( trace.HitPos )
+				effectdata:SetOrigin( traceFx.HitPos )
 				effectdata:SetEntity( trace.Entity )
 				effectdata:SetStart( start )
 				effectdata:SetNormal( trace.HitNormal )
@@ -164,7 +171,7 @@ if SERVER then
 		bullet.Callback = data.Callback
 		bullet.StartTime = CurTime()
 
-		net.Start( "lvs_fire_bullet" )
+		net.Start( "lvs_fire_bullet", true )
 			net.WriteString( bullet.TracerName )
 			net.WriteFloat( bullet.Src.x )
 			net.WriteFloat( bullet.Src.y )
