@@ -184,7 +184,7 @@ if SERVER then
 			net.WriteFloat( bullet.SrcEntity.y )
 			net.WriteFloat( bullet.SrcEntity.z )
 			net.WriteFloat( bullet.Velocity )
-		net.Broadcast()
+		net.SendPVS( bullet.Src )
 
 		table.insert(LVS._ActiveBullets, bullet )
 	end
