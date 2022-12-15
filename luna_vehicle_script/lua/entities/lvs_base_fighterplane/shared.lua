@@ -69,7 +69,7 @@ function ENT:PlayerDirectInput( ply, cmd )
 	if KeyPitchDown then MouseY = 10 end
 	if KeyPitchUp then MouseY = -10 end
 
-	local Input = Vector( MouseX, MouseY * 4, 0 ) * 0.25
+	local Input = Vector( MouseX * 0.666, MouseY, 0 )
 
 	local Cur = self:GetSteer()
 
