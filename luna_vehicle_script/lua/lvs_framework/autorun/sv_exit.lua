@@ -10,6 +10,10 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 
 	if not IsValid( Vehicle ) then return end
 
+	if not LVS.FreezeTeams:GetBool() then
+		ply:lvsSetAITeam( Vehicle:GetAITEAM() )
+	end
+
 	ply._lvsNextUse = CurTime() + 0.25
 
 	local Center = Vehicle:LocalToWorld( Vehicle:OBBCenter() )
