@@ -100,8 +100,8 @@ function ENT:CalcAero( phys, deltatime )
 
 	local Steer = self:GetSteer()
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 3 * Stability - StallPitch * InvStability
-	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw * 0.75 * Stability + StallYaw * InvStability
-	local Roll = math.Clamp( self:Sign( Steer.x ) * (math.abs( Steer.x ) ^ 1.5) * 22,-1,1) * self.TurnRateRoll * 12 * Stability
+	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw * Stability + StallYaw * InvStability
+	local Roll = math.Clamp(Steer.x * 1.5,-1,1) * self.TurnRateRoll * 12 * Stability
 
 	self:HandleLandingGear( deltatime )
 	self:SetWheelSteer( Steer.z * 45 )
