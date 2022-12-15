@@ -9,6 +9,8 @@ function ENT:OnSpawn( PObj )
 	PObj:SetMass( 5000 )
 
 	self:AddDriverSeat( Vector(32,0,67.5), Angle(0,-90,0) )
+	self:AddPassengerSeat( Vector(32,250,67.5), Angle(0,-90,0) )
+	self:AddPassengerSeat( Vector(32,-250,67.5), Angle(0,-90,0) )
 
 	self:AddWheel( Vector(78.12,55,15.16), 13, 600 )
 	self:AddWheel( Vector(78.12,-55,15.16), 13, 600 )
