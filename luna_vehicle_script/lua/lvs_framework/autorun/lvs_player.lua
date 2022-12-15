@@ -1,5 +1,9 @@
 local meta = FindMetaTable( "Player" )
 
+function meta:lvsGetAITeam()
+	return self:GetNWInt( "lvsAITeam", LVS.PlayerDefaultTeam:GetInt() )
+end
+
 function meta:lvsGetVehicle()
 	if not self:InVehicle() then return NULL end
 
@@ -140,6 +144,23 @@ function meta:lvsSetInput( name, value )
 	end
 
 	self._lvsKeyDown[ name ] = value
+end
+
+function meta:lvsSetAITeam( nTeam )
+	nTeam = nTeam or LVS.PlayerDefaultTeam:GetInt()
+
+	local TeamText = {
+		[0] = "FRIENDLY TO EVERYONE",
+		[1] = "Team 1",
+		[2] = "Team 2",
+		[3] = "HOSTILE TO EVERYONE",
+	}
+
+	if self:lvsGetAITeam() ~= nTeam then
+		self:PrintMessage( HUD_PRINTTALK, "[LVS] Your AI-Team has been updated to: "..TeamText[ nTeam ] )
+	end
+
+	self:SetNWInt( "lvsAITeam", nTeam )
 end
 
 hook.Add( "PlayerButtonUp", "!!!lvsButtonUp", function( ply, button )
