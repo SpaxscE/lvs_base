@@ -120,7 +120,15 @@ function ENT:Use( ply )
 end
 
 function ENT:OnTakeDamage( dmginfo )
+	local Attacker = dmginfo:GetAttacker() 
+
+	if IsValid( Attacker ) and Attacker:IsPlayer() then
+		net.Start( "lvs_hitmarker" )
+		net.Send( Attacker )
+	end
+
 	self:TakePhysicsDamage( dmginfo )
+	self:OnAITakeDamage( dmginfo )
 end
 
 function ENT:UpdateTransmitState() 

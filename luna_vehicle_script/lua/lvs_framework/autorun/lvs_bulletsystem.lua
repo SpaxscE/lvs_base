@@ -63,7 +63,7 @@ local function HandleBullets()
 			if IsValid( bullet.Entity ) then -- if the vehicle entity is valid...
 				local inv = 1 - mul
 
-				-- ..."parent" the bullet to the vehicle for a very short of time. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
+				-- ..."parent" the bullet to the vehicle for a very short time. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
 				bullet:SetPos( start * mul + bullet.Entity:LocalToWorld( bullet.SrcEntity ) * inv + pos )
 			else
 				bullet:SetPos( start + pos )
@@ -137,16 +137,18 @@ local function HandleBullets()
 					mask = MASK_SHOT_HULL
 				} )
 
-				local effectdata = EffectData()
-				effectdata:SetOrigin( traceFx.HitPos )
-				effectdata:SetEntity( trace.Entity )
-				effectdata:SetStart( start )
-				effectdata:SetNormal( trace.HitNormal )
-				effectdata:SetSurfaceProp( trace.SurfaceProps )
-				util.Effect( "Impact", effectdata )
+				if not traceFx.HitSky then
+					local effectdata = EffectData()
+					effectdata:SetOrigin( traceFx.HitPos )
+					effectdata:SetEntity( trace.Entity )
+					effectdata:SetStart( start )
+					effectdata:SetNormal( trace.HitNormal )
+					effectdata:SetSurfaceProp( trace.SurfaceProps )
+					util.Effect( "Impact", effectdata )
+				end
 			end
 
-			LVS._ActiveBullets[ id ] = nil -- delete bullet if trace.hit
+			LVS._ActiveBullets[ id ] = nil
 		end
 	end
 end

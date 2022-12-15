@@ -36,6 +36,9 @@ function ENT:OnToggleAI( name, old, new)
 	end
 end
 
+function ENT:OnAITakeDamage( dmginfo )
+end
+
 function ENT:AITargetInFront( ent, range )
 	if not IsValid( ent ) then return false end
 	if not range then range = 45 end
@@ -71,20 +74,18 @@ function ENT:AIGetTarget()
 
 	if MyTeam == 0 then self._LastAITarget = NULL return NULL end
 
-	local players = player.GetAll()
-
 	local ClosestTarget = NULL
 	local TargetDistance = 60000
 
 	if not LVS.IgnorePlayers then
-		for _, v in pairs( player.GetAll() ) do
-			if not v:Alive() then continue end
+		for _, ply in pairs( player.GetAll() ) do
+			if not ply:Alive() then continue end
 
-			local Dist = (v:GetPos() - MyPos):Length()
+			local Dist = (ply:GetPos() - MyPos):Length()
 
 			if Dist > TargetDistance then continue end
 
-			local Veh = v:lvsGetVehicle()
+			local Veh = ply:lvsGetVehicle()
 
 			if IsValid( Veh ) then
 				if self:AICanSee( Veh ) and Veh ~= self then
@@ -93,16 +94,16 @@ function ENT:AIGetTarget()
 					if HisTeam == 0 then continue end
 
 					if HisTeam ~= MyTeam or HisTeam == 3 then
-						ClosestTarget = v
+						ClosestTarget = Veh
 						TargetDistance = Dist
 					end
 				end
 			else
-				local HisTeam = v:lvsGetAITeam()
-				if not v:IsLineOfSightClear( self ) or HisTeam == 0 then continue end
+				local HisTeam = ply:lvsGetAITeam()
+				if not ply:IsLineOfSightClear( self ) or HisTeam == 0 then continue end
 
 				if HisTeam ~= MyTeam or HisTeam == 3 then
-					ClosestTarget = v
+					ClosestTarget = ply
 					TargetDistance = Dist
 				end
 			end
@@ -110,17 +111,16 @@ function ENT:AIGetTarget()
 	end
 
 	if not LVS.IgnoreNPCs then
-		for _, v in pairs( LVS:GetNPCs() ) do
-
-			local HisTeam = LVS:GetNPCRelationship( v:GetClass() )
+		for _, npc in pairs( LVS:GetNPCs() ) do
+			local HisTeam = LVS:GetNPCRelationship( npc:GetClass() )
 
 			if HisTeam == 0 or (HisTeam == MyTeam and HisTeam ~= 3) then continue end
 
-			local Dist = (v:GetPos() - MyPos):Length()
+			local Dist = (npc:GetPos() - MyPos):Length()
 
-			if Dist > TargetDistance or not self:AICanSee( v ) then continue end
+			if Dist > TargetDistance or not self:AICanSee( npc ) then continue end
 
-			ClosestTarget = v
+			ClosestTarget = npc
 			TargetDistance = Dist
 		end
 	end

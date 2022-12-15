@@ -25,6 +25,8 @@ function ENT:LVSHudPaint( X, Y, ply )
 	else
 		self:LVSHudPaintDirectInput( HitPlane )
 	end
+
+	self:LVSPaintHitMarker( HitPlane )
 end
 
 function ENT:LVSHudPaintInfoText( X, Y, ply )
@@ -70,5 +72,46 @@ function ENT:LVSHudPaintMouseAim( HitPlane, HitPilot, FreeLook )
 		-- shadow
 		surface.SetDrawColor( 0, 0, 0, 50 )
 		surface.DrawLine( HitPlane.x + Dir.x * 5 + 1, HitPlane.y + Dir.y * 5 + 1, HitPilot.x - Dir.x * 20+ 1, HitPilot.y- Dir.y * 20 + 1 )
+	end
+end
+
+function ENT:LVSPaintHitMarker( scr )
+	local aV = math.sin( math.rad( math.sin( math.rad( math.max(((self:GetHitMarker() - CurTime()) / 0.15) * 90,0) ) ) * 90 ) )
+	if aV > 0.01 then
+		local Start = 20 + (1 - aV ^ 2) * 20
+		local dst = 10
+
+		surface.SetDrawColor( 255, 255, 0, 255 )
+		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start, scr.y + Start - dst )
+		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start - dst, scr.y + Start )
+
+		surface.DrawLine( scr.x + Start, scr.y - Start, scr.x + Start, scr.y - Start + dst )
+		surface.DrawLine( scr.x + Start, scr.y - Start, scr.x + Start - dst, scr.y - Start )
+
+		surface.DrawLine( scr.x - Start, scr.y + Start, scr.x - Start, scr.y + Start - dst )
+		surface.DrawLine( scr.x - Start, scr.y + Start, scr.x - Start + dst, scr.y + Start )
+
+		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - Start, scr.y - Start + dst )
+		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - Start + dst, scr.y - Start )
+	end
+
+	local aV = math.sin( math.rad( math.sin( math.rad( math.max(((self:GetKillMarker() - CurTime()) / 0.2) * 90,0) ) ) * 90 ) )
+	if aV > 0.01 then
+		surface.SetDrawColor( 255, 255, 255, 15 * (aV ^ 4) )
+		surface.DrawRect( 0, 0, ScrW(), ScrH() )
+
+		local Start = 10 + aV * 40
+		local End = 20 + aV * 45
+		surface.SetDrawColor( 255, 0, 0, 255 )
+		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + End, scr.y + End )
+		surface.DrawLine( scr.x - Start, scr.y + Start, scr.x - End, scr.y + End ) 
+		surface.DrawLine( scr.x + Start, scr.y - Start, scr.x + End, scr.y - End )
+		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - End, scr.y - End ) 
+
+		draw.NoTexture()
+		surface.DrawTexturedRectRotated( scr.x + Start, scr.y + Start, 5, 20, 45 )
+		surface.DrawTexturedRectRotated( scr.x - Start, scr.y + Start, 20, 5, 45 )
+		surface.DrawTexturedRectRotated(  scr.x + Start, scr.y - Start, 20, 5, 45 )
+		surface.DrawTexturedRectRotated( scr.x - Start, scr.y - Start, 5, 20, 45 )
 	end
 end

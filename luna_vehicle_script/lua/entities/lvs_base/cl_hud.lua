@@ -91,3 +91,30 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 		end
 	end
 end
+
+function ENT:HitMarker( LastHitMarker )
+	self.LastHitMarker = LastHitMarker
+
+	local ply = LocalPlayer()
+	ply:EmitSound( table.Random( {"physics/metal/metal_sheet_impact_bullet2.wav","physics/metal/metal_sheet_impact_hard2.wav","physics/metal/metal_sheet_impact_hard6.wav",} ), 140, 140, 0.3, CHAN_ITEM2 )
+end
+
+function ENT:GetHitMarker()
+	return self.LastHitMarker or 0
+end
+
+function ENT:KillMarker( LastKillMarker )
+	self.LastKillMarker = LastKillMarker
+
+	local ply = LocalPlayer()
+
+	--util.ScreenShake( ply:GetPos(), 4, 2, 2, 50000 )
+
+	--ply:EmitSound( table.Random( {"lfs/plane_preexp1.ogg","lfs/plane_preexp3.ogg"} ), 140, 100, 0.5, CHAN_WEAPON )
+
+	ply:EmitSound( "physics/metal/metal_solid_impact_bullet4.wav", 140, 255, 0.3, CHAN_VOICE )
+end
+
+function ENT:GetKillMarker()
+	return self.LastKillMarker or 0
+end

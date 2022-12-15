@@ -10,7 +10,8 @@ end
 function ENT:RunAI()
 	local RangerLength = 15000
 	local mySpeed = self:GetVelocity():Length()
-	local MinDist = 600 + mySpeed * 2
+	local MinDist = 600 + mySpeed
+
 	local StartPos = self:LocalToWorld( self:OBBCenter() )
 
 	local TraceFilter = self:GetCrosshairFilterEnts()
@@ -27,10 +28,9 @@ function ENT:RunAI()
 	local FrontUp = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + self:LocalToWorldAngles( Angle(-20,0,0) ):Forward() * RangerLength } )
 	local FrontDown = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + self:LocalToWorldAngles( Angle(20,0,0) ):Forward() * RangerLength } )
 
-	local Up = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + self:GetUp() * RangerLength } )
-	local Down = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos - self:GetUp() * RangerLength } )
-
-	local Down2 = util.TraceLine( { start = self:LocalToWorld( Vector(0,0,100) ), filter = TraceFilter, endpos = StartPos + Vector(0,0,-RangerLength) } )
+	local TraceForward = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + self:GetForward() * RangerLength } )
+	local TraceDown = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + Vector(0,0,-RangerLength) } )
+	local TraceUp = util.TraceLine( { start = StartPos, filter = TraceFilter, endpos = StartPos + Vector(0,0,RangerLength) } )
 
 	local cAvoid = Vector(0,0,0)
 
@@ -64,34 +64,42 @@ function ENT:RunAI()
 	local FUp = FrontUp.HitPos + FrontUp.HitNormal * MinDist
 	local FDp = FrontDown.HitPos + FrontDown.HitNormal * MinDist
 
-	local Up = Up.HitPos + Up.HitNormal * MinDist
-	local Dp = Down.HitPos + Down.HitNormal * MinDist
+	local Up = TraceUp.HitPos + TraceUp.HitNormal * MinDist
+	local Dp = TraceDown.HitPos + TraceDown.HitNormal * MinDist
 
 	local TargetPos = (FLp+FRp+FL2p+FR2p+FL3p+FR3p+FUp+FDp+Up+Dp) / 10
 
-	local alt = (self:GetPos() - Down2.HitPos):Length()
+	local alt = (StartPos - TraceDown.HitPos):Length()
+	local ceiling = (StartPos - TraceUp.HitPos):Length()
 
-	if alt < MinDist then 
-		self:SetThrottle( 1 )
+	local Throttle = math.min( (StartPos - TraceForward.HitPos):Length() / mySpeed, 1 )
 
-		if self:GetStability() < 0.4 then
-			self:SetThrottle( 1 )
-			TargetPos.z = self:GetPos().z + 2000
+	if alt < 600 or ceiling < 600 then
+		if ceiling < 600 then
+			Throttle = 0
+		else
+			Throttle = 1
+
+			if self:GetStability() < 0.5 then
+				TargetPos.z = StartPos.z + 2000
+			end
 		end
 	else
-		if self:GetStability() < 0.3 then
-			self:SetThrottle( 1 )
-			TargetPos.z = self:GetPos().z + 600
+		if self:GetStability() < 0.5 then
+			TargetPos.z = StartPos.z + 600
 		else
 			if alt > mySpeed then
-				local Target = self:AIGetTarget()
+				local Target = self._LastAITarget
+
+				if not IsValid( self._LastAITarget ) or not self:AITargetInFront( self._LastAITarget, 135 ) or not self:AICanSee( self._LastAITarget ) then
+					Target = self:AIGetTarget()
+				end
 
 				if IsValid( Target ) then
 					if self:AITargetInFront( Target, 65 ) then
 						TargetPos = Target:GetPos() + cAvoid * 8 + Target:GetVelocity() * math.abs(math.cos( CurTime() * 150 ) ) * 3
 						
-						local Throttle = (self:GetPos() - TargetPos):Length() / 8000
-						self:SetThrottle( Throttle )
+						Throttle = math.min( (StartPos - TargetPos):Length() / mySpeed, 1 )
 
 						local tr = util.TraceHull( {
 							start =  StartPos,
@@ -116,23 +124,17 @@ function ENT:RunAI()
 					else
 						if alt > 6000 and self:AITargetInFront( Target, 90 ) then
 							TargetPos = Target:GetPos()
-						else
-							TargetPos = TargetPos
 						end
-						
-						self:SetThrottle( 1 )
 					end
-				else
-					self:SetThrottle( 1 )
 				end
 			else
-				self:SetThrottle( 1 )
-
-				TargetPos.z = self:GetPos().z + 2000
+				TargetPos.z = StartPos.z + 2000
 			end
 		end
 		self:RaiseLandingGear()
 	end
+
+	self:SetThrottle( Throttle )
 
 	self.smTargetPos = self.smTargetPos and self.smTargetPos + (TargetPos - self.smTargetPos) * FrameTime() or self:GetPos()
 
