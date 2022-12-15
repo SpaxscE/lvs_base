@@ -73,7 +73,7 @@ local Teams = {
 	["monster_babycrab"] = 3,
 }
 function LVS:GetNPCRelationship( npc_class )
-	return Teams[ npc_class ] or "0"
+	return Teams[ npc_class ] or 0
 end
 
 hook.Add( "OnEntityCreated", "!!!!lvsEntitySorter", function( ent )

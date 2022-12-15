@@ -115,9 +115,9 @@ local function HandleBullets()
 			if SERVER then
 				local dmginfo = DamageInfo()
 				dmginfo:SetDamage( bullet.Damage )
-				dmginfo:SetAttacker( bullet.Attacker )
+				dmginfo:SetAttacker( (IsValid( bullet.Attacker ) and bullet.Attacker) or (IsValid( bullet.Entity ) and bullet.Entity) or game.GetWorld() )
 				dmginfo:SetDamageType( DMG_BULLET )
-				dmginfo:SetInflictor( bullet.Entity ) 
+				dmginfo:SetInflictor( (IsValid( bullet.Entity ) and bullet.Entity) or (IsValid( bullet.Attacker ) and bullet.Attacker) or game.GetWorld() )
 				dmginfo:SetDamagePosition( trace.HitPos ) 
 				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
 
