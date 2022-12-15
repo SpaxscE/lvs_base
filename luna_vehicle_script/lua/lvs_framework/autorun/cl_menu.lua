@@ -1,27 +1,4 @@
 
-local cvarVolume = CreateClientConVar( "lvs_volume", 0.25, true, false)
-local cvarDirectInput = CreateClientConVar( "lvs_mouseaim", 0, true, true)
-
-local cvarShowPlaneIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
-local cvarHitMarker = CreateConVar( "lvs_hitmarker", 1, true, false)
-LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
-
-LVS.ShowPlaneIdent = cvarShowPlaneIdent and cvarShowPlaneIdent:GetBool() or true
-LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false
-LVS.EngineVolume = cvarVolume and cvarVolume:GetFloat() or 0.25
-
-cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 
-	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
-end)
-
-cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
-	LVS.ShowPlaneIdent = tonumber( newValue ) ~=0
-end)
-
-cvars.AddChangeCallback( "lvs_hitmarker", function( convar, oldValue, newValue ) 
-	LVS.ShowHitMarker = tonumber( newValue ) ~=0
-end)
-
 local icon_load_version = Material("gui/html/refresh")
 local bgMat = Material( "lvs_controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
@@ -41,7 +18,7 @@ local function ClientSettings( Canvas )
 	slider:SetConVar( "lvs_volume" )
 
 	local slider = vgui.Create( "DNumSlider", Canvas )
-	slider:DockMargin( 16, 32, 16, 4 )
+	slider:DockMargin( 16, 16, 16, 4 )
 	slider:Dock( TOP )
 	slider:SetText( "Mouse Aim Camera Focus" )
 	slider:SetMin( -1 )
@@ -50,23 +27,23 @@ local function ClientSettings( Canvas )
 	slider:SetConVar( "lvs_camerafocus" )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
-	CheckBox:DockMargin( 16, 4, 4, 44 )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( BOTTOM )
+	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Use Mouse Aim when available" )
 	CheckBox:SetConVar("lvs_mouseaim") 
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
-	CheckBox:DockMargin( 16, 4, 4, 16 )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( BOTTOM )
+	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Plane Identifier" )
 	CheckBox:SetConVar("lvs_show_identifier") 
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
-	CheckBox:DockMargin( 16, 4, 4, 16 )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( BOTTOM )
+	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Hit/Kill Marker" )
 	CheckBox:SetConVar("lvs_hitmarker") 
 end
@@ -157,6 +134,76 @@ local function ClientControls( Canvas )
 end
 
 local function ServerSettings( Canvas )
+	local slider = vgui.Create( "DNumSlider", Canvas )
+	slider:DockMargin( 16, 32, 16, 4 )
+	slider:Dock( TOP )
+	slider:SetText( "Player Default AI-Team" )
+	slider:SetMin( 0 )
+	slider:SetMax( 3 )
+	slider:SetDecimals( 0 )
+	slider:SetConVar( "lvs_default_teams" )
+	function slider:OnValueChanged( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_default_teams")
+			net.WriteString( tostring( math.Round(val,0) ) )
+		net.SendToServer()
+	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Freeze Player AI-Team" )
+	CheckBox:SetValue( GetConVar( "lvs_freeze_teams" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_freeze_teams")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Only allow Players of matching AI-Team to enter Vehicles" )
+	CheckBox:SetValue( GetConVar( "lvs_teampassenger" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_teampassenger")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "LVS-AI ignore NPC's" )
+	CheckBox:SetValue( GetConVar( "lvs_ai_ignorenpcs" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_ai_ignorenpcs")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "LVS-AI ignore Players's" )
+	CheckBox:SetValue( GetConVar( "lvs_ai_ignoreplayers" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_ai_ignoreplayers")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
 end
 
 function LVS:OpenClientSettings()
