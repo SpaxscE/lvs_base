@@ -36,9 +36,9 @@ function ENT:PrimaryAttack()
 	bullet.Spread 	= Vector( 0.015,  0.015, 0 )
 	bullet.TracerName = "lvs_bullet_base"
 	bullet.Force	= 10
-	bullet.HullSize 	= 10
+	bullet.HullSize 	= 25 --10
 	bullet.Damage	= 50
-	bullet.Velocity = 32000
+	bullet.Velocity = 18000--32000
 	bullet.Attacker 	= self:GetDriver()
 	bullet.Callback = function(att, tr, dmginfo)
 	end
