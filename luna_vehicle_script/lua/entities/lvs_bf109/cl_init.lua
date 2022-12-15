@@ -19,7 +19,7 @@ function ENT:AnimRotor( frametime )
 
 	local PhysRot = self.RotorRPM < 470
 
-	self._rRPM = self._rRPM and (self._rRPM + self.RotorRPM *  RealFrameTime() * (PhysRot and 4 or 1)) or 0
+	self._rRPM = self._rRPM and (self._rRPM + self.RotorRPM *  frametime * (PhysRot and 4 or 1)) or 0
 
 	local Rot = Angle( self._rRPM,0,0)
 	Rot:Normalize() 
