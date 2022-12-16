@@ -177,10 +177,6 @@ function ENT:StartCommand( ply, cmd )
 				self:PhysWake()
 			end
 		end
-
-		if ply:KeyDown( IN_ATTACK ) then
-			self:PrimaryAttack()
-		end
 	end
 
 	if ply:lvsMouseAim() then
