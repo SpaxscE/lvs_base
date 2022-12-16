@@ -114,7 +114,7 @@ function ENT:RunAI()
 						if CanShoot then
 							if self:AITargetInFront( Target, 15 ) then
 								--self:HandleWeapons( true )
-								self:PrimaryAttack()
+								--self:PrimaryAttack()
 								
 								if self:AITargetInFront( Target, 10 ) then
 									--self:HandleWeapons( true, true )
