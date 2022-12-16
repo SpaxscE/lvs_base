@@ -21,6 +21,8 @@ function ENT:AddEngine( pos )
 
 	self:TransferCPPI( Engine )
 
+	self:AddEntityDS( Engine )
+
 	return Engine
 end
 
@@ -45,6 +47,8 @@ function ENT:AddRotor( pos )
 	self:DeleteOnRemove( Rotor )
 
 	self:TransferCPPI( Rotor )
+
+	self:AddEntityDS( Rotor )
 
 	return Rotor
 end

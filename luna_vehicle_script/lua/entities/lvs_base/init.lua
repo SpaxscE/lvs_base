@@ -11,7 +11,7 @@ include("sv_cppi.lua")
 include("sv_pod.lua")
 include("sv_engine.lua")
 include("sv_physics.lua")
-include("sv_weapons.lua")
+include("sv_damagesystem.lua")
 
 function ENT:SpawnFunction( ply, tr, ClassName )
 
@@ -20,6 +20,7 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 	local ent = ents.Create( ClassName )
 	ent:StoreCPPI( ply )
 	ent:SetPos( tr.HitPos + tr.HitNormal * 15 )
+	ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
 	ent:Spawn()
 	ent:Activate()
 
@@ -120,13 +121,7 @@ function ENT:Use( ply )
 end
 
 function ENT:OnTakeDamage( dmginfo )
-	local Attacker = dmginfo:GetAttacker() 
-
-	if IsValid( Attacker ) and Attacker:IsPlayer() then
-		net.Start( "lvs_hitmarker" )
-		net.Send( Attacker )
-	end
-
+	self:CalcDamage( dmginfo )
 	self:TakePhysicsDamage( dmginfo )
 	self:OnAITakeDamage( dmginfo )
 end

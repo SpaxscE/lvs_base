@@ -140,6 +140,8 @@ function ENT:AddDriverSeat( Pos, Ang )
 			DSPhys:SetMass( 1 )
 		end
 
+		self:AddEntityDS( Pod )
+
 		debugoverlay.BoxAngles( Pod:LocalToWorld( Pod:OBBCenter() ), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 255, 93, 0, 200 ) )
 
 		self:DeleteOnRemove( Pod )
@@ -189,6 +191,8 @@ function ENT:AddPassengerSeat( Pos, Ang )
 		DSPhys:EnableMotion( false )
 		DSPhys:SetMass( 1 )
 	end
+
+	self:AddEntityDS( Pod )
 
 	if not istable( self.pSeats ) then self.pSeats = {} end
 

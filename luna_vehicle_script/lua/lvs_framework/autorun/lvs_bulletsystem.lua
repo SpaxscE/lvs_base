@@ -228,7 +228,7 @@ else
 		util.Effect( bullet.TracerName, effectdata )
 	end )
 
-	hook.Add( "Think", "!!!!_lvstest", function()
+	hook.Add( "Think", "!!!!_lvs_bullet_think_cl", function()
 		HandleBullets()
 	end )
 end

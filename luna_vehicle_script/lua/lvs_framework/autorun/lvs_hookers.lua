@@ -86,4 +86,16 @@ if CLIENT then
 		Parent:LVSHudPaint( X, Y, ply )
 		Parent:LVSHudPaintSeatSwitcher( X, Y, ply )
 	end )
+
+	return
 end
+
+hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
+	if not target:IsPlayer() or not dmginfo:IsExplosionDamage() then return end
+
+	local veh = target:lvsGetVehicle()
+
+	if not IsValid( veh ) then return end
+
+	dmginfo:SetDamage( 0 )
+end )
