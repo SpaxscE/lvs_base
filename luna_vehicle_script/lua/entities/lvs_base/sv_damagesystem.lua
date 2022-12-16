@@ -14,18 +14,15 @@ function ENT:AddEntityDS( entity )
 end
 
 function ENT:CalcDamage( dmginfo )
-	local dmgDir = dmginfo:GetDamageForce():GetNormalized() * self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
-	local dmgEndPos = dmgDir
-
-	debugoverlay.Line( dmgPos, dmgEndPos, 1, Color( 0, 0, 255 ), true )
+	local dmgForce = dmginfo:GetDamageForce():GetNormalized() * 25
 
 	for index, part in pairs( self._dmgEnts ) do
 		local mins, maxs = part:GetDamageBounds()
 		local pos = part:GetPos()
 		local ang = part:GetAngles()
 
-		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgEndPos, pos, ang, mins, maxs )
+		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgForce, pos, ang, mins, maxs )
 
 		if HitPos then
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0 ) )
