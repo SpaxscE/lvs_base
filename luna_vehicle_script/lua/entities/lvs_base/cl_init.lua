@@ -37,6 +37,9 @@ end
 function ENT:OnSpawn()
 end
 
+function ENT:OnFrameActive()
+end
+
 function ENT:OnFrame()
 end
 
@@ -76,6 +79,7 @@ end
 function ENT:Think()
 	if self:HandleActive() then
 		self:DoVehicleFX()
+		self:OnFrameActive()
 	end
 
 	self:HandleTrail()
