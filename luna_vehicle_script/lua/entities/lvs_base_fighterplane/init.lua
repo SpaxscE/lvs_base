@@ -36,7 +36,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
 	local Yaw = math.Clamp( -LocalAngYaw / 8 ,-1,1) * RudderFadeOut
-	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 2,-90,90) + LocalAngRoll * RudderFadeOut * 0.25) * WingFinFadeOut / 180 , -1 , 1 )
+	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8,-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
 
 	if FreeMovement then
 		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
