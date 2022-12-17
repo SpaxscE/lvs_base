@@ -84,7 +84,16 @@ if CLIENT then
 		local Y = ScrH()
 
 		Parent:LVSHudPaint( X, Y, ply )
-		Parent:LVSHudPaintSeatSwitcher( X, Y, ply )
+
+		local ScaleX = LVS.SwitcherFrameX / 350
+		local ScaleY = LVS.SwitcherFrameY / 30
+
+		local m = Matrix()
+		m:Scale( Vector( ScaleX, ScaleY, 1 ) )
+
+		cam.PushModelMatrix( m )
+			Parent:LVSHudPaintSeatSwitcher( LVS.SwitcherX / ScaleX, LVS.SwitcherY / ScaleY, LVS.SwitcherFrameX / ScaleX, LVS.SwitcherFrameY / ScaleY, X / ScaleX, Y / ScaleY, ply )
+		cam.PopModelMatrix()	
 	end )
 
 	return
