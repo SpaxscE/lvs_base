@@ -93,15 +93,17 @@ local function HandleBullets()
 				util.Effect( "TracerSound", effectdata )
 			end
 
-			local traceWater = util.TraceLine( {
-				start = start + pos - dir,
-				endpos = start + pos + dir * bullet.Velocity * FT,
-				filter = Filter,
-				mask = MASK_WATER,
-			} )
+			if not bullet.HasHitWater then
+				local traceWater = util.TraceLine( {
+					start = start + pos - dir,
+					endpos = start + pos + dir * bullet.Velocity * FT,
+					filter = Filter,
+					mask = MASK_WATER,
+				} )
 
-			if traceWater.Hit then
-				if traceWater.Fraction > 0 then
+				if traceWater.Hit then
+					LVS._ActiveBullets[ id ].HasHitWater = true
+
 					local effectdata = EffectData()
 					effectdata:SetOrigin( traceWater.HitPos )
 					effectdata:SetScale( 10 * bullet.HullSize * 0.1 )
