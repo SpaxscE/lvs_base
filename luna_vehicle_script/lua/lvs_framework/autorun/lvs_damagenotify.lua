@@ -14,7 +14,7 @@ if CLIENT then
 
 		local vehicle = ply:lvsGetVehicle()
 		if IsValid( vehicle ) then 
-			vehicle:HitMarker( LastHitMarker )
+			vehicle:HitMarker( LastHitMarker, net.ReadBool() )
 		end
 	end )
 
