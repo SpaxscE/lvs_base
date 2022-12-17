@@ -97,10 +97,3 @@ ENT.EngineSounds = {
 		UseDoppler = true,
 	},
 }
-
-sound.Add( {
-	name = "LVS.BF109.FlyBy",
-	channel = CHAN_STATIC,
-	level = 100,
-	sound = "lvs/vehicles/bf109/flyby.wav"
-} )
