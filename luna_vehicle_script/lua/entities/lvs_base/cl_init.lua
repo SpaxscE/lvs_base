@@ -73,7 +73,7 @@ function ENT:HandleActive()
 		self:OnEngineActiveChanged( EngineActive )
 	end
 
-	return Active
+	return EngineActive
 end
 
 function ENT:Think()
