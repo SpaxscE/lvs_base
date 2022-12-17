@@ -15,9 +15,7 @@ if SERVER then
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
 		self:DrawShadow( false )
-
-		local mins, maxs = self:GetDamageBounds()
-		debugoverlay.BoxAngles( self:GetPos(), mins, maxs, self:GetAngles(), 5, Color( 255, 0, 255 ) )
+		debugoverlay.Cross( self:GetPos(), 50, 5, Color( 255, 0, 255 ) )
 	end
 
 	function ENT:Think()
@@ -26,20 +24,6 @@ if SERVER then
 
 	function ENT:UpdateTransmitState() 
 		return TRANSMIT_ALWAYS
-	end
-
-	function ENT:GetDamageBounds()
-		local mins = self._dmgMins or Vector(-2,-40,-40)
-		local maxs = self._dmgMaxs or Vector(2,40,40)
-
-		return mins, maxs
-	end
-
-	function ENT:SetDamageBounds( mins, maxs )
-		if not isvector( mins ) or not isvector( maxs ) then return end
-
-		self._dmgMins = mins
-		self._dmgMaxs = maxs
 	end
 
 	return

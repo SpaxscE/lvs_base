@@ -15,9 +15,7 @@ if SERVER then
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
 		self:DrawShadow( false )
-
-		local mins, maxs = self:GetDamageBounds()
-		debugoverlay.BoxAngles( self:GetPos(), mins, maxs, self:GetAngles(), 5, Color( 0, 255, 255 ) )
+		debugoverlay.Cross( self:GetPos(), 50, 5, Color( 0, 255, 255 ) )
 	end
 
 	function ENT:Think()
@@ -183,6 +181,8 @@ function ENT:Think()
 
 	if not IsValid( vehicle ) then return end
 
+	self:DamageFX( vehicle )
+
 	if not self.EngineSounds then
 		self.EngineSounds = vehicle.EngineSounds
 
@@ -235,7 +235,10 @@ end
 function ENT:DrawTranslucent()
 end
 
---[[
+function ENT:DamageFX( vehicle )
+	local HP = vehicle:GetHP()
+	if HP <= 0 or HP > vehicle:GetMaxHP() * 0.5 then return end
+
 	self.nextDFX = self.nextDFX or 0
 
 	if self.nextDFX < CurTime() then
@@ -246,4 +249,4 @@ end
 			effectdata:SetEntity( self )
 		util.Effect( "lvs_engine_blacksmoke", effectdata )
 	end
-]]
+end

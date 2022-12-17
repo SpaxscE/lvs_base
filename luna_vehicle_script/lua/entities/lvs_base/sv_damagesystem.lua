@@ -14,13 +14,18 @@ function ENT:AddEntityDS( entity )
 end
 
 function ENT:CalcDamage( dmginfo )
+	local Damage = dmginfo:GetDamage()
+	local CurHealth = self:GetHP()
+
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
-	local dmgPenetration = dmgDir * 25
+	local dmgPenetration = dmgDir * 200
 
-	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
+	local CriticalHit = false
 
 	for index, part in pairs( self._dmgEnts ) do
+		if CriticalHit then break end
+
 		local mins, maxs = part:GetDamageBounds()
 		local pos = part:GetPos()
 		local ang = part:GetAngles()
@@ -28,17 +33,25 @@ function ENT:CalcDamage( dmginfo )
 		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
 		if HitPos then
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
-			debugoverlay.Cross( HitPos,50, 4, Color( 255, 0, 255 ) )
-		else
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
+			CriticalHit = true
 		end
 	end
+
+	if CriticalHit then
+		Damage = Damage * 1.5
+	end
+
+	local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
+
+	self:SetHP( NewHealth )
+
+	PrintChat( self:GetHP() )
 
 	local Attacker = dmginfo:GetAttacker() 
 
 	if IsValid( Attacker ) and Attacker:IsPlayer() then
 		net.Start( "lvs_hitmarker" )
+			net.WriteBool( CriticalHit )
 		net.Send( Attacker )
 	end
 end
