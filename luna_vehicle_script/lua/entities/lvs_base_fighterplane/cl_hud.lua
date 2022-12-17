@@ -1,7 +1,5 @@
 
 function ENT:LVSHudPaint( X, Y, ply )
-	self:LVSHudPaintInfoText( X, Y, ply )
-
 	local pod = self:GetDriverSeat()
 
 	if not IsValid( pod ) then return end
@@ -27,17 +25,6 @@ function ENT:LVSHudPaint( X, Y, ply )
 	end
 
 	self:LVSPaintHitMarker( HitPlane )
-end
-
-function ENT:LVSHudPaintInfoText( X, Y, ply )
-	local Throttle = math.Round(self:GetThrottle() * 100,0)
-	local speed = math.Round( self:GetVelocity():Length() * 0.09144,0)
-
-	draw.SimpleText( "THR", "LVS_FONT", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	draw.SimpleText( Throttle.."%" , "LVS_FONT", 120, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
-	draw.SimpleText( "IAS", "LVS_FONT", 10, 35, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-	draw.SimpleText( speed.."km/h", "LVS_FONT", 120, 35, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 end
 
 function ENT:LVSHudPaintDirectInput( HitPlane )
@@ -76,12 +63,39 @@ function ENT:LVSHudPaintMouseAim( HitPlane, HitPilot, FreeLook )
 end
 
 function ENT:LVSPaintHitMarker( scr )
-	local aV = math.sin( math.rad( math.sin( math.rad( math.max(((self:GetHitMarker() - CurTime()) / 0.15) * 90,0) ) ) * 90 ) )
-	if aV > 0.01 then
-		local Start = 20 + (1 - aV ^ 2) * 20
+	local T = CurTime()
+
+	local HitMarkerTime, IsCrit = self:GetHitMarker()
+
+	local aV = math.cos( math.rad( math.max(((HitMarkerTime - T) / 0.1) * 180,0) ) )
+
+	if aV ~= 1 then
+		local Start = 20 + (1 - aV) * 5
 		local dst = 10
 
-		surface.SetDrawColor( 255, 255, 0, 255 )
+		if IsCrit then
+			surface.SetDrawColor( 255, 50, 0, 255 )
+		else
+			surface.SetDrawColor( 255, 255, 0, 255 )
+		end
+
+		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start, scr.y + Start - dst )
+		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start - dst, scr.y + Start )
+
+		surface.DrawLine( scr.x + Start, scr.y - Start, scr.x + Start, scr.y - Start + dst )
+		surface.DrawLine( scr.x + Start, scr.y - Start, scr.x + Start - dst, scr.y - Start )
+
+		surface.DrawLine( scr.x - Start, scr.y + Start, scr.x - Start, scr.y + Start - dst )
+		surface.DrawLine( scr.x - Start, scr.y + Start, scr.x - Start + dst, scr.y + Start )
+
+		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - Start, scr.y - Start + dst )
+		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - Start + dst, scr.y - Start )
+
+		scr.x = scr.x + 1
+		scr.y = scr.y + 1
+
+		surface.SetDrawColor( 0, 0, 0, 80 )
+
 		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start, scr.y + Start - dst )
 		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start - dst, scr.y + Start )
 
@@ -95,7 +109,7 @@ function ENT:LVSPaintHitMarker( scr )
 		surface.DrawLine( scr.x - Start, scr.y - Start, scr.x - Start + dst, scr.y - Start )
 	end
 
-	local aV = math.sin( math.rad( math.sin( math.rad( math.max(((self:GetKillMarker() - CurTime()) / 0.2) * 90,0) ) ) * 90 ) )
+	local aV = math.sin( math.rad( math.sin( math.rad( math.max(((self:GetKillMarker() - T) / 0.2) * 90,0) ) ) * 90 ) )
 	if aV > 0.01 then
 		surface.SetDrawColor( 255, 255, 255, 15 * (aV ^ 4) )
 		surface.DrawRect( 0, 0, ScrW(), ScrH() )

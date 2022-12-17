@@ -11,7 +11,7 @@ function ENT:OnFrameActive()
 
 	local ViewEnt = ply:GetViewEntity()
 
-	if not IsValid( ViewEnt) then return end
+	if not IsValid( ViewEnt ) then return end
 
 	local Time = CurTime()
 

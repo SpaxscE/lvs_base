@@ -4,7 +4,13 @@ ENT.IconVehicleLocked = Material( "lvs_locked.png" )
 function ENT:LVSHudPaint( X, Y, ply )
 end
 
-function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
+function ENT:LVSHudPaintStats( X, Y, w, h, ScrX, ScrY, ply )
+end
+
+function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
+end
+
+function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 	local pSeats = self:GetPassengerSeats()
 	local SeatCount = table.Count( pSeats ) 
 
@@ -54,65 +60,86 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, ply )
 	ply.smHider = ply.smHider and (ply.smHider + ((Hide and 1 or 0) - ply.smHider) * RealFrameTime() * 15) or 0
 
 	local Alpha1 = 135 + 110 * ply.smHider 
-	local HiderOffset = 300 * ply.smHider
-	local Offset = -50
-	local yPos = Y - (SeatCount + 1) * 30 - 10
+	local HiderOffset = 270 * ply.smHider
+	local Offset = -35
+
+	local SwapY = false
+	local SwapX = false
+
+	local xHider = HiderOffset
+
+	if X < (ScrX * 0.5 + w * 0.5) then
+		SwapX = true
+		Offset = -w
+		xHider = 0
+	end
+
+	local yPos = Y - (SeatCount + 1) * 30 + 5
+	if Y < (ScrY * 0.5 + h * 0.5) then
+		SwapY = true
+		yPos = Y - h - 30
+	end
 
 	for _, Pod in pairs( pSeats ) do
 		local I = Pod:GetNWInt( "pPodIndex", -1 )
-		if I >= 0 then
-			if I == MySeat then
-				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
+
+		if I <= 0 then continue end
+
+		if I == MySeat then
+			draw.RoundedBox(5, X + Offset - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
+		else
+			draw.RoundedBox(5, X + Offset - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * ply.smHider) )
+		end
+
+		if Hide then
+			if Passengers[I] then
+				draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 			else
-				draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * ply.smHider) )
+				draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 			end
+			
+			draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+		else
+			if Passengers[I] then
+				draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+			else
+				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+			end
+		end
+
+		if not self:GetlvsLockedStatus() then continue end
+
+		local xLocker = SwapX and 35 + HiderOffset or -25 - HiderOffset
+
+		if SwapY then
+			if I == 1 then
+				surface.SetDrawColor( 255, 255, 255, 255 )
+				surface.SetMaterial( self.IconVehicleLocked  )
+				surface.DrawTexturedRect( X + Offset + xLocker, yPos + I * 30, 25, 25 )
+			end
+		else
 			if I == SeatCount then
-				if self:GetlvsLockedStatus() then
-					surface.SetDrawColor( 255, 255, 255, 255 )
-					surface.SetMaterial( self.IconVehicleLocked  )
-					surface.DrawTexturedRect( X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25 )
-				end
-			end
-			if Hide then
-				if Passengers[I] then
-					draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
-				else
-					draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
-				end
-				
-				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
-			else
-				if Passengers[I] then
-					draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
-				else
-					draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
-				end
+				surface.SetDrawColor( 255, 255, 255, 255 )
+				surface.SetMaterial( self.IconVehicleLocked  )
+				surface.DrawTexturedRect( X + Offset + xLocker, yPos + I * 30, 25, 25 )
 			end
 		end
 	end
 end
 
-function ENT:HitMarker( LastHitMarker )
+function ENT:HitMarker( LastHitMarker, CriticalHit )
 	self.LastHitMarker = LastHitMarker
+	self.LastHitMarkerIsCrit = CriticalHit
 
-	local ply = LocalPlayer()
-	ply:EmitSound( table.Random( {"physics/metal/metal_sheet_impact_bullet2.wav","physics/metal/metal_sheet_impact_hard2.wav","physics/metal/metal_sheet_impact_hard6.wav",} ), 140, 140, 0.3, CHAN_ITEM2 )
+	LocalPlayer():EmitSound( CriticalHit and "lvs/hit_crit.wav" or "lvs/hit.wav", 140, math.random(95,105), 1, CHAN_ITEM2 )
 end
 
 function ENT:GetHitMarker()
-	return self.LastHitMarker or 0
+	return self.LastHitMarker or 0, self.LastHitMarkerIsCrit
 end
 
 function ENT:KillMarker( LastKillMarker )
 	self.LastKillMarker = LastKillMarker
-
-	local ply = LocalPlayer()
-
-	--util.ScreenShake( ply:GetPos(), 4, 2, 2, 50000 )
-
-	--ply:EmitSound( table.Random( {"lfs/plane_preexp1.ogg","lfs/plane_preexp3.ogg"} ), 140, 100, 0.5, CHAN_WEAPON )
-
-	ply:EmitSound( "physics/metal/metal_solid_impact_bullet4.wav", 140, 255, 0.3, CHAN_VOICE )
 end
 
 function ENT:GetKillMarker()
