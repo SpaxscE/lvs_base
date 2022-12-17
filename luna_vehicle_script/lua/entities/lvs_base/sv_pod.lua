@@ -142,7 +142,7 @@ function ENT:AddDriverSeat( Pos, Ang )
 
 		self:AddEntityDS( Pod )
 
-		debugoverlay.BoxAngles( Pod:LocalToWorld( Pod:OBBCenter() ), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 255, 93, 0, 200 ) )
+		debugoverlay.BoxAngles( Pod:GetPos(), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 255, 93, 0, 200 ) )
 
 		self:DeleteOnRemove( Pod )
 
@@ -173,7 +173,7 @@ function ENT:AddPassengerSeat( Pos, Ang )
 	Pod:SetColor( Color( 255, 255, 255, 0 ) ) 
 	Pod:SetRenderMode( RENDERMODE_TRANSALPHA )
 
-	debugoverlay.BoxAngles( Pod:LocalToWorld( Pod:OBBCenter() ), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 100, 65, 127, 200 ) )
+	debugoverlay.BoxAngles( Pod:GetPos(), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 100, 65, 127, 200 ) )
 
 	Pod:DrawShadow( false )
 	Pod.DoNotDuplicate = true

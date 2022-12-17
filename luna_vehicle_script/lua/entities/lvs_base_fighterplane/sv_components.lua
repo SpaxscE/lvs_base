@@ -48,7 +48,5 @@ function ENT:AddRotor( pos )
 
 	self:TransferCPPI( Rotor )
 
-	self:AddEntityDS( Rotor )
-
 	return Rotor
 end

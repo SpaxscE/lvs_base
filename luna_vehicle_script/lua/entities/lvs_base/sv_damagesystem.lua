@@ -15,20 +15,23 @@ end
 
 function ENT:CalcDamage( dmginfo )
 	local dmgPos = dmginfo:GetDamagePosition()
-	local dmgForce = dmginfo:GetDamageForce():GetNormalized() * 25
+	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
+	local dmgPenetration = dmgDir * 25
+
+	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
 	for index, part in pairs( self._dmgEnts ) do
 		local mins, maxs = part:GetDamageBounds()
 		local pos = part:GetPos()
 		local ang = part:GetAngles()
 
-		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgForce, pos, ang, mins, maxs )
+		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
 		if HitPos then
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0 ) )
-			debugoverlay.Cross( HitPos,50, 2, Color( 255, 0, 255 ), true )
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
+			debugoverlay.Cross( HitPos,50, 4, Color( 255, 0, 255 ) )
 		else
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 255, 255 ) )
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
 		end
 	end
 
@@ -39,5 +42,3 @@ function ENT:CalcDamage( dmginfo )
 		net.Send( Attacker )
 	end
 end
-
--- Vector, Vector, number util.IntersectRayWithOBB( Vector rayStart, Vector rayDelta, Vector boxOrigin, Angle boxAngles, Vector boxMins, Vector boxMaxs )
