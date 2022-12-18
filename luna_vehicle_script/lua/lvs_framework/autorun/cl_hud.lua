@@ -78,6 +78,13 @@ end
 			vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
 		end
 	)
+
+	LVS:AddHudEditor( "WeaponSwitcher", 500, 500,  350, 200, 350, 200, "LVS WEAPON SELECTOR", 
+		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+			--if not vehicle.LVSHudPaintSeatSwitcher then return end
+			--vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
+		end
+	)
 --end )
 
 hook.Add( "InitPostEntity", "!!!lvs_load_hud", function()
