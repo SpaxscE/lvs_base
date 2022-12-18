@@ -1,5 +1,7 @@
 
 function ENT:LVSHudPaint( X, Y, ply )
+	if ply ~= self:GetDriver() then return end
+
 	local pod = self:GetDriverSeat()
 
 	if not IsValid( pod ) then return end
