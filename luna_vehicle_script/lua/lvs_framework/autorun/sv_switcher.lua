@@ -23,16 +23,12 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 
 			if hook.Run( "LVS.OnPlayerRequestSeatSwitch", ply, vehicle, CurPod, DriverSeat ) == false then return end
 
-			timer.Simple( FrameTime(), function()
+			timer.Simple( 0, function()
 				if not IsValid( vehicle ) or not IsValid( ply ) then return end
 				if IsValid( vehicle:GetDriver() ) or not IsValid( DriverSeat ) or vehicle:GetAI() then return end
 
 				ply:EnterVehicle( DriverSeat )
-
-				timer.Simple( FrameTime() * 2, function()
-					if not IsValid( ply ) or not IsValid( vehicle ) then return end
-					ply:SetEyeAngles( Angle(0,vehicle:GetAngles().y,0) )
-				end)
+				vehicle:AlignView( ply )
 			end)
 		end
 	else
@@ -43,11 +39,12 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 
 			ply:ExitVehicle()
 
-			timer.Simple( FrameTime(), function()
+			timer.Simple( 0, function()
 				if not IsValid( Pod ) or not IsValid( ply ) then return end
 				if IsValid( Pod:GetDriver() ) then return end
 
 				ply:EnterVehicle( Pod )
+				vehicle:AlignView( ply, true )
 			end)
 		end
 	end

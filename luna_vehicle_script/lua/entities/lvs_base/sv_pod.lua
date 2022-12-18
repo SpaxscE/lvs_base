@@ -1,11 +1,16 @@
 
-function ENT:AlignView( ply )
+function ENT:AlignView( ply, SetZero )
 	if not IsValid( ply ) then return end
 
-	timer.Simple( FrameTime() * 2, function()
+	timer.Simple( 0, function()
 		if not IsValid( ply ) or not IsValid( self ) then return end
-		local Ang = self:GetAngles()
-		Ang.r = 0
+		local Ang = Angle(0,90,0)
+
+		if not SetZero then
+			Ang = self:GetAngles()
+			Ang.r = 0
+		end
+
 		ply:SetEyeAngles( Ang )
 	end)
 end
