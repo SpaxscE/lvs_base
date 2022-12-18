@@ -1,1 +1,2 @@
-print("weapons")
+
+print("hi")
