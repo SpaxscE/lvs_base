@@ -46,6 +46,14 @@ local function ClientSettings( Canvas )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Hit/Kill Marker" )
 	CheckBox:SetConVar("lvs_hitmarker") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Enable Context Menu HUD Editor" )
+	CheckBox:SetConVar("lvs_edit_hud") 
+	
 end
 
 local function ClientControls( Canvas )
@@ -542,7 +550,6 @@ list.Set( "DesktopWindows", "LVSMenu", {
 	icon = "icon64/iconlvs.png",
 	init = function( icon, window )
 		LVS:OpenMenu()
-		LVS:CloseEditors()
 	end
 } )
 

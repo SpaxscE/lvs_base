@@ -30,8 +30,9 @@ if SERVER then
 
 	return
 end
+CreateClientConVar( "lvs_edit_hud", 1, true, false)
 
-local cvarDirectInput = CreateClientConVar( "lvs_mouseaim", 0, true, true)
+CreateClientConVar( "lvs_mouseaim", 0, true, true)
 
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 

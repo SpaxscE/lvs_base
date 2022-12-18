@@ -93,12 +93,19 @@ end )
 hook.Add( "OnContextMenuOpen", "!!!!!LVS_hud", function()
 	if not IsValid( LocalPlayer():lvsGetVehicle() ) then return end
 
+	if not GetConVar( "lvs_edit_hud" ):GetBool() then return end
+
+	LVS:OpenEditors()
+	return false
+end )
+
+function LVS:OpenEditors()
 	for id, editor in pairs( LVS.HudEditors ) do
 		if IsValid( editor.Frame ) then continue end
 
 		MakeFrame( id, editor.X, editor.Y, editor.w, editor.h, editor.minw, editor.minh, editor.text )
 	end
-end )
+end
 
 function LVS:CloseEditors()
 	for id, editor in pairs( LVS.HudEditors ) do
