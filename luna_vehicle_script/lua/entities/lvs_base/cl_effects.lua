@@ -1,5 +1,10 @@
 
 function ENT:StartWindSounds()
+	local ply = LocalPlayer()
+	local veh = ply:lvsGetVehicle()
+
+	if not IsValid( veh ) or veh == self then return end
+
 	self._WindSFX = CreateSound( self, "LVS.Physics.Wind" )
 	self._WindSFX:PlayEx(0,100)
 
