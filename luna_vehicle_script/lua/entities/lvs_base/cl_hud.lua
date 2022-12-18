@@ -61,23 +61,23 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 
 	local Alpha1 = 135 + 110 * ply.smHider 
 	local HiderOffset = 270 * ply.smHider
-	local Offset = -35
+	local xPos = w - 35
+	local yPos = Y - (SeatCount + 1) * 30 + h + 5
 
 	local SwapY = false
 	local SwapX = false
 
 	local xHider = HiderOffset
 
-	if X < (ScrX * 0.5 + w * 0.5) then
+	if X < (ScrX * 0.5 - w * 0.5) then
 		SwapX = true
-		Offset = -w
+		xPos = 0
 		xHider = 0
 	end
 
-	local yPos = Y - (SeatCount + 1) * 30 + 5
-	if Y < (ScrY * 0.5 + h * 0.5) then
+	if Y < (ScrY * 0.5 - h * 0.5) then
 		SwapY = true
-		yPos = Y - h - 30
+		yPos = Y - h
 	end
 
 	for _, Pod in pairs( pSeats ) do
@@ -86,24 +86,24 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 		if I <= 0 then continue end
 
 		if I == MySeat then
-			draw.RoundedBox(5, X + Offset - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
+			draw.RoundedBox(5, X + xPos - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
 		else
-			draw.RoundedBox(5, X + Offset - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * ply.smHider) )
+			draw.RoundedBox(5, X + xPos - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(0,0,0,100 + 50 * ply.smHider) )
 		end
 
 		if Hide then
 			if Passengers[I] then
-				draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+				draw.DrawText( Passengers[I], "LVS_FONT_SWITCHER", X + 40 + xPos - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 			else
-				draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
+				draw.DrawText( "-", "LVS_FONT_SWITCHER", X + 40 + xPos - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255,  Alpha1 ), TEXT_ALIGN_LEFT )
 			end
 			
-			draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+			draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + xPos - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 		else
 			if Passengers[I] then
-				draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+				draw.DrawText( "[^"..I.."]", "LVS_FONT_SWITCHER", X + 17 + xPos - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 			else
-				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + Offset - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+				draw.DrawText( "["..I.."]", "LVS_FONT_SWITCHER", X + 17 + xPos - xHider, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 			end
 		end
 
@@ -115,13 +115,13 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 			if I == 1 then
 				surface.SetDrawColor( 255, 255, 255, 255 )
 				surface.SetMaterial( self.IconVehicleLocked  )
-				surface.DrawTexturedRect( X + Offset + xLocker, yPos + I * 30, 25, 25 )
+				surface.DrawTexturedRect( X + xPos + xLocker, yPos + I * 30, 25, 25 )
 			end
 		else
 			if I == SeatCount then
 				surface.SetDrawColor( 255, 255, 255, 255 )
 				surface.SetMaterial( self.IconVehicleLocked  )
-				surface.DrawTexturedRect( X + Offset + xLocker, yPos + I * 30, 25, 25 )
+				surface.DrawTexturedRect( X + xPos + xLocker, yPos + I * 30, 25, 25 )
 			end
 		end
 	end

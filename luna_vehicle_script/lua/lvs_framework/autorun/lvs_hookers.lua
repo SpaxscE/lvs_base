@@ -65,37 +65,6 @@ if CLIENT then
 			return true
 		end
 	end )
-
-	hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
-		local ply = LocalPlayer()
-
-		if ply:GetViewEntity() ~= ply then return end
-
-		local Pod = ply:GetVehicle()
-		local Parent = ply:lvsGetVehicle()
-
-		if not IsValid( Pod ) or not IsValid( Parent ) then
-			ply._lvsoldPassengers = {}
-
-			return
-		end
-
-		local X = ScrW()
-		local Y = ScrH()
-
-		Parent:LVSHudPaint( X, Y, ply )
-
-		local ScaleX = LVS.SwitcherFrameX / 350
-		local ScaleY = LVS.SwitcherFrameY / 30
-
-		local m = Matrix()
-		m:Scale( Vector( ScaleX, ScaleY, 1 ) )
-
-		cam.PushModelMatrix( m )
-			Parent:LVSHudPaintSeatSwitcher( LVS.SwitcherX / ScaleX, LVS.SwitcherY / ScaleY, LVS.SwitcherFrameX / ScaleX, LVS.SwitcherFrameY / ScaleY, X / ScaleX, Y / ScaleY, ply )
-		cam.PopModelMatrix()	
-	end )
-
 	return
 end
 

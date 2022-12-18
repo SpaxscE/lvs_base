@@ -542,6 +542,7 @@ list.Set( "DesktopWindows", "LVSMenu", {
 	icon = "icon64/iconlvs.png",
 	init = function( icon, window )
 		LVS:OpenMenu()
+		LVS:CloseEditors()
 	end
 } )
 
