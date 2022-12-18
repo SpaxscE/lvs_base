@@ -164,11 +164,10 @@ function meta:lvsSetAITeam( nTeam )
 end
 
 hook.Add( "PlayerButtonUp", "!!!lvsButtonUp", function( ply, button )
-
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
-		if KeyBind[ button ] then
-			ply:lvsSetInput( KeyBind[ button ], false )
-		end
+		if not KeyBind[ button ] then continue end
+
+		ply:lvsSetInput( KeyBind[ button ], false )
 	end
 end )
 
@@ -176,14 +175,14 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 	local vehicle = ply:lvsGetVehicle()
 
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
-		if KeyBind[ button ] then
-			ply:lvsSetInput( KeyBind[ button ], true )
-			
-			if IsValid( vehicle ) then
-				if KeyBind[ button ] == "EXIT" then
-					ply:ExitVehicle()
-				end
-			end
+		if not KeyBind[ button ] then continue end
+
+		ply:lvsSetInput( KeyBind[ button ], true )
+		
+		if not IsValid( vehicle ) then continue end
+
+		if KeyBind[ button ] == "EXIT" then
+			ply:ExitVehicle()
 		end
 	end
 end )

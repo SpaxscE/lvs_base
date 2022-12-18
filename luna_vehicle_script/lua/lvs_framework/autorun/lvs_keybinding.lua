@@ -4,6 +4,44 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 
 	local KEYS = {
 		{
+			name = "ATTACK",
+			category = "Armament",
+			name_menu = "Attack",
+			default = "+attack",
+			cmd = "lvs_attack"
+		},
+		{
+			name = "ZOOM",
+			category = "Armament",
+			name_menu = "Zoom",
+			default = "+attack2",
+			cmd = "lvs_zoom"
+		},
+		{
+			name = "WEAPON1",
+			category = "Armament",
+			name_menu = "Select Weapon 1",
+			cmd = "lvs_select_weapon1"
+		},
+		{
+			name = "WEAPON2",
+			category = "Armament",
+			name_menu = "Select Weapon 2",
+			cmd = "lvs_select_weapon2"
+		},
+		{
+			name = "WEAPON3",
+			category = "Armament",
+			name_menu = "Select Weapon 3",
+			cmd = "lvs_select_weapon3"
+		},
+		{
+			name = "WEAPON4",
+			category = "Armament",
+			name_menu = "Select Weapon 4",
+			cmd = "lvs_select_weapon4"
+		},
+		{
 			name = "EXIT",
 			category = "Misc",
 			name_menu = "Exit Vehicle",
