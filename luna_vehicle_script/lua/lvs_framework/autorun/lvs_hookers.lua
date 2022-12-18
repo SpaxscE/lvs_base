@@ -61,6 +61,15 @@ if CLIENT then
 	hook.Add( "PlayerBindPress", "!!!!_LVS_HideZOOM", function( ply, bind, pressed )
 		if not ply.lvsGetVehicle or not IsValid( ply:lvsGetVehicle() ) then return end
 
+		if not ply:lvsKeyDown( "VIEWDIST" ) then
+			if string.find( bind, "invnext" ) then
+				--PrintChat( "DOWN" )
+			end
+			if string.find( bind, "invprev" ) then
+				--PrintChat( "UP" )
+			end
+		end
+
 		if string.find( bind, "+zoom" ) then
 			return true
 		end
