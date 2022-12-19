@@ -7,7 +7,7 @@ function ENT:OnFrameActive()
 
 	if not IsValid( ply ) then return end
 
-	if ply:lvsGetVehicle() == self then return end
+	if ply:lvsGetVehicle() == self then self.OldApproaching = false return end
 
 	local ViewEnt = ply:GetViewEntity()
 
