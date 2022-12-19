@@ -8,6 +8,7 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 	view.angles = self:GetAngles()
 
 	local FreeLook = ply:lvsKeyDown( "FREELOOK" )
+	local Zoom = ply:lvsKeyDown( "ZOOM" )
 
 	if not pod:GetThirdPersonMode() then
 
@@ -21,9 +22,10 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 		local SideForce = math.Clamp( velL.y / Dividor, -1, 1)
 		local UpForce = math.Clamp( velL.z / Dividor, -1, 1)
 
-		local ViewPunch = Vector(0,SideForce * 10,UpForce * 10)
-		ViewPunch.y = math.Clamp(ViewPunch.y,-1,1)
-		ViewPunch.z = math.Clamp(ViewPunch.z,-1,1)
+		local ViewPunch = Vector(0,math.Clamp(SideForce * 10,-1,1),math.Clamp(UpForce * 10,-1,1))
+		if Zoom then
+			ViewPunch = Vector(0,0,0)
+		end
 
 		pod._lerpPosOffset = pod._lerpPosOffset and pod._lerpPosOffset + (ViewPunch - pod._lerpPosOffset) * RealFrameTime() * 5 or Vector(0,0,0)
 		pod._lerpPos = pos
@@ -59,7 +61,9 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 		local Dir = Sub:GetNormalized()
 		local Dist = Sub:Length()
 
-		pod._lerpPos = pod._lerpPos + (TargetPos - self:GetForward() * (300 + radius) - Dir * 100 - pod._lerpPos) * RealFrameTime() * 12
+		local DesiredPos = TargetPos - self:GetForward() * (300 + radius) - Dir * 100
+
+		pod._lerpPos = pod._lerpPos + (DesiredPos - pod._lerpPos) * RealFrameTime() * (Zoom and 30 or 12)
 		pod._lerpPosL = self:WorldToLocal( pod._lerpPos )
 
 		local vel = self:GetVelocity()
