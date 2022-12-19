@@ -1,5 +1,6 @@
 
 ENT._WEAPONS = {
+	--[[
 	[1] = {
 		Icon = Material("lvs_weapons/hmg.png"),
 		UseHeat = true,
@@ -18,6 +19,7 @@ ENT._WEAPONS = {
 	[4] = {
 		Icon = Material("lvs_weapons/bomb.png"),
 	},
+	]]
 }
 
 if SERVER then
@@ -82,6 +84,10 @@ else
 	)
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
+		local num = #self._WEAPONS
+
+		if num <= 1 then return end
+
 		local CenterY = (Y + h * 0.5)
 		local CenterX = (X + w * 0.5)
 
@@ -91,7 +97,6 @@ else
 		local FT = RealFrameTime()
 
 		local gap = 4
-		local num = #self._WEAPONS
 		local SizeY = h - gap
 
 		local Selected = self:GetSelectedWeapon()
