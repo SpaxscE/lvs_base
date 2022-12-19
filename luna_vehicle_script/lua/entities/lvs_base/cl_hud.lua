@@ -34,7 +34,7 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		else
 			surface.SetDrawColor( 255, 255, 255, 255 )
 		end
-		surface.SetMaterial( self._WEAPONS[ID] )
+		surface.SetMaterial( self._WEAPONS[ID].Icon )
 		surface.DrawTexturedRect( X, yPos, SizeY * 2, SizeY )
 	end
 end

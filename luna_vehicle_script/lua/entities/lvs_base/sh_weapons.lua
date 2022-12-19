@@ -1,9 +1,14 @@
 
 ENT._WEAPONS = {
-	[1] = Material("lvs_weapons/hmg.png"),
-	[2] = Material("lvs_weapons/mg.png"),
-	[3] = Material("lvs_weapons/nos.png"),
-	[4] = Material("lvs_weapons/missile.png"),
+	[1] = {
+		Icon = Material("lvs_weapons/hmg.png"),
+		UseHeat = true,
+		OnFire = function( vehicle ) end,
+		OnSelect = function( vehicle ) end,
+		OnDeselect = function( vehicle ) end,
+		OnRemove = function( vehicle ) end,
+		OnThink = function( vehicle ) end,
+	},
 }
 
 if SERVER then
