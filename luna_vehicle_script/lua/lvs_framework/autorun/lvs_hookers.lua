@@ -57,25 +57,7 @@ hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 	veh:StartCommand( ply, cmd )
 end )
 
-if CLIENT then
-	hook.Add( "PlayerBindPress", "!!!!_LVS_HideZOOM", function( ply, bind, pressed )
-		if not ply.lvsGetVehicle or not IsValid( ply:lvsGetVehicle() ) then return end
-
-		if not ply:lvsKeyDown( "VIEWDIST" ) then
-			if string.find( bind, "invnext" ) then
-				--PrintChat( "DOWN" )
-			end
-			if string.find( bind, "invprev" ) then
-				--PrintChat( "UP" )
-			end
-		end
-
-		if string.find( bind, "+zoom" ) then
-			return true
-		end
-	end )
-	return
-end
+if CLIENT then return end
 
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
 	if not target:IsPlayer() or not dmginfo:IsExplosionDamage() then return end

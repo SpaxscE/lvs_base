@@ -173,15 +173,25 @@ end )
 
 hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 	local vehicle = ply:lvsGetVehicle()
+	local vehValid = IsValid( vehicle )
 
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
-		if not KeyBind[ button ] then continue end
+		local KeyName = KeyBind[ button ]
 
-		ply:lvsSetInput( KeyBind[ button ], true )
-		
-		if not IsValid( vehicle ) then continue end
+		if not KeyName then continue end
 
-		if KeyBind[ button ] == "EXIT" then
+		ply:lvsSetInput( KeyName, true )
+
+		if not vehValid then continue end
+
+		if string.StartWith( KeyName, "~SELECT~" ) then
+			local exp_string = string.Explode( "#", KeyName )
+			if exp_string[2] then
+				vehicle:SelectWeapon( tonumber( exp_string[2] ) )
+			end
+		end
+
+		if KeyName == "EXIT" then
 			ply:ExitVehicle()
 		end
 	end

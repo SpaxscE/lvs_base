@@ -8,6 +8,35 @@ function ENT:LVSHudPaintStats( X, Y, w, h, ScrX, ScrY, ply )
 end
 
 function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
+	local gap = 5
+	local num = #self._WEAPONS
+	local SizeY = h - gap
+
+	local Selected = self:GetSelectedWeapon()
+	local Col = Color(0,0,0,150)
+	local ColSelect = Color(255,255,255,150)
+
+	local SwapY = 0
+
+	if Y < (ScrY * 0.5 - h * 0.5) then
+		SwapY = 1
+	end
+
+	for ID = 1, num do
+		local IsSelected = Selected == ID
+		local n = num - ID
+		local yPos = Y - h * n + (num - 1) * h * SwapY
+
+		draw.RoundedBox(5, X, yPos, w, SizeY, IsSelected and ColSelect or Col )
+
+		if IsSelected then
+			surface.SetDrawColor( 0, 0, 0, 255 )
+		else
+			surface.SetDrawColor( 255, 255, 255, 255 )
+		end
+		surface.SetMaterial( self._WEAPONS[ID] )
+		surface.DrawTexturedRect( X, yPos, SizeY * 2, SizeY )
+	end
 end
 
 function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )

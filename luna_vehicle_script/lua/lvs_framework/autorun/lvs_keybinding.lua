@@ -18,29 +18,37 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 			cmd = "lvs_zoom"
 		},
 		{
-			name = "WEAPON1",
+			name = "~SELECT~WEAPON#1",
 			category = "Armament",
 			name_menu = "Select Weapon 1",
 			cmd = "lvs_select_weapon1"
 		},
 		{
-			name = "WEAPON2",
+			name = "~SELECT~WEAPON#2",
 			category = "Armament",
 			name_menu = "Select Weapon 2",
 			cmd = "lvs_select_weapon2"
 		},
 		{
-			name = "WEAPON3",
+			name = "~SELECT~WEAPON#3",
 			category = "Armament",
 			name_menu = "Select Weapon 3",
 			cmd = "lvs_select_weapon3"
 		},
 		{
-			name = "WEAPON4",
+			name = "~SELECT~WEAPON#4",
 			category = "Armament",
 			name_menu = "Select Weapon 4",
 			cmd = "lvs_select_weapon4"
 		},
+		--[[ only adding 4 because i dont want to bloat the menu. There can be added as many keys as neededed the system should figure it out by itself
+		{
+			name = "~SELECT~WEAPON#5",
+			category = "Armament",
+			name_menu = "Select Weapon 5",
+			cmd = "lvs_select_weapon5"
+		},
+		]]
 		{
 			name = "EXIT",
 			category = "Misc",
@@ -144,6 +152,27 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 end )
 
 if SERVER then return end
+
+hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pressed )
+	if not ply.lvsGetVehicle then return end
+
+	local vehicle = ply:lvsGetVehicle() 
+
+	if not IsValid( vehicle ) then return end
+
+	if not ply:lvsKeyDown( "VIEWDIST" ) then
+		if string.find( bind, "invnext" ) then
+			vehicle:SelectWeapon( 2 )
+		end
+		if string.find( bind, "invprev" ) then
+			vehicle:SelectWeapon( 1 )
+		end
+	end
+
+	if string.find( bind, "+zoom" ) then
+		return true
+	end
+end )
 
 hook.Add( "SpawnMenuOpen", "!!!lvs_spawnmenudisable", function()
 	local ply = LocalPlayer() 

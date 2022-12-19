@@ -1,5 +1,6 @@
 include("shared.lua")
 include("sh_func.lua")
+include( "sh_weapons.lua" )
 include( "cl_effects.lua" )
 include( "cl_hud.lua" )
 include( "cl_trailsystem.lua" )

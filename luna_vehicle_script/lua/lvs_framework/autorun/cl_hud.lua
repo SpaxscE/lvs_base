@@ -14,7 +14,7 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 	local Frame = vgui.Create("DFrame")
 	Frame:SetSize( w, h )
 	Frame:SetPos( X, Y)
-	Frame:SetTitle("")
+	Frame:SetTitle( text )
 	Frame:SetScreenLock( true )
 	Frame:MakePopup()
 	Frame:SetSizable( true )
@@ -33,8 +33,6 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 		surface.DrawRect(w - 2, 0, 2, h)
 		surface.DrawRect(0, 0, w, 2)
 		surface.DrawRect(0, h - 2, w, 2)
-
-		draw.DrawText( text, "LVS_FONT", w * 0.5 - 24, h * 0.5 - 12, Color( 255, 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
 		if not LVS.HudEditors[ self.id ] then return end
 
@@ -70,22 +68,21 @@ function LVS:AddHudEditor( id, X, Y, w, h, minw, minh, text, func )
 	}
 end
 
---hook.Add( "LVS:Initialize", "!!!!lvs_addSwitchers", function()
-	LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, ScrH() - 40,  350, 30, 350, 30, "LVS SEAT SWITCHER", 
-		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
-			if not vehicle.LVSHudPaintSeatSwitcher then return end
 
-			vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
-		end
-	)
+LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, 10,  350, 30, 350, 30, "SEAT SWITCHER", 
+	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+		if not vehicle.LVSHudPaintSeatSwitcher then return end
 
-	LVS:AddHudEditor( "WeaponSwitcher", 500, 500,  350, 200, 350, 200, "LVS WEAPON SELECTOR", 
-		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
-			--if not vehicle.LVSHudPaintSeatSwitcher then return end
-			--vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
-		end
-	)
---end )
+		vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
+	end
+)
+
+LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 85,  200, 75, 200, 75, "WEAPON SELECTOR", 
+	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+		if not vehicle.LVSHudPaintWeapons then return end
+		vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
+	end
+)
 
 hook.Add( "InitPostEntity", "!!!lvs_load_hud", function()
 end )

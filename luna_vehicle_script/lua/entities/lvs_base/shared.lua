@@ -48,16 +48,19 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Bool", "lvsLockedStatus" )
 
 	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
+	self:AddDT( "Int", "SelectedWeapon" )
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
 	self:AddDT( "Float", "Shield" )
 
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
-		
+		self:NetworkVarNotify( "SelectedWeapon", self.OnWeaponChanged )
+
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
 		self:SetShield( self.MaxShield )
+		self:SetSelectedWeapon( 1 )
 	end
 
 	self:OnSetupDataTables()
