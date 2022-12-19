@@ -65,6 +65,10 @@ function ENT:Initialize()
 	self:PhysWake()
 
 	self:AutoAI()
+
+	self:CallOnRemove( "finish_weapons_on_delete", function( ent )
+		ent:WeaponsFinish()
+	end)
 end
 
 function ENT:OnSpawn( PObj )
@@ -74,6 +78,7 @@ function ENT:Think()
 	self:HandleActive()
 	self:HandleStart()
 	self:PhysicsThink()
+	self:WeaponsThink()
 
 	if self:GetAI() then self:RunAI() end
 

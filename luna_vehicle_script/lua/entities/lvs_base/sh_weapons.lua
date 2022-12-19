@@ -1,26 +1,5 @@
 
-ENT._WEAPONS = {
-	--[[
-	[1] = {
-		Icon = Material("lvs_weapons/hmg.png"),
-		UseHeat = true,
-		OnFire = function( vehicle ) end,
-		OnSelect = function( vehicle ) end,
-		OnDeselect = function( vehicle ) end,
-		OnRemove = function( vehicle ) end,
-		OnThink = function( vehicle ) end,
-	},
-	[2] = {
-		Icon = Material("lvs_weapons/mg.png"),
-	},
-	[3] = {
-		Icon = Material("lvs_weapons/nos.png"),
-	},
-	[4] = {
-		Icon = Material("lvs_weapons/bomb.png"),
-	},
-	]]
-}
+ENT.WEAPONS = {}
 
 if SERVER then
 	util.AddNetworkString( "lvs_select_weapon" )
@@ -37,10 +16,57 @@ if SERVER then
 		vehicle:SelectWeapon( ID )
 	end)
 
+	function ENT:WeaponsFinish()
+		if not self._activeWeapon then return end
+
+		local CurWeapon = self.WEAPONS[ self._activeWeapon ]
+
+		if not CurWeapon then return end
+
+		if CurWeapon.FinishAttack then
+			CurWeapon.FinishAttack( self )
+		end
+
+		self._activeWeapon = nil
+	end
+	
+	function ENT:WeaponsThink()
+		local Selected = self:GetSelectedWeapon()
+	
+		for ID, Weapon in pairs( self.WEAPONS ) do
+			if Weapon.OnThink then
+				Weapon.OnThink( self, ID == Selected )
+			end
+		end
+
+		local ply = self:GetDriver()
+
+		if not IsValid( ply ) then return end
+
+		local CurWeapon = self.WEAPONS[ Selected ]
+
+		if not CurWeapon then return end
+
+		local KeyAttack = ply:lvsKeyDown( "ATTACK" )
+
+		if KeyAttack ~= self.OldAttack then
+			self.OldAttack = KeyAttack
+
+			if KeyAttack then
+				if CurWeapon.StartAttack then
+					CurWeapon.StartAttack( self )
+				end
+				self._activeWeapon = Selected
+			else
+				self:WeaponsFinish()
+			end
+		end
+	end
+
 	function ENT:SelectWeapon( ID )
 		if not isnumber( ID ) then return end
 
-		if self._WEAPONS[ ID ] then
+		if self.WEAPONS[ ID ] then
 			self:SetSelectedWeapon( ID )
 		end
 
@@ -54,6 +80,18 @@ if SERVER then
 
 	function ENT:OnWeaponChanged( name, old, new)
 		if new == old then return end
+
+		self:WeaponsFinish()
+
+		local PrevWeapon = self.WEAPONS[ old ]
+		if PrevWeapon and PrevWeapon.OnDeselect then
+			PrevWeapon.OnDeselect( self )
+		end
+
+		local NextWeapon = self.WEAPONS[ new ]
+		if NextWeapon and NextWeapon.OnSelect then
+			NextWeapon.OnSelect( self )
+		end
 	end
 else
 	net.Receive( "lvs_select_weapon", function( length)
@@ -84,7 +122,7 @@ else
 	)
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
-		local num = #self._WEAPONS
+		local num = #self.WEAPONS
 
 		if num <= 1 then return end
 
@@ -142,7 +180,7 @@ else
 			else
 				surface.SetDrawColor( 255, 255, 255, A255 )
 			end
-			surface.SetMaterial( self._WEAPONS[ID].Icon )
+			surface.SetMaterial( self.WEAPONS[ID].Icon )
 			surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
 		end
 	end

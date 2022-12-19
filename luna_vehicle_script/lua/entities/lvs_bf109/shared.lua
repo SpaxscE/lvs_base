@@ -31,6 +31,33 @@ ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 1000
 
+ENT.WEAPONS = {
+	[1] = {
+		Icon = Material("lvs_weapons/hmg.png"),
+		Ammo = 100,
+		Delay = 0.25,
+		HeatRate = 0.05,
+		Attack = function( ent ) end,
+		StartAttack = function( ent ) PrintChat("start 1") end,
+		FinishAttack = function( ent ) PrintChat("stop 1") end,
+		OnSelect = function( ent ) end,
+		OnDeselect = function( ent ) end,
+		OnThink = function( ent, active ) end,
+	},
+	[2] = {
+		Icon = Material("lvs_weapons/mg.png"),
+		Ammo = 600,
+		Delay = 0.1,
+		HeatRate = 0.001,
+		StartAttack = function( ent ) PrintChat("start 2") end,
+		FinishAttack = function( ent ) PrintChat("stop 2")  end,
+		Attack = function( ent ) end,
+		OnSelect = function( ent ) end,
+		OnDeselect = function( ent ) end,
+		OnThink = function( ent, active ) end,
+	}
+}
+
 ENT.EngineSounds = {
 	{
 		sound = "^lvs/vehicles/bf109/dist.wav",

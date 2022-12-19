@@ -49,9 +49,12 @@ function ENT:CreateBaseDT()
 
 	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
 	self:AddDT( "Int", "SelectedWeapon" )
+	self:AddDT( "Int", "WepAmmo" )
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
 	self:AddDT( "Float", "Shield" )
+	self:AddDT( "Float", "WepNextAttack" )
+	self:AddDT( "Float", "WepHeat" )
 
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )

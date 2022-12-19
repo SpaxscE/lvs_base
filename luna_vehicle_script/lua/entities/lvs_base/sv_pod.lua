@@ -64,6 +64,8 @@ function ENT:HandleActive()
 
 			self:EmitSound( "vehicles/atv_ammo_close.wav" )
 		else
+			self:WeaponsFinish()
+
 			self:EmitSound( "vehicles/atv_ammo_open.wav" )
 		end
 	end
