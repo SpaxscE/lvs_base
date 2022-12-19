@@ -9,6 +9,15 @@ ENT._WEAPONS = {
 		OnRemove = function( vehicle ) end,
 		OnThink = function( vehicle ) end,
 	},
+	[2] = {
+		Icon = Material("lvs_weapons/mg.png"),
+	},
+	[3] = {
+		Icon = Material("lvs_weapons/nos.png"),
+	},
+	[4] = {
+		Icon = Material("lvs_weapons/bomb.png"),
+	},
 }
 
 if SERVER then
