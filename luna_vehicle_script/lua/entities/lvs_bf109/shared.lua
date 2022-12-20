@@ -37,27 +37,6 @@ ENT.WEAPONS = {
 		Ammo = 300,
 		Delay = 0.1,
 		Attack = function( ent )
-			ent.MirrorPrimary = not ent.MirrorPrimary
-
-			local Mirror = ent.MirrorPrimary and -1 or 1
-
-			ent:EmitSound("^test_dist.wav",105,105 + math.cos( CurTime() ) * 10 + math.Rand(-5,5),1,CHAN_WEAPON)
-
-			local bullet = {}
-			bullet.Num 	= 1
-			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * Mirror,92.85) )
-			bullet.Dir 	= ent:GetForward()
-			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
-			bullet.TracerName = "lvs_bullet_base"
-			bullet.Force	= 10
-			bullet.HullSize 	= 25
-			bullet.Damage	= 50
-			bullet.Velocity = 18000
-			bullet.Attacker 	= ent:GetDriver()
-			bullet.Callback = function(att, tr, dmginfo)
-			end
-
-			ent:FireBullet( bullet )
 		end,
 
 		StartAttack = function( ent ) end,
@@ -69,37 +48,41 @@ ENT.WEAPONS = {
 	[2] = {
 		Icon = Material("lvs_weapons/mg.png"),
 		Ammo = 1200,
-		Delay = 0.05,
+		Delay = 0.1,
 		Attack = function( ent )
 			ent.MirrorSecondary = not ent.MirrorSecondary
 
 			local Mirror = ent.MirrorSecondary and -1 or 1
 
 			local bullet = {}
-			bullet.Num 	= 1
-			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
-			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
-			bullet.Spread 	= Vector( 0.02,  0.02, 0 )
-			bullet.TracerName = "lvs_bullet_light"
+			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * (1 - Mirror),92.85) )
+			bullet.Dir 	= ent:GetForward()
+			bullet.Spread 	= Vector( 0.04,  0.04, 0 )
+			bullet.TracerName = "lvs_tracer_white"
 			bullet.Force	= 10
 			bullet.HullSize 	= 15
 			bullet.Damage	= 5
-			bullet.Velocity = 40000
+			bullet.Velocity = 18000
 			bullet.Attacker 	= ent:GetDriver()
 			bullet.Callback = function(att, tr, dmginfo)
-				dmginfo:SetDamageType(DMG_AIRBOAT)
 			end
-
+			ent:FireBullet( bullet )
+	
+			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
+			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
+			bullet.Velocity = 26000
 			ent:FireBullet( bullet )
 		end,
 		StartAttack = function( ent )
-			ent.wpn_loop = CreateSound( ent, "test2.wav" )
-			ent.wpn_loop:Play()
+			if not IsValid( ent.SoundEmitter ) then
+				ent.SoundEmitter = ent:AddSoundEmitter( Vector(109.29,0,92.85), "^lvs/vehicles/bf109/fire_loop.wav", "lvs/vehicles/bf109/fire_loop_int.wav" )
+			end
+
+			ent.SoundEmitter:Play()
 		end,
 		FinishAttack = function( ent )
-			if ent.wpn_loop then
-				ent.wpn_loop:Stop()
-				ent.wpn_loop = nil
+			if IsValid( ent.SoundEmitter ) then
+				ent.SoundEmitter:Stop()
 			end
 		end,
 		OnSelect = function( ent ) end,

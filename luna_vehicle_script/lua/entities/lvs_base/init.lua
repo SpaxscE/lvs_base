@@ -171,3 +171,30 @@ function ENT:FireBullet( data )
 
 	LVS:FireBullet( data )
 end
+
+function ENT:AddSoundEmitter( pos, snd, snd_interior )
+	local Emitter = ents.Create( "lvs_soundemitter" )
+
+	if not IsValid( Emitter ) then
+		self:Remove()
+
+		print("LVS: Failed to create sound emitter entity. Vehicle terminated.")
+
+		return
+	end
+
+	Emitter:SetPos( self:LocalToWorld( pos ) )
+	Emitter:SetAngles( self:GetAngles() )
+	Emitter:Spawn()
+	Emitter:Activate()
+	Emitter:SetParent( self )
+	Emitter:SetBase( self )
+	Emitter:SetSound( snd or "" )
+	Emitter:SetSoundInterior( snd_interior or "" )
+
+	self:DeleteOnRemove( Emitter )
+
+	self:TransferCPPI( Emitter )
+
+	return Emitter
+end
