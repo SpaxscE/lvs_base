@@ -34,24 +34,68 @@ ENT.MaxHealth = 1000
 ENT.WEAPONS = {
 	[1] = {
 		Icon = Material("lvs_weapons/hmg.png"),
-		Ammo = 100,
-		Delay = 0.25,
-		HeatRate = 0.05,
-		Attack = function( ent ) end,
-		StartAttack = function( ent ) PrintChat("start 1") end,
-		FinishAttack = function( ent ) PrintChat("stop 1") end,
+		Ammo = 300,
+		Delay = 0.1,
+		Attack = function( ent )
+			ent.MirrorPrimary = not ent.MirrorPrimary
+
+			local Mirror = ent.MirrorPrimary and -1 or 1
+
+			ent:EmitSound("^test_dist.wav",105,105 + math.cos( CurTime() ) * 10 + math.Rand(-5,5),1,CHAN_WEAPON)
+
+			local bullet = {}
+			bullet.Num 	= 1
+			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * Mirror,92.85) )
+			bullet.Dir 	= ent:GetForward()
+			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+			bullet.TracerName = "lvs_bullet_base"
+			bullet.Force	= 10
+			bullet.HullSize 	= 25
+			bullet.Damage	= 50
+			bullet.Velocity = 18000
+			bullet.Attacker 	= ent:GetDriver()
+			bullet.Callback = function(att, tr, dmginfo)
+			end
+
+			ent:FireBullet( bullet )
+		end,
+
+		StartAttack = function( ent ) end,
+		FinishAttack = function( ent ) end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
 	},
 	[2] = {
 		Icon = Material("lvs_weapons/mg.png"),
-		Ammo = 600,
-		Delay = 0.1,
-		HeatRate = 0.001,
-		StartAttack = function( ent ) PrintChat("start 2") end,
-		FinishAttack = function( ent ) PrintChat("stop 2")  end,
-		Attack = function( ent ) end,
+		Ammo = 300,
+		Delay = 0.15,
+		Attack = function( ent )
+			ent.MirrorSecondary = not ent.MirrorSecondary
+
+			local Mirror = ent.MirrorSecondary and -1 or 1
+
+			ent:EmitSound("^test_dist.wav",105,105 + math.cos( CurTime() ) * 10 + math.Rand(-5,5),1,CHAN_WEAPON)
+
+			local bullet = {}
+			bullet.Num 	= 1
+			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
+			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
+			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+			bullet.TracerName = "lvs_bullet_base"
+			bullet.Force	= 10
+			bullet.HullSize 	= 25
+			bullet.Damage	= 50
+			bullet.Velocity = 18000
+			bullet.Attacker 	= ent:GetDriver()
+			bullet.Callback = function(att, tr, dmginfo)
+				dmginfo:SetDamageType(DMG_AIRBOAT)
+			end
+
+			ent:FireBullet( bullet )
+		end,
+		StartAttack = function( ent ) end,
+		FinishAttack = function( ent ) end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,

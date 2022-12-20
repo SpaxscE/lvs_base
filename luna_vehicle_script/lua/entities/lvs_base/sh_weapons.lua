@@ -16,6 +16,13 @@ if SERVER then
 		vehicle:SelectWeapon( ID )
 	end)
 
+	function ENT:GetActiveWeapon()
+		local SelectedID = self:GetSelectedWeapon()
+		local CurWeapon = self.WEAPONS[ SelectedID ]
+
+		return CurWeapon, SelectedID
+	end
+
 	function ENT:WeaponsFinish()
 		if not self._activeWeapon then return end
 
@@ -29,13 +36,51 @@ if SERVER then
 
 		self._activeWeapon = nil
 	end
-	
+
+	function ENT:WeaponUpdateNW()
+		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return end
+
+		self:SetNWAmmo( CurWeapon._CurAmmo or self:GetMaxAmmo() )
+	end
+
+	function ENT:GetMaxAmmo()
+		local CurWeapon = self:GetActiveWeapon()
+
+		return CurWeapon.Ammo
+	end
+
+	function ENT:GetAmmo()
+		local CurWeapon = self:GetActiveWeapon()
+
+		return CurWeapon._CurAmmo or self:GetMaxAmmo()
+	end
+
+	function ENT:TakeAmmo()
+		local CurWeapon = self:GetActiveWeapon()
+
+		CurWeapon._CurAmmo = self:GetAmmo() - 1
+	end
+
+	function ENT:CanAttack()
+		local CurWeapon = self:GetActiveWeapon()
+
+		return (CurWeapon._NextFire or 0) < CurTime()
+	end
+
+	function ENT:SetNextAttack( time )
+		local CurWeapon = self:GetActiveWeapon()
+
+		CurWeapon._NextFire = time
+	end
+
 	function ENT:WeaponsThink()
-		local Selected = self:GetSelectedWeapon()
+		local CurWeapon, SelectedID = self:GetActiveWeapon()
 	
 		for ID, Weapon in pairs( self.WEAPONS ) do
 			if Weapon.OnThink then
-				Weapon.OnThink( self, ID == Selected )
+				Weapon.OnThink( self, ID == SelectedID )
 			end
 		end
 
@@ -43,24 +88,40 @@ if SERVER then
 
 		if not IsValid( ply ) then return end
 
-		local CurWeapon = self.WEAPONS[ Selected ]
-
 		if not CurWeapon then return end
 
-		local KeyAttack = ply:lvsKeyDown( "ATTACK" )
+		local ShouldFire = ply:lvsKeyDown( "ATTACK" )
 
-		if KeyAttack ~= self.OldAttack then
-			self.OldAttack = KeyAttack
+		if self:GetMaxAmmo() > 0 then
+			if self:GetAmmo() <= 0 then
+				ShouldFire = false
+			end
+		end
 
-			if KeyAttack then
+		if ShouldFire ~= self.OldAttack then
+			self.OldAttack = ShouldFire
+
+			if ShouldFire then
 				if CurWeapon.StartAttack then
 					CurWeapon.StartAttack( self )
 				end
-				self._activeWeapon = Selected
+				self._activeWeapon = SelectedID
 			else
 				self:WeaponsFinish()
 			end
 		end
+
+		if ShouldFire then
+			if not self:CanAttack() then return end
+
+			self:SetNextAttack( CurTime() + CurWeapon.Delay )
+
+			CurWeapon.Attack( self )
+
+			self:TakeAmmo()
+		end
+
+		self:WeaponUpdateNW()
 	end
 
 	function ENT:SelectWeapon( ID )
@@ -120,6 +181,23 @@ else
 			vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
 		end
 	)
+
+	LVS:AddHudEditor( "WeaponInfo", ScrW() - 210, ScrH() - 85,  200, 75, 200, 75, "WEAPON INFO", 
+		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+			if not vehicle.LVSHudPaintWeaponInfo then return end
+
+			if ply ~= vehicle:GetDriver() then return end
+
+			vehicle:LVSHudPaintWeaponInfo( X, Y, W, H, ScrX, ScrY, ply )
+		end
+	)
+
+	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
+		draw.RoundedBox(5, X, Y, w, h, Color(0,0,0,150) )
+
+		draw.DrawText( self:GetNWAmmo(), "TargetID", X + 50, Y, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( self:GetNWHeat(), "TargetID", X + 90, Y + 40, color_white, TEXT_ALIGN_CENTER )
+	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		local num = #self.WEAPONS
