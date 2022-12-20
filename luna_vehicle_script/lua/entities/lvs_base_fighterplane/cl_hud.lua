@@ -72,7 +72,7 @@ function ENT:LVSPaintHitMarker( scr )
 	local aV = math.cos( math.rad( math.max(((HitMarkerTime - T) / 0.1) * 180,0) ) )
 
 	if aV ~= 1 then
-		local Start = 20 + (1 - aV) * 5
+		local Start = 20 + (1 - aV ^ 2) * 5
 		local dst = 10
 
 		if IsCrit then

@@ -68,25 +68,23 @@ ENT.WEAPONS = {
 	},
 	[2] = {
 		Icon = Material("lvs_weapons/mg.png"),
-		Ammo = 300,
-		Delay = 0.15,
+		Ammo = 1200,
+		Delay = 0.05,
 		Attack = function( ent )
 			ent.MirrorSecondary = not ent.MirrorSecondary
 
 			local Mirror = ent.MirrorSecondary and -1 or 1
 
-			ent:EmitSound("^test_dist.wav",105,105 + math.cos( CurTime() ) * 10 + math.Rand(-5,5),1,CHAN_WEAPON)
-
 			local bullet = {}
 			bullet.Num 	= 1
 			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
 			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
-			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
-			bullet.TracerName = "lvs_bullet_base"
+			bullet.Spread 	= Vector( 0.02,  0.02, 0 )
+			bullet.TracerName = "lvs_bullet_light"
 			bullet.Force	= 10
-			bullet.HullSize 	= 25
-			bullet.Damage	= 50
-			bullet.Velocity = 18000
+			bullet.HullSize 	= 15
+			bullet.Damage	= 5
+			bullet.Velocity = 40000
 			bullet.Attacker 	= ent:GetDriver()
 			bullet.Callback = function(att, tr, dmginfo)
 				dmginfo:SetDamageType(DMG_AIRBOAT)
@@ -94,8 +92,16 @@ ENT.WEAPONS = {
 
 			ent:FireBullet( bullet )
 		end,
-		StartAttack = function( ent ) end,
-		FinishAttack = function( ent ) end,
+		StartAttack = function( ent )
+			ent.wpn_loop = CreateSound( ent, "test2.wav" )
+			ent.wpn_loop:Play()
+		end,
+		FinishAttack = function( ent )
+			if ent.wpn_loop then
+				ent.wpn_loop:Stop()
+				ent.wpn_loop = nil
+			end
+		end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
