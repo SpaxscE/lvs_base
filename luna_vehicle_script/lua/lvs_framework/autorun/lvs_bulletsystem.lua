@@ -106,7 +106,7 @@ local function HandleBullets()
 
 					local effectdata = EffectData()
 					effectdata:SetOrigin( traceWater.HitPos )
-					effectdata:SetScale( 10 * bullet.HullSize * 0.1 )
+					effectdata:SetScale( 10 + bullet.HullSize * 0.5 )
 					effectdata:SetFlags( 2 )
 					util.Effect( "WaterSplash", effectdata, true, true )
 				end
