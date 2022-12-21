@@ -35,6 +35,7 @@ if SERVER then
 		end
 
 		self._activeWeapon = nil
+		self.OldAttack = false
 	end
 
 	function ENT:WeaponUpdateNW()
