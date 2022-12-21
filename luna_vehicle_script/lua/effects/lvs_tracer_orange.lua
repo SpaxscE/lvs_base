@@ -6,7 +6,7 @@ function EFFECT:Init( data )
 	local pos  = data:GetOrigin()
 	local dir = data:GetNormal()
 
-	self.ID = data:GetFlags()
+	self.ID = data:GetMaterialIndex()
 
 	self:SetRenderBoundsWS( pos, pos + dir * 50000 )
 end

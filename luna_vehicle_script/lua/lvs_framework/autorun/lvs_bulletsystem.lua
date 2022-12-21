@@ -167,7 +167,7 @@ if SERVER then
 
 		setmetatable( bullet, NewBullet )
 
-		bullet.TracerName = data.TracerName or "lvs_bullet_base"
+		bullet.TracerName = data.TracerName or "lvs_tracer_orange"
 		bullet.Src = data.Src or Vector(0,0,0)
 		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or Vector(0,0,0)) * 0.5):GetNormalized()
 		bullet.Force = data.Force or 10
@@ -226,7 +226,7 @@ else
 		local effectdata = EffectData()
 		effectdata:SetOrigin( bullet.Src )
 		effectdata:SetNormal( bullet.Dir )
-		effectdata:SetFlags( index )
+		effectdata:SetMaterialIndex( index )
 		util.Effect( bullet.TracerName, effectdata )
 	end )
 
