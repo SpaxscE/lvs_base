@@ -13,9 +13,17 @@ function ENT:SetupDataTables()
 
 	self:NetworkVar( "String",1, "Sound")
 	self:NetworkVar( "String",2, "SoundInterior")
+
+	self:NetworkVar( "Int",0, "SoundLevel" )
+
+	if SERVER then
+		self:SetSoundLevel( 110 )
+	end
 end
 
 if SERVER then
+	util.AddNetworkString( "lvs_soundemitter_playonce" )
+
 	function ENT:Initialize()	
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
@@ -31,6 +39,14 @@ if SERVER then
 		return TRANSMIT_ALWAYS
 	end
 
+	function ENT:PlayOnce( pitch, volume )
+		net.Start( "lvs_soundemitter_playonce", true )
+			net.WriteEntity( self )
+			net.WriteInt( pitch or 100, 9 )
+			net.WriteFloat( volume or 1 )
+		net.SendPVS( self:GetPos() )
+	end
+
 	function ENT:Play()
 		self:SetActive( true )
 	end
@@ -40,6 +56,40 @@ if SERVER then
 	end
 
 	return
+end
+
+net.Receive( "lvs_soundemitter_playonce", function( len )
+	local ent = net.ReadEntity()
+
+	if not IsValid( ent ) or not ent.PlayOnce then return end
+
+	ent:PlayOnce( net.ReadInt( 9 ), net.ReadFloat() )
+end )
+
+function ENT:PlayOnce( pitch, volume )
+	local ply = LocalPlayer()
+	local veh = ply:lvsGetVehicle()
+
+	local snd = self:GetSound()
+	local snd_int = self:GetSoundInterior()
+
+	if snd == snd_int then self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON ) return end
+
+	if IsValid( veh ) and veh == self:GetBase() and ply:GetViewEntity() == ply then
+		local pod = ply:GetVehicle()
+
+		if IsValid( pod ) then
+			if pod:GetThirdPersonMode() then
+				self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+			else
+				self:EmitSound( snd_int, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+			end
+		else
+			self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+		end
+	else
+		self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+	end
 end
 
 function ENT:Initialize()
@@ -58,31 +108,29 @@ function ENT:RemoveSounds()
 end
 
 function ENT:HandleSounds()
-	if not self.snd_int then
-		return
-	end
+	if not self.snd_int then return end
 
 	local ply = LocalPlayer()
 	local veh = ply:lvsGetVehicle()
 
-	if IsValid( veh ) and veh == self:GetBase() then
+	if IsValid( veh ) and veh == self:GetBase() and ply:GetViewEntity() == ply then
 		local pod = ply:GetVehicle()
 
 		if IsValid( pod ) then
 			if pod:GetThirdPersonMode() then
-				self.snd:ChangeVolume( 1 )
-				self.snd_int:ChangeVolume( 0 )
+				if self.snd then self.snd:ChangeVolume( 1 ) end
+				if self.snd_int then self.snd_int:ChangeVolume( 0 ) end
 			else
-				self.snd:ChangeVolume( 0 )
-				self.snd_int:ChangeVolume( 1 )
+				if self.snd then self.snd:ChangeVolume( 0 ) end
+				if self.snd_int then self.snd_int:ChangeVolume( 1 ) end
 			end
 		else
-			self.snd:ChangeVolume( 1 )
-			self.snd_int:ChangeVolume( 0 )
+			if self.snd then self.snd:ChangeVolume( 1 ) end
+			if self.snd_int then self.snd_int:ChangeVolume( 0 ) end
 		end
 	else
-		self.snd:ChangeVolume( 1 )
-		self.snd_int:ChangeVolume( 0 )
+		if self.snd then self.snd:ChangeVolume( 1 ) end
+		if self.snd_int then self.snd_int:ChangeVolume( 0 ) end
 	end
 end
 
@@ -92,13 +140,19 @@ function ENT:StartSounds()
 
 	if snd ~= "" then
 		self.snd = CreateSound( self, snd )
-		self.snd:SetSoundLevel( 110 )
+		self.snd:SetSoundLevel( self:GetSoundLevel() )
 		self.snd:PlayEx(0,100)
+	end
+
+	if snd == snd_int then
+		self.snd:ChangeVolume( 1, 0 )
+
+		return
 	end
 
 	if snd_int ~= "" then
 		self.snd_int = CreateSound( self, snd_int )
-		self.snd_int:SetSoundLevel( 110 )
+		self.snd_int:SetSoundLevel( self:GetSoundLevel() )
 		self.snd_int:PlayEx(0,100)
 	end
 end
