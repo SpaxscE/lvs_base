@@ -33,21 +33,50 @@ ENT.MaxHealth = 1000
 
 ENT.WEAPONS = {
 	[1] = {
-		Icon = Material("lvs_weapons/hmg.png"),
-		Ammo = 300,
-		Delay = 0.1,
+		Icon = Material("lvs_weapons/mg.png"),
+		Ammo = 1000,
+		Delay = 0.03,
 		Attack = function( ent )
-		end,
+			ent.MirrorPrimary = not ent.MirrorPrimary
+	
+			local Mirror = ent.MirrorPrimary and -1 or 1
 
-		StartAttack = function( ent ) end,
-		FinishAttack = function( ent ) end,
+			local bullet = {}
+			bullet.Num 	= 1
+			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * Mirror,92.85) )
+			bullet.Dir 	= ent:GetForward()
+			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+			bullet.TracerName = "lvs_tracer_white"
+			bullet.Force	= 10
+			bullet.HullSize 	= 5
+			bullet.Damage	= 10
+			bullet.Velocity = 26000
+			bullet.Attacker 	= ent:GetDriver()
+			bullet.Callback = function(att, tr, dmginfo)
+			end
+			ent:FireBullet( bullet )
+		end,
+		StartAttack = function( ent )
+			if not IsValid( ent.SoundEmitter1 ) then
+				ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/vehicles/bf109/weapons/nose_loop.wav", "lvs/mg_loop_interior.wav" )
+				ent.SoundEmitter1:SetSoundLevel( 80 )
+			end
+		
+			ent.SoundEmitter1:Play()
+		end,
+		FinishAttack = function( ent )
+			if IsValid( ent.SoundEmitter1 ) then
+				ent.SoundEmitter1:Stop()
+			end
+			ent:EmitSound("lvs/vehicles/bf109/weapons/nose_lastshot.wav", 75)
+		end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
 	},
 	[2] = {
-		Icon = Material("lvs_weapons/mg.png"),
-		Ammo = 1200,
+		Icon = Material("lvs_weapons/hmg.png"),
+		Ammo = 300,
 		Delay = 0.1,
 		Attack = function( ent )
 			ent.MirrorSecondary = not ent.MirrorSecondary
@@ -55,35 +84,32 @@ ENT.WEAPONS = {
 			local Mirror = ent.MirrorSecondary and -1 or 1
 
 			local bullet = {}
-			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * (1 - Mirror),92.85) )
-			bullet.Dir 	= ent:GetForward()
+			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
+			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
 			bullet.Spread 	= Vector( 0.04,  0.04, 0 )
-			bullet.TracerName = "lvs_tracer_white"
-			bullet.Force	= 10
-			bullet.HullSize 	= 15
-			bullet.Damage	= 5
+			bullet.TracerName = "lvs_tracer_orange"
+			bullet.Force	= 50
+			bullet.HullSize 	= 10
+			bullet.Damage	= 125
 			bullet.Velocity = 18000
 			bullet.Attacker 	= ent:GetDriver()
 			bullet.Callback = function(att, tr, dmginfo)
 			end
 			ent:FireBullet( bullet )
-	
-			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
-			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
-			bullet.Velocity = 26000
-			ent:FireBullet( bullet )
 		end,
 		StartAttack = function( ent )
-			if not IsValid( ent.SoundEmitter ) then
-				ent.SoundEmitter = ent:AddSoundEmitter( Vector(109.29,0,92.85), "^lvs/vehicles/bf109/fire_loop.wav", "lvs/vehicles/bf109/fire_loop_int.wav" )
+			if not IsValid( ent.SoundEmitter2 ) then
+				ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/vehicles/bf109/weapons/wing_loop.wav", "lvs/vehicles/bf109/weapons/wing_loop.wav" )
+				ent.SoundEmitter2:SetSoundLevel( 80 )
 			end
 
-			ent.SoundEmitter:Play()
+			ent.SoundEmitter2:Play()
 		end,
 		FinishAttack = function( ent )
-			if IsValid( ent.SoundEmitter ) then
-				ent.SoundEmitter:Stop()
+			if IsValid( ent.SoundEmitter2 ) then
+				ent.SoundEmitter2:Stop()
 			end
+			ent:EmitSound("lvs/vehicles/bf109/weapons/wing_lastshot.wav", 80)
 		end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
