@@ -26,20 +26,6 @@ if SERVER then
 		return TRANSMIT_ALWAYS
 	end
 
-	function ENT:GetDamageBounds()
-		local mins = self._dmgMins or Vector(-40,-20,-30)
-		local maxs = self._dmgMaxs or Vector(40,20,30)
-
-		return mins, maxs
-	end
-
-	function ENT:SetDamageBounds( mins, maxs )
-		if not isvector( mins ) or not isvector( maxs ) then return end
-
-		self._dmgMins = mins
-		self._dmgMaxs = maxs
-	end
-
 	return
 end
 

@@ -21,8 +21,6 @@ function ENT:AddEngine( pos )
 
 	self:TransferCPPI( Engine )
 
-	self:AddEntityDS( Engine )
-
 	return Engine
 end
 

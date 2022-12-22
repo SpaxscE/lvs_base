@@ -74,7 +74,7 @@ ENT.WEAPONS = {
 	[2] = {
 		Icon = Material("lvs_weapons/hmg.png"),
 		Ammo = 300,
-		Delay = 0.1,
+		Delay = 0.14,
 		Attack = function( ent )
 			ent.MirrorSecondary = not ent.MirrorSecondary
 

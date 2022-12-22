@@ -1,44 +1,64 @@
 
-ENT._dmgEnts = {}
+ENT._dmgParts = {}
 
-function ENT:AddEntityDS( entity )
-	if not IsValid( entity ) then return end
+function ENT:AddDS( data )
+	if not data then return end
 
-	if not entity.GetDamageBounds then
-		entity.GetDamageBounds = function( self )
-			return self:OBBMins(), self:OBBMaxs()
-		end
-	end
+	data.pos = data.pos or Vector(0,0,0)
+	data.ang = data.ang or Angle(0,0,0)
+	data.mins = data.mins or Vector(-1,-1,-1)
+	data.maxs = data.maxs or Vector(1,1,1)
 
-	table.insert( self._dmgEnts, entity )
+	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 50, 50, 50, 150 ) )
+
+	table.insert( self._dmgParts, data )
 end
 
 function ENT:CalcDamage( dmginfo )
 	local Damage = dmginfo:GetDamage()
 	local CurHealth = self:GetHP()
 
+	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
-	local dmgPenetration = dmgDir * 200
+	local dmgPenetration = dmgDir * 10
 
-	local CriticalHit = false
+	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
-	for index, part in pairs( self._dmgEnts ) do
-		if CriticalHit then break end
+	local closestPart
+	local closestDist = Len * 2
 
-		local mins, maxs = part:GetDamageBounds()
-		local pos = part:GetPos()
-		local ang = part:GetAngles()
+	for index, part in pairs( self._dmgParts ) do
+		local mins = part.mins
+		local maxs = part.maxs
+		local pos = self:LocalToWorld( part.pos )
+		local ang = self:LocalToWorldAngles( part.ang )
 
 		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
 		if HitPos then
-			CriticalHit = true
+			debugoverlay.Cross( HitPos, 50, 4, Color( 255, 0, 255 ) )
+
+			local dist = (HitPos - pos):Length()
+
+			if closestDist > dist then
+				closestPart = part
+				closestDist = dist
+			end
 		end
 	end
 
-	if CriticalHit then
-		Damage = Damage * 1.5
+	for index, part in pairs( self._dmgParts ) do
+		local mins = part.mins
+		local maxs = part.maxs
+		local pos = self:LocalToWorld( part.pos )
+		local ang = self:LocalToWorldAngles( part.ang )
+
+		if part == closestPart then
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
+		else
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
+		end
 	end
 
 	local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
@@ -51,7 +71,6 @@ function ENT:CalcDamage( dmginfo )
 
 	if IsValid( Attacker ) and Attacker:IsPlayer() then
 		net.Start( "lvs_hitmarker" )
-			net.WriteBool( CriticalHit )
 		net.Send( Attacker )
 	end
 end

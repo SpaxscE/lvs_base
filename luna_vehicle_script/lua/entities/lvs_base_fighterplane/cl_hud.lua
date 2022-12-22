@@ -67,19 +67,15 @@ end
 function ENT:LVSPaintHitMarker( scr )
 	local T = CurTime()
 
-	local HitMarkerTime, IsCrit = self:GetHitMarker()
+	local HitMarkerTime = self:GetHitMarker()
 
-	local aV = math.cos( math.rad( math.max(((HitMarkerTime - T) / 0.1) * 180,0) ) )
+	local aV = math.cos( math.rad( math.max(((HitMarkerTime - T) / 0.15) * 180,0) ) )
 
 	if aV ~= 1 then
-		local Start = 20 + (1 - aV ^ 2) * 5
+		local Start = 12 + (1 - aV ^ 2) * 8
 		local dst = 10
 
-		if IsCrit then
-			surface.SetDrawColor( 255, 50, 0, 255 )
-		else
-			surface.SetDrawColor( 255, 255, 0, 255 )
-		end
+		surface.SetDrawColor( 255, 255, 0, 255 )
 
 		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start, scr.y + Start - dst )
 		surface.DrawLine( scr.x + Start, scr.y + Start, scr.x + Start - dst, scr.y + Start )
