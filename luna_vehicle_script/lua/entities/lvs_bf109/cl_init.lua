@@ -1,5 +1,7 @@
 include("shared.lua")
 
+ENT.FlyByAdvance = 0.5
+
 function ENT:OnSpawn()
 	self:RegisterTrail( Vector(40,200,70), 0, 20, 2, 1000, 400 )
 	self:RegisterTrail( Vector(40,-200,70), 0, 20, 2, 1000, 400 )

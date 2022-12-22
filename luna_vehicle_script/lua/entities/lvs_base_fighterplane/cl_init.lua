@@ -2,6 +2,8 @@ include("shared.lua")
 include("cl_camera.lua")
 include("cl_hud.lua")
 
+ENT.FlyByAdvance = 0
+
 function ENT:OnFrameActive()
 	local ply = LocalPlayer()
 
@@ -23,7 +25,7 @@ function ENT:OnFrameActive()
 
 	if self:GetThrottle() <= 0.75 or Vel:Length() <= self.MaxVelocity * 0.75 then return end
 
-	local Sub = ViewEnt:GetPos() - self:GetPos()
+	local Sub = ViewEnt:GetPos() - self:GetPos() - Vel * self.FlyByAdvance
 	local ToPlayer = Sub:GetNormalized()
 	local VelDir = Vel:GetNormalized()
 
