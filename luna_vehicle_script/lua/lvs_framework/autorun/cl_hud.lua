@@ -23,6 +23,7 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 	Frame.id = id
 	Frame.OnClose = function( self )
 		ResetFrame( self.id )
+		LocalPlayer():lvsSetInputDisabled( false )
 	end
 	Frame.Paint = function(self, w, h )
 		surface.SetDrawColor(0,0,0,150)
@@ -77,6 +78,7 @@ hook.Add( "OnContextMenuOpen", "!!!!!LVS_hud", function()
 	if not GetConVar( "lvs_edit_hud" ):GetBool() then return end
 
 	LVS:OpenEditors()
+
 	return false
 end )
 
@@ -86,6 +88,8 @@ function LVS:OpenEditors()
 
 		MakeFrame( id, editor.X, editor.Y, editor.w, editor.h, editor.minw, editor.minh, editor.text )
 	end
+
+	LocalPlayer():lvsSetInputDisabled( true )
 end
 
 function LVS:CloseEditors()
@@ -93,6 +97,8 @@ function LVS:CloseEditors()
 		if not IsValid( editor.Frame ) then continue end
 		editor.Frame:Remove()
 	end
+
+	LocalPlayer():lvsSetInputDisabled( false )
 end
 
 hook.Add( "OnContextMenuClose", "!!!!!LVS_hud", function()

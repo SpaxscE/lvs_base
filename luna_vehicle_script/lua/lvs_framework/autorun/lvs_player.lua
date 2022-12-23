@@ -118,6 +118,8 @@ local function GetInput( ply, name )
 end
 
 function meta:lvsKeyDown( name )
+	if not self:lvsGetInputEnabled() then return false end
+
 	local Pressed = GetInput( self, name )
 	local NewPressed = hook.Run( "LVS.PlayerKeyDown", self, name, Pressed )
 
@@ -128,15 +130,63 @@ function meta:lvsKeyDown( name )
 	end
 end
 
+function meta:lvsGetInputEnabled()
+	return (self._lvsKeyDisabler or 0) < CurTime()
+end
+
+function meta:lvsSetInputDisabled( disable )
+	if CLIENT then
+		net.Start( "lvs_buildcontrols" )
+			net.WriteBool( disable )
+		net.SendToServer()
+	end
+
+	if disable then
+		self._lvsKeyDisabler = CurTime() + 60
+	else
+		self._lvsKeyDisabler = CurTime() + 0.1
+	end
+end
+
 if CLIENT then
 	net.Receive( "lvs_buildcontrols", function( len )
 		LocalPlayer():lvsBuildControls()
+	end )
+
+	hook.Add( "OnSpawnMenuOpen", "!!!lvs_keyblocker", function()
+		LocalPlayer():lvsSetInputDisabled( true )
+	end )
+
+	hook.Add( "OnContextMenuOpen", "!!!lvs_keyblocker", function()
+		LocalPlayer():lvsSetInputDisabled( true )
+	end )
+
+	hook.Add( "OnSpawnMenuClose", "!!!lvs_keyblocker", function()
+		LocalPlayer():lvsSetInputDisabled( false )
+	end )
+
+	hook.Add( "OnContextMenuClose", "!!!lvs_keyblocker", function()
+		LocalPlayer():lvsSetInputDisabled( false )
+	end )
+
+	hook.Add( "StartChat", "!!!lvs_keyblocker", function( isTeamChat )
+		LocalPlayer():lvsSetInputDisabled( true )
+	end )
+
+	hook.Add( "FinishChat", "!!!lvs_keyblocker", function()
+		LocalPlayer():lvsSetInputDisabled( false )
 	end )
 
 	return
 end
 
 util.AddNetworkString( "lvs_buildcontrols" )
+
+net.Receive( "lvs_buildcontrols", function( len, ply )
+	if not IsValid( ply ) then return end
+
+	ply:lvsSetInputDisabled( net.ReadBool() )
+end )
 
 function meta:lvsSetInput( name, value )
 	if not self._lvsKeyDown then
@@ -172,6 +222,8 @@ hook.Add( "PlayerButtonUp", "!!!lvsButtonUp", function( ply, button )
 end )
 
 hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
+	if not ply:lvsGetInputEnabled() then return end
+
 	local vehicle = ply:lvsGetVehicle()
 	local vehValid = IsValid( vehicle )
 
