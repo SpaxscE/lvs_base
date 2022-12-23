@@ -1,6 +1,19 @@
 
 ENT.WEAPONS = {}
 
+function ENT:GetActiveWeapon()
+	local SelectedID = self:GetSelectedWeapon()
+	local CurWeapon = self.WEAPONS[ SelectedID ]
+
+	return CurWeapon, SelectedID
+end
+
+function ENT:GetMaxAmmo()
+	local CurWeapon = self:GetActiveWeapon()
+
+	return CurWeapon.Ammo or -1
+end
+
 if SERVER then
 	util.AddNetworkString( "lvs_select_weapon" )
 
@@ -15,13 +28,6 @@ if SERVER then
 
 		vehicle:SelectWeapon( ID )
 	end)
-
-	function ENT:GetActiveWeapon()
-		local SelectedID = self:GetSelectedWeapon()
-		local CurWeapon = self.WEAPONS[ SelectedID ]
-
-		return CurWeapon, SelectedID
-	end
 
 	function ENT:WeaponsFinish()
 		if not self._activeWeapon then return end
@@ -46,12 +52,6 @@ if SERVER then
 		self:SetNWAmmo( CurWeapon._CurAmmo or self:GetMaxAmmo() )
 	end
 
-	function ENT:GetMaxAmmo()
-		local CurWeapon = self:GetActiveWeapon()
-
-		return CurWeapon.Ammo
-	end
-
 	function ENT:GetAmmo()
 		local CurWeapon = self:GetActiveWeapon()
 
@@ -59,6 +59,8 @@ if SERVER then
 	end
 
 	function ENT:TakeAmmo()
+		if self:GetMaxAmmo() <= 0 then return end
+
 		local CurWeapon = self:GetActiveWeapon()
 
 		CurWeapon._CurAmmo = self:GetAmmo() - 1
@@ -115,7 +117,7 @@ if SERVER then
 		if ShouldFire then
 			if not self:CanAttack() then return end
 
-			self:SetNextAttack( CurTime() + CurWeapon.Delay )
+			self:SetNextAttack( CurTime() + (CurWeapon.Delay or 0) )
 
 			CurWeapon.Attack( self )
 
@@ -193,11 +195,25 @@ else
 		end
 	)
 
+	function ENT:GetAmmoID( ID )
+		local selected = self:GetSelectedWeapon()
+		local weapon = self.WEAPONS[ ID ]
+
+		if ID == selected then
+			weapon._CurAmmo = self:GetNWAmmo()
+		else
+			weapon._CurAmmo = weapon._CurAmmo or weapon.Ammo or -1
+		end
+
+		return weapon._CurAmmo
+	end
+
 	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 		draw.RoundedBox(5, X, Y, w, h, Color(0,0,0,150) )
 
-		draw.DrawText( self:GetNWAmmo(), "TargetID", X + 50, Y, color_white, TEXT_ALIGN_CENTER )
-		draw.DrawText( self:GetNWHeat(), "TargetID", X + 90, Y + 40, color_white, TEXT_ALIGN_CENTER )
+		if self:GetMaxAmmo() <= 0 then return end
+
+		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 20, Y + 20, color_white, TEXT_ALIGN_LEFT )
 	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
@@ -261,6 +277,12 @@ else
 			end
 			surface.SetMaterial( self.WEAPONS[ID].Icon )
 			surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
+
+			local ammo = self:GetAmmoID( ID )
+
+			if ammo > -1 then
+				draw.DrawText( ammo, "LVS_FONT_HUD", xPos + w - 10, yPos + SizeY * 0.5 - 10, IsSelected and Color(0,0,0,A255) or Color(255,255,255,A255), TEXT_ALIGN_RIGHT )
+			end
 		end
 	end
 end

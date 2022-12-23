@@ -67,7 +67,9 @@ ENT.WEAPONS = {
 				ent.SoundEmitter1:Stop()
 			end
 		end,
-		OnSelect = function( ent ) end,
+		OnSelect = function( ent )
+			ent:EmitSound("physics/metal/weapon_impact_soft3.wav")
+		end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
 	},
@@ -110,10 +112,21 @@ ENT.WEAPONS = {
 			end
 			ent:EmitSound("lvs/vehicles/bf109/weapons/wing_lastshot.wav", 95)
 		end,
+		OnSelect = function( ent )
+			ent:EmitSound("physics/metal/weapon_impact_soft2.wav")
+		end,
+		OnDeselect = function( ent ) end,
+		OnThink = function( ent, active ) end,
+	},
+	[3] = {
+		Icon = Material("lvs_weapons/nos.png"),
+		Attack = function( ent ) end,
+		StartAttack = function( ent ) end,
+		FinishAttack = function( ent ) end,
 		OnSelect = function( ent ) end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
-	}
+	},
 }
 
 ENT.EngineSounds = {
