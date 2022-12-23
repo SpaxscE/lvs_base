@@ -129,6 +129,18 @@ local function HandleBullets()
 
 				trace.Entity:TakeDamageInfo( dmginfo )
 
+				if bullet.SplashDamage and bullet.SplashDamageRadius then
+					local effectdata = EffectData()
+					effectdata:SetOrigin( trace.HitPos )
+					effectdata:SetNormal( trace.HitNormal )
+					effectdata:SetMagnitude( bullet.SplashDamageRadius / 100 )
+					util.Effect( "lvs_impact", effectdata )
+	
+					dmginfo:SetDamageType( DMG_BUCKSHOT )
+					dmginfo:SetDamage( bullet.SplashDamage )
+
+					util.BlastDamageInfo( dmginfo,  trace.HitPos, bullet.SplashDamageRadius )
+				end
 			else
 				-- hulltrace doesnt hit the wall due to its hullsize...
 				-- so this needs an extra trace line
@@ -179,6 +191,8 @@ if SERVER then
 		bullet.Filter = data.Filter or bullet.Entity
 		bullet.SrcEntity = data.SrcEntity or Vector(0,0,0)
 		bullet.Callback = data.Callback
+		bullet.SplashDamage = data.SplashDamage
+		bullet.SplashDamageRadius = data.SplashDamageRadius
 		bullet.StartTime = CurTime()
 
 		-- net.WriteVector isnt accurate enough. Instead we split into 3 floats per vector
