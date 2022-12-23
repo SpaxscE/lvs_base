@@ -49,13 +49,6 @@ function ENT:OnEngineActiveChanged( Active )
 end
 
 function ENT:OnActiveChanged( Active )
-	if Active then
-		if not IsValid( self:GetDriver() ) then return end
-
-		self:StartWindSounds()
-	else
-		self:StopWindSounds()
-	end
 end
 
 ENT._oldActive = false
@@ -64,15 +57,30 @@ ENT._oldEnActive = false
 function ENT:HandleActive()
 	local Active = self:GetActive()
 	local EngineActive = self:GetEngineActive()
+	local ActiveChanged = false
 
 	if self._oldActive ~= Active then
 		self._oldActive = Active
 		self:OnActiveChanged( Active )
+		ActiveChanged = true
 	end
 
 	if self._oldEnActive ~= EngineActive then
 		self._oldEnActive = EngineActive
 		self:OnEngineActiveChanged( EngineActive )
+		ActiveChanged = true
+	end
+
+	if ActiveChanged then
+		if Active or EngineActive then
+			self:StartWindSounds()
+		else
+			self:StopWindSounds()
+		end
+	end
+
+	if Active or EngineActive then
+		self:DoVehicleFX()
 	end
 
 	return EngineActive
@@ -80,7 +88,6 @@ end
 
 function ENT:Think()
 	if self:HandleActive() then
-		self:DoVehicleFX()
 		self:OnFrameActive()
 	end
 
