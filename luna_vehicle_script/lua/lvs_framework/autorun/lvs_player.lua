@@ -144,7 +144,7 @@ function meta:lvsSetInputDisabled( disable )
 	if disable then
 		self._lvsKeyDisabler = CurTime() + 60
 	else
-		self._lvsKeyDisabler = CurTime() + 0.1
+		self._lvsKeyDisabler = CurTime() + 1
 	end
 end
 
