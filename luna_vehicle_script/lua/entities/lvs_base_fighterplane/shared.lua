@@ -18,7 +18,7 @@ ENT.MaxPerfVelocity = 1500
 ENT.MaxThrust = 25
 
 ENT.ThrottleRateUp = 0.6
-ENT.ThrottleRateDown = 0.2
+ENT.ThrottleRateDown = 0.3
 
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
