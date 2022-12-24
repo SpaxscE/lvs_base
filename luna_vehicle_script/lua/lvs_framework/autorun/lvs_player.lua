@@ -150,31 +150,45 @@ end
 
 if CLIENT then
 	net.Receive( "lvs_buildcontrols", function( len )
-		LocalPlayer():lvsBuildControls()
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsBuildControls()
 	end )
 
 	hook.Add( "OnSpawnMenuOpen", "!!!lvs_keyblocker", function()
-		LocalPlayer():lvsSetInputDisabled( true )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( true )
 	end )
 
 	hook.Add( "OnContextMenuOpen", "!!!lvs_keyblocker", function()
-		LocalPlayer():lvsSetInputDisabled( true )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( true )
 	end )
 
 	hook.Add( "OnSpawnMenuClose", "!!!lvs_keyblocker", function()
-		LocalPlayer():lvsSetInputDisabled( false )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( false )
 	end )
 
 	hook.Add( "OnContextMenuClose", "!!!lvs_keyblocker", function()
-		LocalPlayer():lvsSetInputDisabled( false )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( false )
 	end )
 
 	hook.Add( "StartChat", "!!!lvs_keyblocker", function( isTeamChat )
-		LocalPlayer():lvsSetInputDisabled( true )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( true )
 	end )
 
 	hook.Add( "FinishChat", "!!!lvs_keyblocker", function()
-		LocalPlayer():lvsSetInputDisabled( false )
+		local ply = LocalPlayer()
+		if not IsValid( ply ) then return end
+		ply:lvsSetInputDisabled( false )
 	end )
 
 	return
