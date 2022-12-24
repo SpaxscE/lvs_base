@@ -358,6 +358,9 @@ else
 
 			if ammo > -1 then
 				draw.DrawText( ammo, "LVS_FONT_HUD", xPos + w - 10, yPos + SizeY * 0.5 - 10, IsSelected and Color(0,0,0,A255) or Color(255,255,255,A255), TEXT_ALIGN_RIGHT )
+			else
+				draw.DrawText( "O", "LVS_FONT_HUD", xPos + w - 19, yPos + SizeY * 0.5 - 10, IsSelected and Color(0,0,0,A255) or Color(255,255,255,A255), TEXT_ALIGN_RIGHT )
+				draw.DrawText( "O", "LVS_FONT_HUD", xPos + w - 10, yPos + SizeY * 0.5 - 10, IsSelected and Color(0,0,0,A255) or Color(255,255,255,A255), TEXT_ALIGN_RIGHT )
 			end
 		end
 	end
