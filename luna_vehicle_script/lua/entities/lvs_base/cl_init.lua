@@ -5,6 +5,7 @@ include( "cl_effects.lua" )
 include( "cl_hud.lua" )
 include( "cl_seatswitcher.lua" )
 include( "cl_trailsystem.lua" )
+include( "cl_flyby.lua" )
 
 function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
@@ -83,6 +84,8 @@ function ENT:HandleActive()
 		self:DoVehicleFX()
 	end
 
+	self:FlyByThink()
+
 	return EngineActive
 end
 
@@ -98,6 +101,7 @@ end
 function ENT:OnRemove()
 	self:StopEmitter()
 	self:StopWindSounds()
+	self:StopFlyBy()
 
 	self:OnRemoved()
 end

@@ -75,5 +75,14 @@ function ENT:AnimLandingGear( frametime )
 end
 
 function ENT:OnFlyBy( Pitch )
-	self:EmitSound("lvs/vehicles/bf109/flyby.wav", 95, Pitch)
+	self.flybysnd = CreateSound( self, "lvs/vehicles/bf109/flyby.wav" )
+	self.flybysnd:SetSoundLevel( 95 )
+	self.flybysnd:PlayEx( 1, Pitch )
+end
+
+function ENT:StopFlyBy()
+	if self.flybysnd then
+		self.flybysnd:Stop()
+		self.flybysnd = nil
+	end
 end
