@@ -39,10 +39,12 @@ function ENT:SetupDataTables()
 
 	self:AddDT( "Vector", "Steer" )
 	self:AddDT( "Float", "NWThrottle" )
+	self:AddDT( "Float", "MaxThrottle" )
 	self:AddDT( "Float", "LandingGear" )
 
 	if SERVER then
 		self:SetLandingGear( 1 )
+		self:SetMaxThrottle( 1 )
 	end
 end
 
@@ -97,7 +99,7 @@ function ENT:PlayerMouseAim( ply, cmd )
 
 	local PitchUp = ply:lvsKeyDown( "+PITCH" )
 	local PitchDown = ply:lvsKeyDown( "-PITCH" )
-	local YawRight =ply:lvsKeyDown( "+YAW" )
+	local YawRight = ply:lvsKeyDown( "+YAW" )
 	local YawLeft = ply:lvsKeyDown( "-YAW" )
 	local RollRight = ply:lvsKeyDown( "+ROLL" )
 	local RollLeft = ply:lvsKeyDown( "-ROLL" )
@@ -150,7 +152,7 @@ end
 
 function ENT:SetThrottle( NewThrottle )
 	if self:GetEngineActive() then
-		self:SetNWThrottle( math.Clamp(NewThrottle,0,1) )
+		self:SetNWThrottle( math.Clamp(NewThrottle,0,self:GetMaxThrottle()) )
 	else
 		self:SetNWThrottle( 0 )
 	end

@@ -120,10 +120,26 @@ ENT.WEAPONS = {
 	},
 	[3] = {
 		Icon = Material("lvs/weapons/nos.png"),
-		Attack = function( ent ) end,
-		StartAttack = function( ent ) end,
-		FinishAttack = function( ent ) end,
-		OnSelect = function( ent ) end,
+		HeatRateUp = 0.1,
+		HeatRateDown = 0.2,
+		Attack = function( ent )
+			local PhysObj = ent:GetPhysicsObject()
+			if not IsValid( PhysObj ) then return end
+			local THR = ent:GetThrottle()
+			PhysObj:ApplyForceCenter( ent:GetForward() * 4000 * THR ) -- increase speed
+			PhysObj:AddAngleVelocity( PhysObj:GetAngleVelocity() * FrameTime() * 0.5 * THR ) -- increase turn rate
+		end,
+		StartAttack = function( ent )
+			ent:EmitSound("lvs/vehicles/generic/boost.wav")
+			ent:SetMaxThrottle( 1.25 )
+			ent:SetThrottle( 1.25 )
+		end,
+		FinishAttack = function( ent )
+			ent:SetMaxThrottle( 1 )
+		end,
+		OnSelect = function( ent )
+			ent:EmitSound("buttons/lever5.wav")
+		end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
 	},
