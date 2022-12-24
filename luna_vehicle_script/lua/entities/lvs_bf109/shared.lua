@@ -130,18 +130,31 @@ ENT.WEAPONS = {
 			PhysObj:AddAngleVelocity( PhysObj:GetAngleVelocity() * FrameTime() * 0.5 * THR ) -- increase turn rate
 		end,
 		StartAttack = function( ent )
+			ent.TargetThrottle = 1.3
 			ent:EmitSound("lvs/vehicles/generic/boost.wav")
-			ent:SetMaxThrottle( 1.25 )
-			ent:SetThrottle( 1.25 )
 		end,
 		FinishAttack = function( ent )
-			ent:SetMaxThrottle( 1 )
+			ent.TargetThrottle = 1
 		end,
 		OnSelect = function( ent )
 			ent:EmitSound("buttons/lever5.wav")
 		end,
 		OnDeselect = function( ent ) end,
-		OnThink = function( ent, active ) end,
+		OnThink = function( ent, active )
+			if not ent.TargetThrottle then return end
+
+			local Rate = FrameTime() * 0.5
+
+			ent:SetMaxThrottle( ent:GetMaxThrottle() + math.Clamp(ent.TargetThrottle - ent:GetMaxThrottle(),-Rate,Rate) )
+
+			local MaxThrottle = ent:GetMaxThrottle()
+
+			ent:SetThrottle( MaxThrottle )
+
+			if MaxThrottle == ent.TargetThrottle then
+				ent.TargetThrottle = nil
+			end
+		end,
 	},
 }
 
