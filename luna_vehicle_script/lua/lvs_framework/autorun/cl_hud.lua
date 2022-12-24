@@ -50,6 +50,44 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 end
 
 local function SaveEditors()
+	local SaveString = ""
+	for id, data in pairs( LVS.HudEditors ) do
+		local w = data.w
+		local h = data.h
+
+		local X = data.X
+		local Y = data.Y
+
+		SaveString = SaveString..id.."~"..w.."#"..h.."/"..X.."#"..Y.."\n"
+	end
+
+	file.Write( "lvs_preferences.txt", SaveString )
+end
+
+local function LoadEditors()
+	local LoadString = file.Read( "lvs_preferences.txt" )
+
+	if not LoadString then return end
+
+	for _, garbage in pairs( string.Explode( "\n", LoadString ) ) do
+		local data1 = string.Explode( "~", garbage )
+
+		if not data1[2] then continue end
+
+		local data2 =  string.Explode( "/", data1[2] )
+
+		local size = string.Explode( "#", data2[1] )
+		local pos = string.Explode( "#", data2[2] )
+
+		local ID = data1[1]
+
+		if not LVS.HudEditors[ ID ] or not size[1] or not size[2] or not pos[1] or not pos[2] then continue end
+
+		LVS.HudEditors[ ID ].w = size[1]
+		LVS.HudEditors[ ID ].h = size[2]
+		LVS.HudEditors[ ID ].X = pos[1]
+		LVS.HudEditors[ ID ].Y = pos[2]
+	end
 end
 
 function LVS:AddHudEditor( id, X, Y, w, h, minw, minh, text, func )
@@ -69,9 +107,6 @@ function LVS:AddHudEditor( id, X, Y, w, h, minw, minh, text, func )
 	}
 end
 
-hook.Add( "InitPostEntity", "!!!lvs_load_hud", function()
-end )
-
 hook.Add( "OnContextMenuOpen", "!!!!!LVS_hud", function()
 	if not IsValid( LocalPlayer():lvsGetVehicle() ) then return end
 
@@ -80,6 +115,10 @@ hook.Add( "OnContextMenuOpen", "!!!!!LVS_hud", function()
 	LVS:OpenEditors()
 
 	return false
+end )
+
+hook.Add( "InitPostEntity", "!!!lvs_load_hud", function()
+	LoadEditors()
 end )
 
 function LVS:OpenEditors()
@@ -102,6 +141,8 @@ function LVS:OpenEditors()
 end
 
 function LVS:CloseEditors()
+	SaveEditors()
+
 	for id, editor in pairs( LVS.HudEditors ) do
 		if not IsValid( editor.Frame ) then continue end
 		editor.Frame:Remove()
