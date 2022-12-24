@@ -191,6 +191,25 @@ if CLIENT then
 		ply:lvsSetInputDisabled( false )
 	end )
 
+	local OldVisible = false
+	hook.Add("PostDrawHUD", "!!!lvs_keyblocker", function()
+		local Visible = gui.IsGameUIVisible()
+
+		if Visible ~= OldVisible then
+			OldVisible = Visible
+
+			local ply = LocalPlayer()
+
+			if not IsValid( ply ) then return end
+
+			if Visible then
+				ply:lvsSetInputDisabled( true )
+			else
+				ply:lvsSetInputDisabled( false )
+			end
+		end
+	end )
+
 	return
 end
 
