@@ -1,5 +1,5 @@
 
-ENT.IconVehicleLocked = Material( "lvs_locked.png" )
+ENT.IconVehicleLocked = Material( "lvs/locked.png" )
 
 LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, 10,  350, 30, 350, 30, "SEAT SWITCHER", 
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )

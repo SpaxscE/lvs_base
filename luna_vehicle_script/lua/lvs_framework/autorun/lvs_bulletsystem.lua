@@ -136,7 +136,7 @@ local function HandleBullets()
 					effectdata:SetMagnitude( bullet.SplashDamageRadius / 100 )
 					util.Effect( "lvs_impact", effectdata )
 	
-					dmginfo:SetDamageType( DMG_BUCKSHOT )
+					dmginfo:SetDamageType( DMG_AIRBOAT )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
 					util.BlastDamageInfo( dmginfo,  trace.HitPos, bullet.SplashDamageRadius )

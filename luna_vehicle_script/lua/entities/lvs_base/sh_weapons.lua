@@ -44,16 +44,12 @@ if SERVER then
 		self.OldAttack = false
 	end
 
-	function ENT:WeaponUpdateNW()
-		local CurWeapon = self:GetActiveWeapon()
-
-		if not CurWeapon then return end
-
-		self:SetNWAmmo( CurWeapon._CurAmmo or self:GetMaxAmmo() )
-	end
-
 	function ENT:GetAmmo()
+		if self:GetAI() then return self:GetMaxAmmo() end
+
 		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return -1 end
 
 		return CurWeapon._CurAmmo or self:GetMaxAmmo()
 	end
@@ -64,6 +60,8 @@ if SERVER then
 		local CurWeapon = self:GetActiveWeapon()
 
 		CurWeapon._CurAmmo = self:GetAmmo() - 1
+
+		self:SetNWAmmo( CurWeapon._CurAmmo )
 	end
 
 	function ENT:CanAttack()
@@ -78,22 +76,46 @@ if SERVER then
 		CurWeapon._NextFire = time
 	end
 
-	function ENT:WeaponsThink()
-		local CurWeapon, SelectedID = self:GetActiveWeapon()
-	
-		for ID, Weapon in pairs( self.WEAPONS ) do
-			if Weapon.OnThink then
-				Weapon.OnThink( self, ID == SelectedID )
-			end
-		end
+	function ENT:WeaponsShouldFire()
+		if self:GetAI() then return self._AIFireInput end
 
 		local ply = self:GetDriver()
 
-		if not IsValid( ply ) then return end
+		if not IsValid( ply ) then return false end
+
+		return ply:lvsKeyDown( "ATTACK" )
+	end
+
+	function ENT:WeaponsThink()
+		local T = CurTime()
+		local FT = FrameTime()
+		local CurWeapon, SelectedID = self:GetActiveWeapon()
+	
+		for ID, Weapon in pairs( self.WEAPONS ) do
+			local IsActive = ID == SelectedID
+			if Weapon.OnThink then Weapon.OnThink( self, IsActive ) end
+
+			if IsActive then continue end
+
+			Weapon._CurHeat = Weapon._CurHeat and Weapon._CurHeat - math.min( Weapon._CurHeat, (Weapon.HeatRateDown or 0.25) * FT ) or 0
+		end
 
 		if not CurWeapon then return end
 
-		local ShouldFire = ply:lvsKeyDown( "ATTACK" )
+		local ShouldFire = self:WeaponsShouldFire()
+
+		if CurWeapon.Overheated then
+			if CurWeapon._CurHeat <= 0 then
+				CurWeapon.Overheated = false
+			else
+				ShouldFire = false
+			end
+		else
+			if (CurWeapon._CurHeat or 0) >= 1 then
+				CurWeapon.Overheated = true
+				ShouldFire = false
+			end
+		end
 
 		if self:GetMaxAmmo() > 0 then
 			if self:GetAmmo() <= 0 then
@@ -117,14 +139,23 @@ if SERVER then
 		if ShouldFire then
 			if not self:CanAttack() then return end
 
-			self:SetNextAttack( CurTime() + (CurWeapon.Delay or 0) )
+			local ShootDelay = (CurWeapon.Delay or 0)
+
+			self:SetNextAttack( CurTime() + ShootDelay )
+
+			CurWeapon._CurHeat = math.min( (CurWeapon._CurHeat or 0) + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1)
+			self:SetNWHeat( CurWeapon._CurHeat )
 
 			CurWeapon.Attack( self )
 
 			self:TakeAmmo()
-		end
+		else
+			CurWeapon._CurHeat = CurWeapon._CurHeat and CurWeapon._CurHeat - math.min( CurWeapon._CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) or 0
 
-		self:WeaponUpdateNW()
+			if self:GetNWHeat() == CurWeapon._CurHeat then return end
+
+			self:SetNWHeat( CurWeapon._CurHeat )
+		end
 	end
 
 	function ENT:SelectWeapon( ID )
@@ -155,6 +186,7 @@ if SERVER then
 		local NextWeapon = self.WEAPONS[ new ]
 		if NextWeapon and NextWeapon.OnSelect then
 			NextWeapon.OnSelect( self )
+			self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
 		end
 	end
 else
@@ -185,7 +217,7 @@ else
 		end
 	)
 
-	LVS:AddHudEditor( "WeaponInfo", ScrW() - 210, ScrH() - 85,  200, 75, 200, 75, "WEAPON INFO", 
+	LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
 		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 			if not vehicle.LVSHudPaintWeaponInfo then return end
 
@@ -208,12 +240,57 @@ else
 		return weapon._CurAmmo
 	end
 
+
+	local Circles = {
+		[1] = {r = -1, col = Color(0,0,0,200)},
+		[2] = {r = 0, col = Color(255,255,255,200)},
+		[3] = {r = 1, col = Color(255,255,255,255)},
+		[4] = {r = 2, col = Color(255,255,255,200)},
+		[5] = {r = 3, col = Color(0,0,0,200)},
+	}
+
+	local function DrawCircle( X, Y, target_radius, heatvalue )
+		local endang = 360 * heatvalue
+
+		if endang == 0 then return end
+
+		for i = 1, #Circles do
+			local data = Circles[ i ]
+			local radius = target_radius + data.r
+			local segmentdist = endang / ( math.pi * radius / 2 )
+
+			for a = 0, endang, segmentdist do
+				local r = data.col.r
+				local g = data.col.g * (1 - math.min(a / 270,1))
+				local b = data.col.b * (1 - math.min(a / 90,1))
+
+				surface.SetDrawColor( r, g, b, data.col.a )
+
+				surface.DrawLine( X - math.sin( math.rad( a ) ) * radius, Y + math.cos( math.rad( a ) ) * radius, X - math.sin( math.rad( a + segmentdist ) ) * radius, Y + math.cos( math.rad( a + segmentdist ) ) * radius )
+			end
+		end
+	end
+
+	ENT.HeatMat = Material( "lvs/heat.png" )
+
 	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
-		draw.RoundedBox(5, X, Y, w, h, Color(0,0,0,150) )
+		local Heat = self:GetNWHeat()
+		local hX = X + w - h * 0.5
+		local hY = Y + h * 0.25 + h * 0.25
+		local hAng = math.cos( CurTime() * 50 ) * 5 * Heat ^ 2
+
+		surface.SetMaterial( self.HeatMat )
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.DrawTexturedRectRotated( hX + 4, hY + 1, h * 0.5, h * 0.5, hAng )
+		surface.SetDrawColor( 255, 255 * (1 - Heat), 255 * math.max(1 - Heat * 1.5,0), 255 )
+		surface.DrawTexturedRectRotated( hX + 2, hY - 1, h * 0.5, h * 0.5, hAng )
+
+		DrawCircle( hX, hY, h * 0.35, Heat )
 
 		if self:GetMaxAmmo() <= 0 then return end
 
-		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 20, Y + 20, color_white, TEXT_ALIGN_LEFT )
+		draw.DrawText( "AMMO ", "LVS_FONT", X + 80, Y + 35, color_white, TEXT_ALIGN_RIGHT )
+		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 80, Y + 20, color_white, TEXT_ALIGN_LEFT )
 	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
@@ -239,10 +316,9 @@ else
 		end
 
 		local tAlpha = (self._SelectActiveTime or 0) > T and 1 or 0
-		local tAlphaRateUp = FT * 30
-		local tAlphaRateDn = FT * 15
+		local tAlphaRate = FT * 15
 
-		self.smAlphaSW = self.smAlphaSW and (self.smAlphaSW + math.Clamp(tAlpha - self.smAlphaSW,-tAlphaRateDn,tAlphaRateUp)) or 0
+		self.smAlphaSW = self.smAlphaSW and (self.smAlphaSW + math.Clamp(tAlpha - self.smAlphaSW,-tAlphaRate,tAlphaRate)) or 0
 
 		if self.smAlphaSW > 0.95 then
 			self._DisplaySelected = Selected

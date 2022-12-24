@@ -33,7 +33,7 @@ ENT.MaxHealth = 1000
 
 ENT.WEAPONS = {
 	[1] = {
-		Icon = Material("lvs_weapons/mg.png"),
+		Icon = Material("lvs/weapons/mg.png"),
 		Ammo = 1000,
 		Delay = 0.1,
 		Attack = function( ent )
@@ -74,7 +74,7 @@ ENT.WEAPONS = {
 		OnThink = function( ent, active ) end,
 	},
 	[2] = {
-		Icon = Material("lvs_weapons/hmg.png"),
+		Icon = Material("lvs/weapons/hmg.png"),
 		Ammo = 300,
 		Delay = 0.14,
 		Attack = function( ent )
@@ -119,7 +119,7 @@ ENT.WEAPONS = {
 		OnThink = function( ent, active ) end,
 	},
 	[3] = {
-		Icon = Material("lvs_weapons/nos.png"),
+		Icon = Material("lvs/weapons/nos.png"),
 		Attack = function( ent ) end,
 		StartAttack = function( ent ) end,
 		FinishAttack = function( ent ) end,

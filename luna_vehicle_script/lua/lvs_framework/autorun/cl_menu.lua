@@ -1,6 +1,6 @@
 
 local icon_load_version = Material("gui/html/refresh")
-local bgMat = Material( "lvs_controlpanel_bg.png" )
+local bgMat = Material( "lvs/controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
 local gradient_mat = Material( "gui/gradient" )
 

@@ -89,7 +89,16 @@ function LVS:OpenEditors()
 		MakeFrame( id, editor.X, editor.Y, editor.w, editor.h, editor.minw, editor.minh, editor.text )
 	end
 
-	LocalPlayer():lvsSetInputDisabled( true )
+	local T = CurTime()
+	local ply = LocalPlayer()
+	local vehicle = ply:lvsGetVehicle()
+
+	ply.SwitcherTime = T + 9999
+	ply:lvsSetInputDisabled( true )
+
+	if not IsValid( vehicle ) then return end
+
+	vehicle._SelectActiveTime = T + 9999
 end
 
 function LVS:CloseEditors()
@@ -98,7 +107,16 @@ function LVS:CloseEditors()
 		editor.Frame:Remove()
 	end
 
-	LocalPlayer():lvsSetInputDisabled( false )
+	local T = CurTime()
+	local ply = LocalPlayer()
+	local vehicle = ply:lvsGetVehicle()
+
+	ply.SwitcherTime = T
+	ply:lvsSetInputDisabled( false )
+
+	if not IsValid( vehicle ) then return end
+
+	vehicle._SelectActiveTime = T
 end
 
 hook.Add( "OnContextMenuClose", "!!!!!LVS_hud", function()

@@ -74,6 +74,8 @@ function ENT:RunAI()
 
 	local Throttle = math.min( (StartPos - TraceForward.HitPos):Length() / mySpeed, 1 )
 
+	self._AIFireInput = false
+
 	if alt < 600 or ceiling < 600 then
 		if ceiling < 600 then
 			Throttle = 0
@@ -113,9 +115,10 @@ function ENT:RunAI()
 
 						if CanShoot then
 							if self:AITargetInFront( Target, 15 ) then
+								self._AIFireInput = true
 								--self:HandleWeapons( true )
 								--self:PrimaryAttack()
-								
+
 								if self:AITargetInFront( Target, 10 ) then
 									--self:HandleWeapons( true, true )
 								end
