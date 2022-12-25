@@ -90,6 +90,10 @@ function ENT:PhysicsThink()
 end
 
 function ENT:PhysicsCollide( data, physobj )
+	if self:IsDestroyed() then
+		self.MarkForDestruction = true
+	end
+
 	local HitEnt = data.HitEntity
 
 	self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )

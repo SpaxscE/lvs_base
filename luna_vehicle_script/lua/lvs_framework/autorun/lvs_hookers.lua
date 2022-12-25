@@ -60,7 +60,7 @@ end )
 if CLIENT then return end
 
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
-	if not target:IsPlayer() or not dmginfo:IsExplosionDamage() then return end
+	if not target:IsPlayer() or not dmginfo:IsDamageType(DMG_BULLET + DMG_AIRBOAT + DMG_BLAST) then return end
 
 	local veh = target:lvsGetVehicle()
 

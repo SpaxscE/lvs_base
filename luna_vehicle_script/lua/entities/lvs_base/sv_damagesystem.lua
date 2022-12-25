@@ -8,6 +8,7 @@ function ENT:AddDS( data )
 	data.ang = data.ang or Angle(0,0,0)
 	data.mins = data.mins or Vector(-1,-1,-1)
 	data.maxs = data.maxs or Vector(1,1,1)
+	data.Callback = data.Callback or function( tbl, ent, dmginfo ) end
 
 	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 50, 50, 50, 150 ) )
 
@@ -15,16 +16,14 @@ function ENT:AddDS( data )
 end
 
 function ENT:CalcDamage( dmginfo )
-	local Damage = dmginfo:GetDamage()
-	local CurHealth = self:GetHP()
-
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
-	local dmgPenetration = dmgDir * 250
+	local dmgPenetration = dmgDir * 25
 
 	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
+	local HitCrit = false
 	local closestPart
 	local closestDist = Len * 2
 
@@ -55,22 +54,120 @@ function ENT:CalcDamage( dmginfo )
 		local ang = self:LocalToWorldAngles( part.ang )
 
 		if part == closestPart then
+			HitCrit = true
+			part:Callback( self, dmginfo )
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
 		else
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
 		end
 	end
 
+	local Damage = dmginfo:GetDamage()
+	local CurHealth = self:GetHP()
+
 	local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
 
 	self:SetHP( NewHealth )
 
-	PrintChat( self:GetHP() )
+	if self:IsDestroyed() then return end
 
 	local Attacker = dmginfo:GetAttacker() 
 
 	if IsValid( Attacker ) and Attacker:IsPlayer() then
 		net.Start( "lvs_hitmarker" )
+			net.WriteBool( HitCrit )
 		net.Send( Attacker )
 	end
+
+	if NewHealth <= 0 then
+		self:SetDestroyed()
+
+		self.FinalAttacker = dmginfo:GetAttacker() 
+		self.FinalInflictor = dmginfo:GetInflictor()
+
+		local Attacker = self.FinalAttacker
+		if IsValid( Attacker ) and Attacker:IsPlayer() then
+			net.Start( "lvs_killmarker" )
+			net.Send( Attacker )
+		end
+
+		local ExplodeTime = math.Clamp((self:GetVelocity():Length() - 250) / 500,1.5,8)
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:GetPos() )
+		util.Effect( "lvs_explosion_nodebris", effectdata )
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:GetPos() )
+			effectdata:SetStart( self:GetPhysicsObject():GetMassCenter() )
+			effectdata:SetEntity( self )
+			effectdata:SetScale( 1 )
+			effectdata:SetMagnitude( ExplodeTime )
+		util.Effect( "lvs_firetrail", effectdata )
+
+		timer.Simple( ExplodeTime, function()
+			if not IsValid( self ) then return end
+			self:Explode()
+		end)
+	end
+end
+
+function ENT:DamageThink()
+	if self.MarkForDestruction then
+		self:Explode()
+	end
+
+	if self:IsDestroyed() then
+		if self:GetVelocity():Length() < 800 then
+			self:Explode()
+		end
+	end
+end
+
+function ENT:Explode()
+	if self.ExplodedAlready then return end
+
+	self.ExplodedAlready = true
+
+	local Driver = self:GetDriver()
+	local Gunner = self:GetGunner()
+
+	if IsValid( Driver ) then
+		Driver:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
+	end
+
+	if IsValid( Gunner ) then
+		Gunner:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
+	end
+
+	if istable( self.pSeats ) then
+		for _, pSeat in pairs( self.pSeats ) do
+			if IsValid( pSeat ) then
+				local psgr = pSeat:GetDriver()
+				if IsValid( psgr ) then
+					psgr:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
+				end
+			end
+		end
+	end
+
+	local ent = ents.Create( "lvs_destruction" )
+	if IsValid( ent ) then
+		ent:SetPos( self:LocalToWorld( self:OBBCenter() ) )
+		ent:SetAngles( self:GetAngles() )
+		ent.GibModels = self.GibModels
+		ent.Vel = self:GetVelocity()
+		ent:Spawn()
+		ent:Activate()
+	end
+
+	self:Remove()
+end
+
+function ENT:IsDestroyed()
+	return self.Destroyed == true
+end
+
+function ENT:SetDestroyed()
+	self.Destroyed = true
 end

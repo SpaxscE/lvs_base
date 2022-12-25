@@ -21,13 +21,6 @@ function ENT:OnSpawn( PObj )
 	self:AddEngine( Vector(115,0,75) )
 
 	self:AddRotor( Vector(160,0,75) )
-
-	self:AddDS( {pos = Vector(115,0,75), ang = Angle(0,0,0), mins = Vector(-40,-20,-30), maxs =  Vector(40,20,30)} )
-
-	self:AddDS( {pos = Vector(50,0,95), ang = Angle(0,0,0), mins = Vector(-50,-20,-25), maxs =  Vector(0,20,25)} )
-
-	self:AddDS( {pos = Vector(50,100,60), ang = Angle(0,0,5), mins = Vector(-50,-100,-8), maxs = Vector(50,100,8)} )
-	self:AddDS( {pos = Vector(50,-100,60), ang = Angle(0,0,-5), mins = Vector(-50,-100,-8), maxs = Vector(50,100,8)} )
 end
 
 function ENT:OnLandingGearToggled( IsDeployed )

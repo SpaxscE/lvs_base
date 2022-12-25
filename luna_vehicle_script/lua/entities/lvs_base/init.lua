@@ -79,6 +79,7 @@ function ENT:Think()
 	self:HandleActive()
 	self:HandleStart()
 	self:PhysicsThink()
+	self:DamageThink()
 	self:WeaponsThink()
 
 	if self:GetAI() then self:RunAI() end

@@ -114,13 +114,24 @@ local function HandleBullets()
 		end
 
 		if trace.Hit then
+			-- hulltrace doesnt hit the wall due to its hullsize...
+			-- so this needs an extra trace line
+			local traceImpact = util.TraceLine( {
+				start = start + pos - dir,
+				endpos = start + pos + dir * bullet.Velocity * FT,
+				filter = Filter,
+				mask = MASK_SHOT_HULL
+			} )
+
 			if SERVER then
+				local EndPos = traceImpact.Hit and traceImpact.HitPos or trace.HitPos
+
 				local dmginfo = DamageInfo()
 				dmginfo:SetDamage( bullet.Damage )
 				dmginfo:SetAttacker( (IsValid( bullet.Attacker ) and bullet.Attacker) or (IsValid( bullet.Entity ) and bullet.Entity) or game.GetWorld() )
 				dmginfo:SetDamageType( DMG_BULLET )
 				dmginfo:SetInflictor( (IsValid( bullet.Entity ) and bullet.Entity) or (IsValid( bullet.Attacker ) and bullet.Attacker) or game.GetWorld() )
-				dmginfo:SetDamagePosition( trace.HitPos ) 
+				dmginfo:SetDamagePosition( EndPos )
 				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
 
 				if bullet.Callback then
@@ -131,29 +142,20 @@ local function HandleBullets()
 
 				if bullet.SplashDamage and bullet.SplashDamageRadius then
 					local effectdata = EffectData()
-					effectdata:SetOrigin( trace.HitPos )
-					effectdata:SetNormal( trace.HitNormal )
+					effectdata:SetOrigin( EndPos )
+					effectdata:SetNormal( trace.HitWorld and trace.HitNormal or dir )
 					effectdata:SetMagnitude( bullet.SplashDamageRadius / 100 )
-					util.Effect( "lvs_impact", effectdata )
-	
+					util.Effect( "lvs_bullet_impact", effectdata )
+
 					dmginfo:SetDamageType( DMG_AIRBOAT )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
 					util.BlastDamageInfo( dmginfo,  trace.HitPos, bullet.SplashDamageRadius )
 				end
 			else
-				-- hulltrace doesnt hit the wall due to its hullsize...
-				-- so this needs an extra trace line
-				local traceFx = util.TraceLine( {
-					start = start + pos - dir,
-					endpos = start + pos + dir * bullet.Velocity * FT,
-					filter = Filter,
-					mask = MASK_SHOT_HULL
-				} )
-
-				if not traceFx.HitSky then
+				if not traceImpact.HitSky then
 					local effectdata = EffectData()
-					effectdata:SetOrigin( traceFx.HitPos )
+					effectdata:SetOrigin( traceImpact.HitPos )
 					effectdata:SetEntity( trace.Entity )
 					effectdata:SetStart( start )
 					effectdata:SetNormal( trace.HitNormal )

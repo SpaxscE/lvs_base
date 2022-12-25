@@ -76,15 +76,14 @@ function ENT:CalcAero( phys, deltatime )
 
 	local GravMul = (WorldGravity / 600) * 0.25
 
-	--[[ if destroyed simulate crash using this:
-	if Entity(1):KeyDown( IN_ATTACK ) then
+	-- crash bebehavior
+	if self:IsDestroyed() then
 		Steer = phys:GetAngleVelocity() / 200
 
 		PitchPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) /  90
 
 		GravMul = WorldGravity / 600
 	end
-	]]
 
 	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul

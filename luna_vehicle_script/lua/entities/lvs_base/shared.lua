@@ -20,7 +20,6 @@ ENT.MDL = "models/error.mdl"
 ENT.AITEAM = 0
 
 ENT.MaxHealth = 1000
-ENT.MaxShield = 150
 
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
@@ -40,8 +39,6 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Entity", "Gunner" )
 	self:AddDT( "Entity", "GunnerSeat" )
 
-	self:AddDT( "Entity", "Engine" )
-
 	self:AddDT( "Bool", "Active" )
 	self:AddDT( "Bool", "EngineActive" )
 	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
@@ -52,7 +49,6 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Int", "NWAmmo" )
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
-	self:AddDT( "Float", "Shield" )
 	self:AddDT( "Float", "NWHeat" )
 
 	if SERVER then
@@ -61,7 +57,6 @@ function ENT:CreateBaseDT()
 
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
-		self:SetShield( self.MaxShield )
 		self:SetSelectedWeapon( 1 )
 	end
 
@@ -120,4 +115,22 @@ sound.Add( {
 	channel = CHAN_STATIC,
 	level = 140,
 	sound = "lvs/physics/water_loop.wav",
+} )
+
+sound.Add( {
+	name = "LVS.DYNAMIC_EXPLOSION",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 125,
+	pitch = {75, 120},
+	sound = "^lvs/explosion_dist.wav"
+} )
+
+sound.Add( {
+	name = "LVS.EXPLOSION",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 140,
+	pitch = 100,
+	sound = "lvs/explosion.wav"
 } )

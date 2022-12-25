@@ -22,6 +22,9 @@ if SERVER then
 		return false
 	end
 
+	function ENT:OnTakeDamage( dmginfo )
+	end
+
 	function ENT:UpdateTransmitState() 
 		return TRANSMIT_ALWAYS
 	end

@@ -21,6 +21,16 @@ function ENT:AddEngine( pos )
 
 	self:TransferCPPI( Engine )
 
+	self:AddDS( {
+		pos = pos,
+		ang = Angle(0,0,0),
+		mins = Vector(-40,-20,-30),
+		maxs =  Vector(40,20,30),
+		Callback = function( tbl, ent, dmginfo )
+			Engine:TakeDamageInfo( dmginfo )
+		end
+	} )
+
 	return Engine
 end
 
