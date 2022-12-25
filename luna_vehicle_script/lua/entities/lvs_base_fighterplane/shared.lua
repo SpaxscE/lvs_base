@@ -71,7 +71,9 @@ function ENT:PlayerDirectInput( ply, cmd )
 	if KeyPitchDown then MouseY = 10 end
 	if KeyPitchUp then MouseY = -10 end
 
-	local Input = Vector( MouseX * 0.666, MouseY, 0 )
+	local SensX, SensY = ply:lvsMouseSensitivity()
+
+	local Input = Vector( MouseX * 0.4 * SensX, MouseY * SensY, 0 )
 
 	local Cur = self:GetSteer()
 

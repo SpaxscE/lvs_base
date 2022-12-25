@@ -41,6 +41,12 @@ function meta:lvsMouseAim()
 	return self._lvsMouseAim
 end
 
+function meta:lvsMouseSensitivity()
+	local X = self._lvsMouseX or 1
+	local Y = self._lvsMouseY or 1
+	return X, Y
+end
+
 function meta:lvsBuildControls()
 	if istable( self.LVS_BINDS ) then
 		table.Empty( self.LVS_BINDS )
@@ -57,8 +63,14 @@ function meta:lvsBuildControls()
 
 		net.Start( "lvs_buildcontrols" )
 		net.Send( self )
+
+		self._lvsMouseX = self:GetInfoNum( "lvs_sensitivity_x", 1 )
+		self._lvsMouseY = self:GetInfoNum( "lvs_sensitivity_y", 1 )
 	else
 		self._lvsMouseAim = GetConVar( "lvs_mouseaim" ):GetInt() == 1
+		self._lvsMouseX = GetConVar(  "lvs_sensitivity_x" ):GetFloat()
+		self._lvsMouseY = GetConVar( "lvs_sensitivity_y" ):GetFloat()
+
 		self.LVS_BINDS = {}
 
 		local KeySpawnMenu = input.LookupBinding( "+menu" )

@@ -130,7 +130,7 @@ sound.Add( {
 	name = "LVS.EXPLOSION",
 	channel = CHAN_STATIC,
 	volume = 1.0,
-	level = 130,
-	pitch = {90, 110},
+	level = 115,
+	pitch = {95, 115},
 	sound = "lvs/explosion.wav"
 } )

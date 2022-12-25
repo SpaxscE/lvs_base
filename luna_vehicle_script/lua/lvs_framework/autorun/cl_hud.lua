@@ -164,6 +164,74 @@ hook.Add( "OnContextMenuClose", "!!!!!LVS_hud", function()
 	LVS:CloseEditors()
 end )
 
+function LVS:DrawDiamond( X, Y, radius, perc )
+	if perc <= 0 then return end
+
+	local segmentdist = 90
+
+	draw.NoTexture()
+
+	for a = 90, 360, segmentdist do
+		local Xa = math.Round( math.sin( math.rad( -a ) ) * radius, 0 )
+		local Ya = math.Round( math.cos( math.rad( -a ) ) * radius, 0 )
+
+		local C = math.sqrt( radius ^ 2 + radius ^ 2 )
+
+		if a == 90 then
+			C = C * math.min(math.max(perc - 0.75,0) / 0.25,1)
+		elseif a == 180 then
+			C = C * math.min(math.max(perc - 0.5,0) / 0.25,1)
+		elseif a == 270 then
+			C = C * math.min(math.max(perc - 0.25,0) / 0.25,1)
+		elseif a == 360 then
+			C = C * math.min(math.max(perc,0) / 0.25,1)
+		end
+
+		if C > 0 then
+			local AxisMoveX = math.Round( math.sin( math.rad( -a + 135) ) * (C + 3) * 0.5, 0 )
+			local AxisMoveY =math.Round( math.cos( math.rad( -a + 135) ) * (C + 3) * 0.5, 0 )
+
+			surface.DrawTexturedRectRotated(X - Xa - AxisMoveX, Y - Ya - AxisMoveY,3, math.ceil( C ), a - 45)
+		end
+	end
+end
+
+local function PaintPlaneIdentifier( ent )
+	if not LVS.ShowPlaneIdent then return end
+
+	local MyPos = ent:GetPos()
+	local MyTeam = ent:GetAITEAM()
+
+	for _, v in pairs( LVS:GetVehicles() ) do
+		if not IsValid( v ) or v == ent then continue end
+
+		local rPos = v:LocalToWorld( v:OBBCenter() )
+
+		local Pos = rPos:ToScreen()
+		local Dist = (MyPos - rPos):Length()
+
+		if Dist > 10000 or util.TraceLine( {start = ent:LocalToWorld( ent:OBBCenter() ),endpos = rPos,mask = MASK_NPCWORLDSTATIC,} ).Hit then continue end
+
+		local Alpha = 255 * (1 - (Dist / 10000) ^ 2)
+		local Team = v:GetAITEAM()
+		local IndicatorColor = Color( 255, 0, 0, Alpha )
+
+		if Team == 0 then
+			IndicatorColor = Color( 0, 255, 0, Alpha )
+		else
+			if Team == 1 or Team == 2 then
+				if Team ~= MyTeam and MyTeam ~= 0 then
+					IndicatorColor = Color( 255, 0, 0, Alpha )
+				else
+					IndicatorColor = Color( 0, 127, 255, Alpha )
+				end
+			end
+		end
+
+		ent:LVSHudPaintPlaneIdentifier( Pos.x, Pos.y, IndicatorColor, v )
+	end
+end
+
 hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	local ply = LocalPlayer()
 
@@ -181,6 +249,7 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	local X = ScrW()
 	local Y = ScrH()
 
+	PaintPlaneIdentifier( Parent )
 	Parent:LVSHudPaint( X, Y, ply )
 
 	for id, editor in pairs( LVS.HudEditors ) do
