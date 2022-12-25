@@ -56,7 +56,7 @@ ENT.WEAPONS = {
 		end,
 		StartAttack = function( ent )
 			if not IsValid( ent.SoundEmitter1 ) then
-				ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/vehicles/bf109/weapons/nose_loop.wav", "lvs/vehicles/bf109/weapons/nose_loop_interior.wav" )
+				ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_light_loop.wav", "lvs/weapons/mg_light_loop_interior.wav" )
 				ent.SoundEmitter1:SetSoundLevel( 95 )
 			end
 		
@@ -100,7 +100,7 @@ ENT.WEAPONS = {
 		end,
 		StartAttack = function( ent )
 			if not IsValid( ent.SoundEmitter2 ) then
-				ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/vehicles/bf109/weapons/wing_loop.wav", "lvs/vehicles/bf109/weapons/wing_loop.wav" )
+				ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_heavy_loop.wav", "lvs/weapons/mg_heavy_loop.wav" )
 				ent.SoundEmitter2:SetSoundLevel( 95 )
 			end
 
@@ -110,7 +110,7 @@ ENT.WEAPONS = {
 			if IsValid( ent.SoundEmitter2 ) then
 				ent.SoundEmitter2:Stop()
 			end
-			ent:EmitSound("lvs/vehicles/bf109/weapons/wing_lastshot.wav", 95)
+			ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95)
 		end,
 		OnSelect = function( ent )
 			ent:EmitSound("physics/metal/weapon_impact_soft2.wav")

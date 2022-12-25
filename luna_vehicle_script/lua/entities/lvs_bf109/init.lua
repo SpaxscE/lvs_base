@@ -24,7 +24,7 @@ function ENT:OnSpawn( PObj )
 end
 
 function ENT:OnLandingGearToggled( IsDeployed )
-	self:EmitSound( "lvs/vehicles/bf109/gear.wav" )
+	self:EmitSound( "lvs/vehicles/generic/gear.wav" )
 end
 
 function ENT:OnEngineActiveChanged( Active )
