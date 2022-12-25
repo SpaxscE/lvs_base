@@ -23,8 +23,16 @@ function EFFECT:Init( data )
 	self.DieTime = CurTime() + 1
 
 	self:Explosion( Pos, 2 )
-	
-	sound.Play( "LVS.DYNAMIC_EXPLOSION", Pos )
+
+	local ply = LocalPlayer():GetViewEntity()
+	if IsValid( ply ) then
+		local delay = (Pos - ply:GetPos()):Length() / 13503.9
+		timer.Simple( delay, function()
+			sound.Play( "LVS.DYNAMIC_EXPLOSION", Pos )
+		end )
+	else
+		sound.Play( "LVS.DYNAMIC_EXPLOSION", Pos )
+	end
 	
 	for i = 1, 20 do
 		timer.Simple(math.Rand(0,0.01) * i, function()
