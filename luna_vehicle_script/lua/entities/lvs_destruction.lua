@@ -38,6 +38,8 @@ if SERVER then
 		self.Gibs = {}
 		self.DieTime = CurTime() + 5
 
+		local Speed = self.Vel:Length()
+
 		for _, v in pairs( self.GibModels ) do
 			local ent = ents.Create( "prop_physics" )
 
@@ -54,7 +56,13 @@ if SERVER then
 
 				local PhysObj = ent:GetPhysicsObject()
 				if IsValid( PhysObj ) then
-					PhysObj:SetVelocityInstantaneous( VectorRand() * math.max(300,self.Vel:Length() / 3) + self.Vel  )
+					if Speed <= 250 then
+						local GibDir = Vector( math.Rand(-1,1), math.Rand(-1,1), 1.5 ):GetNormalized()
+						PhysObj:SetVelocityInstantaneous( GibDir * math.random(800,1300)  )
+					else
+						PhysObj:SetVelocityInstantaneous( VectorRand() * math.max(300,self.Vel:Length() / 3) + self.Vel  )
+					end
+
 					PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
 					PhysObj:EnableDrag( false ) 
 
