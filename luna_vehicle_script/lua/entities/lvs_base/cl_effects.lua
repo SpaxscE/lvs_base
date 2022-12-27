@@ -78,16 +78,16 @@ function ENT:DoVehicleFX()
 end
 
 function ENT:GetParticleEmitter( Pos )
-	if self.Emitter then
-		if self.EmitterTime > CurTime() then
-			return self.Emitter
-		end
+	local T = CurTime()
+
+	if IsValid( self.Emitter ) and (self.EmitterTime or 0) > T then
+		return self.Emitter
 	end
 
 	self:StopEmitter()
 
 	self.Emitter = ParticleEmitter( Pos, false )
-	self.EmitterTime = CurTime() + 2
+	self.EmitterTime = T + 2
 
 	return self.Emitter
 end
