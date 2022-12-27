@@ -72,6 +72,8 @@ ENT.WEAPONS = {
 		end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
+		OnOverheat = function( ent ) ent:EmitSound("weapons/flaregun/fire.wav") end,
+		OnRemove = function( ent ) end,
 	},
 	[2] = {
 		Icon = Material("lvs/weapons/hmg.png"),
@@ -115,8 +117,7 @@ ENT.WEAPONS = {
 		OnSelect = function( ent )
 			ent:EmitSound("physics/metal/weapon_impact_soft2.wav")
 		end,
-		OnDeselect = function( ent ) end,
-		OnThink = function( ent, active ) end,
+		OnOverheat = function( ent ) ent:EmitSound("weapons/flaregun/fire.wav") end,
 	},
 	[3] = {
 		Icon = Material("lvs/weapons/nos.png"),
@@ -143,7 +144,6 @@ ENT.WEAPONS = {
 		OnSelect = function( ent )
 			ent:EmitSound("buttons/lever5.wav")
 		end,
-		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active )
 			if not ent.TargetThrottle then return end
 

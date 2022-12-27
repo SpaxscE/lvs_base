@@ -69,6 +69,7 @@ function ENT:Initialize()
 
 	self:CallOnRemove( "finish_weapons_on_delete", function( ent )
 		ent:WeaponsFinish()
+		ent:WeaponsOnRemove()
 	end)
 end
 

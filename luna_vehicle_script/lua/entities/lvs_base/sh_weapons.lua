@@ -29,7 +29,15 @@ if SERVER then
 		vehicle:SelectWeapon( ID )
 	end)
 
-	function ENT:WeaponsFinish()
+	function ENT:WeaponsOnRemove()
+		for ID, Weapon in pairs( self.WEAPONS ) do
+			if not Weapon.OnRemove then continue end
+
+			Weapon.OnRemove( self )
+		end
+	end
+
+	function ENT:WeaponsFinish( CallRemove )
 		if not self._activeWeapon then return end
 
 		local CurWeapon = self.WEAPONS[ self._activeWeapon ]
@@ -114,6 +122,9 @@ if SERVER then
 			if (CurWeapon._CurHeat or 0) >= 1 then
 				CurWeapon.Overheated = true
 				ShouldFire = false
+				if CurWeapon.OnOverheat then
+					CurWeapon.OnOverheat( self )
+				end
 			end
 		end
 
@@ -211,8 +222,6 @@ else
 		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 			if not vehicle.LVSHudPaintWeapons then return end
 
-			if ply ~= vehicle:GetDriver() then return end
-
 			vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
 		end
 	)
@@ -220,8 +229,6 @@ else
 	LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
 		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 			if not vehicle.LVSHudPaintWeaponInfo then return end
-
-			if ply ~= vehicle:GetDriver() then return end
 
 			vehicle:LVSHudPaintWeaponInfo( X, Y, W, H, ScrX, ScrY, ply )
 		end
@@ -274,6 +281,8 @@ else
 	ENT.HeatMat = Material( "lvs/heat.png" )
 
 	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
+		if ply ~= self:GetDriver() then return end
+
 		local Heat = self:GetNWHeat()
 		local hX = X + w - h * 0.5
 		local hY = Y + h * 0.25 + h * 0.25
@@ -294,6 +303,8 @@ else
 	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
+		if ply ~= self:GetDriver() then return end
+
 		local num = #self.WEAPONS
 
 		if num <= 1 then return end
