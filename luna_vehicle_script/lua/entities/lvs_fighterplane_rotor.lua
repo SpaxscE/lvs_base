@@ -72,11 +72,15 @@ function ENT:HandleSounds( vehicle, rpm, throttle )
 	local pitch2 = 100 - rotor_load * 50 * throttle
 	local volume2 = math.max(-rotor_load,0) * mul * throttle ^ 2
 
-	self._RotorSound1:ChangeVolume( volume, 2 )
-	self._RotorSound1:ChangePitch( pitch, 0.5 )
+	if self._RotorSound1 then
+		self._RotorSound1:ChangeVolume( volume, 2 )
+		self._RotorSound1:ChangePitch( pitch, 0.5 )
+	end
 
-	self._RotorSound2:ChangeVolume( volume2, 0.5 )
-	self._RotorSound2:ChangePitch( pitch2, 0 )
+	if self._RotorSound2 then
+		self._RotorSound2:ChangeVolume( volume2, 0.5 )
+		self._RotorSound2:ChangePitch( pitch2, 0 )
+	end
 end
 
 function ENT:Think()
