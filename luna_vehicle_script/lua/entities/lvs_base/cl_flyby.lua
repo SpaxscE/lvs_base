@@ -42,7 +42,16 @@ function ENT:FlyByThink()
 end
 
 function ENT:OnFlyBy( Pitch )
+	if not self.FlyBySound then return end
+
+	self.flybysnd = CreateSound( self, self.FlyBySound )
+	self.flybysnd:SetSoundLevel( 95 )
+	self.flybysnd:PlayEx( 1, Pitch )
 end
 
 function ENT:StopFlyBy()
+	if self.flybysnd then
+		self.flybysnd:Stop()
+		self.flybysnd = nil
+	end
 end

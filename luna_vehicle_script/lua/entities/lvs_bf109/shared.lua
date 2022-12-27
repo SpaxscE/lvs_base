@@ -162,6 +162,10 @@ ENT.WEAPONS = {
 	},
 }
 
+
+ENT.FlyByAdvance = 0.5
+ENT.FlyBySound = "lvs/vehicles/bf109/flyby.wav" 
+
 ENT.EngineSounds = {
 	{
 		sound = "^lvs/vehicles/bf109/dist.wav",

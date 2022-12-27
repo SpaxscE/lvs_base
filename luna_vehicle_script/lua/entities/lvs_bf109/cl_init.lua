@@ -1,7 +1,5 @@
 include("shared.lua")
 
-ENT.FlyByAdvance = 0.5
-
 function ENT:OnSpawn()
 	self:RegisterTrail( Vector(40,200,70), 0, 20, 2, 1000, 400 )
 	self:RegisterTrail( Vector(40,-200,70), 0, 20, 2, 1000, 400 )
@@ -74,15 +72,3 @@ function ENT:AnimLandingGear( frametime )
 	self:ManipulateBoneAngles( 4, Angle( self._smLandingGear / 2,0,0) )
 end
 
-function ENT:OnFlyBy( Pitch )
-	self.flybysnd = CreateSound( self, "lvs/vehicles/bf109/flyby.wav" )
-	self.flybysnd:SetSoundLevel( 95 )
-	self.flybysnd:PlayEx( 1, Pitch )
-end
-
-function ENT:StopFlyBy()
-	if self.flybysnd then
-		self.flybysnd:Stop()
-		self.flybysnd = nil
-	end
-end
