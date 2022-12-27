@@ -85,8 +85,8 @@ local function LoadEditors()
 
 		LVS.HudEditors[ ID ].w = size[1]
 		LVS.HudEditors[ ID ].h = size[2]
-		LVS.HudEditors[ ID ].X = pos[1]
-		LVS.HudEditors[ ID ].Y = pos[2]
+		LVS.HudEditors[ ID ].X = math.min( pos[1], ScrW() - size[1] )
+		LVS.HudEditors[ ID ].Y = math.min( pos[2], ScrH() - size[2] )
 	end
 end
 
