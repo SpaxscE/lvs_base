@@ -2,6 +2,8 @@
 function ENT:OnDestroyed()
 	if not self.DeathSound then return end
 
+	if self:GetVelocity():Length() <= self.MaxVelocity * 0.75 then return end
+
 	local snd = CreateSound( self, self.DeathSound )
 	snd:SetSoundLevel( 120 )
 	snd:PlayEx( 1, 50 + 50 * self:CalcDoppler( LocalPlayer() ) )
