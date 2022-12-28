@@ -1,12 +1,10 @@
 include("shared.lua")
-include("sh_func.lua")
 include( "sh_weapons.lua" )
 include( "cl_effects.lua" )
 include( "cl_hud.lua" )
 include( "cl_seatswitcher.lua" )
 include( "cl_trailsystem.lua" )
-include( "cl_flyby.lua" )
-include( "cl_deathsound.lua" )
+include( "cl_planescript_module.lua" )
 
 function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
@@ -154,3 +152,14 @@ function ENT:GetCrosshairFilterEnts()
 
 	return self.CrosshairFilterEnts
 end
+
+function ENT:OnDestroyed()
+end
+
+net.Receive( "lvs_vehicle_destroy", function( len )
+	local ent = net.ReadEntity()
+
+	if not IsValid( ent ) then return end
+
+	ent:OnDestroyed()
+end )

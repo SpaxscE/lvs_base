@@ -44,10 +44,10 @@ cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue )
 	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
 end)
 
-local cvarShowPlaneIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
-LVS.ShowPlaneIdent = cvarShowPlaneIdent and cvarShowPlaneIdent:GetBool() or true
+local cvarShowIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
+LVS.ShowIdent = cvarShowIdent and cvarShowIdent:GetBool() or true
 cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
-	LVS.ShowPlaneIdent = tonumber( newValue ) ~=0
+	LVS.ShowIdent = tonumber( newValue ) ~=0
 end)
 
 local cvarHitMarker = CreateConVar( "lvs_hitmarker", 1, true, false)

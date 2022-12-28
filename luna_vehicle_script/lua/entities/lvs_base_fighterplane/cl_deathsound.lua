@@ -1,13 +1,5 @@
 
-net.Receive( "lvs_vehicle_destroy", function( len )
-	local ent = net.ReadEntity()
-
-	if not IsValid( ent ) then return end
-
-	ent:StartDeathSound()
-end )
-
-function ENT:StartDeathSound()
+function ENT:OnDestroyed()
 	if not self.DeathSound then return end
 
 	local snd = CreateSound( self, self.DeathSound )

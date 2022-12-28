@@ -1,11 +1,11 @@
 ENT.Type            = "anim"
 
-ENT.PrintName = "[LVS] Base Entity"
+ENT.PrintName = "LBaseEntity"
 ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable			= false
+ENT.Spawnable			= true
 ENT.AdminSpawnable		= false
 
 ENT.AutomaticFrameAdvance = true
@@ -15,7 +15,7 @@ ENT.Editable = true
 
 ENT.LVS = true
 
-ENT.MDL = "models/error.mdl"
+ENT.MDL = "models/props_c17/trappropeller_engine.mdl"
 
 ENT.AITEAM = 0
 
@@ -76,61 +76,76 @@ end
 function ENT:StartCommand( ply, cmd )
 end
 
-sound.Add( {
-	name = "LVS.Physics.Scrape",
-	channel = CHAN_STATIC,
-	level = 80,
-	sound = "lvs/physics/scrape_loop.wav"
-} )
+function ENT:HitGround()
+	if not isvector( self.obbvc ) or not isnumber( self.obbvm ) then
+		self.obbvc = self:OBBCenter() 
+		self.obbvm = self:OBBMins().z
+	end
 
-sound.Add( {
-	name = "LVS.Physics.Impact",
-	channel = CHAN_STATIC,
-	level = 75,
-	sound = {
-		"lvs/physics/impact_soft1.wav",
-		"lvs/physics/impact_soft2.wav",
-		"lvs/physics/impact_soft3.wav",
-		"lvs/physics/impact_soft4.wav",
-		"lvs/physics/impact_soft5.wav",
-	}
-} )
+	local tr = util.TraceLine( {
+		start = self:LocalToWorld( self.obbvc ),
+		endpos = self:LocalToWorld( self.obbvc + Vector(0,0,self.obbvm - 100) ),
+		filter = function( ent ) 
+			if ( ent == self ) then 
+				return false
+			end
+		end
+	} )
+	
+	return tr.Hit 
+end
 
-sound.Add( {
-	name = "LVS.Physics.Crash",
-	channel = CHAN_STATIC,
-	level = 75,
-	sound = "lvs/physics/impact_hard.wav",
-} )
+function ENT:Sign( n )
+	if n > 0 then return 1 end
 
-sound.Add( {
-	name = "LVS.Physics.Wind",
-	channel = CHAN_STATIC,
-	level = 140,
-	sound = "lvs/physics/wind_loop.wav",
-} )
+	if n < 0 then return -1 end
 
-sound.Add( {
-	name = "LVS.Physics.Water",
-	channel = CHAN_STATIC,
-	level = 140,
-	sound = "lvs/physics/water_loop.wav",
-} )
+	return 0
+end
 
-sound.Add( {
-	name = "LVS.DYNAMIC_EXPLOSION",
-	channel = CHAN_STATIC,
-	volume = 1.0,
-	level = 130,
-	pitch = {90, 110},
-	sound = "^lvs/explosion_dist.wav"
-} )
+function ENT:GetMaxHP()
+	return self.MaxHealth
+end
 
-sound.Add( {
-	name = "LVS.EXPLOSION",
-	channel = CHAN_STATIC,
-	volume = 1.0,
-	level = 115,
-	pitch = {95, 115},
-	sound = "lvs/explosion.wav"
-} )
+function ENT:GetPassengerSeats()
+	if not istable( self.pSeats ) then
+		self.pSeats = {}
+
+		local DriverSeat = self:GetDriverSeat()
+
+		for _, v in pairs( self:GetChildren() ) do
+			if v ~= DriverSeat and v:GetClass():lower() == "prop_vehicle_prisoner_pod" then
+				table.insert( self.pSeats, v )
+			end
+		end
+	end
+
+	return self.pSeats
+end
+
+function ENT:GetPassenger( num )
+	if num == 1 then
+		return self:GetDriver()
+	else
+		for _, Pod in pairs( self:GetPassengerSeats() ) do
+			local id = Pod:GetNWInt( "pPodIndex", -1 )
+			if id == -1 then continue end
+
+			if id == num then
+				return Pod:GetDriver()
+			end
+		end
+
+		return NULL
+	end
+end
+
+function ENT:PlayAnimation( animation, playbackrate )
+	playbackrate = playbackrate or 1
+
+	local sequence = self:LookupSequence( animation )
+
+	self:ResetSequence( sequence )
+	self:SetPlaybackRate( playbackrate )
+	self:SetSequence( sequence )
+end

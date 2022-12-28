@@ -196,8 +196,8 @@ function LVS:DrawDiamond( X, Y, radius, perc )
 	end
 end
 
-local function PaintPlaneIdentifier( ent )
-	if not LVS.ShowPlaneIdent then return end
+local function PaintIdentifier( ent )
+	if not LVS.ShowIdent then return end
 
 	local MyPos = ent:GetPos()
 	local MyTeam = ent:GetAITEAM()
@@ -228,7 +228,7 @@ local function PaintPlaneIdentifier( ent )
 			end
 		end
 
-		ent:LVSHudPaintPlaneIdentifier( Pos.x, Pos.y, IndicatorColor, v )
+		ent:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor, v )
 	end
 end
 
@@ -249,7 +249,7 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	local X = ScrW()
 	local Y = ScrH()
 
-	PaintPlaneIdentifier( Parent )
+	PaintIdentifier( Parent )
 	Parent:LVSHudPaint( X, Y, ply )
 
 	for id, editor in pairs( LVS.HudEditors ) do
