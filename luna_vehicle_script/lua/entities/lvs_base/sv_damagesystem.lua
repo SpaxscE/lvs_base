@@ -168,6 +168,12 @@ function ENT:IsDestroyed()
 	return self.Destroyed == true
 end
 
+util.AddNetworkString( "lvs_vehicle_destroy" )
+
 function ENT:SetDestroyed()
 	self.Destroyed = true
+
+	net.Start("lvs_vehicle_destroy")
+		net.WriteEntity( self )
+	net.SendPAS( self:GetPos() )
 end
