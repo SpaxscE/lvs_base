@@ -72,7 +72,7 @@ ENT.WEAPONS = {
 		end,
 		OnDeselect = function( ent ) end,
 		OnThink = function( ent, active ) end,
-		OnOverheat = function( ent ) ent:EmitSound("weapons/flaregun/fire.wav") end,
+		OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
 		OnRemove = function( ent ) end,
 	},
 	[2] = {
@@ -117,7 +117,7 @@ ENT.WEAPONS = {
 		OnSelect = function( ent )
 			ent:EmitSound("physics/metal/weapon_impact_soft2.wav")
 		end,
-		OnOverheat = function( ent ) ent:EmitSound("weapons/flaregun/fire.wav") end,
+		OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
 	},
 	[3] = {
 		Icon = Material("lvs/weapons/nos.png"),
@@ -159,12 +159,14 @@ ENT.WEAPONS = {
 				ent.TargetThrottle = nil
 			end
 		end,
+		OnOverheat = function( ent ) ent:EmitSound("lvs/overheat_boost.wav") end,
 	},
 }
 
 
 ENT.FlyByAdvance = 0.5
 ENT.FlyBySound = "lvs/vehicles/bf109/flyby.wav" 
+ENT.DeathSound = "lvs/vehicles/generic/crash.wav"
 
 ENT.EngineSounds = {
 	{
