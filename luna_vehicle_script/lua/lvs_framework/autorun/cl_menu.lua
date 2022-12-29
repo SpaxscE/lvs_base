@@ -11,23 +11,41 @@ local function ClientSettings( Canvas )
 
 	local TopPanel = vgui.Create( "DPanel", Canvas )
 	TopPanel:SetSize( FrameSizeX, FrameSizeY * 0.5 )
-	TopPanel.Paint = function() end
-	TopPanel:Dock( TOP )
+	TopPanel.Paint = function( self, w, h )
+		surface.SetDrawColor( 80, 80, 80, 255 )
+		surface.SetMaterial( gradient_mat )
+		surface.DrawTexturedRect( 1, 0, w, 1 )
 
-	local slider = vgui.Create( "DNumSlider", TopPanel )
-	slider:DockMargin( 16, 8, 16, 4 )
-	slider:Dock( TOP )
-	slider:SetText( "Engine Volume" )
-	slider:SetMin( 0 )
-	slider:SetMax( 1 )
-	slider:SetDecimals( 2 )
-	slider:SetConVar( "lvs_volume" )
+		draw.DrawText( "Mouse Settings", "LVS_FONT", 4, 4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	end
+	TopPanel:Dock( BOTTOM )
+
+	local RightPanel = vgui.Create( "DPanel", Canvas )
+	RightPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
+	RightPanel.Paint = function() end
+	RightPanel:Dock( RIGHT )
+
+	local LeftPanel = vgui.Create( "DPanel", Canvas )
+	LeftPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
+	LeftPanel.Paint = function() end
+	LeftPanel:Dock( LEFT )
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", TopPanel )
+	CheckBox:DockMargin( 16, 36, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Use Mouse-Aim Steering" )
+	CheckBox:SetConVar("lvs_mouseaim") 
+	CheckBox.OnChange = function( self, bVal )
+		if not isbool( self.first ) then self.first = true return end
+		timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
+	end
 
 	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 then
 		local slider = vgui.Create( "DNumSlider", TopPanel )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
-		slider:SetText( "Mouse X Sensitivity" )
+		slider:SetText( "X Sensitivity" )
 		slider:SetMin( 0 )
 		slider:SetMax( 10 )
 		slider:SetDecimals( 3 )
@@ -36,7 +54,7 @@ local function ClientSettings( Canvas )
 		local slider = vgui.Create( "DNumSlider", TopPanel )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
-		slider:SetText( "Mouse Y Sensitivity" )
+		slider:SetText( "Y Sensitivity" )
 		slider:SetMin( 0 )
 		slider:SetMax( 10 )
 		slider:SetDecimals( 3 )
@@ -45,7 +63,7 @@ local function ClientSettings( Canvas )
 		local slider = vgui.Create( "DNumSlider", TopPanel )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
-		slider:SetText( "Mouse X/Y Return Delta" )
+		slider:SetText( "Return Delta" )
 		slider:SetMin( 0 )
 		slider:SetMax( 10 )
 		slider:SetDecimals( 3 )
@@ -61,36 +79,24 @@ local function ClientSettings( Canvas )
 		slider:SetConVar( "lvs_camerafocus" )
 	end
 
-	local LeftPanel = vgui.Create( "DPanel", Canvas )
-	LeftPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
-	LeftPanel.Paint = function() end
-	LeftPanel:Dock( LEFT )
-
 	local CheckBox = vgui.Create( "DCheckBoxLabel", LeftPanel )
-	CheckBox:DockMargin( 16, 16, 4, 4 )
-	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Mouse-Aim" )
-	CheckBox:SetConVar("lvs_mouseaim") 
-	CheckBox.OnChange = function( self, bVal )
-		if not isbool( self.first ) then self.first = true return end
-		timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
-	end
-
-	local CheckBox = vgui.Create( "DCheckBoxLabel", LeftPanel )
-	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:DockMargin( 16, 34, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Enable Context Menu HUD Editor" )
 	CheckBox:SetConVar("lvs_edit_hud") 
 
-	local RightPanel = vgui.Create( "DPanel", Canvas )
-	RightPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
-	RightPanel.Paint = function() end
-	RightPanel:Dock( RIGHT )
+	local slider = vgui.Create( "DNumSlider", LeftPanel )
+	slider:DockMargin( 16, 8, 16, 4 )
+	slider:Dock( TOP )
+	slider:SetText( "Engine Volume" )
+	slider:SetMin( 0 )
+	slider:SetMax( 1 )
+	slider:SetDecimals( 2 )
+	slider:SetConVar( "lvs_volume" )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
-	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:DockMargin( 16, 34, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Vehicle Team Identifier" )
