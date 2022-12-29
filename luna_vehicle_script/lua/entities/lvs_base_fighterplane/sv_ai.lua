@@ -90,58 +90,62 @@ function ENT:RunAI()
 		if self:GetStability() < 0.5 then
 			TargetPos.z = StartPos.z + 600
 		else
-			if alt > mySpeed then
-				local Target = self._LastAITarget
+			if IsValid( self:GetHardLockTarget() ) then
+				TargetPos = self:GetHardLockTarget():GetPos() + cAvoid * 8
+			else
+				if alt > mySpeed then
+					local Target = self._LastAITarget
 
-				if not IsValid( self._LastAITarget ) or not self:AITargetInFront( self._LastAITarget, 135 ) or not self:AICanSee( self._LastAITarget ) then
-					Target = self:AIGetTarget()
-				end
+					if not IsValid( self._LastAITarget ) or not self:AITargetInFront( self._LastAITarget, 135 ) or not self:AICanSee( self._LastAITarget ) then
+						Target = self:AIGetTarget()
+					end
 
-				if IsValid( Target ) then
-					if self:AITargetInFront( Target, 65 ) then
-						TargetPos = Target:GetPos() + cAvoid * 8 + Target:GetVelocity() * math.abs(math.cos( CurTime() * 150 ) ) * 3
-						
-						Throttle = math.min( (StartPos - TargetPos):Length() / mySpeed, 1 )
+					if IsValid( Target ) then
+						if self:AITargetInFront( Target, 65 ) then
+							TargetPos = Target:GetPos() + cAvoid * 8 + Target:GetVelocity() * math.abs(math.cos( CurTime() * 150 ) ) * 3
+							
+							Throttle = math.min( (StartPos - TargetPos):Length() / mySpeed, 1 )
 
-						local tr = util.TraceHull( {
-							start =  StartPos,
-							endpos = (StartPos + self:GetForward() * 50000),
-							mins = Vector( -50, -50, -50 ),
-							maxs = Vector( 50, 50, 50 ),
-							filter = TraceFilter
-						} )
+							local tr = util.TraceHull( {
+								start =  StartPos,
+								endpos = (StartPos + self:GetForward() * 50000),
+								mins = Vector( -50, -50, -50 ),
+								maxs = Vector( 50, 50, 50 ),
+								filter = TraceFilter
+							} )
 
-						local CanShoot = (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true
+							local CanShoot = (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true
 
-						if CanShoot then
-							local CurHeat = self:GetNWHeat()
-							local CurWeapon = self:GetSelectedWeapon()
+							if CanShoot then
+								local CurHeat = self:GetNWHeat()
+								local CurWeapon = self:GetSelectedWeapon()
 
-							if CurWeapon > 2 then
-								self:AISelectWeapon( 1 )
-							else
-								if CurHeat > 0.9 then
-									if CurWeapon == 1 and self:HasWeapon( 2 ) then
-										self:AISelectWeapon( 2 )
+								if CurWeapon > 2 then
+									self:AISelectWeapon( 1 )
+								else
+									if CurHeat > 0.9 then
+										if CurWeapon == 1 and self:HasWeapon( 2 ) then
+											self:AISelectWeapon( 2 )
 
-									elseif CurWeapon == 2 then
-										self:AISelectWeapon( 1 )
+										elseif CurWeapon == 2 then
+											self:AISelectWeapon( 1 )
+										end
 									end
 								end
+
+								self._AIFireInput = true
 							end
+						else
+							self:AISelectWeapon( 1 )
 
-							self._AIFireInput = true
-						end
-					else
-						self:AISelectWeapon( 1 )
-
-						if alt > 6000 and self:AITargetInFront( Target, 90 ) then
-							TargetPos = Target:GetPos()
+							if alt > 6000 and self:AITargetInFront( Target, 90 ) then
+								TargetPos = Target:GetPos()
+							end
 						end
 					end
+				else
+					TargetPos.z = StartPos.z + 2000
 				end
-			else
-				TargetPos.z = StartPos.z + 2000
 			end
 		end
 		self:RaiseLandingGear()
@@ -166,4 +170,25 @@ function ENT:AISelectWeapon( ID )
 	self._nextAISwitchWeapon = T + math.random(3,6)
 
 	self:SelectWeapon( ID )
+end
+
+function ENT:OnAITakeDamage( dmginfo )
+	local attacker = dmginfo:GetAttacker()
+
+	if not IsValid( attacker ) then return end
+
+	if not self:AITargetInFront( attacker, IsValid( self:AIGetTarget() ) and 120 or 45 ) then
+		self:SetHardLockTarget( attacker )
+	end
+end
+
+function ENT:SetHardLockTarget( target )
+	self._HardLockTarget =  target
+	self._HardLockTime = CurTime() + 4
+end
+
+function ENT:GetHardLockTarget()
+	if (self._HardLockTime or 0) < CurTime() then return NULL end
+
+	return self._HardLockTarget
 end
