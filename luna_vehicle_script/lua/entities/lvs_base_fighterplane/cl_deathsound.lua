@@ -12,15 +12,21 @@ function ENT:OnDestroyed()
 end
 
 function ENT:StopDeathSound()
-	local ply = LocalPlayer():GetViewEntity()
+	local ply = LocalPlayer()
 
 	if not IsValid( ply ) then return end
+
+	local ViewEnt = ply:GetViewEntity()
+
+	if not IsValid( ViewEnt ) then
+		ViewEnt = ply
+	end
 
 	local ID = self:EntIndex()
 
 	if not LVS.DeathSounds[ ID ] then return end
 
-	local delay = (self:GetPos() - ply:GetPos()):Length() / 13503.9
+	local delay = (self:GetPos() - ViewEnt:GetPos()):Length() / 13503.9
 
 	timer.Simple( delay, function()
 		LVS.DeathSounds[ ID ]:Stop()
