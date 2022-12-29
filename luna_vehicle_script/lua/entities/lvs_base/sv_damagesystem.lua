@@ -19,7 +19,7 @@ function ENT:CalcDamage( dmginfo )
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
-	local dmgPenetration = dmgDir * 50
+	local dmgPenetration = dmgDir * 250
 
 	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 

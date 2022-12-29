@@ -11,24 +11,19 @@ end
 function ENT:KillMarker()
 	self.LastKillMarker = CurTime() + 0.5
 
-	local ply = LocalPlayer()
-
-	ply:EmitSound( "physics/metal/metal_solid_impact_bullet4.wav", 140, 255, 0.3, CHAN_VOICE )
+	LocalPlayer():EmitSound( "lvs/hit_kill.wav", 85, 100, 0.4, CHAN_VOICE )
 end
 
 function ENT:HitMarker()
 	self.LastHitMarker = CurTime() + 0.15
 
-	LocalPlayer():EmitSound( "lvs/hit.wav", 85, math.random(95,105), 0.4, CHAN_ITEM2 )
+	LocalPlayer():EmitSound( "lvs/hit.wav", 85, math.random(95,105), 0.4, CHAN_ITEM )
 end
 
 function ENT:CritMarker()
 	self.LastCritMarker = CurTime() + 0.15
 
-	local ply = LocalPlayer()
-
-	ply:EmitSound( "physics/metal/metal_sheet_impact_bullet2.wav", 85, 125, 0.2, CHAN_ITEM2 )
-	ply:EmitSound( "physics/metal/metal_solid_impact_bullet4.wav", 85, 200, 0.2, CHAN_VOICE )
+	LocalPlayer():EmitSound(  "lvs/hit_crit.wav", 85, math.random(95,105), 0.4, CHAN_ITEM2 )
 end
 
 function ENT:GetHitMarker()
