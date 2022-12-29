@@ -15,6 +15,8 @@ end
 function ENT:GetMaxAmmo()
 	local CurWeapon = self:GetActiveWeapon()
 
+	if not CurWeapon then return -1 end
+
 	return CurWeapon.Ammo or -1
 end
 
@@ -286,6 +288,8 @@ else
 
 	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 		if ply ~= self:GetDriver() then return end
+
+		if not self:HasWeapon( self:GetSelectedWeapon() ) then return end
 
 		local Heat = self:GetNWHeat()
 		local hX = X + w - h * 0.5
