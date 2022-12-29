@@ -44,7 +44,9 @@ end
 function meta:lvsMouseSensitivity()
 	local X = self._lvsMouseX or 1
 	local Y = self._lvsMouseY or 1
-	return X, Y
+	local delta = self._lvsReturnDelta or 1
+
+	return X, Y, delta
 end
 
 function meta:lvsBuildControls()
@@ -66,10 +68,12 @@ function meta:lvsBuildControls()
 
 		self._lvsMouseX = self:GetInfoNum( "lvs_sensitivity_x", 1 )
 		self._lvsMouseY = self:GetInfoNum( "lvs_sensitivity_y", 1 )
+		self._lvsReturnDelta = self:GetInfoNum( "lvs_return_delta", 1 )
 	else
 		self._lvsMouseAim = GetConVar( "lvs_mouseaim" ):GetInt() == 1
 		self._lvsMouseX = GetConVar(  "lvs_sensitivity_x" ):GetFloat()
 		self._lvsMouseY = GetConVar( "lvs_sensitivity_y" ):GetFloat()
+		self._lvsReturnDelta = GetConVar( "lvs_return_delta" ):GetFloat()
 
 		self.LVS_BINDS = {}
 

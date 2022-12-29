@@ -8,7 +8,13 @@ local FrameSizeX = 600
 local FrameSizeY = 400
 
 local function ClientSettings( Canvas )
-	local slider = vgui.Create( "DNumSlider", Canvas )
+
+	local TopPanel = vgui.Create( "DPanel", Canvas )
+	TopPanel:SetSize( FrameSizeX, FrameSizeY * 0.5 )
+	TopPanel.Paint = function() end
+	TopPanel:Dock( TOP )
+
+	local slider = vgui.Create( "DNumSlider", TopPanel )
 	slider:DockMargin( 16, 8, 16, 4 )
 	slider:Dock( TOP )
 	slider:SetText( "Engine Volume" )
@@ -17,61 +23,85 @@ local function ClientSettings( Canvas )
 	slider:SetDecimals( 2 )
 	slider:SetConVar( "lvs_volume" )
 
-	local slider = vgui.Create( "DNumSlider", Canvas )
-	slider:DockMargin( 16, 4, 16, 4 )
-	slider:Dock( TOP )
-	slider:SetText( "Mouse Aim Camera Focus" )
-	slider:SetMin( -1 )
-	slider:SetMax( 1 )
-	slider:SetDecimals( 2 )
-	slider:SetConVar( "lvs_camerafocus" )
+	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 then
+		local slider = vgui.Create( "DNumSlider", TopPanel )
+		slider:DockMargin( 16, 4, 16, 4 )
+		slider:Dock( TOP )
+		slider:SetText( "Mouse X Sensitivity" )
+		slider:SetMin( 0 )
+		slider:SetMax( 10 )
+		slider:SetDecimals( 3 )
+		slider:SetConVar( "lvs_sensitivity_x" )
 
-	local slider = vgui.Create( "DNumSlider", Canvas )
-	slider:DockMargin( 16, 4, 16, 4 )
-	slider:Dock( TOP )
-	slider:SetText( "Direct Input Mouse X Sensitivity" )
-	slider:SetMin( 0 )
-	slider:SetMax( 10 )
-	slider:SetDecimals( 3 )
-	slider:SetConVar( "lvs_sensitivity_x" )
+		local slider = vgui.Create( "DNumSlider", TopPanel )
+		slider:DockMargin( 16, 4, 16, 4 )
+		slider:Dock( TOP )
+		slider:SetText( "Mouse Y Sensitivity" )
+		slider:SetMin( 0 )
+		slider:SetMax( 10 )
+		slider:SetDecimals( 3 )
+		slider:SetConVar( "lvs_sensitivity_y" )
 
-	local slider = vgui.Create( "DNumSlider", Canvas )
-	slider:DockMargin( 16, 4, 16, 4 )
-	slider:Dock( TOP )
-	slider:SetText( "Direct Input Mouse Y Sensitivity" )
-	slider:SetMin( 0 )
-	slider:SetMax( 10 )
-	slider:SetDecimals( 3 )
-	slider:SetConVar( "lvs_sensitivity_y" )
+		local slider = vgui.Create( "DNumSlider", TopPanel )
+		slider:DockMargin( 16, 4, 16, 4 )
+		slider:Dock( TOP )
+		slider:SetText( "Mouse X/Y Return Delta" )
+		slider:SetMin( 0 )
+		slider:SetMax( 10 )
+		slider:SetDecimals( 3 )
+		slider:SetConVar( "lvs_return_delta" )
+	else
+		local slider = vgui.Create( "DNumSlider", TopPanel )
+		slider:DockMargin( 16, 4, 16, 4 )
+		slider:Dock( TOP )
+		slider:SetText( "Camera Focus" )
+		slider:SetMin( -1 )
+		slider:SetMax( 1 )
+		slider:SetDecimals( 2 )
+		slider:SetConVar( "lvs_camerafocus" )
+	end
 
-	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	local LeftPanel = vgui.Create( "DPanel", Canvas )
+	LeftPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
+	LeftPanel.Paint = function() end
+	LeftPanel:Dock( LEFT )
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", LeftPanel )
 	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Use Mouse-Aim Steering Method (when available)" )
+	CheckBox:SetText( "Mouse-Aim" )
 	CheckBox:SetConVar("lvs_mouseaim") 
+	CheckBox.OnChange = function( self, bVal )
+		if not isbool( self.first ) then self.first = true return end
+		timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
+	end
 
-	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	local CheckBox = vgui.Create( "DCheckBoxLabel", LeftPanel )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Enable Context Menu HUD Editor" )
+	CheckBox:SetConVar("lvs_edit_hud") 
+
+	local RightPanel = vgui.Create( "DPanel", Canvas )
+	RightPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
+	RightPanel.Paint = function() end
+	RightPanel:Dock( RIGHT )
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
 	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Vehicle Team Identifier" )
 	CheckBox:SetConVar("lvs_show_identifier") 
 
-	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
 	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Hit/Kill Marker" )
 	CheckBox:SetConVar("lvs_hitmarker") 
-
-	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
-	CheckBox:DockMargin( 16, 16, 4, 4 )
-	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Enable Context Menu HUD Editor" )
-	CheckBox:SetConVar("lvs_edit_hud") 
-	
 end
 
 local function ClientControls( Canvas )
@@ -495,8 +525,16 @@ function LVS:OpenServerMenu()
 	ServerSettings( Canvas )
 end
 
-function LVS:OpenMenu()
+function LVS:OpenMenu( keep_position )
+	local xPos
+	local yPos
+
 	if IsValid( LVS.Frame ) then
+		if keep_position then
+			xPos = LVS.Frame:GetX()
+			yPos = LVS.Frame:GetY()
+		end
+
 		LVS.Frame:Close()
 		LVS.Frame = nil
 	end
@@ -508,6 +546,10 @@ function LVS:OpenMenu()
 	LVS.Frame:SetScreenLock( true )
 	LVS.Frame:MakePopup()
 	LVS.Frame:Center()
+	if keep_position and xPos and yPos then
+		LVS.Frame:SetPos( xPos, yPos )
+	end
+
 	LVS.Frame.Paint = function(self, w, h )
 		draw.RoundedBox( 8, 0, 0, w, h, Color( 0, 0, 0, 255 ) )
 		draw.RoundedBoxEx( 8, 1, 26, w-2, h-27, Color( 120, 120, 120, 255 ), false, false, true, true )

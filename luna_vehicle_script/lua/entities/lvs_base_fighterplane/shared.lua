@@ -68,18 +68,18 @@ function ENT:PlayerDirectInput( ply, cmd )
 		ply:SetEyeAngles( Angle(0,90,0) )
 	end
 
-	if KeyPitchDown then MouseY = 10 end
-	if KeyPitchUp then MouseY = -10 end
+	local SensX, SensY, ReturnDelta = ply:lvsMouseSensitivity()
 
-	local SensX, SensY = ply:lvsMouseSensitivity()
+	if KeyPitchDown then MouseY = 10 * ReturnDelta end
+	if KeyPitchUp then MouseY = -10 * ReturnDelta end
 
 	local Input = Vector( MouseX * 0.4 * SensX, MouseY * SensY, 0 )
 
 	local Cur = self:GetSteer()
 
-	local Rate = Delta * 2
+	local Rate = Delta * 3 * ReturnDelta
 
-	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5,-Rate,Rate), math.Clamp(Cur.y * Delta * 5,-Rate,Rate), 0)
+	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5 * ReturnDelta,-Rate,Rate), math.Clamp(Cur.y * Delta * 5 * ReturnDelta,-Rate,Rate), 0)
 
 	local Target = New + Input * Delta * 0.8
 
