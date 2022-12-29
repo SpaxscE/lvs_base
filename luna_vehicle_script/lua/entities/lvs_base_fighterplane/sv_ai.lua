@@ -114,17 +114,27 @@ function ENT:RunAI()
 						local CanShoot = (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true
 
 						if CanShoot then
-							if self:AITargetInFront( Target, 15 ) then
-								self._AIFireInput = true
-								--self:HandleWeapons( true )
-								--self:PrimaryAttack()
+							local CurHeat = self:GetNWHeat()
+							local CurWeapon = self:GetSelectedWeapon()
 
-								if self:AITargetInFront( Target, 10 ) then
-									--self:HandleWeapons( true, true )
+							if CurWeapon > 2 then
+								self:AISelectWeapon( 1 )
+							else
+								if CurHeat > 0.9 then
+									if CurWeapon == 1 and self:HasWeapon( 2 ) then
+										self:AISelectWeapon( 2 )
+
+									elseif CurWeapon == 2 then
+										self:AISelectWeapon( 1 )
+									end
 								end
 							end
+
+							self._AIFireInput = true
 						end
 					else
+						self:AISelectWeapon( 1 )
+
 						if alt > 6000 and self:AITargetInFront( Target, 90 ) then
 							TargetPos = Target:GetPos()
 						end
@@ -144,4 +154,16 @@ function ENT:RunAI()
 	local TargetAng = (self.smTargetPos - self:GetPos()):GetNormalized():Angle()
 
 	self:ApproachTargetAngle( TargetAng )
+end
+
+function ENT:AISelectWeapon( ID )
+	if ID == self:GetSelectedWeapon() then return end
+
+	local T = CurTime()
+
+	if (self._nextAISwitchWeapon or 0) > T then return end
+
+	self._nextAISwitchWeapon = T + math.random(3,6)
+
+	self:SelectWeapon( ID )
 end

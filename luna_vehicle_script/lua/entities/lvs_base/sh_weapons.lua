@@ -1,6 +1,10 @@
 
 ENT.WEAPONS = {}
 
+function ENT:HasWeapon( ID )
+	return istable( self.WEAPONS[ ID ] )
+end
+
 function ENT:GetActiveWeapon()
 	local SelectedID = self:GetSelectedWeapon()
 	local CurWeapon = self.WEAPONS[ SelectedID ]
