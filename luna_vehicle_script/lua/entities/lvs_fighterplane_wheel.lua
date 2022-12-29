@@ -59,7 +59,15 @@ if SERVER then
 
 		return BrakeForce, Vector(0,0,0), SIM_LOCAL_ACCELERATION
 	end
-	
+
+	function ENT:SetBase( ent )
+		self._baseEnt = ent
+	end
+
+	function ENT:GetBase()
+		return self._baseEnt
+	end
+
 	function ENT:Use( ply )
 	end
 
@@ -74,7 +82,11 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
-		self:TakePhysicsDamage( dmginfo )
+		local base = self:GetBase()
+
+		if not IsValid( base ) then return end
+
+		base:TakeDamageInfo( dmginfo )
 	end
 
 	return

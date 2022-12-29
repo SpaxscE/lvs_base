@@ -93,7 +93,7 @@ function ENT:AddWheel( pos, radius, mass, type )
 		type = LVS.WHEEL_BRAKE
 	end
 
-	local wheel = ents.Create( "lvs_wheel" )
+	local wheel = ents.Create( "lvs_fighterplane_wheel" )
 
 	if not IsValid( wheel ) then
 		self:Remove()
@@ -113,6 +113,7 @@ function ENT:AddWheel( pos, radius, mass, type )
 	wheel:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )
 	wheel:Spawn()
 	wheel:Activate()
+	wheel:SetBase( self )
 	wheel:Define( 
 		{
 			physmat = "jeeptire",
