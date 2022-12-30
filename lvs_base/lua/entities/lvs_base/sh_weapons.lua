@@ -1,6 +1,30 @@
 
 ENT.WEAPONS = {}
 
+function ENT:InitWeapons()
+end
+
+function ENT:AddWeapon( data )
+	if not istable( data ) then print("[LVS] couldn't register weapon") return end
+
+	local default = LVS:GetWeaponPreset( "DEFAULT" )
+
+	data.Icon = data.Icon or Material("lvs/weapons/bullet.png")
+	data.Ammo = data.Ammo or -1
+	data.Delay = data.Delay or 0
+	data.HeatRateUp = data.HeatRateUp or default.HeatRateUp
+	data.Attack = data.Attack or default.Attack
+	data.StartAttack = data.StartAttack or default.StartAttack
+	data.FinishAttack = data.FinishAttack or default.FinishAttack
+	data.OnSelect = data.OnSelect or default.OnSelect
+	data.OnDeselect = data.OnDeselect or default.OnDeselect
+	data.OnThink = data.OnThink or default.OnThink
+	data.OnOverheat = data.OnOverheat or default.OnOverheat
+	data.OnRemove = data.OnRemove or default.OnRemove
+
+	table.insert( self.Weapons, data )
+end
+
 function ENT:HasWeapon( ID )
 	return istable( self.WEAPONS[ ID ] )
 end

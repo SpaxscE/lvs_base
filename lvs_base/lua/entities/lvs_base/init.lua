@@ -54,6 +54,7 @@ function ENT:Initialize()
 	PObj:EnableDrag( false )
 
 	self:OnSpawn( PObj )
+	self:InitWeapons()
 
 	self:StartMotionController()
 

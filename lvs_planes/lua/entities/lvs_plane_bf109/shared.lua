@@ -31,96 +31,95 @@ ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 1000
 
-ENT.WEAPONS = {
-	[1] = {
-		Icon = Material("lvs/weapons/mg.png"),
-		Ammo = 1000,
-		Delay = 0.1,
-		Attack = function( ent )
-			ent.MirrorPrimary = not ent.MirrorPrimary
+function ENT:InitWeapons()
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/mg.png")
+	weapon.Ammo = 1000
+	weapon.Delay = 0.1
+	weapon.Attack = function( ent )
+		ent.MirrorPrimary = not ent.MirrorPrimary
 
-			local Mirror = ent.MirrorPrimary and -1 or 1
+		local Mirror = ent.MirrorPrimary and -1 or 1
 
-			local bullet = {}
-			bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * Mirror,92.85) )
-			bullet.Dir 	= ent:GetForward()
-			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
-			bullet.TracerName = "lvs_tracer_white"
-			bullet.Force	= 10
-			bullet.HullSize 	= 50
-			bullet.Damage	= 10
-			bullet.Velocity = 30000
-			bullet.Attacker 	= ent:GetDriver()
-			bullet.Callback = function(att, tr, dmginfo) end
-			ent:FireBullet( bullet )
-		end,
-		StartAttack = function( ent )
-			if not IsValid( ent.SoundEmitter1 ) then
-				ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_light_loop.wav", "lvs/weapons/mg_light_loop_interior.wav" )
-				ent.SoundEmitter1:SetSoundLevel( 95 )
-			end
-		
-			ent.SoundEmitter1:Play()
-		end,
-		FinishAttack = function( ent )
-			if IsValid( ent.SoundEmitter1 ) then
-				ent.SoundEmitter1:Stop()
-			end
-		end,
-		OnSelect = function( ent )
-			ent:EmitSound("physics/metal/weapon_impact_soft3.wav")
-		end,
-		OnDeselect = function( ent ) end,
-		OnThink = function( ent, active ) end,
-		OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
-		OnRemove = function( ent ) end,
-	},
-	[2] = {
-		Icon = Material("lvs/weapons/hmg.png"),
-		Ammo = 300,
-		Delay = 0.14,
-		Attack = function( ent )
-			ent.MirrorSecondary = not ent.MirrorSecondary
+		local bullet = {}
+		bullet.Src 	= ent:LocalToWorld( Vector(109.29,7.13 * Mirror,92.85) )
+		bullet.Dir 	= ent:GetForward()
+		bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+		bullet.TracerName = "lvs_tracer_white"
+		bullet.Force	= 10
+		bullet.HullSize 	= 50
+		bullet.Damage	= 10
+		bullet.Velocity = 30000
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo) end
+		ent:FireBullet( bullet )
+	end
+	weapon.StartAttack = function( ent )
+		if not IsValid( ent.SoundEmitter1 ) then
+			ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_light_loop.wav", "lvs/weapons/mg_light_loop_interior.wav" )
+			ent.SoundEmitter1:SetSoundLevel( 95 )
+		end
+	
+		ent.SoundEmitter1:Play()
+	end
+	weapon.FinishAttack = function( ent )
+		if IsValid( ent.SoundEmitter1 ) then
+			ent.SoundEmitter1:Stop()
+		end
+	end
+	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	self:AddWeapon( weapon )
 
-			local Mirror = ent.MirrorSecondary and -1 or 1
 
-			local bullet = {}
-			bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
-			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
-			bullet.Spread 	= Vector( 0.04,  0.04, 0 )
-			bullet.TracerName = "lvs_tracer_orange"
-			bullet.Force	= 50
-			bullet.HullSize 	= 15
-			bullet.Damage	= 15
-			bullet.SplashDamage = 85
-			bullet.SplashDamageRadius = 50
-			bullet.Velocity = 12000
-			bullet.Attacker 	= ent:GetDriver()
-			bullet.Callback = function(att, tr, dmginfo)
-			end
-			ent:FireBullet( bullet )
-		end,
-		StartAttack = function( ent )
-			if not IsValid( ent.SoundEmitter2 ) then
-				ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_heavy_loop.wav", "lvs/weapons/mg_heavy_loop.wav" )
-				ent.SoundEmitter2:SetSoundLevel( 95 )
-			end
 
-			ent.SoundEmitter2:Play()
-		end,
-		FinishAttack = function( ent )
-			if IsValid( ent.SoundEmitter2 ) then
-				ent.SoundEmitter2:Stop()
-			end
-			ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95)
-		end,
-		OnSelect = function( ent )
-			ent:EmitSound("physics/metal/weapon_impact_soft2.wav")
-		end,
-		OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
-	},
-	[3] = LVS:GetWeaponPreset( "TURBO" ),
-}
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/hmg.png")
+	weapon.Ammo = 300
+	weapon.Delay = 0.14
+	weapon.Attack = function( ent )
+		ent.MirrorSecondary = not ent.MirrorSecondary
+
+		local Mirror = ent.MirrorSecondary and -1 or 1
+
+		local bullet = {}
+		bullet.Src 	= ent:LocalToWorld( Vector(93.58,85.93 * Mirror,63.63) )
+		bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-0.5 * Mirror,0) ):Forward()
+		bullet.Spread 	= Vector( 0.04,  0.04, 0 )
+		bullet.TracerName = "lvs_tracer_orange"
+		bullet.Force	= 50
+		bullet.HullSize 	= 15
+		bullet.Damage	= 15
+		bullet.SplashDamage = 85
+		bullet.SplashDamageRadius = 50
+		bullet.Velocity = 12000
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo)
+		end
+		ent:FireBullet( bullet )
+	end
+	weapon.StartAttack = function( ent )
+		if not IsValid( ent.SoundEmitter2 ) then
+			ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_heavy_loop.wav", "lvs/weapons/mg_heavy_loop.wav" )
+			ent.SoundEmitter2:SetSoundLevel( 95 )
+		end
+
+		ent.SoundEmitter2:Play()
+	end
+	weapon.FinishAttack = function( ent )
+		if IsValid( ent.SoundEmitter2 ) then
+			ent.SoundEmitter2:Stop()
+		end
+		ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95)
+	end
+	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft2.wav") end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	self:AddWeapon( weapon )
+
+
+
+	self:AddWeapon( LVS:GetWeaponPreset( "TURBO" ) )
+end
 
 ENT.FlyByAdvance = 0.5
 ENT.FlyBySound = "lvs/vehicles/bf109/flyby.wav" 
