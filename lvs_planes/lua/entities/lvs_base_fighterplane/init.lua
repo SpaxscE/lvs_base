@@ -133,7 +133,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	phys:Wake()
 
-	local Thrust = math.max( self:GetThrustStrenght(), 0 ) * self.MaxThrust * phys:GetMass()
+	local Thrust = math.max( self:GetThrustStrenght(), 0 ) * self.MaxThrust * 100
 
 	local ForceLinear = (Aero * 10000 * self.ForceLinearMultiplier + Vector(Thrust,0,0)) * deltatime
 	local ForceAngle = (Torque * 25 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250

@@ -135,10 +135,14 @@ function ENT:CalcViewDriver( ply, pos, angles, fov, pod )
 	end
 end
 
+function ENT:CalcViewPassenger( ply, pos, angles, fov, pod )
+	return LVS:CalcView( self, ply, pos, angles, fov, pod )
+end
+
 function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	if self:GetDriverSeat() == pod then
 		return self:CalcViewDriver( ply, pos, angles, fov, pod )
 	else
-		return LVS:CalcView( self, ply, pos, angles, fov, pod )
+		return self:CalcViewPassenger( ply, pos, angles, fov, pod )
 	end
 end

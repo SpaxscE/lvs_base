@@ -99,7 +99,11 @@ end
 function ENT:OnTick()
 end
 
+function ENT:OnRemoved()
+end
+
 function ENT:OnRemove()
+	self:OnRemoved()
 end
 
 function ENT:Lock()

@@ -10,26 +10,37 @@ function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
 end
 
-function ENT:OnDraw()
+function ENT:PreDraw()
 	return true
 end
 
-function ENT:OnDrawTranslucent()
+function ENT:PreDrawTranslucent()
 	return false
 end
 
-function ENT:Draw()
-	if not self:OnDraw() then return end
+function ENT:PostDraw()
+end
 
-	self:DrawModel()
+function ENT:PostDrawTranslucent()
+end
+
+function ENT:Draw()
+
+	if self:PreDraw() then
+		self:DrawModel()
+	end
+
+	self:PostDraw()
 end
 
 function ENT:DrawTranslucent()
 	self:DrawTrail()
 
-	if not self:OnDrawTranslucent() then return end
+	if self:PreDrawTranslucent() then
+		self:DrawModel()
+	end
 
-	self:DrawModel()
+	self:PostDrawTranslucent()
 end
 
 function ENT:Initialize()
