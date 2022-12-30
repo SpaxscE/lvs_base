@@ -169,7 +169,7 @@ function ENT:GetCrosshairFilterEnts()
 	return self.CrosshairFilterEnts
 end
 
-function ENT:FireBullet( data )
+function ENT:LVSFireBullet( data )
 	data.Entity = self
 	data.Velocity = data.Velocity + self:GetVelocity():Length()
 	data.SrcEntity = self:WorldToLocal( data.Src )

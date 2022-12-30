@@ -16,7 +16,7 @@ function ENT:OnSpawn( PhysObj )
 		LVS.WHEEL_STEER_REAR -- ..turns right when left key is pressed
 	]]
 
-	-- self:AddEngine( Position ) -- add a engine. This will also register a critical hit point and create black smoke effects when health is low.
+	self:AddEngine( Vector(40,0,0) ) -- add a engine. This will also register a critical hit point and create black smoke effects when health is low.
 
 	--[[ -- AddEngine intenrally registers a critical hit point to the damage system like this:
 	self:AddDS( {
