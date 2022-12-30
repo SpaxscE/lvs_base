@@ -34,6 +34,8 @@ function ENT:AddDT( type, name, data )
 end
 
 function ENT:CreateBaseDT()
+	self:InitWeapons()
+
 	self:AddDT( "Entity", "Driver" )
 	self:AddDT( "Entity", "DriverSeat" )
 	self:AddDT( "Entity", "Gunner" )

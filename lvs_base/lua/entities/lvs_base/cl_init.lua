@@ -45,7 +45,6 @@ end
 
 function ENT:Initialize()
 	self:OnSpawn()
-	self:InitWeapons()
 end
 
 function ENT:OnSpawn()

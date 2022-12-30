@@ -22,7 +22,7 @@ function ENT:AddWeapon( data )
 	data.OnOverheat = data.OnOverheat or default.OnOverheat
 	data.OnRemove = data.OnRemove or default.OnRemove
 
-	table.insert( self.Weapons, data )
+	table.insert( self.WEAPONS, data )
 end
 
 function ENT:HasWeapon( ID )
