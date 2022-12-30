@@ -67,3 +67,25 @@ end
 function ENT:CalcMainActivity( ply ) -- edit player anims here, works just like CalcMainActivity Hook.
 end
 ]]
+
+
+function ENT:InitWeapons()
+	--[[ add a weapon:
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/bullet.png")
+	weapon.Ammo = -1
+	weapon.Delay = 0.15
+	weapon.HeatRateUp = 0.2
+	weapon.HeatRateDown = 0.25
+	weapon.Attack = function( ent ) end
+	weapon.StartAttack = function( ent ) end
+	weapon.FinishAttack = function( ent ) end
+	weapon.OnSelect = function( ent ) end
+	weapon.OnDeselect = function( ent ) end
+	weapon.OnThink = function( ent, active ) end
+	weapon.OnOverheat = function( ent ) end
+	weapon.OnRemove = function( ent ) end
+	self:AddWeapon( weapon )
+	]]
+end
