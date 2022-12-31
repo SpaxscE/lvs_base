@@ -32,8 +32,8 @@ ENT.MaxSlipAngleYaw = 10
 ENT.MaxHealth = 1000
 
 function ENT:InitWeapons()
-	self.PosTPMG= { Vector(100,150,65), Vector(100,-150,65), Vector(110,-50,55), Vector(110,50,55), Vector(105,100,58), Vector(105,-100,58), }
-	self.DirTPMG= { 0.5, -0.5, -0.05, 0.05, 0.4, -0.4 }
+	self.PosTPMG= { Vector(100,150,65), Vector(100,-150,65), Vector(136.19,-74.97,53.7), Vector(136.19,74.97,53.7), Vector(105,100,58), Vector(105,-100,58), }
+	self.DirTPMG= { 0.5, -0.5, -0.5, 0.5, 0.4, -0.4 }
 	self:AddWeapon( LVS:GetWeaponPreset( "TABLE_POINT_MG" ) )
 
 	self.PosHMG = Vector(136.19,74.97,53.7)

@@ -171,7 +171,7 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	if SERVER then
+	if SERVER and not self.WheelAutoRetract then
 		local KeyJump = ply:lvsKeyDown( "VSPEC" )
 
 		if self._lvsOldKeyJump ~= KeyJump then

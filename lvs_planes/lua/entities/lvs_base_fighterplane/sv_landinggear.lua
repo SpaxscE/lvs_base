@@ -4,6 +4,14 @@ function ENT:HandleLandingGear( Rate )
 
 	local Cur = self:GetLandingGear()
 
+	if self.WheelAutoRetract then
+		if self:HitGround() then
+			self.LandingGearUp = false
+		else
+			self.LandingGearUp = self:GetStability() > 0.4
+		end
+	end
+
 	local New = Cur + math.Clamp((self.LandingGearUp and 0 or 1) - Cur,-Rate,Rate)
 
 	local SetValue = Cur ~= New
@@ -28,12 +36,16 @@ function ENT:HandleLandingGear( Rate )
 end
 
 function ENT:ToggleLandingGear()
+	if self.WheelAutoRetract then return end
+
 	self.LandingGearUp = not self.LandingGearUp
-	
+
 	self:OnLandingGearToggled( self.LandingGearUp )
 end
 
 function ENT:RaiseLandingGear()
+	if self.WheelAutoRetract then return end
+
 	if not self.LandingGearUp then
 		self.LandingGearUp = true
 		
@@ -42,6 +54,8 @@ function ENT:RaiseLandingGear()
 end
 
 function ENT:DeployLandingGear()
+	if self.WheelAutoRetract then return end
+
 	if self.LandingGearUp then
 		self.LandingGearUp = false
 		
