@@ -19,58 +19,36 @@ local Materials = {
 }
 
 function EFFECT:Init( data )
-	local lPos = data:GetOrigin()
-	local lAng = data:GetAngles() - Angle(90,0,0)
-	local Entity = data:GetEntity()
-	local Size = data:GetMagnitude()
+	local Pos = data:GetOrigin()
+	local Dir = data:GetNormal()
+	local Ent = data:GetEntity()
+	local Scale = data:GetMagnitude()
 
-	if IsValid( Entity ) then
-		local Vel = Entity:GetVelocity()
-		local Dir = Entity:LocalToWorldAngles( lAng ):Forward()
-		local Pos = Entity:LocalToWorld( lPos )
+	if not IsValid( Ent ) then return end
 
-		local emitter = ParticleEmitter( Pos, false )
+	local Vel = Ent:GetVelocity()
 
-		if emitter then
-			local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], Pos )
-			local cInt = math.Clamp(100 - 40 * Size,0,255)
-			local rand = Vector( math.random(-1,1), math.random(-1,1), math.random(-1,1) ) * 0.25
+	local emitter = Ent:GetParticleEmitter( Pos )
 
-			if particle then
-				particle:SetVelocity( Vel + (Dir + rand) * (50 + Size * 100) )
-				particle:SetDieTime( 0.4 + Size * 0.6 )
-				particle:SetAirResistance( 200 ) 
-				particle:SetStartAlpha( math.max(20 + Size ^ 3 * 20 - Vel:Length() / 800,0) * 0.7)
-				particle:SetStartSize( 2 )
-				particle:SetEndSize( 10 + Size * 60 )
-				particle:SetRoll( math.Rand( -1, 1 ) )
-				particle:SetColor( math.Clamp(cInt,0,255), math.Clamp(cInt,0,255), math.Clamp(cInt,0,255) )
-				particle:SetGravity( Vector( 0, 0, 100 ) + Vel * 0.5 )
-				particle:SetCollide( false )
-			end
+	if not IsValid( emitter ) then return end
 
-			if Size > 0.4 then
-				for i = 0, 12 do
-					local Pos2 = Pos + Dir * i * 0.7 * math.random(1,2) * 0.5
+	local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], Pos )
 
-					local particle1 = emitter:Add( "effects/muzzleflash2", Pos2 )
+	if not particle then return end
 
-					if particle1 then
-						particle1:SetVelocity( Vel + Dir * (5 + Vel:Length() / 20) )
-						particle1:SetDieTime( 0.05 )
-						particle1:SetStartAlpha( 255 * Size )
-						particle1:SetStartSize( math.max( math.random(4,12) - i * 0.5,0.1 ) * Size )
-						particle1:SetEndSize( 0 )
-						particle1:SetRoll( math.Rand( -1, 1 ) )
-						particle1:SetColor( 255,255,255 )
-						particle1:SetCollide( false )
-					end
-				end
-			end
+	local Col = 100 - 60 * Scale
 
-			emitter:Finish()
-		end
-	end
+	particle:SetVelocity( Vel + Dir * (100 + 50 * Scale) )
+	particle:SetDieTime( 0.4 - 0.3 * Scale )
+	particle:SetAirResistance( 400 ) 
+	particle:SetStartAlpha( 80 )
+	particle:SetStartSize( 2 )
+	particle:SetEndSize( 10 + 20 * Scale )
+	particle:SetRoll( math.Rand( -1, 1 ) )
+	particle:SetRollDelta( math.Rand( -1, 1 ) * 2 )
+	particle:SetColor( Col, Col, Col )
+	particle:SetGravity( Vector( 0, 0, 10 ) )
+	particle:SetCollide( false )
 end
 
 function EFFECT:Think()

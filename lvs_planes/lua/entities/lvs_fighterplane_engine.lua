@@ -193,29 +193,7 @@ function ENT:Think()
 end
 
 function ENT:OnRemove()
-	self:StopEmitter()
 	self:StopSounds()
-end
-
-function ENT:GetParticleEmitter( Pos )
-	if self.Emitter then
-		if self.EmitterTime > CurTime() then
-			return self.Emitter
-		end
-	end
-
-	self:StopEmitter()
-
-	self.Emitter = ParticleEmitter( Pos, false )
-	self.EmitterTime = CurTime() + 2
-
-	return self.Emitter
-end
-
-function ENT:StopEmitter()
-	if IsValid( self.Emitter ) then
-		self.Emitter:Finish()
-	end
 end
 
 function ENT:Draw()
@@ -235,6 +213,6 @@ function ENT:DamageFX( vehicle )
 
 	local effectdata = EffectData()
 		effectdata:SetOrigin( self:GetPos() )
-		effectdata:SetEntity( self )
+		effectdata:SetEntity( vehicle )
 	util.Effect( "lvs_engine_blacksmoke", effectdata )
 end
