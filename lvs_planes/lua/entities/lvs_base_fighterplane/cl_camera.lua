@@ -1,7 +1,12 @@
 
+ENT._FixScreenShake = Vector(0,0,0)
 ENT._lvsSmoothFreeLook = 0
 
 function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
+	local ViewPosL = pod:WorldToLocal( pos )
+
+	self._FixScreenShake = self._FixScreenShake + (ViewPosL - self._FixScreenShake) * RealFrameTime() * 5
+
 	local view = {}
 	view.fov = fov
 	view.drawviewer = true
@@ -71,6 +76,8 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 		view.origin = pod._lerpPos
 		view.angles = self:GetAngles()
 	end
+
+	view.origin = view.origin + ViewPosL - self._FixScreenShake
 
 	return view
 end

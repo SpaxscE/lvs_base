@@ -142,6 +142,27 @@ function ENT:GetPassenger( num )
 	end
 end
 
+function ENT:GetEveryone()
+	local plys = {}
+
+	local Pilot = self:GetDriver()
+	if IsValid( Pilot ) then
+		table.insert( plys, Pilot )
+	end
+
+	for _, Pod in pairs( self:GetPassengerSeats() ) do
+		if not IsValid( Pod ) then continue end
+
+		local ply = Pod:GetDriver()
+
+		if not IsValid( ply ) then continue end
+
+		table.insert( plys, ply )
+	end
+
+	return plys
+end
+
 function ENT:PlayAnimation( animation, playbackrate )
 	playbackrate = playbackrate or 1
 

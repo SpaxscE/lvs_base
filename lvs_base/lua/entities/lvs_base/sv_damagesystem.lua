@@ -87,6 +87,12 @@ function ENT:CalcDamage( dmginfo )
 		net.Send( Attacker )
 	end
 
+	if Damage > 1 then
+		net.Start( "lvs_hurtmarker" )
+			net.WriteFloat( math.min( Damage / 50, 1 ) )
+		net.Send( self:GetEveryone() )
+	end
+
 	if NewHealth <= 0 then
 		self:SetDestroyed()
 
