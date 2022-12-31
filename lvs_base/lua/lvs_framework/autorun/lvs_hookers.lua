@@ -47,6 +47,16 @@ hook.Add("CalcMainActivity", "!!!lvs_playeranimations", function(ply)
 	end
 end)
 
+hook.Add("UpdateAnimation", "!!!lvs_playeranimations", function( ply, velocity, maxseqgroundspeed )
+	if not ply.lvsGetVehicle then return end
+
+	local Ent = ply:lvsGetVehicle()
+
+	if not IsValid( Ent ) then return end
+
+	return Ent:UpdateAnimation( ply, velocity, maxseqgroundspeed )
+end)
+
 hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 	if not ply.lvsGetVehicle then return end
 

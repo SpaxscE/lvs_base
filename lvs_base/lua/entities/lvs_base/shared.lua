@@ -75,6 +75,15 @@ end
 function ENT:CalcMainActivity( ply )
 end
 
+function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
+	ply:SetPlaybackRate( 1 )
+
+	GAMEMODE:GrabEarAnimation( ply )
+	GAMEMODE:MouthMoveAnimation( ply )
+
+	return false
+end
+
 function ENT:StartCommand( ply, cmd )
 end
 

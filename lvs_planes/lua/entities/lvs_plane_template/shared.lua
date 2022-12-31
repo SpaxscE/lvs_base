@@ -63,10 +63,13 @@ function ENT:OnSetupDataTables() -- use this to add networkvariables instead of 
 end
 
 --[[
-function ENT:CalcMainActivity( ply ) -- edit player anims here, works just like CalcMainActivity Hook.
+function ENT:CalcMainActivity( ply ) -- edit player anims here, works just like GM:CalcMainActivity hook
+end
+
+function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed ) -- just like GM:UpdateAnimation hook
+	return false -- prevent original behavior
 end
 ]]
-
 
 function ENT:InitWeapons()
 	-- add a weapon:
