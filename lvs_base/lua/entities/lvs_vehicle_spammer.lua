@@ -239,7 +239,7 @@ if CLIENT then
 						surface.SetDrawColor( 255, 0, 0, A * 255 )
 						surface.DrawTexturedRect( -512, -512 + OY * 512, 1024, 1024 )
 
-						surface.SetDrawColor( 255, 0, 0, math.abs( math.cos( T4 ) * 255 ) )
+						surface.SetDrawColor( 255, 0, 0, math.abs( math.cos( T4 ) ) ^ 2 * 255  )
 					else
 						surface.SetDrawColor( 0, 127, 255, A * 255 )
 						surface.DrawTexturedRect( -512, -512 + OY * 512, 1024, 1024 )
