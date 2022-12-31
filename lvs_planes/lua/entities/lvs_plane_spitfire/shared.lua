@@ -32,7 +32,7 @@ ENT.MaxSlipAngleYaw = 10
 ENT.MaxHealth = 1000
 
 function ENT:InitWeapons()
-	self.PosTPMG= { Vector(125,150,55), Vector(125,-150,55), Vector(125,-50,53), Vector(125,50,53), Vector(125,100,54), Vector(125,-100,54), }
+	self.PosTPMG= { Vector(100,150,65), Vector(100,-150,65), Vector(110,-50,55), Vector(110,50,55), Vector(105,100,58), Vector(105,-100,58), }
 	self.DirTPMG= { 0.5, -0.5, -0.05, 0.05, 0.4, -0.4 }
 	self:AddWeapon( LVS:GetWeaponPreset( "TABLE_POINT_MG" ) )
 
@@ -63,6 +63,7 @@ ENT.EngineSounds = {
 	},
 	{
 		sound = "lvs/vehicles/spitfire/engine_low.wav",
+		sound_int = "lvs/vehicles/spitfire/engine_low_int.wav",
 		Pitch = 80,
 		PitchMin = 0,
 		PitchMax = 255,
@@ -73,24 +74,13 @@ ENT.EngineSounds = {
 		UseDoppler = false,
 	},
 	{
-		sound = "lvs/vehicles/spitfire/engine_mid.wav",
-		Pitch = 80,
-		PitchMin = 0,
-		PitchMax = 255,
-		PitchMul = 80,
-		FadeIn = 0.15,
-		FadeOut = 0.35,
-		FadeSpeed = 1.5,
-		UseDoppler = true,
-	},
-	{
 		sound = "lvs/vehicles/spitfire/engine_high.wav",
 		sound_int = "lvs/vehicles/spitfire/engine_high_int.wav",
 		Pitch = 50,
 		PitchMin = 0,
 		PitchMax = 255,
 		PitchMul = 60,
-		FadeIn = 0.35,
+		FadeIn = 0.15,
 		FadeOut = 1,
 		FadeSpeed = 1,
 		UseDoppler = true,
