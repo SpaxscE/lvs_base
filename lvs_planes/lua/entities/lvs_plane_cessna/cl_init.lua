@@ -33,7 +33,7 @@ function ENT:AnimControlSurfaces( frametime )
 	local Steer = self:GetSteer()
 
 	local Pitch = -Steer.y * 30
-	local Yaw = -Steer.z * 15
+	local Yaw = -Steer.z * 20
 	local Roll = math.Clamp(-Steer.x * 60,-30,30)
 
 	self.smPitch = self.smPitch and self.smPitch + (Pitch - self.smPitch) * FT or 0
