@@ -19,6 +19,10 @@ function ENT:CalcDamage( dmginfo )
 
 	if dmginfo:IsDamageType( DMG_SONIC ) then return end
 
+	if dmginfo:IsDamageType( DMG_BULLET ) then
+		dmginfo:ScaleDamage( 0.01 )
+	end
+
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
@@ -65,7 +69,8 @@ function ENT:CalcDamage( dmginfo )
 		end
 	end
 
-	local Damage = dmginfo:GetDamage()
+	local Damage = math.max( dmginfo:GetDamage(), 1 )
+
 	local CurHealth = self:GetHP()
 
 	local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
