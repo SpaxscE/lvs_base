@@ -4,9 +4,13 @@ include("shared.lua")
 
 -- use this instead of ENT:Initialize()
 function ENT:OnSpawn( PhysObj )
-	self:AddDriverSeat( Vector(0,0,0), Angle(0,-90,0) ) -- self:AddDriverSeat( Position,  Angle ) -- add a driver seat (max 1)
+	local Pod = self:AddDriverSeat( Vector(0,0,0), Angle(0,-90,0) ) -- self:AddDriverSeat( Position,  Angle ) -- add a driver seat (max 1)
+	-- Pod.ExitPos = Vector(0,0,100) -- change exit position
+	-- Pod.HidePlayer = true -- should the player in this pod be invisible?
 
-	-- self:AddPassengerSeat( Position, Angle ) -- add a passenger seat (no limit)
+	-- local Pod = self:AddPassengerSeat( Position, Angle ) -- add a passenger seat (no limit)
+	-- Pod.ExitPos = Vector(0,0,100) -- change exit position
+	-- Pod.HidePlayer = true -- should the player in this pod be invisible?
 
 	-- self:AddWheel( Position, Radius, Mass, Type ) -- add a wheel.
 	--[[ Type can be either:
