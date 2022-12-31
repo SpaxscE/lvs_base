@@ -27,7 +27,7 @@ function ENT:AddEngine( pos )
 		mins = Vector(-40,-20,-30),
 		maxs =  Vector(40,20,30),
 		Callback = function( tbl, ent, dmginfo )
-			dmginfo:ScaleDamage( 15 )
+			dmginfo:ScaleDamage( 10 )
 		end
 	} )
 
