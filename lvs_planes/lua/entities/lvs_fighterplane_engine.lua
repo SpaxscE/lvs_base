@@ -225,17 +225,16 @@ function ENT:DrawTranslucent()
 end
 
 function ENT:DamageFX( vehicle )
+	local T = CurTime()
 	local HP = vehicle:GetHP()
-	if HP <= 0 or HP > vehicle:GetMaxHP() * 0.5 then return end
+	local MaxHP = vehicle:GetMaxHP() 
 
-	self.nextDFX = self.nextDFX or 0
+	if HP <= 0 or HP > MaxHP * 0.5 or (self.nextDFX or 0) > T then return end
 
-	if self.nextDFX < CurTime() then
-		self.nextDFX = CurTime() + 0.05
-		
-		local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
-			effectdata:SetEntity( self )
-		util.Effect( "lvs_engine_blacksmoke", effectdata )
-	end
+	self.nextDFX = T + 0.05
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( self:GetPos() )
+		effectdata:SetEntity( self )
+	util.Effect( "lvs_engine_blacksmoke", effectdata )
 end
