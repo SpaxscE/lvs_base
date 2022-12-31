@@ -141,9 +141,9 @@ WEAPON["HMG"] = {
 		bullet.TracerName = "lvs_tracer_orange"
 		bullet.Force	= 50
 		bullet.HullSize 	= 15
-		bullet.Damage	= 15
-		bullet.SplashDamage = 85
-		bullet.SplashDamageRadius = 50
+		bullet.Damage	= 25
+		bullet.SplashDamage = 75
+		bullet.SplashDamageRadius = 200
 		bullet.Velocity = 12000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
@@ -162,7 +162,7 @@ WEAPON["HMG"] = {
 		if IsValid( ent.SoundEmitter2 ) then
 			ent.SoundEmitter2:Stop()
 		end
-		ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95)
+		ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95 )
 	end,
 	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft2.wav") end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,

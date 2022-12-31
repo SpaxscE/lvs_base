@@ -118,7 +118,7 @@ local function HandleBullets()
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
 				start = start + pos - dir,
-				endpos = start + pos + dir * bullet.Velocity * FT,
+				endpos = start + pos + dir * 50000,
 				filter = Filter,
 				mask = MASK_SHOT_HULL
 			} )
@@ -144,10 +144,10 @@ local function HandleBullets()
 					local effectdata = EffectData()
 					effectdata:SetOrigin( EndPos )
 					effectdata:SetNormal( trace.HitWorld and trace.HitNormal or dir )
-					effectdata:SetMagnitude( bullet.SplashDamageRadius / 100 )
+					effectdata:SetMagnitude( bullet.SplashDamageRadius / 250 )
 					util.Effect( "lvs_bullet_impact", effectdata )
 
-					dmginfo:SetDamageType( DMG_AIRBOAT )
+					dmginfo:SetDamageType( DMG_SONIC )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
 					util.BlastDamageInfo( dmginfo,  trace.HitPos, bullet.SplashDamageRadius )
@@ -156,10 +156,10 @@ local function HandleBullets()
 				if not traceImpact.HitSky then
 					local effectdata = EffectData()
 					effectdata:SetOrigin( traceImpact.HitPos )
-					effectdata:SetEntity( trace.Entity )
+					effectdata:SetEntity( traceImpact.Entity )
 					effectdata:SetStart( start )
-					effectdata:SetNormal( trace.HitNormal )
-					effectdata:SetSurfaceProp( trace.SurfaceProps )
+					effectdata:SetNormal( traceImpact.HitNormal )
+					effectdata:SetSurfaceProp( traceImpact.SurfaceProps )
 					util.Effect( "Impact", effectdata )
 				end
 			end

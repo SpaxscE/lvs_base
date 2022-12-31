@@ -16,6 +16,9 @@ function ENT:AddDS( data )
 end
 
 function ENT:CalcDamage( dmginfo )
+
+	if dmginfo:IsDamageType( DMG_SONIC ) then return end
+
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
