@@ -17,6 +17,10 @@ end
 function ENT:OnFrame()
 end
 
+function ENT:LVSPreHudPaint( X, Y, ply )
+	return true -- return false to prevent original hud paint from running
+end
+
 function ENT:PreDraw() -- function is called in ENT:Draw() right before self:DrawModel() is called.
 	return true -- set to false to prevent model from drawing.  Note this will not stop ENT:PostDraw() from being called
 end

@@ -1,5 +1,11 @@
 
+function ENT:LVSPreHudPaint( X, Y, ply )
+	return true
+end
+
 function ENT:LVSHudPaint( X, Y, ply )
+	if not self:LVSPreHudPaint( X, Y, ply ) then return end
+
 	if ply ~= self:GetDriver() then return end
 
 	local pod = self:GetDriverSeat()

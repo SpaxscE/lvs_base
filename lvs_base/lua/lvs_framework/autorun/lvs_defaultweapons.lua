@@ -58,6 +58,52 @@ WEAPON["LMG"] = {
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
 }
 
+WEAPON["TABLE_POINT_MG"] = {
+	Icon = Material("lvs/weapons/bullet.png"),
+	Ammo = 2000,
+	Delay = 0.1,
+	Attack = function( ent )
+		if not ent.PosTPMG or not ent.DirTPMG then return end
+
+		for i = 1, 2 do
+			ent._NumTPMG = ent._NumTPMG and ent._NumTPMG + 1 or 1
+
+			if ent._NumTPMG > #ent.PosTPMG then ent._NumTPMG = 1 end
+		
+			local Pos = ent.PosTPMG[ ent._NumTPMG ]
+			local Dir = ent.DirTPMG[ ent._NumTPMG ]
+
+			local bullet = {}
+			bullet.Src 	= ent:LocalToWorld( Pos )
+			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-Dir,0) ):Forward()
+			bullet.Spread 	= Vector( 0.035,  0.035, 0 )
+			bullet.TracerName = "lvs_tracer_yellow"
+			bullet.Force	= 10
+			bullet.HullSize 	= 25
+			bullet.Damage	= 10
+			bullet.Velocity = 40000
+			bullet.Attacker 	= ent:GetDriver()
+			bullet.Callback = function(att, tr, dmginfo) end
+			ent:LVSFireBullet( bullet )
+		end
+	end,
+	StartAttack = function( ent )
+		if not IsValid( ent.SoundEmitter1 ) then
+			ent.SoundEmitter1 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_light_loop.wav", "lvs/weapons/mg_light_loop_interior.wav" )
+			ent.SoundEmitter1:SetSoundLevel( 95 )
+		end
+	
+		ent.SoundEmitter1:Play()
+	end,
+	FinishAttack = function( ent )
+		if IsValid( ent.SoundEmitter1 ) then
+			ent.SoundEmitter1:Stop()
+		end
+	end,
+	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end,
+	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
+}
+
 WEAPON["HMG"] = {
 	Icon = Material("lvs/weapons/hmg.png"),
 	Ammo = 300,
