@@ -9,8 +9,7 @@ function ENT:LVSHudPaint( X, Y, ply )
 end
 
 function ENT:HurtMarker( intensity )
-	LocalPlayer():EmitSound( "lvs/got_hit"..math.random(1,3)..".wav", 75, math.random(95,105), 0.25 + intensity * 0.75, CHAN_STATIC )
-
+	LocalPlayer():EmitSound( "lvs/hit_receive"..math.random(1,2)..".wav", 75, math.random(95,105), 0.25 + intensity * 0.75, CHAN_STATIC )
 	util.ScreenShake( Vector(0, 0, 0), 25 * intensity, 25 * intensity, 0.5, 1 )
 end
 
