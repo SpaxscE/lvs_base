@@ -25,12 +25,18 @@ WEAPON["LMG"] = {
 
 		local Mirror = ent.MirrorPrimary and -1 or 1
 
-		local Pos = ent.PosLMG and Vector(ent.PosLMG.x,ent.PosLMG.y * Mirror,ent.PosLMG.z) or Vector(0,0,0)
+		local Pos = ent:LocalToWorld( ent.PosLMG and Vector(ent.PosLMG.x,ent.PosLMG.y * Mirror,ent.PosLMG.z) or Vector(0,0,0) )
 		local Dir = ent.DirLMG or 0
 
+		local effectdata = EffectData()
+		effectdata:SetOrigin( Pos )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle", effectdata )
+
 		local bullet = {}
-		bullet.Src 	= ent:LocalToWorld( Pos )
-		bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-Dir * Mirror,0) ):Forward()
+		bullet.Src =  Pos
+		bullet.Dir = ent:LocalToWorldAngles( Angle(0,-Dir * Mirror,0) ):Forward()
 		bullet.Spread 	= Vector( 0.015,  0.015, 0 )
 		bullet.TracerName = "lvs_tracer_white"
 		bullet.Force	= 10
@@ -70,12 +76,18 @@ WEAPON["TABLE_POINT_MG"] = {
 
 			if ent._NumTPMG > #ent.PosTPMG then ent._NumTPMG = 1 end
 		
-			local Pos = ent.PosTPMG[ ent._NumTPMG ]
+			local Pos = ent:LocalToWorld( ent.PosTPMG[ ent._NumTPMG ] )
 			local Dir = ent.DirTPMG[ ent._NumTPMG ]
 
+			local effectdata = EffectData()
+			effectdata:SetOrigin( Pos )
+			effectdata:SetNormal( ent:GetForward() )
+			effectdata:SetEntity( ent )
+			util.Effect( "lvs_muzzle", effectdata )
+
 			local bullet = {}
-			bullet.Src 	= ent:LocalToWorld( Pos )
-			bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-Dir,0) ):Forward()
+			bullet.Src = Pos
+			bullet.Dir = ent:LocalToWorldAngles( Angle(0,-Dir,0) ):Forward()
 			bullet.Spread 	= Vector( 0.035,  0.035, 0 )
 			bullet.TracerName = "lvs_tracer_yellow"
 			bullet.Force	= 10
@@ -113,12 +125,18 @@ WEAPON["HMG"] = {
 
 		local Mirror = ent.MirrorSecondary and -1 or 1
 
-		local Pos = ent.PosHMG and Vector(ent.PosHMG.x,ent.PosHMG.y * Mirror,ent.PosHMG.z) or Vector(0,0,0)
+		local Pos = ent:LocalToWorld( ent.PosHMG and Vector(ent.PosHMG.x,ent.PosHMG.y * Mirror,ent.PosHMG.z) or Vector(0,0,0) )
 		local Dir = ent.DirHMG or 0.5
 
+		local effectdata = EffectData()
+		effectdata:SetOrigin( Pos )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle", effectdata )
+
 		local bullet = {}
-		bullet.Src 	= ent:LocalToWorld( Pos )
-		bullet.Dir 	= ent:LocalToWorldAngles( Angle(0,-Dir * Mirror,0) ):Forward()
+		bullet.Src = Pos
+		bullet.Dir = ent:LocalToWorldAngles( Angle(0,-Dir * Mirror,0) ):Forward()
 		bullet.Spread 	= Vector( 0.04,  0.04, 0 )
 		bullet.TracerName = "lvs_tracer_orange"
 		bullet.Force	= 50
