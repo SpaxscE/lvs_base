@@ -3,11 +3,11 @@ function ENT:RunAI()
 end
 
 function ENT:AutoAI()
-	if IsValid( self._OwnerEntLVS ) then
-		if self._OwnerEntLVS:InVehicle() then
-			if self._OwnerEntLVS:IsAdmin() then
-				self:SetAI( true )
-			end
+	if not IsValid( self._OwnerEntLVS ) then return end
+
+	if self._OwnerEntLVS:InVehicle() then
+		if self._OwnerEntLVS:IsAdmin() then
+			self:SetAI( true )
 		end
 	end
 end
@@ -20,7 +20,7 @@ end
 
 function ENT:OnToggleAI( name, old, new)
 	if new == old then return end
-	
+
 	if new == true then
 		local Driver = self:GetDriver()
 		
@@ -42,9 +42,9 @@ end
 function ENT:AITargetInFront( ent, range )
 	if not IsValid( ent ) then return false end
 	if not range then range = 45 end
-	
+
 	local DirToTarget = (ent:GetPos() - self:GetPos()):GetNormalized()
-	
+
 	local InFront = math.deg( math.acos( math.Clamp( self:GetForward():Dot( DirToTarget ) ,-1,1) ) ) < range
 
 	return InFront
