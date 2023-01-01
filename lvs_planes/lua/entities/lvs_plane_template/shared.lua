@@ -56,10 +56,13 @@ ENT.MaxSlipAngleYaw = 10 -- same for yaw
 ENT.MaxHealth = 1000
 
 function ENT:OnSetupDataTables() -- use this to add networkvariables instead of ENT:SetupDataTables().
-	--self:AddDT(  string_type, string_name, table_extended ) -- please use self:AddDT() function instead of self:NetworkVar(). It automatically handles slot indexes internally.
+	--self:AddDT(  string_type, string_name, table_extended ) -- self:AddDT() works the same as self:NetworkVar() except AddDT doesnt take a slot variable as it automatically handles slots internally.
 
 	-- example:
 	--self:AddDT( "Float", "MyValue", { KeyName = "myvalue", Edit = { type = "Float", order = 3,min = 0, max = 10, category = "Misc"}  )
+
+	-- or:
+	-- self:AddDT( "Float", "MyValue" )
 end
 
 --[[
@@ -109,9 +112,9 @@ function ENT:InitWeapons()
 	self:AddWeapon( weapon )
 
 --[[
-	-- or use presets:
-	self.PosLMG = Vector(25,0,30)
-	self.DirLMG = 0
+	-- or use presets (defined in "lvs_base\lua\lvs_framework\autorun\lvs_defaultweapons.lua"):
+	self.PosLMG = Vector(25,0,30)	-- this is used internally as variable in LMG script
+	self.DirLMG = 0				-- this is used internally as variable in LMG script
 	self:AddWeapon( LVS:GetWeaponPreset( "LMG" ) )
 ]]
 end
@@ -127,17 +130,17 @@ ENT.DeathSound = "lvs/vehicles/generic/crash.wav" -- which sound to play on deat
 ENT.EngineSounds = {
 	{
 		sound = "ambient/machines/spin_loop.wav", -- exterior sound
-		--sound_int = "vehicles/airboat/fan_motor_fullthrottle_loop1.wav", -- interior sound
-		Pitch = 80, -- pitch start value
-		PitchMin = 0,
-		PitchMax = 255,
-		PitchMul = 100,
+		--sound_int = "vehicles/airboat/fan_motor_fullthrottle_loop1.wav", -- interior sound. Commenting this out makes the exterior sound play while in interior. Set to "" to mute
+		Pitch = 80, -- Pitch start value
+		PitchMin = 0, -- clamp min pitch, 0 = unclamped
+		PitchMax = 255, -- clamp max pitch, 255 = unclamped (max possible value in source)
+		PitchMul = 100, -- pitch change is linear to throttle. The math behind this is:  SoundPitch = Pitch + Throttle * PitchMul
 		FadeIn = 0, -- fade in at 0 Throttle
 		FadeOut = 1, -- fade out at 1 Throttle
 		FadeSpeed = 1.5, -- how fast to fade
 		UseDoppler = true, -- set false to not use doppler
-		--VolumeMin = 0,
-		--VolumeMax = 1,
+		--VolumeMin = 0, -- min volume clamp, 0 == unclamped
+		--VolumeMax = 1, -- max volume clamp, 1 == unclamped
 		--SoundLevel = 110,
 	},
 }
