@@ -89,6 +89,19 @@ function ENT:PhysicsThink()
 	end
 end
 
+function ENT:TakeCollisionDamage( damage, attacker )
+	if not IsValid( attacker ) then
+		attacker = game.GetWorld()
+	end
+
+	local dmginfo = DamageInfo()
+	dmginfo:SetDamage( damage )
+	dmginfo:SetAttacker( attacker )
+	dmginfo:SetInflictor( attacker )
+	dmginfo:SetDamageType( DMG_CRUSH + DMG_VEHICLE ) -- this will communicate to the damage system to handle this kind of damage differently.
+	self:TakeDamageInfo( dmginfo )
+end
+
 function ENT:PhysicsCollide( data, physobj )
 	if self:IsDestroyed() then
 		self.MarkForDestruction = true
@@ -104,6 +117,23 @@ function ENT:PhysicsCollide( data, physobj )
 		end
 	end
 
+	if self:GetAI() and not self:IsPlayerHolding() then
+		if self:WaterLevel() >= self.WaterLevelDestroyAI then
+			self:SetDestroyed( true )
+			self.MarkForDestruction = true
+
+			return
+		end
+
+		self:TakeCollisionDamage( data.OurOldVelocity:Length() - data.OurNewVelocity:Length(), data.HitEntity )
+
+		return
+	end
+
+	if self:WaterLevel() >= self.WaterLevelAutoStop then
+		self:StopEngine()
+	end
+
 	if data.Speed > 60 and data.DeltaTime > 0.2 then
 		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
 
@@ -113,6 +143,10 @@ function ENT:PhysicsCollide( data, physobj )
 
 		if VelDif > 700 then
 			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
+
+			if self:GetHP() <= self:GetMaxHP() * 0.5 then -- this will effectivly disable collision damage for anything that isnt in combat. It's more fun to fly like this tbh
+				self:TakeCollisionDamage( VelDif, data.HitEntity )
+			end
 		else
 			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
 		end

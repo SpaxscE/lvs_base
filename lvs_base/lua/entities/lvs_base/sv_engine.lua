@@ -26,6 +26,8 @@ end
 function ENT:IsEngineStartAllowed()
 	if hook.Run( "LVS.IsEngineStartAllowed", self ) == false then return false end
 
+	if self:WaterLevel() > self.WaterLevelPreventStart then return false end
+
 	return true
 end
 

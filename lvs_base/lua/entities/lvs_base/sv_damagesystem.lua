@@ -15,14 +15,7 @@ function ENT:AddDS( data )
 	table.insert( self._dmgParts, data )
 end
 
-function ENT:CalcDamage( dmginfo )
-
-	if dmginfo:IsDamageType( DMG_SONIC ) then return end
-
-	if dmginfo:IsDamageType( DMG_BULLET ) then
-		dmginfo:ScaleDamage( 0.01 )
-	end
-
+function ENT:CalcComponentDamage( dmginfo )
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
@@ -30,7 +23,7 @@ function ENT:CalcDamage( dmginfo )
 
 	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
-	local HitCrit = false
+	local Hit = false
 	local closestPart
 	local closestDist = Len * 2
 
@@ -61,12 +54,29 @@ function ENT:CalcDamage( dmginfo )
 		local ang = self:LocalToWorldAngles( part.ang )
 
 		if part == closestPart then
-			HitCrit = true
+			Hit = true
 			part:Callback( self, dmginfo )
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
 		else
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
 		end
+	end
+
+	return Hit
+end
+
+function ENT:CalcDamage( dmginfo )
+	if dmginfo:IsDamageType( DMG_SONIC ) then return end
+
+	if dmginfo:IsDamageType( DMG_BULLET ) then
+		dmginfo:ScaleDamage( 0.01 )
+	end
+
+	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
+	local CriticalHit = false
+
+	if not IsCollisionDamage then
+		CriticalHit = self:CalcComponentDamage( dmginfo )
 	end
 
 	local Damage = math.max( dmginfo:GetDamage(), 1 )
@@ -83,18 +93,18 @@ function ENT:CalcDamage( dmginfo )
 
 	if IsValid( Attacker ) and Attacker:IsPlayer() then
 		net.Start( "lvs_hitmarker" )
-			net.WriteBool( HitCrit )
+			net.WriteBool( CriticalHit )
 		net.Send( Attacker )
 	end
 
-	if Damage > 1 then
+	if Damage > 1 and not IsCollisionDamage then
 		net.Start( "lvs_hurtmarker" )
 			net.WriteFloat( math.min( Damage / 50, 1 ) )
 		net.Send( self:GetEveryone() )
 	end
 
 	if NewHealth <= 0 then
-		self:SetDestroyed()
+		self:SetDestroyed( IsCollisionDamage )
 
 		self.FinalAttacker = dmginfo:GetAttacker() 
 		self.FinalInflictor = dmginfo:GetInflictor()
@@ -187,10 +197,12 @@ end
 
 util.AddNetworkString( "lvs_vehicle_destroy" )
 
-function ENT:SetDestroyed()
+function ENT:SetDestroyed( SuppressOnDestroy )
 	if self.Destroyed then return end
 
 	self.Destroyed = true
+
+	if SuppressOnDestroy then return end
 
 	self:OnDestroyed()
 

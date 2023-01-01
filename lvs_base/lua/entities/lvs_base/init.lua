@@ -15,6 +15,10 @@ include("sv_engine.lua")
 include("sv_physics.lua")
 include("sv_damagesystem.lua")
 
+ENT.WaterLevelPreventStart = 1
+ENT.WaterLevelAutoStop = 2
+ENT.WaterLevelDestroyAI = 2
+
 function ENT:SpawnFunction( ply, tr, ClassName )
 
 	if not tr.Hit then return end
