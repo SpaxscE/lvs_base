@@ -4,7 +4,7 @@ ENT.Base = "lvs_base_fighterplane"
 ENT.PrintName = "Spitfire"
 ENT.Author = "Luna"
 ENT.Information = "British World War 2 Fighterplane"
-ENT.Category = "[LVS]"
+ENT.Category = "[LVS] - Planes"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= false

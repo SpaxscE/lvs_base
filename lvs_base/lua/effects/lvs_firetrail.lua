@@ -40,7 +40,7 @@ function EFFECT:Think()
 			self.nextDFX = T + 0.05
 
 			if self.Emitter then
-				local particle = self.Emitter:Add( Materials[math.Round(math.Rand(1,table.Count( Materials )),0)], Pos )
+				local particle = self.Emitter:Add( Materials[ math.random(1, #Materials ) ], Pos )
 
 				if particle then
 					particle:SetVelocity( VectorRand() * 100 * self.Scale )

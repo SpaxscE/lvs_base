@@ -56,8 +56,6 @@ sound.Add( {
 	level = 130,
 	pitch = {90, 120},
 	sound = {
-		"ambient/levels/streetwar/city_battle7.wav",
-		"ambient/levels/streetwar/city_battle15.wav",
 		"ambient/levels/streetwar/city_battle17.wav",
 		"ambient/levels/streetwar/city_battle18.wav",
 		"ambient/levels/streetwar/city_battle19.wav",

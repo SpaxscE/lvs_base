@@ -87,6 +87,10 @@ function EFFECT:Init( data )
 	local ply = LocalPlayer():GetViewEntity()
 	if IsValid( ply ) then
 		local delay = (Pos - ply:GetPos()):Length() / 13503.9
+		if delay <= 0.11 then
+			sound.Play( "ambient/explosions/explode_9.wav", Pos, 85, 100, 1 - delay * 8 )
+		end
+
 		timer.Simple( delay, function()
 			sound.Play( "LVS.MISSILE_EXPLOSION", Pos )
 		end )

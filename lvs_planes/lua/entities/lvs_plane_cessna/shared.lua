@@ -4,7 +4,7 @@ ENT.Base = "lvs_base_fighterplane"
 ENT.PrintName = "Cessna 172"
 ENT.Author = "Luna"
 ENT.Information = "Small and Unarmed Civilian Airplane"
-ENT.Category = "[LVS]"
+ENT.Category = "[LVS] - Planes"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= false
