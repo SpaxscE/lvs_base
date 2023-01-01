@@ -9,13 +9,9 @@ ENT.Category = "[LVS]"
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
-ENT.MDL = "models/blu/bf109.mdl"
-
-ENT.AITEAM = 3
-
 ENT.MaxVelocity = 2500
 ENT.MaxPerfVelocity = 1500
-ENT.MaxThrust = 25
+ENT.MaxThrust = 250
 
 ENT.ThrottleRateUp = 0.6
 ENT.ThrottleRateDown = 0.3
@@ -31,8 +27,6 @@ ENT.ForceAngleDampingMultiplier = 1
 
 ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
-
-ENT.MaxHealth = 1000
 
 function ENT:SetupDataTables()
 	self:CreateBaseDT()

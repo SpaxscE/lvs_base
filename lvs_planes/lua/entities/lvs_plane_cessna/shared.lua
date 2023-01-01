@@ -17,8 +17,8 @@ ENT.MaxVelocity = 1800
 ENT.MaxPerfVelocity = 1500
 ENT.MaxThrust = 700
 
-ENT.TurnRatePitch = 1.5
-ENT.TurnRateYaw = 1.3
+ENT.TurnRatePitch = 1.25
+ENT.TurnRateYaw = 1.15
 ENT.TurnRateRoll = 1
 
 ENT.ForceLinearMultiplier = 1
