@@ -50,6 +50,21 @@ sound.Add( {
 } )
 
 sound.Add( {
+	name = "LVS.MISSILE_EXPLOSION",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 130,
+	pitch = {90, 120},
+	sound = {
+		"ambient/levels/streetwar/city_battle7.wav",
+		"ambient/levels/streetwar/city_battle15.wav",
+		"ambient/levels/streetwar/city_battle17.wav",
+		"ambient/levels/streetwar/city_battle18.wav",
+		"ambient/levels/streetwar/city_battle19.wav",
+	}
+} )
+
+sound.Add( {
 	name = "LVS.EXPLOSION",
 	channel = CHAN_STATIC,
 	volume = 1.0,
