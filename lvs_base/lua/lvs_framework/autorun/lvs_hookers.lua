@@ -67,7 +67,13 @@ hook.Add( "StartCommand", "!!!!LVS_grab_command", function( ply, cmd )
 	veh:StartCommand( ply, cmd )
 end )
 
-if CLIENT then return end
+if CLIENT then
+	hook.Add( "CanProperty", "!!!!lvsEditPropertiesDisabler", function( ply, property, ent )
+		if ent.LVS and not ply:IsAdmin() and property == "editentity" then return false end
+	end )
+
+	return
+end
 
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
 	if not target:IsPlayer() then return end
