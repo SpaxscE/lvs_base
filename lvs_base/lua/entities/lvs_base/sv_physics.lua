@@ -131,6 +131,10 @@ function ENT:PhysicsCollide( data, physobj )
 	end
 
 	if self:WaterLevel() >= self.WaterLevelAutoStop then
+		if self:GetAI() then
+			self:SetAI( false )
+		end
+
 		self:StopEngine()
 	end
 
