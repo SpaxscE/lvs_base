@@ -1,4 +1,6 @@
 
+ENT.WheelSteerAngle = 45
+
 function ENT:AddWheelSteeringPlate( rear )
 	if rear then
 		if IsValid( self._lvsSteerPlateRear ) then
@@ -64,7 +66,7 @@ function ENT:SetWheelSteer( SteerAngle )
 			end
 		end
 
-		self._lvsSteerPlate:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(SteerAngle,-45,45),0) ) )
+		self._lvsSteerPlate:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(SteerAngle,-self.WheelSteerAngle,self.WheelSteerAngle),0) ) )
 	end
 
 	if not IsValid( self._lvsSteerPlateRear ) then return end
@@ -77,7 +79,7 @@ function ENT:SetWheelSteer( SteerAngle )
 		PhysObj:EnableMotion( false )
 	end
 
-	self._lvsSteerPlateRear:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-SteerAngle,-45,45),0) ) )
+	self._lvsSteerPlateRear:SetAngles( self:LocalToWorldAngles( Angle(0,math.Clamp(-SteerAngle,-self.WheelSteerAngle,self.WheelSteerAngle),0) ) )
 end
 
 function ENT:GetWheels()

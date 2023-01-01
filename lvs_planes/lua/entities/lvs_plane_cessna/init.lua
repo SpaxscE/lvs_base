@@ -2,6 +2,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
 
+ENT.WheelSteerAngle = 20
 ENT.WheelAutoRetract = true
 
 function ENT:OnSpawn( PObj )
@@ -13,8 +14,8 @@ function ENT:OnSpawn( PObj )
 		self:AddPassengerSeat( Pos, Angle(0,-90,0) )
 	end
 
-	self:AddWheel( Vector(-30,50,10), 15, 80 )
-	self:AddWheel( Vector(-30,-50,10), 15, 80 )
+	self:AddWheel( Vector(-30,50,10), 15, 40 )
+	self:AddWheel( Vector(-30,-50,10), 15, 40 )
 	self:AddWheel( Vector(53.3,0,5), 15, 80, LVS.WHEEL_STEER_FRONT )
 
 	self:AddEngine( Vector(40,0,45) )
