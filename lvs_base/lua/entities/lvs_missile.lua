@@ -7,8 +7,8 @@ ENT.Author = "Luna"
 ENT.Information = "LVS Missile"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable			= true
-ENT.AdminSpawnable		= true
+ENT.Spawnable		= true
+ENT.AdminOnly		= true
 
 if SERVER then
 	function ENT:SetDamage( num )
