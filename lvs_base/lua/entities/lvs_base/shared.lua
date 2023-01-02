@@ -78,8 +78,10 @@ end
 function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 	ply:SetPlaybackRate( 1 )
 
-	GAMEMODE:GrabEarAnimation( ply )
-	GAMEMODE:MouthMoveAnimation( ply )
+	if CLIENT then
+		GAMEMODE:GrabEarAnimation( ply )
+		GAMEMODE:MouthMoveAnimation( ply )
+	end
 
 	return false
 end
