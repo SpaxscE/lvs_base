@@ -68,8 +68,8 @@ end
 function ENT:CalcDamage( dmginfo )
 	if dmginfo:IsDamageType( DMG_SONIC ) then return end
 
-	if dmginfo:IsDamageType( DMG_BULLET ) then
-		dmginfo:ScaleDamage( 0.01 )
+	if dmginfo:IsDamageType( DMG_BULLET + DMG_CLUB ) then
+		dmginfo:ScaleDamage( 0.1 )
 	end
 
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
@@ -177,7 +177,7 @@ function ENT:Explode()
 
 	local ent = ents.Create( "lvs_destruction" )
 	if IsValid( ent ) then
-		ent:SetPos( self:LocalToWorld( self:OBBCenter() ) )
+		ent:SetPos( self:GetPos() )
 		ent:SetAngles( self:GetAngles() )
 		ent.GibModels = self.GibModels
 		ent.Vel = self:GetVelocity()
