@@ -20,6 +20,7 @@ ENT.MDL = "models/props_c17/trappropeller_engine.mdl"
 ENT.AITEAM = 0
 
 ENT.MaxHealth = 1000
+ENT.MaxShield = 0
 
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
@@ -51,6 +52,7 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Int", "NWAmmo" )
 
 	self:AddDT( "Float", "HP", { KeyName = "health", Edit = { type = "Float", order = 2,min = 0, max = self.MaxHealth, category = "Misc"} } )
+	self:AddDT( "Float", "Shield" )
 	self:AddDT( "Float", "NWHeat" )
 
 	if SERVER then
@@ -59,6 +61,7 @@ function ENT:CreateBaseDT()
 
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
+		self:SetShield( self.MaxShield )
 		self:SetSelectedWeapon( 1 )
 	end
 
@@ -114,6 +117,14 @@ function ENT:Sign( n )
 	if n < 0 then return -1 end
 
 	return 0
+end
+
+function ENT:GetMaxShield()
+	return isnumber( self.MaxShield ) and self.MaxShield or 0
+end
+
+function ENT:GetShieldPercent()
+	return self:GetShield() / self:GetMaxShield()
 end
 
 function ENT:GetMaxHP()

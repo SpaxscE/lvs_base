@@ -61,7 +61,6 @@ end
 
 hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
 	timer.Simple(20, function()
-		LVS:FixVelocity()
 		LVS.CheckUpdates()
 	end)
 end )

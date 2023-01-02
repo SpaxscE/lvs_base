@@ -14,7 +14,9 @@ end
 function TOOL:LeftClick( trace )
 	local ent = trace.Entity
 
-	if not IsValid( ent ) or not ent.LVS then return false end
+	if not IsValid( ent ) then return false end
+
+	if not ent.LVS or not ent.LFS then return end
 
 	if isfunction( ent.SetAI ) then
 		ent:SetAI( true )
@@ -26,7 +28,9 @@ end
 function TOOL:RightClick( trace )
 	local ent = trace.Entity
 
-	if not IsValid( ent ) or not ent.LVS then return false end
+	if not IsValid( ent ) then return false end
+
+	if not ent.LVS or not ent.LFS then return end
 
 	if isfunction( ent.SetAI ) then
 		ent:SetAI( false )

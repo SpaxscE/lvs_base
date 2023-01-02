@@ -19,7 +19,7 @@ function ENT:SetupDataTables()
 	for _, v in pairs( AllSents ) do
 		if not v or not istable( v.t ) or not v.t.Spawnable then continue end
 
-		if v.t.Base and string.StartWith( v.t.Base:lower(), "lvs_base" ) then
+		if v.t.Base and (string.StartWith( v.t.Base:lower(), "lvs_base" ) or string.StartWith( v.t.Base:lower(), "lunasflightschool" )) then
 			if v.t.Category and v.t.PrintName then
 				local nicename = v.t.Category.." - "..v.t.PrintName
 				if not table.HasValue( SpawnOptions, nicename ) then
@@ -35,6 +35,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Int",5, "Amount", { KeyName = "amount", Edit = { type = "Int", order = 6,min = 1, max = 10, category = "Vehicle-Options"} } )
 	self:NetworkVar( "Int",6, "SpawnWithSkin", { KeyName = "spawnwithskin", Edit = { type = "Int", order = 8,min = 0, max = 16, category = "Vehicle-Options"} } )
 	self:NetworkVar( "Int",7, "SpawnWithHealth", { KeyName = "spawnwithhealth", Edit = { type = "Int", order = 9,min = 0, max = 50000, category = "Vehicle-Options"} } )
+	self:NetworkVar( "Int",8, "SpawnWithShield", { KeyName = "spawnwithshield", Edit = { type = "Int", order = 10,min = 0, max = 50000, category = "Vehicle-Options"} } )
 
 	self:NetworkVar( "Int",10, "SelfDestructAfterAmount", { KeyName = "selfdestructafteramount", Edit = { type = "Int", order = 22,min = 0, max = 100, category = "Spawner-Options"} } )
 	self:NetworkVar( "Bool",2, "MasterSwitch" )
@@ -46,6 +47,7 @@ function ENT:SetupDataTables()
 		self:SetAmount( 1 )
 		self:SetSelfDestructAfterAmount( 0 )
 		self:SetSpawnWithHealth( 0 )
+		self:SetSpawnWithShield( 0 )
 		self:SetTeamOverride( -1 )
 	end
 end
@@ -154,6 +156,19 @@ if SERVER then
 						if self:GetSpawnWithHealth() > 0 then
 							spawnedvehicle.MaxHealth = self:GetSpawnWithHealth()
 							spawnedvehicle:SetHP( self:GetSpawnWithHealth() )
+						end
+	
+						if self:GetSpawnWithShield() > 0 then
+							spawnedvehicle.MaxShield = self:GetSpawnWithShield()
+							spawnedvehicle:SetShield( self:GetSpawnWithShield() )
+						end
+
+						if spawnedvehicle.LFS and not spawnedvehicle.DontPushMePlease then
+							local PhysObj = spawnedvehicle:GetPhysicsObject()
+							
+							if IsValid( PhysObj ) then
+								PhysObj:SetVelocityInstantaneous( -self:GetRight() * 1000 )
+							end
 						end
 
 						table.insert( self.spawnedvehicles, spawnedvehicle )

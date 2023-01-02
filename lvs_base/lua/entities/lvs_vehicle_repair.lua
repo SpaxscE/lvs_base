@@ -39,6 +39,15 @@ if SERVER then
 	end
 
 	function ENT:Refil( entity )
+		if not IsValid( entity ) then return end
+
+		if entity.LFS and entity.StartMaintenance then
+			entity:StartMaintenance()
+			return
+		end
+
+		if not entity.LVS then return end
+
 		if entity:GetHP() ~= entity:GetMaxHP() then
 			entity:SetHP( entity:GetMaxHP() )
 			entity:EmitSound("npc/dog/dog_servo2.wav")
@@ -64,12 +73,10 @@ if SERVER then
 	end
 
 	function ENT:StartTouch( entity )
-		if not IsValid( entity ) or not entity.LVS then return end
 		self:Refil( entity )
 	end
 
 	function ENT:EndTouch( entity )
-		if not IsValid( entity ) or not entity.LVS then return end
 		self:Refil( entity )
 	end
 

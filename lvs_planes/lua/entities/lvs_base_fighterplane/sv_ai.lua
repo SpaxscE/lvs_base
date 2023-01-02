@@ -102,8 +102,9 @@ function ENT:RunAI()
 
 					if IsValid( Target ) then
 						if self:AITargetInFront( Target, 65 ) then
-							TargetPos = Target:GetPos() + cAvoid * 8 + Target:GetVelocity() * math.abs(math.cos( CurTime() * 150 ) ) * 3
-							
+							local T = CurTime() + self:EntIndex() * 1337
+							TargetPos = Target:GetPos() + cAvoid * 8 + Vector(0,0, math.sin( T * 5 ) * 500 ) + Target:GetVelocity() * math.abs( math.cos( T * 13.37 ) ) * 5
+
 							Throttle = math.min( (StartPos - TargetPos):Length() / mySpeed, 1 )
 
 							local tr = util.TraceHull( {

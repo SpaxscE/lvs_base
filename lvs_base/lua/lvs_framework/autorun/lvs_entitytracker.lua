@@ -91,5 +91,13 @@ hook.Add( "OnEntityCreated", "!!!!lvsEntitySorter", function( ent )
 
 			table.insert( LVS.VehiclesStored, ent )
 		end
+
+		if ent.LFS then 
+			table.insert( LVS.VehiclesStored, ent )
+		end
+
+		if SERVER then
+			LVS:FixVelocity()
+		end
 	end )
 end )
