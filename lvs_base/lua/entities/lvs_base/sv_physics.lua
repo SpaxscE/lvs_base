@@ -119,8 +119,8 @@ function ENT:PhysicsCollide( data, physobj )
 
 	self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
 
-	if IsValid( data.HitEntity ) then
-		if data.HitEntity:IsPlayer() or data.HitEntity:IsNPC() then
+	if IsValid( HitEnt ) then
+		if HitEnt:IsPlayer() or HitEnt:IsNPC() then
 			return
 		end
 	end
@@ -133,7 +133,7 @@ function ENT:PhysicsCollide( data, physobj )
 			return
 		end
 
-		self:TakeCollisionDamage( data.OurOldVelocity:Length() - data.OurNewVelocity:Length(), data.HitEntity )
+		self:TakeCollisionDamage( data.OurOldVelocity:Length() - data.OurNewVelocity:Length(), HitEnt )
 
 		return
 	end
@@ -157,7 +157,7 @@ function ENT:PhysicsCollide( data, physobj )
 			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 
 			if self:GetHP() <= self:GetMaxHP() * 0.5 then -- this will effectivly disable collision damage for anything that isnt in combat. It's more fun to fly like this tbh
-				self:TakeCollisionDamage( VelDif, data.HitEntity )
+				self:TakeCollisionDamage( VelDif, HitEnt )
 			end
 		else
 			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
