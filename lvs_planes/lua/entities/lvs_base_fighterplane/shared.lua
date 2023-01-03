@@ -186,7 +186,15 @@ function ENT:StartCommand( ply, cmd )
 	self:CalcThrottle( ply, cmd )
 end
 
+function ENT:FreezeStability()
+	self._StabilityFrozen = CurTime() + 2
+end
+
 function ENT:GetStability()
+	if (self._StabilityFrozen or 0) > CurTime() then
+		return 1, 0, self.MaxPerfVelocity
+	end
+
 	local ForwardVelocity = self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x
 
 	local Stability = math.Clamp(ForwardVelocity / self.MaxPerfVelocity,0,1) ^ 2

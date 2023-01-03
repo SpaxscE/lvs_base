@@ -128,6 +128,25 @@ function ENT:CalcAero( phys, deltatime )
 	return Vector(0, -VelL.y * MulY, Lift - VelL.z * MulZ ) * Stability,  Vector( Roll, Pitch, Yaw )
 end
 
+function ENT:OnSkyCollide( data, PhysObj )
+
+	local Velocity = data.OurOldVelocity
+	local VelForward = Velocity:GetNormalized()
+
+	local Ax = math.acos( math.Clamp( data.HitNormal:Dot( VelForward ) ,-1,1) )
+
+	local Fx = math.cos( Ax ) * Velocity:Length()
+
+	local NewVelocity = data.OurOldVelocity - data.HitNormal * (math.abs( Fx ) + 200)
+
+	PhysObj:ApplyForceCenter( (NewVelocity - self:GetVelocity()) * PhysObj:GetMass() )
+	PhysObj:SetAngleVelocityInstantaneous( data.OurOldAngularVelocity )
+
+	self:FreezeStability()
+
+	return true
+end
+
 function ENT:PhysicsSimulate( phys, deltatime )
 	local Aero, Torque = self:CalcAero( phys, deltatime )
 
