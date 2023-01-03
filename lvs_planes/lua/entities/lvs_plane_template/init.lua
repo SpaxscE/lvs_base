@@ -67,3 +67,8 @@ end
 function ENT:OnEngineActiveChanged( Active )
 end
 
+-- called by the vehicle repair trailer after a repair/refil is performed
+function ENT:OnMaintenance()
+end
+
+
