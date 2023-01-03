@@ -2,11 +2,6 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
-if CLIENT then
-	function ENT:Draw()
-	end
-end
-
 if SERVER then
 	function ENT:Initialize()
 		self:PhysicsInit( SOLID_VPHYSICS )
@@ -16,8 +11,10 @@ if SERVER then
 
 		self.Vel = isvector( self.Vel ) and self.Vel or Vector(0,0,0)
 
+		local fxPos = self:LocalToWorld( self:OBBCenter() )
+	
 		local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
+			effectdata:SetOrigin( fxPos )
 		util.Effect( "lvs_explosion", effectdata )
 
 		local gibs = {
@@ -43,43 +40,43 @@ if SERVER then
 		for _, v in pairs( self.GibModels ) do
 			local ent = ents.Create( "prop_physics" )
 
-			if IsValid( ent ) then
-				table.insert( self.Gibs, ent ) 
+			if not IsValid( ent ) then continue end
 
-				ent:SetPos( self:GetPos() )
-				ent:SetAngles( self:GetAngles() )
-				ent:SetModel( v )
-				ent:Spawn()
-				ent:Activate()
-				ent:SetRenderMode( RENDERMODE_TRANSALPHA )
-				ent:SetCollisionGroup( COLLISION_GROUP_WORLD )
+			table.insert( self.Gibs, ent ) 
 
-				local PhysObj = ent:GetPhysicsObject()
-				if IsValid( PhysObj ) then
-					if Speed <= 250 then
-						local GibDir = Vector( math.Rand(-1,1), math.Rand(-1,1), 1.5 ):GetNormalized()
-						PhysObj:SetVelocityInstantaneous( GibDir * math.random(800,1300)  )
-					else
-						PhysObj:SetVelocityInstantaneous( VectorRand() * math.max(300,self.Vel:Length() / 3) + self.Vel  )
-					end
+			ent:SetPos( self:GetPos() )
+			ent:SetAngles( self:GetAngles() )
+			ent:SetModel( v )
+			ent:Spawn()
+			ent:Activate()
+			ent:SetRenderMode( RENDERMODE_TRANSALPHA )
+			ent:SetCollisionGroup( COLLISION_GROUP_WORLD )
 
-					PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
-					PhysObj:EnableDrag( false ) 
-
-					local effectdata = EffectData()
-						effectdata:SetOrigin( ent:GetPos() )
-						effectdata:SetStart( PhysObj:GetMassCenter() )
-						effectdata:SetEntity( ent )
-						effectdata:SetScale( math.Rand(0.3,0.7) )
-						effectdata:SetMagnitude( math.Rand(0.5,2.5) )
-					util.Effect( "lvs_firetrail", effectdata )
+			local PhysObj = ent:GetPhysicsObject()
+			if IsValid( PhysObj ) then
+				if Speed <= 250 then
+					local GibDir = Vector( math.Rand(-1,1), math.Rand(-1,1), 1.5 ):GetNormalized()
+					PhysObj:SetVelocityInstantaneous( GibDir * math.random(800,1300)  )
+				else
+					PhysObj:SetVelocityInstantaneous( VectorRand() * math.max(300,self.Vel:Length() / 3) + self.Vel  )
 				end
 
-				timer.Simple( 4.5 + math.Rand(0,0.5), function()
-					if not IsValid( ent ) then return end
-					ent:SetRenderFX( kRenderFxFadeFast  ) 
-				end)
+				PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
+				PhysObj:EnableDrag( false ) 
+
+				local effectdata = EffectData()
+					effectdata:SetOrigin( fxPos )
+					effectdata:SetStart( PhysObj:GetMassCenter() )
+					effectdata:SetEntity( ent )
+					effectdata:SetScale( math.Rand(0.3,0.7) )
+					effectdata:SetMagnitude( math.Rand(0.5,2.5) )
+				util.Effect( "lvs_firetrail", effectdata )
 			end
+
+			timer.Simple( 4.5 + math.Rand(0,0.5), function()
+				if not IsValid( ent ) then return end
+				ent:SetRenderFX( kRenderFxFadeFast  ) 
+			end)
 		end
 	end
 
@@ -88,7 +85,7 @@ if SERVER then
 			self:Remove()
 		end
 
-		self:NextThink( CurTime() )
+		self:NextThink( CurTime() + 1 )
 
 		return true
 	end
@@ -102,10 +99,7 @@ if SERVER then
 			end
 		end
 	end
-
-	function ENT:OnTakeDamage( dmginfo )
-	end
-
-	function ENT:PhysicsCollide( data, physobj )
+else
+	function ENT:Draw()
 	end
 end
