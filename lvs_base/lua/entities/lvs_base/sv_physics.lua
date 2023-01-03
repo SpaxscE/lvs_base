@@ -102,7 +102,15 @@ function ENT:TakeCollisionDamage( damage, attacker )
 	self:TakeDamageInfo( dmginfo )
 end
 
+function ENT:OnSkyCollide()
+	return true
+end
+
 function ENT:PhysicsCollide( data, physobj )
+	if util.GetSurfacePropName( data.TheirSurfaceProps ) == "default_silent" then
+		if self:OnSkyCollide() then return end
+	end
+
 	if self:IsDestroyed() then
 		self.MarkForDestruction = true
 	end
