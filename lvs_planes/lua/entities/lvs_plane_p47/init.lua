@@ -55,6 +55,36 @@ function ENT:OnSpawn( PObj )
 	for id, exh in pairs( Exhaust ) do
 		self:AddExhaust( exh.pos, exh.ang )
 	end
+
+	self.MISSILE_ENTITIES = {}
+
+	for ID, pos in pairs( self.MISSILE_POSITIONS ) do
+		local Missile = ents.Create( "prop_dynamic" )
+		Missile:SetModel( self.MISSILE_MDL )
+		Missile:SetModelScale( 0.8 )
+		Missile:SetPos( self:LocalToWorld( pos * 0.8 ) )
+		Missile:SetAngles( self:LocalToWorldAngles( Angle(0, -self:Sign( pos.y ), 0 ) ) )
+		Missile:SetMoveType( MOVETYPE_NONE )
+		Missile:Spawn()
+		Missile:Activate()
+		Missile:SetNotSolid( true )
+		Missile:DrawShadow( false )
+		Missile:SetParent( self )
+		Missile.DoNotDuplicate = true
+		self:TransferCPPI( Missile )
+
+		
+		self.MISSILE_ENTITIES[ ID ] = Missile
+	end
+end
+
+function ENT:OnMaintenance()
+	if not self.MISSILE_ENTITIES then return end
+
+	for _, Missile in pairs( self.MISSILE_ENTITIES ) do
+		if not IsValid( Missile ) then continue end
+		Missile:SetNoDraw( false )
+	end
 end
 
 function ENT:OnLandingGearToggled( IsDeployed )

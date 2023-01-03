@@ -31,6 +31,20 @@ ENT.MaxSlipAngleYaw = 12
 
 ENT.MaxHealth = 1000
 
+ENT.MISSILE_MDL = "models/blu/p47_missile.mdl"
+ENT.MISSILE_POSITIONS = {
+	[1] = Vector(92.16,-194.69,62.98),
+	[2] = Vector(92.16,194.69,62.98),
+	[3] = Vector(92.63,-178.76,61.32),
+	[4] = Vector(92.63,178.76,61.32),
+	[5] = Vector(93.54,-163.72,59.4),
+	[6] = Vector(93.54,163.72,59.4),
+	[7] = Vector(93.96,-132.84,55.58),
+	[8] = Vector(93.96,132.84,55.58),
+	[9] = Vector(94,-118.52,53.9),
+	[10] = Vector(94,118.52,53.9),
+}
+
 function ENT:InitWeapons()
 	self.PosTPMG= {
 		Vector(109.15,102.95,54.79), Vector(109.15,-102.95,54.79),
@@ -40,6 +54,43 @@ function ENT:InitWeapons()
 	}
 	self.DirTPMG= { 0.6, -0.6, -0.6, 0.6, 0.6, -0.6, -0.6, 0.6 }
 	self:AddWeapon( LVS:GetWeaponPreset( "TABLE_POINT_MG" ) )
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/missile.png")
+	weapon.UseableByAI = false
+	weapon.Ammo = 10
+	weapon.Delay = 0.1
+	weapon.HeatRateUp = 3
+	weapon.HeatRateDown = 0.05
+	weapon.Attack = function( ent )
+		if not ent.MISSILE_ENTITIES then return end
+
+		local Missile = ent.MISSILE_ENTITIES[ ent:GetAmmo() ]
+
+		if not IsValid( Missile ) then return end
+
+		Missile:SetNoDraw( true )
+
+		local projectile = ents.Create( "lvs_missile" )
+		projectile:SetPos( Missile:GetPos() )
+		projectile:SetAngles( Missile:GetAngles() )
+		projectile:Spawn()
+		projectile:Activate()
+		projectile:SetAttacker( self:GetDriver() )
+		projectile:SetEntityFilter( self:GetCrosshairFilterEnts() )
+		projectile:SetSpeed( self:GetVelocity():Length() + 4000 )
+		projectile:SetDamage( 250 )
+		projectile:Enable()
+	end
+
+	weapon.StartAttack = function( ent ) end
+	weapon.FinishAttack = function( ent ) end
+	weapon.OnSelect = function( ent ) end
+	weapon.OnDeselect = function( ent ) end
+	weapon.OnThink = function( ent, active ) end
+	weapon.OnOverheat = function( ent ) end
+	weapon.OnRemove = function( ent ) end
+	self:AddWeapon( weapon )
 
 	self:AddWeapon( LVS:GetWeaponPreset( "TURBO" ) )
 end
