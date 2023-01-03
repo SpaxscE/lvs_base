@@ -172,6 +172,7 @@ WEAPON["TURBO"] = {
 	Icon = Material("lvs/weapons/nos.png"),
 	HeatRateUp = 0.1,
 	HeatRateDown = 0.2,
+	UseableByAI = false,
 	Attack = function( ent )
 		local PhysObj = ent:GetPhysicsObject()
 		if not IsValid( PhysObj ) then return end
