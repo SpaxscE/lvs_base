@@ -1,5 +1,5 @@
 
-hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
+hook.Add( "LVS:Initialize", "!!11lvs_default_keys", function()
 	local KEYS = {
 		{
 			name = "ATTACK",

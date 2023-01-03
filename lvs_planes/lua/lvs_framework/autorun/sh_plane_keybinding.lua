@@ -1,5 +1,5 @@
 
-hook.Add( "LVS:Initialize", "!!!11!!lvs_add_plane_keys", function()
+hook.Add( "LVS:Initialize", "[LVS] - Planes - Keys", function()
 	local KEYS = {
 		{
 			name = "+THROTTLE",
