@@ -177,6 +177,7 @@ function ENT:Explode()
 
 	local ent = ents.Create( "lvs_destruction" )
 	if IsValid( ent ) then
+		ent:SetModel( self:GetModel() )
 		ent:SetPos( self:GetPos() )
 		ent:SetAngles( self:GetAngles() )
 		ent.GibModels = self.GibModels
