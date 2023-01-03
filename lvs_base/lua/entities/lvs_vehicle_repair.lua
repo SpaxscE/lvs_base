@@ -70,6 +70,8 @@ if SERVER then
 			entity:EmitSound("items/ammo_pickup.wav")
 			entity:SetNWAmmo( entity:GetAmmo() )
 		end
+
+		entity:OnMaintenance()
 	end
 
 	function ENT:StartTouch( entity )

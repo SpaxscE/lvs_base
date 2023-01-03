@@ -144,6 +144,9 @@ function ENT:OnTakeDamage( dmginfo )
 	self:OnAITakeDamage( dmginfo )
 end
 
+function ENT:OnMaintenance()
+end
+
 function ENT:UpdateTransmitState() 
 	return TRANSMIT_ALWAYS
 end
