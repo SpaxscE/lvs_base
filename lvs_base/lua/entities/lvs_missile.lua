@@ -11,6 +11,16 @@ ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
 if SERVER then
+	function ENT:SetEntityFilter( filter )
+		if not istable( filter ) then return end
+
+		self._FilterEnts = {}
+
+		for _, ent in pairs( filter ) do
+			self._FilterEnts[ ent ] = true
+		end
+	end
+
 	function ENT:SetDamage( num )
 		self._dmg = num
 	end
@@ -130,8 +140,18 @@ if SERVER then
 		return true
 	end
 
+	ENT.IgnoreCollisionGroup = {
+		[COLLISION_GROUP_NONE] = true,
+		[COLLISION_GROUP_WORLD] =  true,
+	}
+
 	function ENT:StartTouch( entity )
 		if entity == self:GetAttacker() then return end
+
+		if istable( self._FilterEnts ) and self._FilterEnts[ entity ] then return end
+
+		if entity.GetCollisionGroup and self.IgnoreCollisionGroup[ entity:GetCollisionGroup() ] then return end
+
 		self:Detonate( entity )
 	end
 
@@ -149,7 +169,7 @@ if SERVER then
 	end
 
 	function ENT:Detonate( target )
-		if self.IsDetonated then return end
+		if not self.IsEnabled or self.IsDetonated then return end
 
 		self.IsDetonated = true
 
@@ -159,7 +179,7 @@ if SERVER then
 			effectdata:SetOrigin( Pos )
 		util.Effect( "lvs_explosion_small", effectdata )
 
-		if IsValid( target ) then
+		if IsValid( target ) and not target:IsNPC() then
 			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
 		end
 
