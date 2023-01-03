@@ -6,6 +6,8 @@ ENT.Spawnable       = false
 ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
 
+ENT._LVS = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
 

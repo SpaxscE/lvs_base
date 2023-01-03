@@ -70,3 +70,31 @@ sound.Add( {
 	pitch = {95, 115},
 	sound = "lvs/explosion.wav"
 } )
+
+if CLIENT then
+	local SoundList = {}
+
+	hook.Add( "EntityEmitSound", "!!!lvs_fps_rape_fixer", function( t )
+		if not t.Entity.LVS and not t.Entity._LVS then return end
+
+		local SoundFile = t.SoundName
+
+		if SoundList[ SoundFile ] == true then
+			return true
+
+		elseif SoundList[ SoundFile ] == false then
+			return false
+
+		else
+			local File = string.Replace( SoundFile, "^", "" )
+
+			local Exists = file.Exists( "sound/"..File , "GAME" )
+
+			SoundList[ SoundFile ] = Exists
+
+			if not Exists then
+				print("[LVS] '"..SoundFile.."' not found. Soundfile will not be played and is filtered for this game session to avoid fps issues.")
+			end
+		end
+	end )
+end
