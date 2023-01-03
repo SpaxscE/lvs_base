@@ -137,7 +137,7 @@ function ENT:OnSkyCollide( data, PhysObj )
 
 	local Fx = math.cos( Ax ) * Velocity:Length()
 
-	local NewVelocity = data.OurOldVelocity - data.HitNormal * (math.abs( Fx ) + 200)
+	local NewVelocity = data.OurOldVelocity - data.HitNormal * (math.abs( Fx ) + math.max(self:GetThrustStrenght() * self.MaxThrust,200))
 
 	PhysObj:ApplyForceCenter( (NewVelocity - self:GetVelocity()) * PhysObj:GetMass() )
 	PhysObj:SetAngleVelocityInstantaneous( data.OurOldAngularVelocity )
