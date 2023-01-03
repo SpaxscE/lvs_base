@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\blu\p47\flor"
+	"$bumpmap" "models\blu\p47\flor_n"
+	"$halflambert" "1"				
+	"$nocull" 0
+	"$alphatest" 0
+}

@@ -21,12 +21,20 @@ function ENT:AddWeapon( data )
 	data.OnThink = data.OnThink or default.OnThink
 	data.OnOverheat = data.OnOverheat or default.OnOverheat
 	data.OnRemove = data.OnRemove or default.OnRemove
+	data.UseableByAI = data.UseableByAI ~= false
 
 	table.insert( self.WEAPONS, data )
 end
 
 function ENT:HasWeapon( ID )
 	return istable( self.WEAPONS[ ID ] )
+end
+
+function ENT:AIHasWeapon( ID )
+	local weapon = self.WEAPONS[ ID ]
+	if not istable( weapon ) then return false end
+
+	return weapon.UseableByAI
 end
 
 function ENT:GetActiveWeapon()

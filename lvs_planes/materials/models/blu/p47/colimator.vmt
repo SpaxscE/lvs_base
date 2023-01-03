@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/blu\p47/ss.vtf"
+	"$translucent" 1
+	"$selfillum" "1"
+	"$selfillummask" "models/blu\p47/ss_A.vtf"
+}
