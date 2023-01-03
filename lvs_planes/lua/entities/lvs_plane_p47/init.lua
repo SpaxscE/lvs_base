@@ -2,7 +2,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
 
-ENT.WheelSteerAngle = 25
+ENT.WheelSteerAngle = 20
 
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 5000 )

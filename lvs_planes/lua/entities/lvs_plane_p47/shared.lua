@@ -21,6 +21,9 @@ ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 0.8
 
+ENT.ThrottleRateUp = 0.4
+ENT.ThrottleRateDown = 0.2
+
 ENT.ForceLinearMultiplier = 1
 
 ENT.ForceAngleMultiplier = 1
