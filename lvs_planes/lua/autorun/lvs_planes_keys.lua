@@ -1,0 +1,62 @@
+
+hook.Add( "LVS:Initialize", "!!!11!!lvs_add_plane_keys", function()
+	local KEYS = {
+		{
+			name = "+THROTTLE",
+			category = "LVS-Plane",
+			name_menu = "Throttle Increase",
+			default = "+forward",
+			cmd = "lvs_plane_throttle_up"
+		},
+		{
+			name = "-THROTTLE",
+			category = "LVS-Plane",
+			name_menu = "Throttle Decrease",
+			default = "+back",
+			cmd = "lvs_plane_throttle_down"
+		},
+		{
+			name = "+PITCH",
+			category = "LVS-Plane",
+			name_menu = "Pitch Up",
+			default = "+speed",
+			cmd = "lvs_plane_pitch_up"
+		},
+		{
+			name = "-PITCH",
+			category = "LVS-Plane",
+			name_menu = "Pitch Down",
+			cmd = "lvs_plane_pitch_down"
+		},
+		{
+			name = "-YAW",
+			category = "LVS-Plane",
+			name_menu = "Yaw Left",
+			cmd = "lvs_plane_yaw_left"
+		},
+		{
+			name = "+YAW",
+			category = "LVS-Plane",
+			name_menu = "Yaw Right",
+			cmd = "lvs_plane_yaw_right"
+		},
+		{
+			name = "-ROLL",
+			category = "LVS-Plane",
+			name_menu = "Roll Left",
+			default = "+moveleft",
+			cmd = "lvs_plane_roll_left"
+		},
+		{
+			name = "+ROLL",
+			category = "LVS-Plane",
+			name_menu = "Roll Right",
+			default = "+moveright",
+			cmd = "lvs_plane_roll_right"
+		},
+	}
+
+	for _, v in pairs( KEYS ) do
+		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
+	end
+end )

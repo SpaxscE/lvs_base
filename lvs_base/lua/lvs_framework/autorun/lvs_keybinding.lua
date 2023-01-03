@@ -1,7 +1,5 @@
 
 hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
-	table.Empty( LVS.KEYS_CATEGORIES )
-
 	local KEYS = {
 		{
 			name = "ATTACK",
@@ -90,59 +88,6 @@ hook.Add( "LVS:Initialize", "!!!!lvs_addkeys", function()
 			name_menu = "Toggle Vehicle-specific Function",
 			default = "+jump",
 			cmd = "lvs_special"
-		},
-		{
-			name = "+THROTTLE",
-			category = "LVS-Plane",
-			name_menu = "Throttle Increase",
-			default = "+forward",
-			cmd = "lvs_throttle_up"
-		},
-		{
-			name = "-THROTTLE",
-			category = "LVS-Plane",
-			name_menu = "Throttle Decrease",
-			default = "+back",
-			cmd = "lvs_throttle_down"
-		},
-		{
-			name = "+PITCH",
-			category = "LVS-Plane",
-			name_menu = "Pitch Up",
-			default = "+speed",
-			cmd = "lvs_pitch_up"
-		},
-		{
-			name = "-PITCH",
-			category = "LVS-Plane",
-			name_menu = "Pitch Down",
-			cmd = "lvs_pitch_down"
-		},
-		{
-			name = "-YAW",
-			category = "LVS-Plane",
-			name_menu = "Yaw Left",
-			cmd = "lvs_yaw_left"
-		},
-		{
-			name = "+YAW",
-			category = "LVS-Plane",
-			name_menu = "Yaw Right",
-			cmd = "lvs_yaw_right"
-		},
-		{
-			name = "-ROLL",
-			category = "LVS-Plane",
-			name_menu = "Roll Left",
-			default = "+moveleft",
-			cmd = "lvs_roll_left"
-		},
-		{
-			name = "+ROLL",
-			category = "LVS-Plane",
-			name_menu = "Roll Right",
-			default = "+moveright",
-			cmd = "lvs_roll_right"
 		},
 	}
 
