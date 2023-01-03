@@ -59,7 +59,7 @@ function LVS:AddKey(name, category, printname, cmd, default)
 end
 
 function LVS:CheckUpdates()
-	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LunaVehicleScript/main/luna_vehicle_script/lua/autorun/lvs_init.lua", function(contents,size) 
+	http.Fetch("https://raw.githubusercontent.com/Blu-x92/LunaVehicleScript/main/lvs_base/lua/autorun/lvs_init.lua", function(contents,size) 
 		local Entry = string.match( contents, "LVS.VERSION%s=%s%d+" )
 
 		if Entry then
