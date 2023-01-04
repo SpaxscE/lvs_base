@@ -182,7 +182,7 @@ WEAPON["TURBO"] = {
 		local Vel = ent:GetVelocity():Length()
 
 		PhysObj:ApplyForceCenter( ent:GetForward() * math.Clamp(ent.MaxVelocity + 500 - Vel,0,1) * PhysObj:GetMass() * THR * FT * 150 ) -- increase speed
-		PhysObj:AddAngleVelocity( PhysObj:GetAngleVelocity() * FT * 0.25 * THR ) -- increase turn rate
+		PhysObj:AddAngleVelocity( PhysObj:GetAngleVelocity() * FT * 0.5 * THR ) -- increase turn rate
 	end,
 	StartAttack = function( ent )
 		ent.TargetThrottle = 1.3
