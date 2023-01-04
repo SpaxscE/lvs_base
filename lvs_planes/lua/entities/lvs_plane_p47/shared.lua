@@ -32,7 +32,7 @@ ENT.ForceAngleDampingMultiplier = 1
 ENT.MaxSlipAnglePitch = 24
 ENT.MaxSlipAngleYaw = 12
 
-ENT.MaxHealth = 1000
+ENT.MaxHealth = 650
 
 ENT.MISSILE_MDL = "models/blu/p47_missile.mdl"
 ENT.MISSILE_POSITIONS = {

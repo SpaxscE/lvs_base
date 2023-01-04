@@ -29,7 +29,7 @@ ENT.ForceAngleDampingMultiplier = 1
 ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
-ENT.MaxHealth = 1000
+ENT.MaxHealth = 650
 
 function ENT:InitWeapons()
 	self.PosLMG = Vector(109.29,7.13,92.85)
