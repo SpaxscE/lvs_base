@@ -115,7 +115,7 @@ function ENT:CalcDamage( dmginfo )
 			net.Send( Attacker )
 		end
 
-		local ExplodeTime = math.Clamp((self:GetVelocity():Length() - 250) / 500,1.5,8)
+		local ExplodeTime = math.Clamp((self:GetVelocity():Length() - 200) / 200,1.5,16)
 
 		local effectdata = EffectData()
 			effectdata:SetOrigin( self:GetPos() )
