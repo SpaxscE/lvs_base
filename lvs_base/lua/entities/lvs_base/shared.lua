@@ -119,6 +119,18 @@ function ENT:Sign( n )
 	return 0
 end
 
+function ENT:VectorSubtractNormal( Normal, Velocity )
+	local VelForward = Velocity:GetNormalized()
+
+	local Ax = math.acos( math.Clamp( Normal:Dot( VelForward ) ,-1,1) )
+
+	local Fx = math.cos( Ax ) * Velocity:Length()
+
+	local NewVelocity = Velocity - Normal * math.abs( Fx )
+
+	return NewVelocity
+end
+
 function ENT:GetMaxShield()
 	return isnumber( self.MaxShield ) and self.MaxShield or 0
 end
