@@ -85,6 +85,7 @@ function ENT:Think()
 	self:PhysicsThink()
 	self:DamageThink()
 	self:WeaponsThink()
+	self:ShieldThink()
 
 	if self:GetAI() then self:RunAI() end
 
@@ -139,6 +140,7 @@ function ENT:Use( ply )
 end
 
 function ENT:OnTakeDamage( dmginfo )
+	self:CalcShieldDamage( dmginfo )
 	self:CalcDamage( dmginfo )
 	self:TakePhysicsDamage( dmginfo )
 	self:OnAITakeDamage( dmginfo )

@@ -19,7 +19,7 @@ ENT.MDL = "models/props_c17/trappropeller_engine.mdl"
 
 ENT.AITEAM = 0
 
-ENT.MaxHealth = 1000
+ENT.MaxHealth = 100
 ENT.MaxShield = 0
 
 function ENT:AddDT( type, name, data )
@@ -132,7 +132,7 @@ function ENT:VectorSubtractNormal( Normal, Velocity )
 end
 
 function ENT:GetMaxShield()
-	return isnumber( self.MaxShield ) and self.MaxShield or 0
+	return self.MaxShield
 end
 
 function ENT:GetShieldPercent()
