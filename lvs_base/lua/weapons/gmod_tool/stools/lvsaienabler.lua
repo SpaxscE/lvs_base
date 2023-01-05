@@ -16,7 +16,7 @@ function TOOL:LeftClick( trace )
 
 	if not IsValid( ent ) then return false end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	if isfunction( ent.SetAI ) then
 		ent:SetAI( true )
@@ -30,7 +30,7 @@ function TOOL:RightClick( trace )
 
 	if not IsValid( ent ) then return false end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	if isfunction( ent.SetAI ) then
 		ent:SetAI( false )
