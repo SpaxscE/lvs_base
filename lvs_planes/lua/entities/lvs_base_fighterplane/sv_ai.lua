@@ -72,11 +72,13 @@ function ENT:RunAI()
 	local alt = (StartPos - TraceDown.HitPos):Length()
 	local ceiling = (StartPos - TraceUp.HitPos):Length()
 
-	local Throttle = math.min( (StartPos - TraceForward.HitPos):Length() / mySpeed, 1 )
+	local WallDist = (StartPos - TraceForward.HitPos):Length()
+
+	local Throttle = math.min( WallDist / mySpeed, 1 )
 
 	self._AIFireInput = false
 
-	if alt < 600 or ceiling < 600 then
+	if alt < 600 or ceiling < 600 or WallDist < (MinDist * 3 * (math.deg( math.acos( math.Clamp( Vector(0,0,1):Dot( myDir ) ,-1,1) ) ) / 180) ^ 2) then
 		if ceiling < 600 then
 			Throttle = 0
 		else
@@ -121,7 +123,7 @@ function ENT:RunAI()
 
 							local CanShoot = (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true
 
-							if CanShoot then
+							if CanShoot and self:AITargetInFront( Target, 22 ) then
 								local CurHeat = self:GetNWHeat()
 								local CurWeapon = self:GetSelectedWeapon()
 
