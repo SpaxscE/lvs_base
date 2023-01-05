@@ -82,8 +82,12 @@ function ENT:RunAI()
 		else
 			Throttle = 1
 
-			if self:GetStability() < 0.5 then
-				TargetPos.z = StartPos.z + 2000
+			if self:HitGround() then
+				TargetPos.z = StartPos.z + 750
+			else
+				if self:GetStability() < 0.5 then
+					TargetPos.z = StartPos.z + 1500
+				end
 			end
 		end
 	else
