@@ -1,0 +1,10 @@
+{
+	"title"		: "[LVS] - Planes",
+	"type"		: "vehicle",
+	"tags"		: [ "fun", "realism" ],
+	"ignore"	: [
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}
