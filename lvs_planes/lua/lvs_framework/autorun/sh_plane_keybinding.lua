@@ -60,3 +60,7 @@ hook.Add( "LVS:Initialize", "[LVS] - Planes - Keys", function()
 		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
 	end
 end )
+
+if CLIENT then return end
+
+resource.AddWorkshop("2912826012")
