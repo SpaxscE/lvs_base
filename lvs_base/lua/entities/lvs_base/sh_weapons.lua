@@ -338,8 +338,8 @@ else
 
 		if self:GetMaxAmmo() <= 0 then return end
 
-		draw.DrawText( "AMMO ", "LVS_FONT", X + 75, Y + 35, color_white, TEXT_ALIGN_RIGHT )
-		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 75, Y + 20, color_white, TEXT_ALIGN_LEFT )
+		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
+		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
 	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
