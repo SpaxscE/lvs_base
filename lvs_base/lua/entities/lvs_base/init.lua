@@ -26,7 +26,7 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 
 	local ent = ents.Create( ClassName )
 	ent:StoreCPPI( ply )
-	ent:SetPos( tr.HitPos + tr.HitNormal * 15 )
+	ent:SetPos( tr.HitPos + tr.HitNormal * ent.SpawnNormalOffset )
 	ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
 	ent:Spawn()
 	ent:Activate()
