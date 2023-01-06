@@ -148,30 +148,45 @@ function ENT:DamageThink()
 	end
 end
 
+function ENT:HurtPlayer( ply, dmg, attacker, inflictor )
+	if not IsValid( ply ) then return end
+
+	if not IsValid( attacker ) then
+		attacker = game.GetWorld()
+	end
+
+	if not IsValid( inflictor ) then
+		inflictor = game.GetWorld()
+	end
+
+	local dmginfo = DamageInfo()
+	dmginfo:SetDamage( dmg )
+	dmginfo:SetAttacker( attacker )
+	dmginfo:SetInflictor( inflictor )
+	dmginfo:SetDamageType( DMG_DIRECT )
+
+	ply:TakeDamageInfo( dmginfo )
+end
+
 function ENT:Explode()
 	if self.ExplodedAlready then return end
 
 	self.ExplodedAlready = true
 
 	local Driver = self:GetDriver()
-	local Gunner = self:GetGunner()
 
 	if IsValid( Driver ) then
-		Driver:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
-	end
-
-	if IsValid( Gunner ) then
-		Gunner:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
+		self:HurtPlayer( Driver, 1000, self.FinalAttacker, self.FinalInflictor )
 	end
 
 	if istable( self.pSeats ) then
 		for _, pSeat in pairs( self.pSeats ) do
-			if IsValid( pSeat ) then
-				local psgr = pSeat:GetDriver()
-				if IsValid( psgr ) then
-					psgr:TakeDamage( 1000, self.FinalAttacker or Entity(0), self.FinalInflictor or Entity(0) )
-				end
-			end
+			if not IsValid( pSeat ) then continue end
+
+			local psgr = pSeat:GetDriver()
+			if not IsValid( psgr ) then continue end
+
+			self:HurtPlayer( psgr, 1000, self.FinalAttacker, self.FinalInflictor )
 		end
 	end
 
