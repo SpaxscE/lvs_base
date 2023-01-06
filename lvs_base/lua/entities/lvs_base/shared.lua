@@ -22,6 +22,8 @@ ENT.AITEAM = 0
 ENT.MaxHealth = 100
 ENT.MaxShield = 0
 
+ENT.SpawnNormalOffset = 15
+
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
 
