@@ -28,7 +28,7 @@ function ENT:OnSpawn( PhysObj )
 
 	self:AddEngine( Vector(40,0,0) ) -- add a engine. This will also register a critical hit point and create black smoke effects when health is low.
 
-	--[[ -- AddEngine intenrally registers a critical hit point to the damage system like this:
+	--[[ -- AddEngine internally registers a critical hit point to the damage system like this:
 	self:AddDS( {
 		pos = Vector(0,0,0),
 		ang = Angle(0,0,0),
