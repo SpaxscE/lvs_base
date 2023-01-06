@@ -218,10 +218,9 @@ if CLIENT then
 	local ArrowMat = Material( "lvs/3d2dmats/arrow.png" )
 
 	function ENT:Draw()
-		if TutorialDone then
-			if GetConVarNumber( "cl_draweffectrings" ) == 0 then return end
+		local ply = LocalPlayer()
 
-			local ply = LocalPlayer()
+		if IsValid( ply ) then
 			local wep = ply:GetActiveWeapon()
 
 			if not IsValid( wep ) then return end
@@ -231,6 +230,10 @@ if CLIENT then
 			if not WhiteList[ weapon_name ] then
 				return
 			end
+		end
+
+		if TutorialDone then
+			if GetConVarNumber( "cl_draweffectrings" ) == 0 then return end
 		end
 
 		local Pos = self:GetPos()
