@@ -238,7 +238,6 @@ if CLIENT then
 		render.SetMaterial( mat )
 		render.DrawBox( Pos, self:GetAngles(), Vector(-R,-R,0), Vector(R,R,200), color_white )
 
-    
 		for i = 0, 180, 180 do
 			cam.Start3D2D( Pos, self:LocalToWorldAngles( Angle(i,0,0) ), 0.185 )
 				if self:GetMasterSwitch() then
