@@ -220,7 +220,11 @@ if CLIENT then
 	function ENT:Draw()
 		local ply = LocalPlayer()
 
-		if IsValid( ply ) then
+		if not IsValid( ply ) then return end
+
+		if TutorialDone then
+			if GetConVarNumber( "cl_draweffectrings" ) == 0 then return end
+
 			local wep = ply:GetActiveWeapon()
 
 			if not IsValid( wep ) then return end
@@ -230,10 +234,19 @@ if CLIENT then
 			if not WhiteList[ weapon_name ] then
 				return
 			end
-		end
+		else
+			local wep = ply:GetActiveWeapon()
 
-		if TutorialDone then
-			if GetConVarNumber( "cl_draweffectrings" ) == 0 then return end
+			if not IsValid( wep ) then return end
+
+			local weapon_name = wep:GetClass()
+
+			if not WhiteList[ weapon_name ] then
+				if weapon_name == "gmod_camera" then return end
+
+				local Trace = ply:GetEyeTrace()
+				if Trace.Entity ~= self or (ply:GetShootPos() - Trace.HitPos):Length() > 800 then return end
+			end
 		end
 
 		local Pos = self:GetPos()
