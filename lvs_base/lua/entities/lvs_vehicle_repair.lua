@@ -95,7 +95,6 @@ if CLIENT then
 		["weapon_physgun"] = true,
 		["weapon_physcannon"] = true,
 		["gmod_tool"] = true,
-		["gmod_camera"] = true,
 	}
 
 	local mat = Material( "models/wireframe" )
