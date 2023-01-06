@@ -27,6 +27,12 @@ local function DrawCircle( X, Y, target_radius, value )
 end
 
 function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
+	local kmh = math.Round(self:GetVelocity():Length() * 0.09144,0)
+	draw.DrawText( "km/h ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
+	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
+
+	if ply ~= self:GetDriver() then return end
+
 	local Throttle = self:GetThrottle()
 	local Col = Throttle <= 1 and color_white or Color(0,0,0,255)
 	local hX = X + W - H * 0.5
@@ -43,10 +49,6 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 	if Throttle > 1 then
 		draw.SimpleText( "+"..math.Round((Throttle - 1) * 100,0).."%" , "LVS_FONT",  hX, hY, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
-
-	local kmh = math.Round(self:GetVelocity():Length() * 0.09144,0)
-	draw.DrawText( "km/h ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
-	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
 end
 
 function ENT:LVSPreHudPaint( X, Y, ply )

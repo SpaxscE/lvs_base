@@ -37,6 +37,7 @@ ENT.DeathSound = "lvs/vehicles/generic/crash.wav"
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "LightsEnabled" )
+	self:AddDT( "Bool", "SignalsEnabled" )
 end
 
 function ENT:InitWeapons()
@@ -54,6 +55,23 @@ function ENT:InitWeapons()
 
 		ent:SetLightsEnabled( not ent:GetLightsEnabled() )
 		ent:EmitSound( "items/flashlight1.wav", 75, 105 )
+	end
+	self:AddWeapon( weapon )
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/wing_light.png")
+	weapon.UseableByAI = false
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 1
+	weapon.StartAttack = function( ent )
+		if not ent.SetSignalsEnabled then return end
+
+		if ent:GetAI() then return end
+
+		ent:SetSignalsEnabled( not ent:GetSignalsEnabled() )
+		ent:EmitSound( "buttons/lightswitch2.wav", 75, 105 )
 	end
 	self:AddWeapon( weapon )
 end

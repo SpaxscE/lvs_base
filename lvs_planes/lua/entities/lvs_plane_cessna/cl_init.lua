@@ -67,6 +67,8 @@ function ENT:OnRemoved()
 end
 
 ENT.Red = Color( 255, 0, 0, 255)
+ENT.White = Color( 255, 255, 255, 255)
+ENT.Green = Color( 0, 255, 0, 255)
 ENT.SignalSprite = Material( "sprites/light_glow02_add" )
 ENT.Spotlight = Material( "effects/lvs/spotlight_projectorbeam" )
 
@@ -105,7 +107,7 @@ function ENT:HandleLights()
 end
 
 function ENT:HandleSignals()
-	if not self:GetEngineActive() then return end
+	if not self:GetSignalsEnabled() then return end
 
 	local T4 = CurTime() * 4 + self:EntIndex() * 1337
 
@@ -114,9 +116,9 @@ function ENT:HandleSignals()
 
 	local R = A * 64
 	render.SetMaterial( self.SignalSprite )
-	render.DrawSprite( self:LocalToWorld( Vector(11,-219,84) ), R, R, self.Red )
+	render.DrawSprite( self:LocalToWorld( Vector(11,-219,84) ), R, R, self.Green )
 	render.DrawSprite( self:LocalToWorld( Vector(11,219,84) ), R, R, self.Red )
-	render.DrawSprite( self:LocalToWorld( Vector(-203,0,122) ), R, R, self.Red )
+	render.DrawSprite( self:LocalToWorld( Vector(-203,0,122) ), R, R, self.White )
 end
 
 function ENT:PostDrawTranslucent()
