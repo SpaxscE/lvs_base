@@ -181,7 +181,7 @@ end
 
 function ENT:GetVtolMove()
 	if self:GetEngineActive() then
-		return self:GetNWVtolMove() * self.ThrustVtol
+		return self:GetNWVtolMove() * self.ThrustVtol * (1 - self:GetThrottle())
 	else
 		return Vector(0,0,0)
 	end
