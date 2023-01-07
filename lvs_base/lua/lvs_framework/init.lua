@@ -28,8 +28,6 @@ end
 hook.Run( "LVS:Initialize" )
 
 if CLIENT then
-	LVS.DeathSounds = {}
-
 	hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
 		timer.Simple(20, function() LVS.CheckUpdates() end)
 	end )

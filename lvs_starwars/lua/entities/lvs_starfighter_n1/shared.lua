@@ -42,7 +42,7 @@ function ENT:InitWeapons()
 		bullet.TracerName = "lvs_laser_green"
 		bullet.Force	= 10
 		bullet.HullSize 	= 25
-		bullet.Damage	= 10
+		bullet.Damage	= 40
 		bullet.Velocity = 60000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
@@ -72,6 +72,7 @@ end
 
 ENT.FlyByAdvance = 0.75
 ENT.FlyBySound = "lvs/vehicles/naboo_n1_starfighter/flyby.wav" 
+ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"
 
 ENT.EngineSounds = {
 	{
