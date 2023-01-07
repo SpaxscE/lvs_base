@@ -19,13 +19,11 @@ function ENT:PostDrawTranslucent()
 	local Size = 80 + self:GetThrottle() * 120 + self:GetBoost()
 	local Mirror = false
 
-	for i = 0,1 do
-		local Sub = Mirror and 1 or -1
-		local pos = self:LocalToWorld( Vector(20,143.87 * Sub,30.93) )
+	for i = -1,1,2 do
+		local pos = self:LocalToWorld( Vector(20,143.87 * i,30.93) )
 		
 		render.SetMaterial( self.EngineGlow )
 		render.DrawSprite( pos, Size, Size, Color( 0, 127, 255, 255) )
-		Mirror = true
 	end
 end
 
