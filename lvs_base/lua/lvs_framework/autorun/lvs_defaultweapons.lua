@@ -46,6 +46,8 @@ WEAPON["LMG"] = {
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo) end
 		ent:LVSFireBullet( bullet )
+
+		ent:TakeAmmo()
 	end,
 	StartAttack = function( ent )
 		if not IsValid( ent.SoundEmitter1 ) then
@@ -98,6 +100,8 @@ WEAPON["TABLE_POINT_MG"] = {
 			bullet.Callback = function(att, tr, dmginfo) end
 			ent:LVSFireBullet( bullet )
 		end
+
+		ent:TakeAmmo()
 	end,
 	StartAttack = function( ent )
 		if not IsValid( ent.SoundEmitter1 ) then
@@ -149,6 +153,8 @@ WEAPON["HMG"] = {
 		bullet.Callback = function(att, tr, dmginfo)
 		end
 		ent:LVSFireBullet( bullet )
+
+		ent:TakeAmmo()
 	end,
 	StartAttack = function( ent )
 		if not IsValid( ent.SoundEmitter2 ) then

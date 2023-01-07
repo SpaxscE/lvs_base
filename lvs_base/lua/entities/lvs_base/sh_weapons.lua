@@ -100,12 +100,12 @@ if SERVER then
 		return CurWeapon._CurAmmo or self:GetMaxAmmo()
 	end
 
-	function ENT:TakeAmmo()
+	function ENT:TakeAmmo( num )
 		if self:GetMaxAmmo() <= 0 then return end
 
 		local CurWeapon = self:GetActiveWeapon()
 
-		CurWeapon._CurAmmo = self:GetAmmo() - 1
+		CurWeapon._CurAmmo = math.max( self:GetAmmo() - (num or 1), 0 )
 
 		self:SetNWAmmo( CurWeapon._CurAmmo )
 	end
@@ -196,8 +196,6 @@ if SERVER then
 			self:SetNWHeat( CurWeapon._CurHeat )
 
 			CurWeapon.Attack( self )
-
-			self:TakeAmmo()
 		else
 			CurWeapon._CurHeat = CurWeapon._CurHeat and CurWeapon._CurHeat - math.min( CurWeapon._CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) or 0
 

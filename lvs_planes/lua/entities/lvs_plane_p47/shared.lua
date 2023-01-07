@@ -84,6 +84,8 @@ function ENT:InitWeapons()
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
 		projectile:SetDamage( 250 )
 		projectile:Enable()
+
+		ent:TakeAmmo()
 	end
 	self:AddWeapon( weapon )
 
