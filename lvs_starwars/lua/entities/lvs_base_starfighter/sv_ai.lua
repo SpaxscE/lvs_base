@@ -79,14 +79,10 @@ function ENT:RunAI()
 	self._AIFireInput = false
 
 	if alt < 600 or ceiling < 600 or WallDist < (MinDist * 3 * (math.deg( math.acos( math.Clamp( Vector(0,0,1):Dot( myDir ) ,-1,1) ) ) / 180) ^ 2) then
-		if ceiling < 600 then
-			Throttle = 0
-		else
-			Throttle = 1
+		Throttle = 1
 
-			if self:HitGround() then
-				TargetPos.z = StartPos.z + 750
-			end
+		if self:HitGround() then
+			TargetPos.z = StartPos.z + 750
 		end
 	else
 		if IsValid( self:GetHardLockTarget() ) then
