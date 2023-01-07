@@ -79,13 +79,37 @@ function ENT:CalcAero( phys, deltatime )
 
 	local Forward = self:GetForward()
 	local Left = -self:GetRight()
-	local Up = self:GetUp()
 
 	local Vel = self:GetVelocity()
 	local VelForward = Vel:GetNormalized()
 
-	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch * 3
-	local Yaw = math.Clamp(Steer.z * 4,-1,1) * self.TurnRateYaw
+	local GravityPitch = 0
+	local GravityYaw = 0
+
+	-- crash bebehavior
+	if self:IsDestroyed() then
+		local WorldGravity = self:GetWorldGravity()
+		local WorldUp = self:GetWorldUp()
+
+		local Up = self:GetUp()
+
+		Steer = phys:GetAngleVelocity() / 200
+
+		local PitchPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) /  90
+		local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
+
+		local GravMul = WorldGravity / 600
+
+		GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul
+		GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul
+
+		if not phys:IsGravityEnabled() then
+			phys:EnableGravity( true )
+		end
+	end
+
+	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 3
+	local Yaw = math.Clamp(Steer.z * 4 + GravityYaw,-1,1) * self.TurnRateYaw
 	local Roll = math.Clamp(Steer.x * 1.5,-1,1) * self.TurnRateRoll * 12
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
@@ -117,6 +141,10 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local Aero, Torque = self:CalcAero( phys, deltatime )
 
 	local Thrust = self:GetThrustStrenght() * self.MaxThrust * 100
+
+	if self:IsDestroyed() then
+		Thrust = math.max( Thrust, 0 ) -- dont allow braking, but allow accelerating while destroyed
+	end
 
 	local ForceLinear = (Aero * 10000 * self.ForceLinearMultiplier + Vector(Thrust,0,0)) * deltatime
 	local ForceAngle = (Torque * 25 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250
