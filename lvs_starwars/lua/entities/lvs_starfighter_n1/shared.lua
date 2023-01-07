@@ -25,7 +25,8 @@ ENT.ForceLinearMultiplier = 1
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
-ENT.MaxHealth = 650
+ENT.MaxHealth = 450
+ENT.MaxShield = 400
 
 function ENT:InitWeapons()
 end

@@ -6,6 +6,7 @@ AddCSLuaFile( "cl_flyby.lua" )
 AddCSLuaFile( "cl_deathsound.lua" )
 include("shared.lua")
 include("sv_ai.lua")
+include("sv_components.lua")
 
 DEFINE_BASECLASS( "lvs_base" )
 
