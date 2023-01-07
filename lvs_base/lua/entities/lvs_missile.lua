@@ -11,7 +11,7 @@ ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
 if SERVER then
-	function ENT:SetEntityFilter( filter )
+function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
 
 		self._FilterEnts = {}
@@ -20,45 +20,51 @@ if SERVER then
 			self._FilterEnts[ ent ] = true
 		end
 	end
+	function ENT:SetTarget( ent ) self._target = ent end
+	function ENT:SetDamage( num ) self._dmg = num end
+	function ENT:SetThrust( num ) self._thrust = num end
+	function ENT:SetSpeed( num ) self._speed = num end
+	function ENT:SetTurnSpeed( num ) self._turnspeed = num end
+	function ENT:SetRadius( num ) self._radius = num end
+	function ENT:SetAttacker( ent ) self._attacker = ent end
 
-	function ENT:SetDamage( num )
-		self._dmg = num
+	function ENT:GetAttacker() return self._attacker or NULL end
+	function ENT:GetDamage() return (self._dmg or 100) end
+	function ENT:GetRadius() return (self._radius or 250) end
+	function ENT:GetSpeed() return (self._speed or 4000) end
+	function ENT:GetTurnSpeed() return (self._turnspeed or 1) * 100 end
+	function ENT:GetThrust() return (self._thrust or 500) end
+	function ENT:GetTarget()
+		if IsValid( self._target ) then
+			local Pos = self:GetPos()
+			local tPos = self:GetTargetPos()
+
+			local Sub = tPos - Pos
+			local Len = Sub:Length()
+			local Dir = Sub:GetNormalized()
+			local Forward = self:GetForward()
+
+			local AngToTarget = math.deg( math.acos( math.Clamp( Forward:Dot( Dir ) ,-1,1) ) )
+
+			local LooseAng = math.min( Len / 100, 90 )
+
+			if AngToTarget > LooseAng then
+				self._target = nil
+			end
+		end
+
+		return self._target
 	end
+	function ENT:GetTargetPos()
+		local Target = self._target
 
-	function ENT:SetThrust( num )
-		self._thrust = num
-	end
+		if not IsValid( Target ) then return Vector(0,0,0) end
 
-	function ENT:SetSpeed( num )
-		self._speed = num
-	end
+		if isfunction( Target.GetMissileOffset ) then
+			return Target:LocalToWorld( Target:GetMissileOffset() )
+		end
 
-	function ENT:SetRadius( num )
-		self._radius = num
-	end
-
-	function ENT:SetAttacker( ent )
-		self._attacker = ent
-	end
-
-	function ENT:GetAttacker()
-		return self._attacker or NULL
-	end
-
-	function ENT:GetDamage()
-		return (self._dmg or 100)
-	end
-
-	function ENT:GetRadius()
-		return (self._radius or 250)
-	end
-
-	function ENT:GetSpeed()
-		return (self._speed or 4000)
-	end
-
-	function ENT:GetThrust()
-		return (self._thrust or 500)
+		return Target:GetPos()
 	end
 
 	function ENT:SpawnFunction( ply, tr, ClassName )
@@ -118,10 +124,20 @@ if SERVER then
 
 		local Thrust = self:GetThrust()
 		local Speed = self:GetSpeed()
-		local velL = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
+		local Pos = self:GetPos()
+		local velL = self:WorldToLocal( Pos + self:GetVelocity() )
 
-		local ForceLinear = Vector( (Speed - velL.x) * deltatime * Thrust,0,0)
-		local ForceAngle = -phys:GetAngleVelocity() * 250 * deltatime
+		local ForceLinear = (Vector( Speed * Thrust,0,0) - velL) * deltatime
+
+		local Target = self:GetTarget()
+
+		if not IsValid( Target ) then
+			return (-phys:GetAngleVelocity() * 250 * deltatime), ForceLinear, SIM_LOCAL_ACCELERATION
+		end
+
+		local AngForce = -self:WorldToLocalAngles( (self:GetTargetPos() - Pos):Angle() )
+
+		local ForceAngle = (Vector(AngForce.r,-AngForce.p,-AngForce.y) * self:GetTurnSpeed() - phys:GetAngleVelocity() ) * 250 * deltatime
 
 		return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
 	end
