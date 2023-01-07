@@ -31,6 +31,20 @@ ENT.MaxShield = 400
 function ENT:InitWeapons()
 end
 
-ENT.FlyByAdvance = 0.5
-ENT.FlyBySound = "lvs/vehicles/bf109/flyby.wav" 
-ENT.DeathSound = "lvs/vehicles/generic/crash.wav"
+ENT.FlyByAdvance = 0.75
+ENT.FlyBySound = "lvs/vehicles/naboo_n1_starfighter/flyby.wav" 
+ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"
+
+ENT.EngineSounds = {
+	{
+		sound = "lvs/vehicles/naboo_n1_starfighter/loop.wav",
+		Pitch = 80,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 40,
+		FadeIn = 0,
+		FadeOut = 1,
+		FadeSpeed = 1.5,
+		UseDoppler = true,
+	},
+}

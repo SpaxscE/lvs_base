@@ -37,3 +37,28 @@ function ENT:AddEngine( pos )
 
 	return Engine
 end
+
+function ENT:AddEngineSound( pos )
+	local EngineSND = ents.Create( "lvs_starfighter_soundemitter" )
+
+	if not IsValid( EngineSND ) then
+		self:Remove()
+
+		print("LVS: Failed to create engine sound entity. Vehicle terminated.")
+
+		return
+	end
+
+	EngineSND:SetPos( self:LocalToWorld( pos ) )
+	EngineSND:SetAngles( self:GetAngles() )
+	EngineSND:Spawn()
+	EngineSND:Activate()
+	EngineSND:SetParent( self )
+	EngineSND:SetBase( self )
+
+	self:DeleteOnRemove( EngineSND )
+
+	self:TransferCPPI( EngineSND )
+
+	return EngineSND
+end

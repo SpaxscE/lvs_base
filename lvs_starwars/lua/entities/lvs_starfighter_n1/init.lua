@@ -9,4 +9,5 @@ function ENT:OnSpawn( PObj )
 
 	self:AddEngine( Vector(100,145,30) )
 	self:AddEngine( Vector(100,-145,30) )
+	self:AddEngineSound( Vector(100,0,0) )
 end
