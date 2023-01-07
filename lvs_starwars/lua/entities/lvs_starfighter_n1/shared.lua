@@ -30,7 +30,7 @@ ENT.MaxShield = 100
 
 function ENT:InitWeapons()
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/bullet.png")
+	weapon.Icon = Material("lvs/weapons/laser.png")
 	weapon.Ammo = 400
 	weapon.Delay = 0.15
 	weapon.HeatRateUp = 0.5
@@ -60,12 +60,35 @@ function ENT:InitWeapons()
 
 		ent.PrimarySND:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	self:AddWeapon( weapon )
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
+	weapon.UseableByAI = false
+	weapon.Ammo = 10
+	weapon.Delay = 0.1
+	weapon.HeatRateUp = 3
+	weapon.HeatRateDown = 0.05
+	weapon.Attack = function( ent )
+		local projectile = ents.Create( "lvs_protontorpedo" )
+		projectile:SetPos( ent:LocalToWorld( Vector(147.82,0,39.52) ) )
+		projectile:SetAngles( ent:GetAngles() )
+		projectile:Spawn()
+		projectile:Activate()
+		projectile:SetAttacker( ent:GetDriver() )
+		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
+		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
+		projectile:SetDamage( 250 )
+		projectile:Enable()
+	end
 	weapon.StartAttack = function( ent ) end
 	weapon.FinishAttack = function( ent ) end
 	weapon.OnSelect = function( ent ) end
 	weapon.OnDeselect = function( ent ) end
 	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	weapon.OnOverheat = function( ent ) end
 	weapon.OnRemove = function( ent ) end
 	self:AddWeapon( weapon )
 end
