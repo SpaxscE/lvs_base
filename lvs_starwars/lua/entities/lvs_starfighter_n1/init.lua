@@ -10,6 +10,9 @@ function ENT:OnSpawn( PObj )
 	self:AddEngine( Vector(100,145,30) )
 	self:AddEngine( Vector(100,-145,30) )
 	self:AddEngineSound( Vector(100,0,0) )
+
+	self.PrimarySND = self:AddSoundEmitter( Vector(118.24,0,49.96), "lvs/vehicles/naboo_n1_starfighter/fire.mp3", "lvs/vehicles/naboo_n1_starfighter/fire.mp3" )
+	self.PrimarySND:SetSoundLevel( 110 )
 end
 
 function ENT:OnEngineActiveChanged( Active )

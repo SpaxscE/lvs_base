@@ -25,36 +25,40 @@ ENT.ForceLinearMultiplier = 1
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
-ENT.MaxHealth = 450
-ENT.MaxShield = 400
+ENT.MaxHealth = 500
+ENT.MaxShield = 100
 
 function ENT:InitWeapons()
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/bullet.png")
 	weapon.Ammo = 400
 	weapon.Delay = 0.15
-	weapon.HeatRateUp = 0.2
-	weapon.HeatRateDown = 0.25
+	weapon.HeatRateUp = 0.5
+	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
 		local bullet = {}
 		bullet.Dir 	= ent:GetForward()
 		bullet.Spread 	= Vector( 0.015,  0.015, 0 )
 		bullet.TracerName = "lvs_laser_green"
 		bullet.Force	= 10
-		bullet.HullSize 	= 5
+		bullet.HullSize 	= 25
 		bullet.Damage	= 10
 		bullet.Velocity = 60000
-		bullet.SplashDamage = 75
-		bullet.SplashDamageRadius = 200
 		bullet.Attacker 	= ent:GetDriver()
-		bullet.Callback = function(att, tr, dmginfo) end
+		bullet.Callback = function(att, tr, dmginfo)
+			local effectdata = EffectData()
+				effectdata:SetStart( Vector(50,255,50) ) 
+				effectdata:SetOrigin( tr.HitPos )
+				effectdata:SetNormal( tr.HitNormal )
+			util.Effect( "lvs_laser_impact", effectdata )
+		end
 
 		for i = -1,1,2 do
 			bullet.Src 	= ent:LocalToWorld( Vector(118.24,18.04 * i,49.96) )
 			ent:LVSFireBullet( bullet )
 		end
 
-		ent:EmitSound("lvs/vehicles/naboo_n1_starfighter/fire.mp3" )
+		ent.PrimarySND:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
 	weapon.StartAttack = function( ent ) end
 	weapon.FinishAttack = function( ent ) end
@@ -68,7 +72,6 @@ end
 
 ENT.FlyByAdvance = 0.75
 ENT.FlyBySound = "lvs/vehicles/naboo_n1_starfighter/flyby.wav" 
-ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"
 
 ENT.EngineSounds = {
 	{
