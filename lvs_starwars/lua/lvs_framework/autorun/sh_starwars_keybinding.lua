@@ -78,6 +78,13 @@ hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
 			name_menu = "VTOL Left",
 			cmd = "lvs_starfighter_vtol_left"
 		},
+		{
+			name = "-VTOL_X_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Reverse",
+			default = "+back",
+			cmd = "lvs_starfighter_vtol_reverse"
+		},
 	}
 
 	for _, v in pairs( KEYS ) do

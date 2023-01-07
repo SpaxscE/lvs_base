@@ -149,12 +149,20 @@ end
 function ENT:CalcVtolThrottle( ply, cmd )
 	local Delta = FrameTime()
 
+	local ThrottleZero = self:GetThrottle() <= 0
+
+	local VtolX = ThrottleZero and (ply:lvsKeyDown( "-VTOL_X_SF" ) and -1 or 0) or 0
 	local VtolY = ((ply:lvsKeyDown( "+VTOL_Y_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Y_SF" ) and 1 or 0))
 	local VtolZ = ((ply:lvsKeyDown( "+VTOL_Z_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Z_SF" ) and 1 or 0))
 
-	local DesiredVtol = Vector(0,VtolY,VtolZ)
+	local DesiredVtol = Vector(VtolX,VtolY,VtolZ)
+	local NewVtolMove = self:GetNWVtolMove() + (DesiredVtol - self:GetNWVtolMove()) * self.ThrustRateVtol * Delta
 
-	self:SetVtolMove( self:GetNWVtolMove() + (DesiredVtol - self:GetNWVtolMove()) * self.ThrustRateVtol * Delta )
+	if not ThrottleZero then
+		NewVtolMove.x = 0
+	end
+
+	self:SetVtolMove( NewVtolMove )
 end
 
 function ENT:SetVtolMove( NewMove )
