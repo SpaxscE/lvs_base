@@ -1,0 +1,17 @@
+"VertexlitGeneric"
+
+{
+	"$basetexture"			"models/blu/naboostarfighter/n1engc"
+
+	"$nocull"			"1"
+
+	"$Phong"			"1"
+	"$PhongBoost"			"1.2"
+	"$phongexponent"		"39.8"
+	"$PhongFresnelRanges"		"[.05 .5 1]"
+
+	"$detail"			"detail\metal_detail_01"
+	"$detailscale"			"5.283"
+	"$detailblendfactor"		"0.5"
+	"$detailblendmode"		"0"
+}

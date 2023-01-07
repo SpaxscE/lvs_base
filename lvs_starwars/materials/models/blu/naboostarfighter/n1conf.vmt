@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+
+{
+	"$basetexture"		"models/blu/naboostarfighter/n1conf"
+	"$selfillum"		"1"
+   	"$selfillummask"	"models/blu/naboostarfighter/n1conf_spec"
+
+	"$Phong"		"1"
+	"$PhongBoost"		"1.2"
+	"$phongexponent"	"39.8"
+	"$PhongFresnelRanges"	"[.05 .5 1]"
+}

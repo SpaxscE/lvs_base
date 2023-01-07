@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+
+{
+	"$basetexture"			"models/blu/naboostarfighter/n1coc"
+	"$bumpmap"			"models/blu/naboostarfighter/n1coc_nrm"
+
+	"$Phong"			"1"
+	"$PhongBoost"			"1.2"
+	"$phongexponent"		"39.8"
+	"$PhongFresnelRanges"		"[.05 .5 1]"
+
+
+
+}

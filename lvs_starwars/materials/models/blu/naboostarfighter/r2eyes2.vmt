@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+
+{
+	"$basetexture"		"models/blu/naboostarfighter/r2eyes"
+
+	"$envmap"		"env_cubemap"
+	"$envmaptint"		"[0.5 0.5 0.5]"
+	"$refractamount"	"0.10" 
+	"$envmapsaturation"	"0.75"
+}
