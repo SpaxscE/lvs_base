@@ -85,6 +85,8 @@ function ENT:CalcDamage( dmginfo )
 
 	local Damage = dmginfo:GetDamage()
 
+	if Damage <= 0 then return end
+
 	local CurHealth = self:GetHP()
 
 	local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
