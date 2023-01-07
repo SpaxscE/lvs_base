@@ -4,7 +4,7 @@ function ENT:CalcShieldDamage( dmginfo )
 
 	if MaxShield <= 0 then return end
 
-	if not dmginfo:IsBulletDamage() then return end
+	if not dmginfo:IsDamageType( DMG_BULLET + DMG_AIRBOAT ) then return end
 
 	self:DelayNextShieldRecharge( 3 )
 
