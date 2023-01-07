@@ -158,7 +158,7 @@ function ENT:CalcVtolThrottle( ply, cmd )
 	local DesiredVtol = Vector(VtolX,VtolY,VtolZ)
 	local NewVtolMove = self:GetNWVtolMove() + (DesiredVtol - self:GetNWVtolMove()) * self.ThrustRateVtol * Delta
 
-	if not ThrottleZero then
+	if not ThrottleZero or self:WorldToLocal( self:GetPos() + self:GetVelocity() ).x > 100 then
 		NewVtolMove.x = 0
 	end
 
