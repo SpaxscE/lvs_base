@@ -12,7 +12,6 @@ ENT.AdminSpawnable		= false
 ENT.MaxVelocity = 3000
 ENT.MaxThrust = 3000
 
-ENT.MaxThrottleEnableVtol = 1
 ENT.ThrustVtol = 75
 ENT.ThrustRateVtol = 3
 
@@ -151,7 +150,7 @@ function ENT:CalcVtolThrottle( ply, cmd )
 	local VtolY = ((ply:lvsKeyDown( "+VTOL_Y_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Y_SF" ) and 1 or 0))
 	local VtolZ = ((ply:lvsKeyDown( "+VTOL_Z_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Z_SF" ) and 1 or 0))
 
-	local DesiredVtol = self:GetThrottle() > self.MaxThrottleEnableVtol and Vector(0,0,0) or Vector(0,VtolY,VtolZ)
+	local DesiredVtol = Vector(0,VtolY,VtolZ)
 
 	self:SetVtolMove( self:GetNWVtolMove() + (DesiredVtol - self:GetNWVtolMove()) * self.ThrustRateVtol * Delta )
 end
@@ -160,7 +159,7 @@ function ENT:SetVtolMove( NewMove )
 	if self:GetEngineActive() then
 		self:SetNWVtolMove( NewMove )
 	else
-		self:SetNWVtolMove( 0 )
+		self:SetNWVtolMove( Vector(0,0,0) )
 	end
 end
 
