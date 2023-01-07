@@ -58,14 +58,12 @@ hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
 			name = "+VTOL_Z_SF",
 			category = "LVS-Starfighter",
 			name_menu = "VTOL Up",
-			default = "+jump",
 			cmd = "lvs_starfighter_vtol_up"
 		},
 		{
 			name = "-VTOL_Z_SF",
 			category = "LVS-Starfighter",
 			name_menu = "VTOL Down",
-			default = "+back",
 			cmd = "lvs_starfighter_vtol_dn"
 		},
 		{
