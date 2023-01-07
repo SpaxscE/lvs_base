@@ -156,9 +156,7 @@ function ENT:PhysicsCollide( data, physobj )
 		if VelDif > 700 then
 			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 
-			if self:GetHP() <= self:GetMaxHP() * 0.5 then -- this will effectivly disable collision damage for anything that isnt in combat. It's more fun to fly like this tbh
-				self:TakeCollisionDamage( VelDif, HitEnt )
-			end
+			self:TakeCollisionDamage( VelDif, HitEnt )
 		else
 			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
 		end
