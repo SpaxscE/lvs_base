@@ -145,6 +145,8 @@ function ENT:RunAI()
 				end
 			else
 				TargetPos.z = StartPos.z + 2000
+
+				self:EnableVehicleSpecific()
 			end
 		end
 	end
