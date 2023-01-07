@@ -44,6 +44,10 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 	surface.SetDrawColor( color_white )
 	surface.DrawTexturedRectRotated( hX + 2, hY - 1, H * 0.5, H * 0.5, 0 )
 
+	if not self:GetEngineActive() then
+		draw.SimpleText( "X" , "LVS_FONT",  hX, hY, Color(0,0,0,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
+
 	DrawCircle( hX, hY, H * 0.35, math.min( Throttle, 1 ) )
 
 	if Throttle > 1 then
