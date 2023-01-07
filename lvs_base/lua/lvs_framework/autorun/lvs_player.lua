@@ -60,7 +60,13 @@ function meta:lvsBuildControls()
 		self.LVS_BINDS = table.Copy( LVS.KEYS_CATEGORIES )
 
 		for _,v in pairs( LVS.KEYS_REGISTERED ) do
-			self.LVS_BINDS[v.category][ self:GetInfoNum( v.cmd, 0 ) ] = v.id
+			local ButtonID = self:GetInfoNum( v.cmd, 0 )
+
+			if not self.LVS_BINDS[v.category][ ButtonID ] then
+				self.LVS_BINDS[v.category][ ButtonID ] = {}
+			end
+
+			table.insert( self.LVS_BINDS[v.category][ ButtonID ], v.id )
 		end
 
 		net.Start( "lvs_buildcontrols" )
@@ -264,9 +270,13 @@ end
 
 hook.Add( "PlayerButtonUp", "!!!lvsButtonUp", function( ply, button )
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
-		if not KeyBind[ button ] then continue end
+		local KeyTBL = KeyBind[ button ]
 
-		ply:lvsSetInput( KeyBind[ button ], false )
+		if not KeyTBL then continue end
+
+		for _, KeyName in pairs( KeyTBL ) do
+			ply:lvsSetInput( KeyName, false )
+		end
 	end
 end )
 
@@ -277,23 +287,25 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 	local vehValid = IsValid( vehicle )
 
 	for _, KeyBind in pairs( ply:lvsGetControls() ) do
-		local KeyName = KeyBind[ button ]
+		local KeyTBL = KeyBind[ button ]
 
-		if not KeyName then continue end
+		if not KeyTBL then continue end
 
-		ply:lvsSetInput( KeyName, true )
+		for _, KeyName in pairs( KeyTBL ) do
+			ply:lvsSetInput( KeyName, true )
 
-		if not vehValid then continue end
+			if not vehValid then continue end
 
-		if string.StartWith( KeyName, "~SELECT~" ) then
-			local exp_string = string.Explode( "#", KeyName )
-			if exp_string[2] then
-				vehicle:SelectWeapon( tonumber( exp_string[2] ) )
+			if string.StartWith( KeyName, "~SELECT~" ) then
+				local exp_string = string.Explode( "#", KeyName )
+				if exp_string[2] then
+					vehicle:SelectWeapon( tonumber( exp_string[2] ) )
+				end
 			end
-		end
 
-		if KeyName == "EXIT" then
-			ply:ExitVehicle()
+			if KeyName == "EXIT" then
+				ply:ExitVehicle()
+			end
 		end
 	end
 end )
