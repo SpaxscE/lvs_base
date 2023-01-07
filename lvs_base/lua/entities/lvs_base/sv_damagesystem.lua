@@ -69,7 +69,11 @@ function ENT:CalcDamage( dmginfo )
 	if dmginfo:IsDamageType( DMG_SONIC ) then return end
 
 	if dmginfo:IsDamageType( DMG_BULLET + DMG_CLUB ) then
-		dmginfo:ScaleDamage( 0.1 )
+		if dmginfo:GetDamage() ~= 0 then
+			dmginfo:ScaleDamage( 0.1 )
+
+			dmginfo:SetDamage( math.max(dmginfo:GetDamage(),1) )
+		end
 	end
 
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
@@ -79,7 +83,7 @@ function ENT:CalcDamage( dmginfo )
 		CriticalHit = self:CalcComponentDamage( dmginfo )
 	end
 
-	local Damage = math.max( dmginfo:GetDamage(), 1 )
+	local Damage = dmginfo:GetDamage()
 
 	local CurHealth = self:GetHP()
 
