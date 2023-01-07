@@ -29,7 +29,7 @@ function ENT:AddEngine( pos )
 		Callback = function( tbl, ent, dmginfo )
 			if dmginfo:GetDamage() <= 0 then return end
 
-			dmginfo:ScaleDamage( 10 )
+			dmginfo:ScaleDamage( 2 )
 
 			Engine:TakeDamageInfo( dmginfo )
 		end
