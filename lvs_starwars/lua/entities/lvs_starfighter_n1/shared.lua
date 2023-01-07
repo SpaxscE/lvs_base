@@ -71,12 +71,18 @@ function ENT:InitWeapons()
 	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
 	weapon.UseableByAI = false
 	weapon.Ammo = 8
-	weapon.Delay = 0.1
+	weapon.Delay = 1
 	weapon.HeatRateUp = 0
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent ) end
 	weapon.StartAttack = function( ent ) end
 	weapon.FinishAttack = function( ent )
+		local T = CurTime()
+
+		if (ent._nextMissle or 0) > T then return end
+
+		ent._nextMissle = T + 1
+
 		local projectile = ents.Create( "lvs_protontorpedo" )
 		projectile:SetPos( ent:LocalToWorld( Vector(147.82,0,39.52) ) )
 		projectile:SetAngles( ent:GetAngles() )
@@ -87,6 +93,7 @@ function ENT:InitWeapons()
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
 		projectile:SetDamage( 250 )
 		projectile:Enable()
+		projectile:EmitSound( "lvs/vehicles/naboo_n1_starfighter/proton_fire.mp3", 125 )
 
 		ent:TakeAmmo()
 	end
