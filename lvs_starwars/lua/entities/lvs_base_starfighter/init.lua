@@ -54,7 +54,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local RudderFadeOut = math.min( math.max( (120 - AngDiff ) / 120, 0 ) * 3, 1 )
 
 	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
-	local Yaw = math.Clamp( -LocalAngYaw / 8 ,-1,1) * RudderFadeOut
+	local Yaw = math.Clamp( -LocalAngYaw / 4 ,-1,1) * RudderFadeOut
 	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8 * self:GetThrottle(),-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
 
 	if FreeMovement then
@@ -73,7 +73,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 		Roll = OverrideRoll
 	end
 
-	self:SetSteer( Vector( Roll, -Pitch, -Yaw) )
+	self:SetSteer( Vector( math.Clamp(Roll * 1.25,-1,1), math.Clamp(-Pitch * 1.25,-1,1), -Yaw) )
 end
 
 function ENT:CalcAero( phys, deltatime )

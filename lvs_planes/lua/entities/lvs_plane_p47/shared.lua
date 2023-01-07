@@ -29,8 +29,8 @@ ENT.ForceLinearMultiplier = 1
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
-ENT.MaxSlipAnglePitch = 24
-ENT.MaxSlipAngleYaw = 12
+ENT.MaxSlipAnglePitch = 20
+ENT.MaxSlipAngleYaw = 10
 
 ENT.MaxHealth = 650
 
