@@ -134,6 +134,8 @@ function ENT:PlayerMouseAim( ply, cmd )
 end
 
 function ENT:CalcThrottle( ply, cmd )
+	if CLIENT then return end
+
 	local Delta = FrameTime()
 
 	local ThrottleUp =  ply:lvsKeyDown( "+THRUST_SF" ) and self.ThrottleRateUp or 0
