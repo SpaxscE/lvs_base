@@ -52,8 +52,10 @@ local function HandleBullets()
 
 		local start = bullet.Src
 		local dir = bullet.Dir
-		local pos = dir * bullet:GetTimeAlive() * bullet.Velocity
+		local TimeAlive = bullet:GetTimeAlive()
+		local pos = dir * TimeAlive * bullet.Velocity
 		local mul = bullet:GetLength()
+		local Is2ndTickAlive = TimeAlive > FT * 2 -- this system is slow. Takes atleast 2 ticks before it spawns. We need to trace from startpos until lua catches up
 
 		-- startpos, direction and curtime of creation is networked to client. 
 		-- The Bullet position is simulated by doing startpos + dir * time * velocity
@@ -76,13 +78,15 @@ local function HandleBullets()
 		end
 
 		local trace = util.TraceHull( {
-			start = start + pos - dir,
+			start = Is2ndTickAlive and start + pos - dir or start,
 			endpos = start + pos + dir * bullet.Velocity * FT,
 			filter = Filter,
 			mins = Vector(-1,-1,-1) * bullet.HullSize,
 			maxs = Vector(1,1,1) * bullet.HullSize,
 			mask = MASK_SHOT_HULL
 		} )
+
+		--debugoverlay.Line( Is2ndTickAlive and start + pos - dir or start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
 
 		if CLIENT then
 			if mul == 1 then
@@ -117,7 +121,7 @@ local function HandleBullets()
 			-- hulltrace doesnt hit the wall due to its hullsize...
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
-				start = start + pos - dir,
+				start = Is2ndTickAlive and start + pos - dir or start,
 				endpos = start + pos + dir * 50000,
 				filter = Filter,
 				mask = MASK_SHOT_HULL
