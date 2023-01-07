@@ -29,6 +29,41 @@ ENT.MaxHealth = 450
 ENT.MaxShield = 400
 
 function ENT:InitWeapons()
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/bullet.png")
+	weapon.Ammo = 400
+	weapon.Delay = 0.15
+	weapon.HeatRateUp = 0.2
+	weapon.HeatRateDown = 0.25
+	weapon.Attack = function( ent )
+		local bullet = {}
+		bullet.Dir 	= ent:GetForward()
+		bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+		bullet.TracerName = "lvs_laser_green"
+		bullet.Force	= 10
+		bullet.HullSize 	= 5
+		bullet.Damage	= 10
+		bullet.Velocity = 60000
+		bullet.SplashDamage = 75
+		bullet.SplashDamageRadius = 200
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo) end
+
+		for i = -1,1,2 do
+			bullet.Src 	= ent:LocalToWorld( Vector(118.24,18.04 * i,49.96) )
+			ent:LVSFireBullet( bullet )
+		end
+
+		ent:EmitSound("lvs/vehicles/naboo_n1_starfighter/fire.mp3" )
+	end
+	weapon.StartAttack = function( ent ) end
+	weapon.FinishAttack = function( ent ) end
+	weapon.OnSelect = function( ent ) end
+	weapon.OnDeselect = function( ent ) end
+	weapon.OnThink = function( ent, active ) end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	weapon.OnRemove = function( ent ) end
+	self:AddWeapon( weapon )
 end
 
 ENT.FlyByAdvance = 0.75

@@ -12,7 +12,7 @@ ENT.AdminSpawnable		= false
 ENT.MaxVelocity = 3000
 ENT.MaxThrust = 3000
 
-ENT.ThrustVtol = 75
+ENT.ThrustVtol = 55
 ENT.ThrustRateVtol = 3
 
 ENT.ThrottleRateUp = 0.6
