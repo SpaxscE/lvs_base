@@ -23,7 +23,7 @@ function EFFECT:Render()
 	local endpos = bullet:GetPos()
 	local dir = bullet:GetDir()
 
-	local len = 3000 * bullet:GetLength()
+	local len = 1000 * bullet:GetLength()
 
 	render.SetMaterial( self.MatBeam )
 
