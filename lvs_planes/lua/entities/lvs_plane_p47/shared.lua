@@ -79,20 +79,12 @@ function ENT:InitWeapons()
 		projectile:SetAngles( Missile:GetAngles() )
 		projectile:Spawn()
 		projectile:Activate()
-		projectile:SetAttacker( self:GetDriver() )
-		projectile:SetEntityFilter( self:GetCrosshairFilterEnts() )
-		projectile:SetSpeed( self:GetVelocity():Length() + 4000 )
+		projectile:SetAttacker( ent:GetDriver() )
+		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
+		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
 		projectile:SetDamage( 250 )
 		projectile:Enable()
 	end
-
-	weapon.StartAttack = function( ent ) end
-	weapon.FinishAttack = function( ent ) end
-	weapon.OnSelect = function( ent ) end
-	weapon.OnDeselect = function( ent ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) end
-	weapon.OnRemove = function( ent ) end
 	self:AddWeapon( weapon )
 
 	self:AddWeapon( LVS:GetWeaponPreset( "TURBO" ) )
