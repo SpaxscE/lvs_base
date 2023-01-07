@@ -16,7 +16,7 @@ ENT.EngineGlow = Material( "sprites/light_glow02_add" )
 function ENT:PostDrawTranslucent()
 	if not self:GetEngineActive() then return end
 
-	local Size = 80 + self:GetThrottle() * 120
+	local Size = 80 + self:GetThrottle() * 120 + self:GetBoost()
 	local Mirror = false
 
 	for i = 0,1 do
@@ -37,7 +37,7 @@ function ENT:EngineEffects()
 	if (self.nextEFX or 0) > T then return end
 
 	self.nextEFX = T + 0.01
-	
+
 	local THR = self:GetThrottle()
 
 	local emitter = self:GetParticleEmitter( self:GetPos() )
@@ -54,7 +54,7 @@ function ENT:EngineEffects()
 
 		if not particle then continue end
 
-		particle:SetVelocity( vNormal * 1000 + self:GetVelocity() )
+		particle:SetVelocity( vNormal * (1000 + self:GetBoost() * 10) + self:GetVelocity() )
 		particle:SetLifeTime( 0 )
 		particle:SetDieTime( 0.05 )
 		particle:SetStartAlpha( 255 )
@@ -101,4 +101,12 @@ function ENT:AnimCockpit()
 	self.SMcOpen = self.SMcOpen and self.SMcOpen + math.Clamp(TVal - self.SMcOpen,-Speed,Speed) or 0
 
 	self:ManipulateBonePosition( 1, Vector(0,0,self.SMcOpen * 50) ) 
+end
+
+function ENT:OnStartBoost()
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/boost.wav", 125 )
+end
+
+function ENT:OnStopBoost()
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/brake.wav", 125 )
 end
