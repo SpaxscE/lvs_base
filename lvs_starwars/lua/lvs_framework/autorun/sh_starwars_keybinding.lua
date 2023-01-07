@@ -4,14 +4,14 @@ hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
 		{
 			name = "+THRUST_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Throttle Increase",
+			name_menu = "Thrust Increase",
 			default = "+forward",
 			cmd = "lvs_starfighter_throttle_up"
 		},
 		{
 			name = "-THRUST_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Throttle Decrease",
+			name_menu = "Thrust Decrease",
 			default = "+back",
 			cmd = "lvs_starfighter_throttle_down"
 		},
@@ -53,6 +53,32 @@ hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
 			name_menu = "Roll Right",
 			default = "+moveright",
 			cmd = "lvs_starfighter_roll_right"
+		},
+		{
+			name = "+VTOL_Z_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Up",
+			default = "+jump",
+			cmd = "lvs_starfighter_vtol_up"
+		},
+		{
+			name = "-VTOL_Z_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Down",
+			default = "+back",
+			cmd = "lvs_starfighter_vtol_dn"
+		},
+		{
+			name = "-VTOL_Y_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Right",
+			cmd = "lvs_starfighter_vtol_right"
+		},
+		{
+			name = "+VTOL_Y_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Left",
+			cmd = "lvs_starfighter_vtol_left"
 		},
 	}
 

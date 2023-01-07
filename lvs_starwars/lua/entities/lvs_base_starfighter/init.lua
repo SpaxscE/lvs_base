@@ -7,6 +7,24 @@ AddCSLuaFile( "cl_deathsound.lua" )
 include("shared.lua")
 include("sv_ai.lua")
 
+DEFINE_BASECLASS( "lvs_base" )
+
+function ENT:StartEngine()
+	if self:GetEngineActive() or not self:IsEngineStartAllowed() then return end
+
+	self:GetPhysicsObject():EnableGravity( false )
+
+	BaseClass.StartEngine( self )
+end
+
+function ENT:StopEngine()
+	if not self:GetEngineActive() then return end
+
+	self:GetPhysicsObject():EnableGravity( true )
+
+	BaseClass.StopEngine( self )
+end
+
 function ENT:OnCreateAI()
 	self:StartEngine()
 	self.COL_GROUP_OLD = self:GetCollisionGroup()
@@ -35,7 +53,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
 	local Yaw = math.Clamp( -LocalAngYaw / 8 ,-1,1) * RudderFadeOut
-	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8,-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
+	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8 * self:GetThrottle(),-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
 
 	if FreeMovement then
 		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
@@ -57,8 +75,6 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 end
 
 function ENT:CalcAero( phys, deltatime )
-	local WorldGravity = self:GetWorldGravity()
-	local WorldUp = self:GetWorldUp()
 	local Steer = self:GetSteer()
 
 	local Forward = self:GetForward()
@@ -77,11 +93,12 @@ function ENT:CalcAero( phys, deltatime )
 	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - math.abs( Steer.y ), 0 ) / 90) * 0.3
 	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - 90 ) - math.abs( Steer.z ), 0 ) / 90) * 0.15
 
-	return Vector(0, -VelL.y * MulY, -VelL.z * MulZ ),  Vector( Roll, Pitch, Yaw )
+	local Move = Vector(0, -VelL.y * MulY, -VelL.z * MulZ ) + self:GetVtolMove()
+
+	return Move, Vector( Roll, Pitch, Yaw )
 end
 
 function ENT:OnSkyCollide( data, PhysObj )
-
 	local NewVelocity = self:VectorSubtractNormal( data.HitNormal, data.OurOldVelocity ) - data.HitNormal * math.Clamp(self:GetThrustStrenght() * self.MaxThrust,250,800)
 
 	PhysObj:SetVelocityInstantaneous( NewVelocity )
@@ -91,11 +108,13 @@ function ENT:OnSkyCollide( data, PhysObj )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
-	if not self:GetEngineActive() then return end
+	phys:Wake()
+
+	if not self:GetEngineActive() then
+		return Vector(0,0,0), Vector(0,0,0), SIM_NOTHING
+	end
 
 	local Aero, Torque = self:CalcAero( phys, deltatime )
-
-	phys:Wake()
 
 	local Thrust = self:GetThrustStrenght() * self.MaxThrust * 100
 

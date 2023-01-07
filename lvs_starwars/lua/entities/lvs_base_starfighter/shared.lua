@@ -12,7 +12,11 @@ ENT.AdminSpawnable		= false
 ENT.MaxVelocity = 3000
 ENT.MaxThrust = 3000
 
-ENT.ThrottleRateUp = 0.8
+ENT.MaxThrottleEnableVtol = 1
+ENT.ThrustVtol = 75
+ENT.ThrustRateVtol = 3
+
+ENT.ThrottleRateUp = 0.6
 ENT.ThrottleRateDown = 0.6
 
 ENT.TurnRatePitch = 1
@@ -28,6 +32,7 @@ function ENT:SetupDataTables()
 	self:CreateBaseDT()
 
 	self:AddDT( "Vector", "Steer" )
+	self:AddDT( "Vector", "NWVtolMove" )
 	self:AddDT( "Float", "NWThrottle" )
 	self:AddDT( "Float", "MaxThrottle" )
 
@@ -140,6 +145,25 @@ function ENT:CalcThrottle( ply, cmd )
 	self:SetThrottle( self:GetThrottle() + Throttle )
 end
 
+function ENT:CalcVtolThrottle( ply, cmd )
+	local Delta = FrameTime()
+
+	local VtolY = ((ply:lvsKeyDown( "+VTOL_Y_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Y_SF" ) and 1 or 0))
+	local VtolZ = ((ply:lvsKeyDown( "+VTOL_Z_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Z_SF" ) and 1 or 0))
+
+	local DesiredVtol = self:GetThrottle() > self.MaxThrottleEnableVtol and Vector(0,0,0) or Vector(0,VtolY,VtolZ)
+
+	self:SetVtolMove( self:GetNWVtolMove() + (DesiredVtol - self:GetNWVtolMove()) * self.ThrustRateVtol * Delta )
+end
+
+function ENT:SetVtolMove( NewMove )
+	if self:GetEngineActive() then
+		self:SetNWVtolMove( NewMove )
+	else
+		self:SetNWVtolMove( 0 )
+	end
+end
+
 function ENT:SetThrottle( NewThrottle )
 	if self:GetEngineActive() then
 		self:SetNWThrottle( math.Clamp(NewThrottle,0,self:GetMaxThrottle()) )
@@ -156,6 +180,14 @@ function ENT:GetThrottle()
 	end
 end
 
+function ENT:GetVtolMove()
+	if self:GetEngineActive() then
+		return self:GetNWVtolMove() * self.ThrustVtol
+	else
+		return Vector(0,0,0)
+	end
+end
+
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
@@ -166,6 +198,7 @@ function ENT:StartCommand( ply, cmd )
 	end
 
 	self:CalcThrottle( ply, cmd )
+	self:CalcVtolThrottle( ply, cmd )
 end
 
 function ENT:GetThrustStrenght()
