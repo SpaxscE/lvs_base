@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/vulture_droid/body"
+	"$halflambert" "1"
+	
+	"$selfillum" 1
+	"$selfillummask" "models/salza/vulture_droid/body_ilum"
+}

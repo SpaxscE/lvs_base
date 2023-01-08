@@ -1,0 +1,16 @@
+VertexLitGeneric
+{
+	$basetexture "models/salza/droidtrifighter/base"	
+	$bumpmap    "models/salza/droidtrifighter/base_nm"
+	//$AmbientOcclTexture "models/salza/arc170/wings_ao"
+	$envmap "env_cubemap"	
+	$envmaptint "[.05 .05 .05]"
+
+	$phong 			1
+	$phongexponent 		10
+	$phongboost	 	2
+	$phongfresnelranges	"[0 0.5 1]"
+	
+	"$selfillum" 1
+	"$selfillummask" "models/salza/droidtrifighter/base_illum"
+}

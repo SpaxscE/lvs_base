@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture"		"models/blu/vulturedroid/vulture_texture"
+	"$bumpmap"		"models/blu/vulturedroid/vulture_texture_n"
+	
+	$nodiffusebumplighting 0
+	$surfaceprop metal
+	$model 1
+	$envmaptint "[0.05 0.05 0.05]"
+	$envmap env_cubemap
+	$envmapfresnel 1
+	$envmapFresnelMinMaxExp "[.7 1 0]"				
+	
+	"$selfillum" 1
+}
