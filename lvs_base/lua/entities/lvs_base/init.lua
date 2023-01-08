@@ -22,16 +22,27 @@ ENT.WaterLevelDestroyAI = 2
 
 function ENT:SpawnFunction( ply, tr, ClassName )
 
-	if not tr.Hit then return end
+	if ply:InVehicle() then
+		local ent = ents.Create( ClassName )
+		ent:StoreCPPI( ply )
+		ent:SetPos( ply:GetPos() + Vector(0,0,100) )
+		ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
+		ent:Spawn()
+		ent:Activate()
 
-	local ent = ents.Create( ClassName )
-	ent:StoreCPPI( ply )
-	ent:SetPos( tr.HitPos + tr.HitNormal * ent.SpawnNormalOffset )
-	ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
-	ent:Spawn()
-	ent:Activate()
+		return ent
+	else
+		if not tr.Hit then return end
 
-	return ent
+		local ent = ents.Create( ClassName )
+		ent:StoreCPPI( ply )
+		ent:SetPos( tr.HitPos + tr.HitNormal * ent.SpawnNormalOffset )
+		ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
+		ent:Spawn()
+		ent:Activate()
+
+		return ent
+	end
 end
 
 function ENT:Initialize()
