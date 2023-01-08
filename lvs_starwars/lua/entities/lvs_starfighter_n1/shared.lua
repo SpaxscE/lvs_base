@@ -105,6 +105,8 @@ function ENT:InitWeapons()
 		projectile:SetDamage( 400 )
 
 		ent._ProtonTorpedo = projectile
+
+		ent:SetNextAttack( CurTime() + 0.1 ) -- wait 0.1 second before starting to track
 	end
 	weapon.FinishAttack = function( ent )
 		if not IsValid( ent._ProtonTorpedo ) then return end

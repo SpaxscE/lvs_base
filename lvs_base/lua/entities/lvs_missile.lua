@@ -12,10 +12,57 @@ ENT.AdminOnly		= true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
+	self:NetworkVar( "Entity", 0, "NWTarget" )
 end
 
 if SERVER then
-	function ENT:FindTarget( pos, dir, cone_ang, cone_len )
+	util.AddNetworkString( "lvs_missile_hud" )
+
+	function ENT:FindTarget( pos, forward, cone_ang, cone_len )
+		local targets = {
+			[1] = player.GetAll(),
+			[2] = LVS:GetVehicles(),
+			[3] = LVS:GetNPCs(),
+		}
+
+		local Target = NULL
+		local DistToTarget = 0
+
+		for _, tbl in ipairs( targets ) do
+			for _, ent in pairs( tbl ) do
+				if not IsValid( ent ) or Target == ent then continue end
+
+				local pos_ent = ent:GetPos()
+				local dir = (pos_ent - pos):GetNormalized()
+				local ang = math.deg( math.acos( math.Clamp( forward:Dot( dir ) ,-1,1) ) )
+
+				if ang > cone_ang then continue end
+
+				local dist, _, _ = util.DistanceToLine( pos, pos + forward * cone_len, pos_ent )
+
+				if not IsValid( Target ) then
+					Target = ent
+					DistToTarget = dist
+
+					continue
+				end
+
+				if dist < DistToTarget then
+					Target = ent
+					DistToTarget = dist
+				end
+			end
+		end
+
+		self:SetTarget( Target )
+
+		local ply = self:GetAttacker()
+
+		if not IsValid( ply ) or not ply:IsPlayer() then return end
+
+		net.Start( "lvs_missile_hud", true )
+			net.WriteEntity( self )
+		net.Send( ply )
 	end
 
 	function ENT:SetEntityFilter( filter )
@@ -27,7 +74,7 @@ if SERVER then
 			self._FilterEnts[ ent ] = true
 		end
 	end
-	function ENT:SetTarget( ent ) self._target = ent end
+	function ENT:SetTarget( ent ) self:SetNWTarget( ent ) end
 	function ENT:SetDamage( num ) self._dmg = num end
 	function ENT:SetThrust( num ) self._thrust = num end
 	function ENT:SetSpeed( num ) self._speed = num end
@@ -42,7 +89,7 @@ if SERVER then
 	function ENT:GetTurnSpeed() return (self._turnspeed or 1) * 100 end
 	function ENT:GetThrust() return (self._thrust or 500) end
 	function ENT:GetTarget()
-		if IsValid( self._target ) then
+		if IsValid( self:GetNWTarget() ) then
 			local Pos = self:GetPos()
 			local tPos = self:GetTargetPos()
 
@@ -56,14 +103,14 @@ if SERVER then
 			local LooseAng = math.min( Len / 100, 90 )
 
 			if AngToTarget > LooseAng then
-				self._target = nil
+				self:SetNWTarget( NULL )
 			end
 		end
 
-		return self._target
+		return self:GetNWTarget()
 	end
 	function ENT:GetTargetPos()
-		local Target = self._target
+		local Target = self:GetNWTarget()
 
 		if not IsValid( Target ) then return Vector(0,0,0) end
 
@@ -155,7 +202,7 @@ if SERVER then
 
 		local AngForce = -self:WorldToLocalAngles( (self:GetTargetPos() - Pos):Angle() )
 
-		local ForceAngle = (Vector(AngForce.r,-AngForce.p,-AngForce.y) * self:GetTurnSpeed() - phys:GetAngleVelocity() ) * 250 * deltatime
+		local ForceAngle = (Vector(AngForce.r,-AngForce.p,-AngForce.y) * self:GetTurnSpeed() - phys:GetAngleVelocity() * 5 ) * 250 * deltatime
 
 		return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
 	end
@@ -296,4 +343,75 @@ else
 	function ENT:OnRemove()
 		self:SoundStop()
 	end
+
+	local function DrawDiamond( X, Y, radius, angoffset )
+		angoffset = angoffset or 0
+
+		local segmentdist = 90
+		local radius2 = radius + 1
+
+		for ang = 0, 360, segmentdist do
+			local a = ang + angoffset
+			surface.DrawLine( X + math.cos( math.rad( a ) ) * radius, Y - math.sin( math.rad( a ) ) * radius, X + math.cos( math.rad( a + segmentdist ) ) * radius, Y - math.sin( math.rad( a + segmentdist ) ) * radius )
+			surface.DrawLine( X + math.cos( math.rad( a ) ) * radius2, Y - math.sin( math.rad( a ) ) * radius2, X + math.cos( math.rad( a + segmentdist ) ) * radius2, Y - math.sin( math.rad( a + segmentdist ) ) * radius2 )
+		end
+	end
+
+	local color_red = Color(255,0,0,255)
+	local HudTargets = {}
+	hook.Add( "HUDPaint", "!!!!lvs_missile_hud", function()
+		local T = CurTime()
+
+		local Index = 0
+
+		surface.SetDrawColor( 255, 0, 0, 255 )
+
+		for ID, _ in pairs( HudTargets ) do
+			local Missile = Entity( ID )
+
+			if not IsValid( Missile ) then
+				HudTargets[ ID ] = nil
+
+				continue
+			end
+
+			local Target = Missile:GetNWTarget()
+
+			if not IsValid( Target ) then
+				HudTargets[ ID ] = nil
+
+				continue
+			end
+
+			local MissilePos = Missile:GetPos():ToScreen()
+			local TargetPos = Target:LocalToWorld( Target:OBBCenter() ):ToScreen()
+
+			Index =  Index + 1
+
+			if not MissilePos.visible then continue end
+
+			DrawDiamond( MissilePos.x, MissilePos.y, 16, ID * 1337 - T * 100 )
+			draw.DrawText( Index, "LVS_FONT", MissilePos.x + 10, MissilePos.y + 10, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+
+			if not TargetPos.visible then continue end
+
+			surface.DrawLine( MissilePos.x, MissilePos.y, TargetPos.x, TargetPos.y )
+
+			DrawDiamond( TargetPos.x, TargetPos.y, 40, ID * 1337 - T * 100 )
+
+			if Target:IsPlayer() then
+				draw.DrawText( Target:GetName(), "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			else
+				draw.DrawText( Target.PrintName or Target:GetClass(), "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			end
+		end
+	end )
+
+	net.Receive( "lvs_missile_hud", function( len )
+		local ent = net.ReadEntity()
+
+		if not IsValid( ent ) then return end
+
+		HudTargets[ ent:EntIndex() ] = true
+	end )
 end
