@@ -71,17 +71,27 @@ function ENT:InitWeapons()
 	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
 	weapon.UseableByAI = false
 	weapon.Ammo = 8
-	weapon.Delay = 0
-	weapon.HeatRateUp = -0.5
-	weapon.HeatRateDown = 0.5
+	weapon.Delay = 0 -- this will turn weapon.Attack to a somewhat think function
+	weapon.HeatRateUp = -0.5 -- cool down when attack key is held. This system fires on key-release.
+	weapon.HeatRateDown = 0.25
 	weapon.Attack = function( ent )
+		local T = CurTime()
+
+		if IsValid( ent._ProtonTorpedo ) then
+			if (ent._nextMissleTracking or 0) > T then return end
+
+			ent._nextMissleTracking = T + 0.1 -- 0.1 second interval because those find functions can be expensive
+
+			ent._ProtonTorpedo:FindTarget( ent:GetPos(), ent:GetForward(), 30, 7500 )
+
+			return
+		end
+
 		local T = CurTime()
 
 		if (ent._nextMissle or 0) > T then return end
 
 		ent._nextMissle = T + 0.5
-
-		if IsValid( ent._ProtonTorpedo ) then return end
 
 		local projectile = ents.Create( "lvs_protontorpedo" )
 		projectile:SetPos( ent:LocalToWorld( Vector(147.82,0,39.52) ) )
@@ -92,7 +102,7 @@ function ENT:InitWeapons()
 		projectile:SetAttacker( ent:GetDriver() )
 		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
-		projectile:SetDamage( 250 )
+		projectile:SetDamage( 400 )
 
 		ent._ProtonTorpedo = projectile
 	end

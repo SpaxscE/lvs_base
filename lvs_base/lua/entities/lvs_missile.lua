@@ -15,6 +15,9 @@ function ENT:SetupDataTables()
 end
 
 if SERVER then
+	function ENT:FindTarget( pos, dir, cone_ang, cone_len )
+	end
+
 	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
 
