@@ -32,6 +32,7 @@ WEAPON["LMG"] = {
 		effectdata:SetOrigin( Pos )
 		effectdata:SetNormal( ent:GetForward() )
 		effectdata:SetEntity( ent )
+		effectdata:SetStart( Vector(255, 255, 255) )
 		util.Effect( "lvs_muzzle", effectdata )
 
 		local bullet = {}
@@ -85,6 +86,7 @@ WEAPON["TABLE_POINT_MG"] = {
 			effectdata:SetOrigin( Pos )
 			effectdata:SetNormal( ent:GetForward() )
 			effectdata:SetEntity( ent )
+			effectdata:SetStart( Vector(255, 255, 255) )
 			util.Effect( "lvs_muzzle", effectdata )
 
 			local bullet = {}
@@ -136,6 +138,7 @@ WEAPON["HMG"] = {
 		effectdata:SetOrigin( Pos )
 		effectdata:SetNormal( ent:GetForward() )
 		effectdata:SetEntity( ent )
+		effectdata:SetStart( Vector(255, 255, 255) )
 		util.Effect( "lvs_muzzle", effectdata )
 
 		local bullet = {}
