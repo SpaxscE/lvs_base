@@ -24,6 +24,31 @@ end
 
 function ENT:OnFrame()
 	self:EngineEffects()
+	self:AnimWings()
+end
+
+function ENT:AnimWings()
+	self._sm_wing = self._sm_wing or 1
+
+	local target_wing = self:GetFoils() and 0 or 1
+	local RFT = RealFrameTime() * (0.5 + math.abs( math.sin( self._sm_wing * math.pi ) ) * 0.5)
+	local RateUp = RFT * 2
+	local RateDown = RFT * 1.5
+
+	self._sm_wing = self._sm_wing + math.Clamp(target_wing - self._sm_wing,-RateDown,RateUp)
+
+	local DoneMoving = self._sm_wing == 1 or self._sm_wing == 0
+
+	if self._oldDoneMoving ~= DoneMoving then
+		self._oldDoneMoving = DoneMoving
+		if not DoneMoving then
+			self:EmitSound("lvs/vehicles/vwing/sfoils.wav")
+		end
+	end
+
+	self:SetPoseParameter( "wings", 1 - self._sm_wing )
+
+	self:InvalidateBoneCache()
 end
 
 function ENT:EngineEffects()
