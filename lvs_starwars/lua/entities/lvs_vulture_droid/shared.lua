@@ -49,8 +49,8 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 0.25
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
-		self.NumPrim = self.NumPrim and self.NumPrim + 1 or 1
-		if self.NumPrim > 4 then self.NumPrim = 1 end
+		ent.NumPrim = ent.NumPrim and ent.NumPrim + 1 or 1
+		if ent.NumPrim > #ent.FirePositions then ent.NumPrim = 1 end
 
 		local pod = ent:GetDriverSeat()
 
