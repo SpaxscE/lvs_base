@@ -116,6 +116,12 @@ if SERVER then
 
 		if not IsValid( Target ) then return Vector(0,0,0) end
 
+		if isfunction( Target.GetShield ) then
+			if Target:GetShield() > 0 then
+				return Target:LocalToWorld( VectorRand() * math.random( -1000, 1000 ) )
+			end
+		end
+
 		if isfunction( Target.GetMissileOffset ) then
 			return Target:LocalToWorld( Target:GetMissileOffset() )
 		end
@@ -401,10 +407,10 @@ else
 
 			DrawDiamond( TargetPos.x, TargetPos.y, 40, ID * 1337 - T * 100 )
 
-			if Target:IsPlayer() then
-				draw.DrawText( Target:GetName(), "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+			if isfunction( Target.GetShield ) and Target:GetShield() > 0 then
+				draw.DrawText("WEAK LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 			else
-				draw.DrawText( Target.PrintName or Target:GetClass(), "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+				draw.DrawText(" FULL LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 			end
 		end
 	end )
