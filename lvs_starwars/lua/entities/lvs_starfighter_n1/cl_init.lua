@@ -17,7 +17,6 @@ function ENT:PostDrawTranslucent()
 	if not self:GetEngineActive() then return end
 
 	local Size = 80 + self:GetThrottle() * 120 + self:GetBoost()
-	local Mirror = false
 
 	render.SetMaterial( self.EngineGlow )
 
@@ -102,9 +101,9 @@ function ENT:AnimCockpit()
 end
 
 function ENT:OnStartBoost()
-	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/boost.wav" )
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/boost.wav", 85 )
 end
 
 function ENT:OnStopBoost()
-	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/brake.wav" )
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/brake.wav", 85 )
 end
