@@ -135,6 +135,8 @@ if SERVER then
 
 		CurWeapon.Overheated = overheat
 
+		if self:GetHeat() == 0 then return end
+
 		if CurWeapon.OnOverheat then
 			CurWeapon.OnOverheat( self )
 		end
@@ -145,11 +147,13 @@ if SERVER then
 
 		if not CurWeapon then return end
 
+		heat = math.Clamp( heat, 0, 1 )
+
 		CurWeapon._CurHeat = heat
 
-		if self:GetNWHeat() == CurWeapon._CurHeat then return end
+		if self:GetNWHeat() == heat then return end
 
-		self:SetNWHeat( CurWeapon._CurHeat )
+		self:SetNWHeat( heat )
 	end
 
 	function ENT:CanAttack()
@@ -232,13 +236,13 @@ if SERVER then
 			local ShootDelay = (CurWeapon.Delay or 0)
 
 			self:SetNextAttack( CurTime() + ShootDelay )
-			self:SetHeat( math.min( CurHeat + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1) )
+			self:SetHeat( CurHeat + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT) )
 
 			if CurWeapon.Attack then
 				CurWeapon.Attack( self )
 			end
 		else
-			self:SetHeat( CurHeat - math.min( CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) )
+			self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
 	end
 
