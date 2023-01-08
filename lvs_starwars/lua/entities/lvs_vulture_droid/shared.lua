@@ -84,6 +84,13 @@ function ENT:InitWeapons()
 		end
 		ent:LVSFireBullet( bullet )
 
+		local effectdata = EffectData()
+		effectdata:SetStart( Vector(255,50,50) )
+		effectdata:SetOrigin( bullet.Src )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle", effectdata )
+
 		ent:TakeAmmo()
 
 		ent.PrimarySND:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
@@ -119,6 +126,14 @@ function ENT:InitWeapons()
 
 		for i = -1,1,2 do
 			bullet.Src 	= ent:LocalToWorld( Vector(30,15.2 * i,6.5) )
+
+			local effectdata = EffectData()
+			effectdata:SetStart( Vector(255,50,50) )
+			effectdata:SetOrigin( bullet.Src )
+			effectdata:SetNormal( ent:GetForward() )
+			effectdata:SetEntity( ent )
+			util.Effect( "lvs_muzzle", effectdata )
+
 			ent:LVSFireBullet( bullet )
 		end
 
@@ -160,7 +175,7 @@ function ENT:InitWeapons()
 
 		local Pos = Vector( 56.82, (ent._swapMissile and -105.6 or 105.6), 0 )
 
-		local projectile = ents.Create( "lvs_protontorpedo" )
+		local projectile = ents.Create( "lvs_concussionmissile" )
 		projectile:SetPos( ent:LocalToWorld( Pos ) )
 		projectile:SetAngles( ent:GetAngles() )
 		projectile:SetParent( ent )

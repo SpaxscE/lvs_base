@@ -1,19 +1,19 @@
 AddCSLuaFile()
 
-ENT.Base = "lvs_missile"
+ENT.Base = "lvs_protontorpedo"
 
 ENT.Type            = "anim"
 
-ENT.PrintName = "Proton Torpedo"
+ENT.PrintName = "Concussion Missile"
 ENT.Author = "Luna"
-ENT.Information = "geht ab wie'n zäpfchen"
+ENT.Information = "sprengt dir ein zweites arschloch"
 ENT.Category = "[LVS]"
 
 ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
-ENT.ExplosionEffect = "lvs_proton_explosion"
-ENT.GlowColor = Color( 0, 127, 255, 255 )
+ENT.ExplosionEffect = "lvs_concussion_explosion"
+ENT.GlowColor = Color( 255, 40, 100, 255 )
 
 if SERVER then
 	function ENT:GetDamage() return
@@ -41,7 +41,7 @@ function ENT:Enable()
 	local effectdata = EffectData()
 		effectdata:SetOrigin( self:GetPos() )
 		effectdata:SetEntity( self )
-	util.Effect( "lvs_proton_trail", effectdata )
+	util.Effect( "lvs_concussion_trail", effectdata )
 end
 
 function ENT:Draw()
