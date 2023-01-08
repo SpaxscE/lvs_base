@@ -12,9 +12,20 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
+ENT.ExplosionEffect = "lvs_proton_explosion"
 ENT.GlowColor = Color( 0, 127, 255, 255 )
 
-if SERVER then return end
+if SERVER then
+	function ENT:GetDamage() return
+		(self._dmg or 400)
+	end
+
+	function ENT:GetRadius() 
+		return (self._radius or 100)
+	end
+
+	return
+end
 
 ENT.GlowMat = Material( "sprites/light_glow02_add" )
 

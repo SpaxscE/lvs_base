@@ -28,8 +28,10 @@ function EFFECT:Init( data )
 	local dir = data:GetNormal()
 	local scale = data:GetMagnitude()
 
-	sound.Play( "physics/flesh/flesh_strider_impact_bullet"..math.random(1,3)..".wav", pos, 85, math.random(180,200), 0.75 )
+	sound.Play( "physics/flesh/flesh_strider_impact_bullet"..math.random(1,3)..".wav", pos, 85, math.random(180,200) + 55 * math.max(1 - scale,0), 0.75 )
 	sound.Play( "ambient/materials/rock"..math.random(1,5)..".wav", pos, 75, 180, 1 )
+
+	if scale < 0.5 then return end -- normal impact effect just fine at smaller scale
 
 	local emitter = ParticleEmitter( pos, false )
 

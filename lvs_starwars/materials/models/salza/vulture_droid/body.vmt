@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/vulture_droid/body"
+	"$bumpmap" "models/salza/vulture_droid/body_nm"
+	
+	$envmap "env_cubemap"	
+	$envmaptint "[.01 .01 .01]"
+
+	$phong 			1
+	$phongexponent 		80
+	$phongboost	 	2
+	$phongfresnelranges	"[0.1 0.1 0.1]"
+}

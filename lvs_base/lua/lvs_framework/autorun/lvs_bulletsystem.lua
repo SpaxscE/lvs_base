@@ -139,7 +139,7 @@ local function HandleBullets()
 				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
 
 				if bullet.Callback then
-					bullet.Callback( bullet.Attacker, trace, dmginfo )
+					bullet.Callback( bullet.Attacker, traceImpact, dmginfo )
 				end
 
 				trace.Entity:TakeDamageInfo( dmginfo )

@@ -30,7 +30,7 @@ ENT.MaxShield = 100
 
 function ENT:InitWeapons()
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/laser.png")
+	weapon.Icon = Material("lvs/weapons/dual_mg.png")
 	weapon.Ammo = 400
 	weapon.Delay = 0.15
 	weapon.HeatRateUp = 0.5
@@ -102,7 +102,6 @@ function ENT:InitWeapons()
 		projectile:SetAttacker( ent:GetDriver() )
 		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
-		projectile:SetDamage( 400 )
 
 		ent._ProtonTorpedo = projectile
 

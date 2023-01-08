@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/blu/vwing/rep_fly_vwing"
+
+	"$detail" "models/blu/laat/details/detail_metal"
+	"$detailscale"		"13"
+	"$detailblendfactor"		"0.75"	
+
+	"$halflambert" "1"
+}

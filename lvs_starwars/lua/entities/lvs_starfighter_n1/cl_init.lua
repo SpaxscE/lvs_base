@@ -102,9 +102,9 @@ function ENT:AnimCockpit()
 end
 
 function ENT:OnStartBoost()
-	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/boost.wav", 125 )
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/boost.wav" )
 end
 
 function ENT:OnStopBoost()
-	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/brake.wav", 125 )
+	self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/brake.wav" )
 end

@@ -1,27 +1,9 @@
 
-local Materials = {
-	"particle/smokesprites_0001",
-	"particle/smokesprites_0002",
-	"particle/smokesprites_0003",
-	"particle/smokesprites_0004",
-	"particle/smokesprites_0005",
-	"particle/smokesprites_0006",
-	"particle/smokesprites_0007",
-	"particle/smokesprites_0008",
-	"particle/smokesprites_0009",
-	"particle/smokesprites_0010",
-	"particle/smokesprites_0011",
-	"particle/smokesprites_0012",
-	"particle/smokesprites_0013",
-	"particle/smokesprites_0014",
-	"particle/smokesprites_0015",
-	"particle/smokesprites_0016"
-}
-
 function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Dir = data:GetNormal()
 	local Ent = data:GetEntity()
+	local Col = data:GetStart() or Vector(255,255,255)
 	local Vel = Dir * 10
 
 	if IsValid( Ent ) then
@@ -42,7 +24,7 @@ function EFFECT:Init( data )
 		particle:SetStartSize( math.max( math.random(10,24) - i * 0.5,0.1 ) * Size )
 		particle:SetEndSize( 0 )
 		particle:SetRoll( math.Rand( -1, 1 ) )
-		particle:SetColor( 255,255,255 )
+		particle:SetColor( Col.x, Col.y, Col.z )
 		particle:SetCollide( false )
 	end
 
