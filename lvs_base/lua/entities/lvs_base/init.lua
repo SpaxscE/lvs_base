@@ -25,7 +25,7 @@ function ENT:SpawnFunction( ply, tr, ClassName )
 	if ply:InVehicle() then
 		local ent = ents.Create( ClassName )
 		ent:StoreCPPI( ply )
-		ent:SetPos( ply:GetPos() + Vector(0,0,100) )
+		ent:SetPos( ply:GetPos() + Vector(0,0,100 + ent.SpawnNormalOffset) )
 		ent:SetAngles( Angle(0, ply:EyeAngles().y, 0 ) )
 		ent:Spawn()
 		ent:Activate()

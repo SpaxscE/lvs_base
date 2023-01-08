@@ -142,7 +142,7 @@ if SERVER then
 					local spawnedvehicle = ents.Create( Type )
 					
 					if IsValid( spawnedvehicle ) then
-						spawnedvehicle:SetPos( pos )
+						spawnedvehicle:SetPos( pos + Vector(0,0,spawnedvehicle.SpawnNormalOffset or 0) )
 						spawnedvehicle:SetAngles( ang )
 						spawnedvehicle:Spawn()
 						spawnedvehicle:Activate()

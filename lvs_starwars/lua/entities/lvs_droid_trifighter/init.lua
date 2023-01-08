@@ -2,7 +2,7 @@ AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
 
-ENT.SpawnNormalOffset = 25
+ENT.SpawnNormalOffset = 80
 
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 1000 )
