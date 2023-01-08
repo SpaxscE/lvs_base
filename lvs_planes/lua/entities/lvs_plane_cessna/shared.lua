@@ -14,7 +14,7 @@ ENT.MDL = "models/blu/cessna.mdl"
 ENT.AITEAM = 0
 
 ENT.MaxVelocity = 1800
-ENT.MaxPerfVelocity = 1500
+ENT.MaxPerfVelocity = 900
 ENT.MaxThrust = 700
 
 ENT.TurnRatePitch = 1.25

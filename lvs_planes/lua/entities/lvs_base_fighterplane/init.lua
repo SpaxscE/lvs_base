@@ -38,8 +38,8 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	local AngVel = self:GetPhysicsObject():GetAngleVelocity()
 
-	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 ) + math.Clamp(AngVel.y / 100,-0.25,0.25) / math.abs( LocalAngPitch )
-	local Yaw = math.Clamp( -LocalAngYaw / 4,-1,1) * RudderFadeOut + math.Clamp(AngVel.z / 100,-0.25,0.25) / math.abs( LocalAngYaw )
+	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
+	local Yaw = math.Clamp( -LocalAngYaw / 4,-1,1) * RudderFadeOut
 	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8,-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
 
 	if FreeMovement then
@@ -118,7 +118,7 @@ function ENT:CalcAero( phys, deltatime )
 	local Roll = math.Clamp(Steer.x * 1.5,-1,1) * self.TurnRateRoll * 12 * Stability
 
 	self:HandleLandingGear( deltatime )
-	self:SetWheelSteer( Steer.z * 45 )
+	self:SetWheelSteer( Steer.z * self.WheelSteerAngle )
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
