@@ -75,7 +75,7 @@ if SERVER then
 		end
 	end
 
-	function ENT:WeaponsFinish( CallRemove )
+	function ENT:WeaponsFinish()
 		if not self._activeWeapon then return end
 
 		local CurWeapon = self.WEAPONS[ self._activeWeapon ]
@@ -116,6 +116,28 @@ if SERVER then
 		if not CurWeapon then return 0 end
 
 		return (CurWeapon._CurHeat or 0)
+	end
+
+	function ENT:GetOverheated()
+		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return false end
+
+		return CurWeapon.Overheated == true
+	end
+
+	function ENT:SetOverheated( overheat )
+		if self:GetOverheated() == overheat then return end
+
+		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return end
+
+		CurWeapon.Overheated = overheat
+
+		if CurWeapon.OnOverheat then
+			CurWeapon.OnOverheat( self )
+		end
 	end
 
 	function ENT:SetHeat( heat )
@@ -163,26 +185,25 @@ if SERVER then
 
 			if IsActive then continue end
 
+			-- cool all inactive weapons down
 			Weapon._CurHeat = Weapon._CurHeat and Weapon._CurHeat - math.min( Weapon._CurHeat, (Weapon.HeatRateDown or 0.25) * FT ) or 0
 		end
 
 		if not CurWeapon then return end
 
 		local ShouldFire = self:WeaponsShouldFire()
+		local CurHeat = self:GetHeat()
 
-		if CurWeapon.Overheated then
-			if CurWeapon._CurHeat <= 0 then
-				CurWeapon.Overheated = false
+		if self:GetOverheated() then
+			if CurHeat <= 0 then
+				self:SetOverheated( false )
 			else
 				ShouldFire = false
 			end
 		else
-			if (CurWeapon._CurHeat or 0) >= 1 then
-				CurWeapon.Overheated = true
+			if CurHeat >= 1 then
+				self:SetOverheated( true )
 				ShouldFire = false
-				if CurWeapon.OnOverheat then
-					CurWeapon.OnOverheat( self )
-				end
 			end
 		end
 
@@ -211,11 +232,12 @@ if SERVER then
 			local ShootDelay = (CurWeapon.Delay or 0)
 
 			self:SetNextAttack( CurTime() + ShootDelay )
-			self:SetHeat( math.min( self:GetHeat() + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1) )
+			self:SetHeat( math.min( CurHeat + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1) )
 
-			CurWeapon.Attack( self )
+			if CurWeapon.Attack then
+				CurWeapon.Attack( self )
+			end
 		else
-			local CurHeat = self:GetHeat()
 			self:SetHeat( CurHeat - math.min( CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
 	end
