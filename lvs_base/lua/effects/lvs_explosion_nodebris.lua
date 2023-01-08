@@ -46,7 +46,7 @@ end
 function EFFECT:Explosion( pos , scale )
 	local emitter = ParticleEmitter( pos, false )
 
-	if not emitter then return end
+	if not IsValid( emitter ) then return end
 
 	for i = 0,10 do
 		local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )

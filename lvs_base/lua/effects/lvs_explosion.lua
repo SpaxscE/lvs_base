@@ -49,7 +49,9 @@ end
 
 function EFFECT:Debris( pos )
 	local emitter = ParticleEmitter( pos, false )
-	
+
+	if not IsValid( emitter ) then return end
+
 	for i = 0,60 do
 		local particle = emitter:Add( "effects/fleck_tile"..math.random(1,2), pos )
 		local vel = VectorRand() * math.Rand(200,600)
@@ -75,42 +77,42 @@ end
 function EFFECT:Explosion( pos , scale )
 	local emitter = ParticleEmitter( pos, false )
 	
-	if emitter then
-		for i = 0,10 do
-			local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
+	if not IsValid( emitter ) then return end
 
-			if particle then
-				particle:SetVelocity( VectorRand() * 1500 * scale )
-				particle:SetDieTime( math.Rand(0.75,1.5) * scale )
-				particle:SetAirResistance( math.Rand(200,600) ) 
-				particle:SetStartAlpha( 255 )
-				particle:SetStartSize( math.Rand(60,120) * scale )
-				particle:SetEndSize( math.Rand(220,320) * scale )
-				particle:SetRoll( math.Rand(-1,1) )
-				particle:SetColor( 40,40,40 )
-				particle:SetGravity( Vector( 0, 0, 100 ) )
-				particle:SetCollide( false )
-			end
+	for i = 0,10 do
+		local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
+
+		if particle then
+			particle:SetVelocity( VectorRand() * 1500 * scale )
+			particle:SetDieTime( math.Rand(0.75,1.5) * scale )
+			particle:SetAirResistance( math.Rand(200,600) ) 
+			particle:SetStartAlpha( 255 )
+			particle:SetStartSize( math.Rand(60,120) * scale )
+			particle:SetEndSize( math.Rand(220,320) * scale )
+			particle:SetRoll( math.Rand(-1,1) )
+			particle:SetColor( 40,40,40 )
+			particle:SetGravity( Vector( 0, 0, 100 ) )
+			particle:SetCollide( false )
 		end
-
-		for i = 0, 40 do
-			local particle = emitter:Add( "particles/flamelet"..math.random(1,5), pos )
-
-			if particle then
-				particle:SetVelocity( VectorRand() * 1500 * scale )
-				particle:SetDieTime( 0.2 )
-				particle:SetStartAlpha( 255 )
-				particle:SetStartSize( 20 * scale )
-				particle:SetEndSize( math.Rand(180,240) * scale )
-				particle:SetEndAlpha( 100 )
-				particle:SetRoll( math.Rand( -1, 1 ) )
-				particle:SetColor( 200,150,150 )
-				particle:SetCollide( false )
-			end
-		end
-
-		emitter:Finish()
 	end
+
+	for i = 0, 40 do
+		local particle = emitter:Add( "particles/flamelet"..math.random(1,5), pos )
+
+		if particle then
+			particle:SetVelocity( VectorRand() * 1500 * scale )
+			particle:SetDieTime( 0.2 )
+			particle:SetStartAlpha( 255 )
+			particle:SetStartSize( 20 * scale )
+			particle:SetEndSize( math.Rand(180,240) * scale )
+			particle:SetEndAlpha( 100 )
+			particle:SetRoll( math.Rand( -1, 1 ) )
+			particle:SetColor( 200,150,150 )
+			particle:SetCollide( false )
+		end
+	end
+
+	emitter:Finish()
 
 	local dlight = DynamicLight( math.random(0,9999) )
 	if dlight then
