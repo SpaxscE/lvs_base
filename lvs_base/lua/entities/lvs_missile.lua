@@ -10,6 +10,8 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
+ENT.ExplosionEffect = "lvs_explosion_small"
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
 	self:NetworkVar( "Entity", 0, "NWTarget" )
@@ -258,7 +260,7 @@ if SERVER then
 
 		local effectdata = EffectData()
 			effectdata:SetOrigin( Pos )
-		util.Effect( "lvs_explosion_small", effectdata )
+		util.Effect( self.ExplosionEffect, effectdata )
 
 		if IsValid( target ) and not target:IsNPC() then
 			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
