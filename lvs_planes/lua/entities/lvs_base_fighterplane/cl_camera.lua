@@ -17,8 +17,16 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 
 	if not pod:GetThirdPersonMode() then
 
+		local freeOffset, lockOffset =
+		self.ViewFreeOffset and self:LocalToWorld(self.ViewFreeOffset) or pos,
+		self.ViewLockOffset and self:LocalToWorld(self.ViewLockOffset) or pos
+
+		local newPos = lockOffset
+
 		if FreeLook then
 			view.angles = pod:LocalToWorldAngles( ply:EyeAngles() )
+
+			newPos = freeOffset
 		end
 
 		local velL = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
@@ -32,10 +40,12 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 			ViewPunch = Vector(0,0,0)
 		end
 
-		pod._lerpPosOffset = pod._lerpPosOffset and pod._lerpPosOffset + (ViewPunch - pod._lerpPosOffset) * RealFrameTime() * 5 or Vector(0,0,0)
-		pod._lerpPos = pos
+		view.origin = LerpVector(self._lvsSmoothFreeLook, freeOffset, lockOffset)
 
-		view.origin = pos + pod:GetForward() *  -pod._lerpPosOffset.y * 0.5 + pod:GetUp() *  pod._lerpPosOffset.z * 0.5
+		pod._lerpPosOffset = pod._lerpPosOffset and pod._lerpPosOffset + (ViewPunch - pod._lerpPosOffset) * RealFrameTime() * 5 or Vector(0,0,0)
+		pod._lerpPos = newPos
+
+		view.origin = newPos + pod:GetForward() *  -pod._lerpPosOffset.y * 0.5 + pod:GetUp() *  pod._lerpPosOffset.z * 0.5
 		view.angles.p = view.angles.p - pod._lerpPosOffset.z * 0.1
 		view.angles.y = view.angles.y + pod._lerpPosOffset.y * 0.1
 		view.drawviewer = false
