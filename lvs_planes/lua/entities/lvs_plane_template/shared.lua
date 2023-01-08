@@ -57,6 +57,10 @@ ENT.MaxSlipAngleYaw = 10 -- same for yaw
 
 ENT.MaxHealth = 1000
 
+-- View offsets relative to model origin, nil won't override, a Vector() will
+ENT.ViewLockOffset = nil -- Overrides the normal inside view position
+ENT.ViewFreeOffset = nil -- Overrides the freelook inside view position
+
 function ENT:OnSetupDataTables() -- use this to add networkvariables instead of ENT:SetupDataTables().
 	--self:AddDT(  string_type, string_name, table_extended ) -- self:AddDT() works the same as self:NetworkVar() except AddDT doesnt take a slot variable as it automatically handles slots internally.
 

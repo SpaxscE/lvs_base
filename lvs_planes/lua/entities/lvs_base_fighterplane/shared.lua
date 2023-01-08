@@ -28,6 +28,9 @@ ENT.ForceAngleDampingMultiplier = 1
 ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
+ENT.ViewLockOffset = nil
+ENT.ViewFreeOffset = nil
+
 function ENT:SetupDataTables()
 	self:CreateBaseDT()
 

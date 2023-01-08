@@ -101,6 +101,11 @@ function ENT:CalcViewMouseAim( ply, pos, angles, fov, pod )
 
 	if not pod:GetThirdPersonMode() then
 
+		local freeOffset, lockOffset =
+		self.ViewFreeOffset and self:LocalToWorld(self.ViewFreeOffset) or view.origin,
+		self.ViewLockOffset and self:LocalToWorld(self.ViewLockOffset) or view.origin
+
+		view.origin = LerpVector(self._lvsSmoothFreeLook, freeOffset, lockOffset)
 		view.drawviewer = false
 
 		return view
