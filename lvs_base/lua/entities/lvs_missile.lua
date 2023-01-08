@@ -272,7 +272,9 @@ if SERVER then
 			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
 		end
 
-		util.BlastDamage( self, self:GetAttacker(), Pos, self:GetRadius(), self:GetDamage() )
+		local attacker = self:GetAttacker()
+
+		util.BlastDamage( self, IsValid( attacker ) and attacker or game.GetWorld(), Pos, self:GetRadius(), self:GetDamage() )
 
 		SafeRemoveEntityDelayed( self, FrameTime() )
 	end

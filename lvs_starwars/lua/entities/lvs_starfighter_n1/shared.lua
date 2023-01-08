@@ -77,7 +77,6 @@ function ENT:InitWeapons()
 
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
-	weapon.UseableByAI = false
 	weapon.Ammo = 8
 	weapon.Delay = 0 -- this will turn weapon.Attack to a somewhat think function
 	weapon.HeatRateUp = -0.5 -- cool down when attack key is held. This system fires on key-release.
@@ -101,13 +100,15 @@ function ENT:InitWeapons()
 
 		ent._nextMissle = T + 0.5
 
+		local Driver = ent:GetDriver()
+
 		local projectile = ents.Create( "lvs_protontorpedo" )
 		projectile:SetPos( ent:LocalToWorld( Vector(147.82,0,39.52) ) )
 		projectile:SetAngles( ent:GetAngles() )
 		projectile:SetParent( ent )
 		projectile:Spawn()
 		projectile:Activate()
-		projectile:SetAttacker( ent:GetDriver() )
+		projectile:SetAttacker( IsValid( Driver ) and Driver or self )
 		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
 
