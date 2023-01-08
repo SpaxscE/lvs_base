@@ -110,6 +110,26 @@ if SERVER then
 		self:SetNWAmmo( CurWeapon._CurAmmo )
 	end
 
+	function ENT:GetHeat()
+		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return 0 end
+
+		return (CurWeapon._CurHeat or 0)
+	end
+
+	function ENT:SetHeat( heat )
+		local CurWeapon = self:GetActiveWeapon()
+
+		if not CurWeapon then return end
+
+		CurWeapon._CurHeat = heat
+
+		if self:GetNWHeat() == CurWeapon._CurHeat then return end
+
+		self:SetNWHeat( CurWeapon._CurHeat )
+	end
+
 	function ENT:CanAttack()
 		local CurWeapon = self:GetActiveWeapon()
 
@@ -191,17 +211,12 @@ if SERVER then
 			local ShootDelay = (CurWeapon.Delay or 0)
 
 			self:SetNextAttack( CurTime() + ShootDelay )
-
-			CurWeapon._CurHeat = math.min( (CurWeapon._CurHeat or 0) + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1)
-			self:SetNWHeat( CurWeapon._CurHeat )
+			self:SetHeat( math.min( self:GetHeat() + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT), 1) )
 
 			CurWeapon.Attack( self )
 		else
-			CurWeapon._CurHeat = CurWeapon._CurHeat and CurWeapon._CurHeat - math.min( CurWeapon._CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) or 0
-
-			if self:GetNWHeat() == CurWeapon._CurHeat then return end
-
-			self:SetNWHeat( CurWeapon._CurHeat )
+			local CurHeat = self:GetHeat()
+			self:SetHeat( CurHeat - math.min( CurHeat, (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
 	end
 
