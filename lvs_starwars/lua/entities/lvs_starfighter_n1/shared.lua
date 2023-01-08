@@ -71,37 +71,51 @@ function ENT:InitWeapons()
 	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
 	weapon.UseableByAI = false
 	weapon.Ammo = 8
-	weapon.Delay = 1
-	weapon.HeatRateUp = 0
-	weapon.HeatRateDown = 1
-	weapon.Attack = function( ent ) end
-	weapon.StartAttack = function( ent ) end
-	weapon.FinishAttack = function( ent )
+	weapon.Delay = 0
+	weapon.HeatRateUp = -0.5
+	weapon.HeatRateDown = 0.5
+	weapon.Attack = function( ent )
 		local T = CurTime()
 
 		if (ent._nextMissle or 0) > T then return end
 
-		ent._nextMissle = T + 1
+		ent._nextMissle = T + 0.5
+
+		if IsValid( ent._ProtonTorpedo ) then return end
 
 		local projectile = ents.Create( "lvs_protontorpedo" )
 		projectile:SetPos( ent:LocalToWorld( Vector(147.82,0,39.52) ) )
 		projectile:SetAngles( ent:GetAngles() )
+		projectile:SetParent( ent )
 		projectile:Spawn()
 		projectile:Activate()
 		projectile:SetAttacker( ent:GetDriver() )
 		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
 		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
 		projectile:SetDamage( 250 )
+
+		ent._ProtonTorpedo = projectile
+	end
+	weapon.FinishAttack = function( ent )
+		if not IsValid( ent._ProtonTorpedo ) then return end
+
+		local projectile = ent._ProtonTorpedo
+
 		projectile:Enable()
 		projectile:EmitSound( "lvs/vehicles/naboo_n1_starfighter/proton_fire.mp3", 125 )
-
 		ent:TakeAmmo()
+
+		ent._ProtonTorpedo = nil
+
+		local NewHeat = ent:GetHeat() + 0.75
+
+		ent:SetHeat( NewHeat )
+		if NewHeat >= 1 then
+			ent:SetOverheated( true )
+		end
 	end
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
-	weapon.OnDeselect = function( ent ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) end
-	weapon.OnRemove = function( ent ) end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
 end
 

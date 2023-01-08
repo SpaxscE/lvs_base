@@ -10,8 +10,12 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
+function ENT:SetupDataTables()
+	self:NetworkVar( "Bool", 0, "Active" )
+end
+
 if SERVER then
-function ENT:SetEntityFilter( filter )
+	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
 
 		self._FilterEnts = {}
@@ -82,16 +86,25 @@ function ENT:SetEntityFilter( filter )
 
 	function ENT:Initialize()	
 		self:SetModel( "models/weapons/w_missile_launch.mdl" )
-		self:PhysicsInit( SOLID_VPHYSICS )
-		self:SetMoveType( MOVETYPE_VPHYSICS )
-		self:SetSolid( SOLID_VPHYSICS )
+		self:SetMoveType( MOVETYPE_NONE )
 		self:SetRenderMode( RENDERMODE_TRANSALPHA )
-		self:PhysWake()
-		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 	end
 
 	function ENT:Enable()
 		if self.IsEnabled then return end
+
+		local Parent = self:GetParent()
+
+		if IsValid( Parent ) then
+			self:SetOwner( Parent )
+			self:SetParent( NULL )
+		end
+
+		self:PhysicsInit( SOLID_VPHYSICS )
+		self:SetMoveType( MOVETYPE_VPHYSICS )
+		self:SetSolid( SOLID_VPHYSICS )
+		self:SetCollisionGroup( COLLISION_GROUP_NONE )
+		self:PhysWake()
 
 		self.IsEnabled = true
 
@@ -117,6 +130,8 @@ function ENT:SetEntityFilter( filter )
 		self:PhysWake()
 
 		self.SpawnTime = CurTime()
+
+		self:SetActive( true )
 	end
 
 	function ENT:PhysicsSimulate( phys, deltatime )
@@ -205,6 +220,13 @@ function ENT:SetEntityFilter( filter )
 	end
 else
 	function ENT:Initialize()	
+	end
+
+	function ENT:Enable()
+		if self.IsEnabled then return end
+
+		self.IsEnabled = true
+
 		self.snd = CreateSound(self, "weapons/rpg/rocket1.wav")
 		self.snd:SetSoundLevel( 80 )
 		self.snd:Play()
@@ -245,12 +267,20 @@ else
 	end
 
 	function ENT:Draw()
+		if not self:GetActive() then return end
+
 		self:DrawModel()
 	end
 
 	function ENT:Think()
 		if self.snd then
 			self.snd:ChangePitch( 100 * self:CalcDoppler() )
+		end
+
+		if self.IsEnabled then return end
+
+		if self:GetActive() then
+			self:Enable()
 		end
 	end
 

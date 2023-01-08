@@ -18,7 +18,11 @@ if SERVER then return end
 
 ENT.GlowMat = Material( "sprites/light_glow02_add" )
 
-function ENT:Initialize()	
+function ENT:Enable()	
+	if self.IsEnabled then return end
+
+	self.IsEnabled = true
+
 	self.snd = CreateSound(self, "npc/combine_gunship/gunship_crashing1.wav")
 	self.snd:SetSoundLevel( 80 )
 	self.snd:Play()
@@ -30,6 +34,8 @@ function ENT:Initialize()
 end
 
 function ENT:Draw()
+	if not self:GetActive() then return end
+
 	self:DrawModel()
 
 	render.SetMaterial( self.GlowMat )
