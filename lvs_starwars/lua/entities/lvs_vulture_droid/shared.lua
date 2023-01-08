@@ -49,8 +49,8 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 0.25
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
-		self.NumPrim = self.NumPrim and self.NumPrim + 1 or 1
-		if self.NumPrim > 4 then self.NumPrim = 1 end
+		ent.NumPrim = ent.NumPrim and ent.NumPrim + 1 or 1
+		if ent.NumPrim > #ent.FirePositions then ent.NumPrim = 1 end
 
 		local pod = ent:GetDriverSeat()
 
@@ -83,6 +83,13 @@ function ENT:InitWeapons()
 			util.Effect( "lvs_laser_impact", effectdata )
 		end
 		ent:LVSFireBullet( bullet )
+
+		local effectdata = EffectData()
+		effectdata:SetStart( Vector(255,50,50) )
+		effectdata:SetOrigin( bullet.Src )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle", effectdata )
 
 		ent:TakeAmmo()
 
@@ -119,6 +126,14 @@ function ENT:InitWeapons()
 
 		for i = -1,1,2 do
 			bullet.Src 	= ent:LocalToWorld( Vector(30,15.2 * i,6.5) )
+
+			local effectdata = EffectData()
+			effectdata:SetStart( Vector(255,50,50) )
+			effectdata:SetOrigin( bullet.Src )
+			effectdata:SetNormal( ent:GetForward() )
+			effectdata:SetEntity( ent )
+			util.Effect( "lvs_muzzle", effectdata )
+
 			ent:LVSFireBullet( bullet )
 		end
 
@@ -160,7 +175,7 @@ function ENT:InitWeapons()
 
 		local Pos = Vector( 56.82, (ent._swapMissile and -105.6 or 105.6), 0 )
 
-		local projectile = ents.Create( "lvs_protontorpedo" )
+		local projectile = ents.Create( "lvs_concussionmissile" )
 		projectile:SetPos( ent:LocalToWorld( Pos ) )
 		projectile:SetAngles( ent:GetAngles() )
 		projectile:SetParent( ent )

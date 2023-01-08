@@ -55,6 +55,14 @@ function ENT:InitWeapons()
 
 		for i = -1,1,2 do
 			bullet.Src 	= ent:LocalToWorld( Vector(118.24,18.04 * i,49.96) )
+
+			local effectdata = EffectData()
+			effectdata:SetStart( Vector(50,255,50) )
+			effectdata:SetOrigin( bullet.Src )
+			effectdata:SetNormal( ent:GetForward() )
+			effectdata:SetEntity( ent )
+			util.Effect( "lvs_muzzle", effectdata )
+
 			ent:LVSFireBullet( bullet )
 		end
 
