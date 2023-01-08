@@ -75,9 +75,9 @@ function ENT:EngineEffects()
 end
 
 function ENT:OnStartBoost()
-	self:EmitSound( "lvs/vehicles/vulturedroid/boost.wav" )
+	self:EmitSound( "lvs/vehicles/vulturedroid/boost.wav", 85 )
 end
 
 function ENT:OnStopBoost()
-	self:EmitSound( "lvs/vehicles/vulturedroid/brake.wav" )
+	self:EmitSound( "lvs/vehicles/vulturedroid/brake.wav", 85 )
 end
