@@ -398,14 +398,7 @@ else
 
 			Index =  Index + 1
 
-			if not MissilePos.visible then continue end
-
-			DrawDiamond( MissilePos.x, MissilePos.y, 16, ID * 1337 - T * 100 )
-			draw.DrawText( Index, "LVS_FONT", MissilePos.x + 10, MissilePos.y + 10, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
 			if not TargetPos.visible then continue end
-
-			surface.DrawLine( MissilePos.x, MissilePos.y, TargetPos.x, TargetPos.y )
 
 			DrawDiamond( TargetPos.x, TargetPos.y, 40, ID * 1337 - T * 100 )
 
@@ -414,6 +407,13 @@ else
 			else
 				draw.DrawText(" FULL LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 			end
+
+			if not MissilePos.visible then continue end
+
+			DrawDiamond( MissilePos.x, MissilePos.y, 16, ID * 1337 - T * 100 )
+			draw.DrawText( Index, "LVS_FONT", MissilePos.x + 10, MissilePos.y + 10, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		
+			surface.DrawLine( MissilePos.x, MissilePos.y, TargetPos.x, TargetPos.y )
 		end
 	end )
 
