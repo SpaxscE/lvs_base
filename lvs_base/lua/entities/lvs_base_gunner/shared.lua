@@ -5,8 +5,9 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.Spawnable			= true
-ENT.AdminSpawnable		= false
+ENT.Spawnable       = false
+ENT.AdminSpawnable  = false
+ENT.DoNotDuplicate = true
 
 ENT.LVS_GUNNER = true
 
