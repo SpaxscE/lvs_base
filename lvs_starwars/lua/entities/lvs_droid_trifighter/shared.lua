@@ -162,6 +162,6 @@ ENT.EngineSounds = {
 		UseDoppler = true,
 		VolumeMin = 0,
 		VolumeMax = 1,
-		SoundLevel = 125,
+		SoundLevel = 100,
 	},
 }

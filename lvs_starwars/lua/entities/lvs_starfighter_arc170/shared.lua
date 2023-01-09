@@ -38,6 +38,10 @@ ENT.MaxShield = 100
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "Foils" )
+
+	if SERVER then
+		self:NetworkVarNotify( "Foils", self.OnFoilsChanged )
+	end
 end
 
 function ENT:InitWeapons()

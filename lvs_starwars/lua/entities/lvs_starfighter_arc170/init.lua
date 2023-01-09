@@ -20,6 +20,8 @@ function ENT:OnSpawn( PObj )
 
 	self.SNDRight = self:AddSoundEmitter( Vector(207.65,-303.52,-48.35), "lvs/vehicles/arc170/fire.mp3", "lvs/vehicles/arc170/fire.mp3" )
 	self.SNDRight:SetSoundLevel( 110 )
+
+	self:SetMaxThrottle( 1.2 )
 end
 
 function ENT:OnEngineActiveChanged( Active )
@@ -44,6 +46,16 @@ function ENT:OnVehicleSpecificToggled( new )
 
 	if cur ~= new then
 		self:SetFoils( new )
+	end
+end
+
+function ENT:OnFoilsChanged( name, old, new)
+	if new == old then return end
+
+	if new == true then
+		self:SetMaxThrottle( 1 )
+	else
+		self:SetMaxThrottle( 1.2 )
 	end
 end
 

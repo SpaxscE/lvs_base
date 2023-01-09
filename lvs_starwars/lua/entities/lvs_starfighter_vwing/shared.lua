@@ -30,6 +30,10 @@ ENT.MaxShield = 100
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "Foils" )
+
+	if SERVER then
+		self:NetworkVarNotify( "Foils", self.OnFoilsChanged )
+	end
 end
 
 function ENT:InitWeapons()
@@ -179,8 +183,6 @@ function ENT:InitWeapons()
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
-
-
 
 	self:AddWeapon( LVS:GetWeaponPreset( "TURBO" ) )
 end
