@@ -262,3 +262,24 @@ function ENT:OnWeaponChanged( name, old, new)
 		self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
 	end
 end
+
+function ENT:LVSFireBullet( data )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	data.Entity = Base
+
+	data.Velocity = data.Velocity + self:GetVelocity():Length()
+	data.SrcEntity = Base:WorldToLocal( data.Src )
+
+	LVS:FireBullet( data )
+end
+
+function ENT:GetCrosshairFilterEnts()
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return {} end
+
+	return Base:GetCrosshairFilterEnts()
+end
