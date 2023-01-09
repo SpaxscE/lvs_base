@@ -64,7 +64,7 @@ function meta:lvsAddWeapon( ID )
 	if not IsValid( weapon ) then return NULL end
 
 	weapon:SetPos( self:LocalToWorld( Vector(0,0,33.182617) ) ) -- location exactly where ply:GetShootPos() is. This will make AI-Tracing easier.
-	weapon:SetAngles( self:GetAngles() )
+	weapon:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )
 	weapon:SetOwner( self )
 	weapon:Spawn()
 	weapon:Activate()
