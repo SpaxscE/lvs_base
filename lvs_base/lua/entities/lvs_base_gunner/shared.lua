@@ -10,6 +10,7 @@ ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
 
 ENT.LVS_GUNNER = true
+ENT.VectorNull = Vector(0,0,0)
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Driver" )
@@ -21,9 +22,29 @@ function ENT:SetupDataTables()
 
 	self:NetworkVar( "Float", 0, "NWHeat" )
 
+	self:NetworkVar( "Vector", 0, "NWAimVector" )
+
 	if SERVER then
 		self:NetworkVarNotify( "SelectedWeapon", self.OnWeaponChanged )
 	end
+end
+
+function ENT:GetAI()
+	if IsValid( self:GetDriver() ) then return false end
+
+	local veh = self:GetVehicle()
+
+	if not IsValid( veh ) then return false end
+
+	return veh:GetAI()
+end
+
+function ENT:GetAITEAM()
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return 0 end
+
+	return Base:GetAITeam()
 end
 
 function ENT:GetVehicle()
@@ -32,16 +53,6 @@ function ENT:GetVehicle()
 	if not IsValid( Pod ) then return NULL end
 
 	return Pod:GetParent()
-end
-
-function ENT:GetAI()
-	if self:GetDriver() then return false end
-
-	local veh = self:GetVehicle()
-
-	if not IsValid( veh ) then return false end
-
-	return veh:GetAI()
 end
 
 function ENT:HasWeapon( ID )

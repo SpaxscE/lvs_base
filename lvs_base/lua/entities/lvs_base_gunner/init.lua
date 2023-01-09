@@ -1,6 +1,7 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
+include("sv_ai.lua")
 
 function ENT:Initialize()	
 	self:SetMoveType( MOVETYPE_NONE )
@@ -12,6 +13,10 @@ function ENT:Think()
 	self:HandleActive()
 	self:WeaponsThink()
 
+	if self:GetAI() then
+		self:RunAI()
+	end
+ 
 	self:NextThink( CurTime() )
 
 	return true

@@ -208,7 +208,7 @@ function ENT:InitWeapons()
 		local startpos = pod:LocalToWorld( pod:OBBCenter() )
 		local trace = util.TraceHull( {
 			start = startpos,
-			endpos = (startpos + ent:GetForward() * 50000),
+			endpos = (startpos + ent:GetAimVector() * 50000),
 			mins = Vector( -10, -10, -10 ),
 			maxs = Vector( 10, 10, 10 ),
 			filter = ent:GetCrosshairFilterEnts()
