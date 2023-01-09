@@ -107,10 +107,10 @@ hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pr
 
 	if not ply:lvsKeyDown( "VIEWDIST" ) then
 		if string.find( bind, "invnext" ) then
-			vehicle:SelectWeapon( 2 )
+			vehicle:NextWeapon()
 		end
 		if string.find( bind, "invprev" ) then
-			vehicle:SelectWeapon( 1 )
+			vehicle:PrevWeapon()
 		end
 	end
 

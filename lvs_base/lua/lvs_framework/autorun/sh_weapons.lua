@@ -41,12 +41,17 @@ net.Receive( "lvs_select_weapon", function( length, ply )
 	if not IsValid( ply ) then return end
 
 	local ID = net.ReadInt( 5 )
+	local Increment = net.ReadBool()
 
 	local base = ply:lvsGetWeaponHandler()
 
 	if not IsValid( base ) then return end
 
-	base:SelectWeapon( ID )
+	if Increment then
+		base:SelectWeapon( base:GetSelectedWeapon() + ID )
+	else
+		base:SelectWeapon( ID )
+	end
 end)
 
 function meta:lvsAddWeapon( ID )

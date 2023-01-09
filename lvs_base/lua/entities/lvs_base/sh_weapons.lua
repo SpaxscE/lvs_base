@@ -281,16 +281,23 @@ else
 
 		net.Start( "lvs_select_weapon" )
 			net.WriteInt( ID, 5 )
+			net.WriteBool( false )
 		net.SendToServer()
 	end
 
-	LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR", 
-		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
-			if not vehicle.LVSHudPaintWeapons then return end
+	function ENT:NextWeapon()
+		net.Start( "lvs_select_weapon" )
+			net.WriteInt( 1, 5 )
+			net.WriteBool( true )
+		net.SendToServer()
+	end
 
-			vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
-		end
-	)
+	function ENT:PrevWeapon()
+		net.Start( "lvs_select_weapon" )
+			net.WriteInt( -1, 5 )
+			net.WriteBool( true )
+		net.SendToServer()
+	end
 
 	LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
 		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )

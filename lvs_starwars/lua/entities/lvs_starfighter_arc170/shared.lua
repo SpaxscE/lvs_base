@@ -202,78 +202,21 @@ function ENT:InitWeapons()
 	
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/bullet.png")
-	weapon.Ammo = 1000
+	weapon.Ammo = 500
 	weapon.Delay = 0.1
 	weapon.HeatRateUp = 0.2
 	weapon.HeatRateDown = 0.25
 	weapon.Attack = function( ent )
-		print("fire1")
+		ent:TakeAmmo()
+		PrintChat("fire")
 	end
-	weapon.StartAttack = function( ent ) print("start 1" ) end
-	weapon.FinishAttack = function( ent ) print("stop 1" ) end
-	weapon.OnSelect = function( ent ) print("select 1") end
+	weapon.StartAttack = function( ent ) PrintChat("start") end
+	weapon.FinishAttack = function( ent ) PrintChat("stop") end
+	weapon.OnSelect = function( ent ) end
 	weapon.OnDeselect = function( ent ) end
 	weapon.OnThink = function( ent, active ) end
 	weapon.OnOverheat = function( ent ) end
 	weapon.OnRemove = function( ent ) end
-	self:AddWeapon( weapon, 2 )
-
-	
-	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/bullet.png")
-	weapon.Ammo = 1000
-	weapon.Delay = 0.1
-	weapon.HeatRateUp = 0.2
-	weapon.HeatRateDown = 0.25
-	weapon.Attack = function( ent )
-		print("fire2")
-	end
-	weapon.StartAttack = function( ent ) print("start 2" ) end
-	weapon.FinishAttack = function( ent ) print("stop 2" ) end
-	weapon.OnSelect = function( ent ) print("select 2") end
-	weapon.OnDeselect = function( ent ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) end
-	weapon.OnRemove = function( ent ) end
-	self:AddWeapon( weapon, 2 )
-
-
-	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/hmg.png")
-	weapon.Ammo = 100
-	weapon.Delay = 0.5
-	weapon.HeatRateUp = 0.5
-	weapon.HeatRateDown = 0.5
-	weapon.Attack = function( ent )
-		print("fire3")
-	end
-	weapon.StartAttack = function( ent ) print("start 3" ) end
-	weapon.FinishAttack = function( ent ) print("stop 3" ) end
-	weapon.OnSelect = function( ent ) print("select 3") end
-	weapon.OnDeselect = function( ent ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) end
-	weapon.OnRemove = function( ent ) end
-	self:AddWeapon( weapon, 2 )
-
-	
-	
-	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/mg.png")
-	weapon.Ammo = 255
-	weapon.Delay = 0.25
-	weapon.HeatRateUp = 0.5
-	weapon.HeatRateDown = 0.5
-	weapon.Attack = function( ent )
-		print("fire4")
-	end
-	weapon.StartAttack = function( ent ) print("start 4" ) end
-	weapon.FinishAttack = function( ent ) print("stop 4" ) end
-	weapon.OnSelect = function( ent ) print("select 4") end
-	weapon.OnDeselect = function( ent ) print("deselect 4" ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) print("overheat 4" )end
-	weapon.OnRemove = function( ent ) print("onremove 4")  end
 	self:AddWeapon( weapon, 2 )
 end
 
