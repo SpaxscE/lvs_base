@@ -80,7 +80,7 @@ if SERVER then
 		end
 
 		if AmmoIsSet then
-			self:SetNWAmmo( entity:GetAmmo() )
+			self:SetNWAmmo( self:GetAmmo() )
 
 			for _, pod in pairs( self:GetPassengerSeats() ) do
 				local weapon = pod:lvsGetWeapon()
