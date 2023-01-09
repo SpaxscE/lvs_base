@@ -190,34 +190,6 @@ function ENT:InitWeapons()
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/bullet.png")
-	weapon.Ammo = 500
-	weapon.Delay = 0.1
-	weapon.HeatRateUp = 0.2
-	weapon.HeatRateDown = 0.25
-	weapon.Attack = function( ent )
-		ent:TakeAmmo()
-		PrintChat("fire")
-	end
-	weapon.StartAttack = function( ent ) PrintChat("start") end
-	weapon.FinishAttack = function( ent ) PrintChat("stop") end
-	weapon.OnSelect = function( ent ) end
-	weapon.OnDeselect = function( ent ) end
-	weapon.OnThink = function( ent, active ) end
-	weapon.OnOverheat = function( ent ) end
-	weapon.OnRemove = function( ent ) end
-	self:AddWeapon( weapon, 2 )
 end
 
 ENT.FlyByAdvance = 0.5
