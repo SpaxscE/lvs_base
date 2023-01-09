@@ -56,9 +56,9 @@ function ENT:InitWeapons()
 		ent.NumPrim = ent.NumPrim and ent.NumPrim + 1 or 1
 		if ent.NumPrim > #ent.FirePositions then ent.NumPrim = 1 end
 
-		--if not ent:GetFoils() then
-		--	ent:SetHeat( ent:GetHeat() + 0.1 )
-		--end
+		if not ent:GetFoils() then
+			ent:SetHeat( ent:GetHeat() + 0.1 )
+		end
 	
 		local pod = ent:GetDriverSeat()
 
@@ -113,21 +113,88 @@ function ENT:InitWeapons()
 	end
 	weapon.OnSelect = function( ent )
 		ent:EmitSound("physics/metal/weapon_impact_soft3.wav")
-
 		if ent.SetFoils then ent:SetFoils( true ) end
 	end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	self:AddWeapon( weapon )
+
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/protontorpedo.png")
+	weapon.Ammo = 12
+	weapon.Delay = 0 -- this will turn weapon.Attack to a somewhat think function
+	weapon.HeatRateUp = -0.5 -- cool down when attack key is held. This system fires on key-release.
+	weapon.HeatRateDown = 0.25
+	weapon.Attack = function( ent )
+		local T = CurTime()
+
+		if IsValid( ent._ProtonTorpedo ) then
+			if (ent._nextMissleTracking or 0) > T then return end
+
+			ent._nextMissleTracking = T + 0.1 -- 0.1 second interval because those find functions can be expensive
+
+			ent._ProtonTorpedo:FindTarget( ent:GetPos(), ent:GetForward(), 30, 7500 )
+
+			return
+		end
+
+		local T = CurTime()
+
+		if (ent._nextMissle or 0) > T then return end
+
+		ent._nextMissle = T + 0.5
+
+		ent._swapMissile = not ent._swapMissile
+
+		local Pos = Vector( 90, (ent._swapMissile and -304 or 304), -32 )
+
+		local Driver = self:GetDriver()
+
+		local projectile = ents.Create( "lvs_protontorpedo" )
+		projectile:SetPos( ent:LocalToWorld( Pos ) )
+		projectile:SetAngles( ent:LocalToWorldAngles( Angle(0,ent._swapMissile and 2 or -2,0) ) )
+		projectile:SetParent( ent )
+		projectile:Spawn()
+		projectile:Activate()
+		projectile:SetAttacker( IsValid( Driver ) and Driver or self )
+		projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
+		projectile:SetSpeed( ent:GetVelocity():Length() + 4000 )
+
+		ent._ProtonTorpedo = projectile
+
+		ent:SetNextAttack( CurTime() + 0.1 ) -- wait 0.1 second before starting to track
+	end
+	weapon.FinishAttack = function( ent )
+		if not IsValid( ent._ProtonTorpedo ) then return end
+
+		local projectile = ent._ProtonTorpedo
+
+		projectile:Enable()
+		projectile:EmitSound( "lvs/vehicles/naboo_n1_starfighter/proton_fire.mp3", 125 )
+		ent:TakeAmmo()
+
+		ent._ProtonTorpedo = nil
+
+		local NewHeat = ent:GetHeat() + 0.75
+
+		ent:SetHeat( NewHeat )
+		if NewHeat >= 1 then
+			ent:SetOverheated( true )
+		end
+	end
+	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
 end
 
 ENT.FlyByAdvance = 0.5
-ENT.FlyBySound = "lvs/vehicles/vwing/flyby.wav" 
+ENT.FlyBySound = "lvs/vehicles/arc170/flyby.wav" 
 ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"
 
 ENT.EngineSounds = {
 	{
-		sound = "lvs/vehicles/vwing/loop.wav",
-		sound_int = "lvs/vehicles/vwing/loop_interior.wav",
+		sound = "lvs/vehicles/arc170/loop.wav",
 		Pitch = 80,
 		PitchMin = 0,
 		PitchMax = 255,
