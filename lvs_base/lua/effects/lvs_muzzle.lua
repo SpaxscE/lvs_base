@@ -11,6 +11,8 @@ function EFFECT:Init( data )
 
 	local emitter = ParticleEmitter( Pos, false )
 
+	if not IsValid( emitter ) then return end
+
 	for i = 0, 12 do
 		local particle = emitter:Add( "effects/muzzleflash2", Pos + Dir * i * 0.7 * math.random(1,2) * 0.5 )
 		local Size = 1
