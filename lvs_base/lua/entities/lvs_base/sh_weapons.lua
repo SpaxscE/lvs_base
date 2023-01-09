@@ -299,6 +299,13 @@ else
 		net.SendToServer()
 	end
 
+	LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR", 
+		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+			if not vehicle.LVSHudPaintWeapons then return end
+			vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
+		end
+	)
+
 	LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
 		function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 			if not vehicle.LVSHudPaintWeaponInfo then return end
