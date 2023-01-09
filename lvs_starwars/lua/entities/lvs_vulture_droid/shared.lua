@@ -89,7 +89,7 @@ function ENT:InitWeapons()
 		effectdata:SetOrigin( bullet.Src )
 		effectdata:SetNormal( ent:GetForward() )
 		effectdata:SetEntity( ent )
-		util.Effect( "lvs_muzzle", effectdata )
+		util.Effect( "lvs_muzzle_colorable", effectdata )
 
 		ent:TakeAmmo()
 
@@ -202,7 +202,7 @@ function ENT:InitWeapons()
 			effectdata:SetOrigin( bullet.Src )
 			effectdata:SetNormal( ent:GetForward() )
 			effectdata:SetEntity( ent )
-			util.Effect( "lvs_muzzle", effectdata )
+			util.Effect( "lvs_muzzle_colorable", effectdata )
 
 			ent:LVSFireBullet( bullet )
 		end

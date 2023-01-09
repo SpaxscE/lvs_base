@@ -3,6 +3,7 @@ function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Dir = data:GetNormal()
 	local Ent = data:GetEntity()
+	local Col = data:GetStart() or Vector(255,255,255)
 	local Vel = Dir * 10
 
 	if IsValid( Ent ) then
@@ -23,7 +24,7 @@ function EFFECT:Init( data )
 		particle:SetStartSize( math.max( math.random(10,24) - i * 0.5,0.1 ) * Size )
 		particle:SetEndSize( 0 )
 		particle:SetRoll( math.Rand( -1, 1 ) )
-		particle:SetColor( 255, 255, 255 )
+		particle:SetColor( Col.x, Col.y, Col.z )
 		particle:SetCollide( false )
 	end
 
