@@ -27,12 +27,15 @@ if SERVER then
 			[3] = LVS:GetNPCs(),
 		}
 
+		local Attacker = self:GetAttacker()
+		local Parent = self:GetParent()
+		local Owner = self:GetOwner()
 		local Target = NULL
 		local DistToTarget = 0
 
 		for _, tbl in ipairs( targets ) do
 			for _, ent in pairs( tbl ) do
-				if not IsValid( ent ) or Target == ent then continue end
+				if not IsValid( ent ) or ent == Parent or ent == Owner or Target == ent or Attacker == ent then continue end
 
 				local pos_ent = ent:GetPos()
 				local dir = (pos_ent - pos):GetNormalized()
