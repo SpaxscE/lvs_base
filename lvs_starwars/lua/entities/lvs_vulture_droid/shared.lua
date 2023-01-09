@@ -152,7 +152,7 @@ function ENT:InitWeapons()
 		local projectile = ent._ProtonTorpedo
 
 		projectile:Enable()
-		projectile:EmitSound( "lvs/vehicles/naboo_n1_starfighter/proton_fire.mp3", 125 )
+		projectile:EmitSound( "lvs/vehicles/vulturedroid/fire_missile.mp3", 125 )
 		ent:TakeAmmo()
 
 		ent._ProtonTorpedo = nil
