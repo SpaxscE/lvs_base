@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/arc170/displays"
+	"$alphatest" "1"
+	"$allowAlphaToCoverage" "1"
+	"$halflambert" "1"
+}

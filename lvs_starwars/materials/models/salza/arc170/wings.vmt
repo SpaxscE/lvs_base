@@ -1,0 +1,13 @@
+VertexLitGeneric
+{
+	$basetexture "models/salza/arc170/wings"	
+	$bumpmap "models/salza/arc170/wings_nm"
+	//$AmbientOcclTexture "models/salza/arc170/wings_ao"
+	$envmap "env_cubemap"	
+	$envmaptint "[.5 .5 .5]"
+
+	$phong 			1
+	$phongexponent 		10
+	$phongboost	 	2
+	$phongfresnelranges	"[0 0.5 1]"
+}

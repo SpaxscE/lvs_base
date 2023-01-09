@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/arc170/droid"
+	"$halflambert" "1"
+}

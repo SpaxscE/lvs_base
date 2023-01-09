@@ -42,25 +42,23 @@ end
 
 function ENT:InitWeapons()
 	self.FirePositions = {
-		Vector(3.97,-56.3,53.79),
-		Vector(4.01,56.39,46.96),
-		Vector(4.01,-56.39,46.96),
-		Vector(3.97,56.3,53.79),
+		Vector(207.65,-303.52,-48.35),
+		Vector(207.65,303.52,-48.35),
 	}
 
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/mg.png")
-	weapon.Ammo = 3000
-	weapon.Delay = 0.07
-	weapon.HeatRateUp = 0.25
+	weapon.Icon = Material("lvs/weapons/hmg.png")
+	weapon.Ammo = 1000
+	weapon.Delay = 0.15
+	weapon.HeatRateUp = 0.5
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
 		ent.NumPrim = ent.NumPrim and ent.NumPrim + 1 or 1
 		if ent.NumPrim > #ent.FirePositions then ent.NumPrim = 1 end
 
-		if not ent:GetFoils() then
-			ent:SetHeat( ent:GetHeat() + 0.1 )
-		end
+		--if not ent:GetFoils() then
+		--	ent:SetHeat( ent:GetHeat() + 0.1 )
+		--end
 	
 		local pod = ent:GetDriverSeat()
 
@@ -83,9 +81,11 @@ function ENT:InitWeapons()
 		bullet.Spread 	= Vector( 0.025,  0.025, 0 )
 		bullet.TracerName = "lvs_laser_green"
 		bullet.Force	= 10
-		bullet.HullSize 	= 25
-		bullet.Damage	= 25
-		bullet.Velocity = 60000
+		bullet.HullSize 	= 30
+		bullet.Damage	= 40
+		bullet.SplashDamage = 60
+		bullet.SplashDamageRadius = 250
+		bullet.Velocity = 50000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
 			local effectdata = EffectData()
@@ -101,7 +101,7 @@ function ENT:InitWeapons()
 		effectdata:SetOrigin( bullet.Src )
 		effectdata:SetNormal( ent:GetForward() )
 		effectdata:SetEntity( ent )
-		util.Effect( "lvs_muzzle", effectdata )
+		util.Effect( "lvs_muzzle_colorable", effectdata )
 
 		ent:TakeAmmo()
 

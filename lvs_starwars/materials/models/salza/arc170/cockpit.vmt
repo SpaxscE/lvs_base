@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/arc170/cockpit"
+	"$halflambert" "1"
+
+}
