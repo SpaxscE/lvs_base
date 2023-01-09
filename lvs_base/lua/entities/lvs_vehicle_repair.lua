@@ -53,22 +53,8 @@ if SERVER then
 			entity:EmitSound("npc/dog/dog_servo2.wav")
 		end
 
-		local AmmoIsSet = false
-
-		for id, weapon in pairs( entity.WEAPONS ) do
-			local MaxAmmo = weapon.Ammo or -1
-			local CurAmmo = weapon._CurAmmo or -1
-
-			if CurAmmo == MaxAmmo then continue end
-
-			entity.WEAPONS[ id ]._CurAmmo = MaxAmmo
-
-			AmmoIsSet = true
-		end
-
-		if AmmoIsSet then
+		if entity:WeaponRestoreAmmo() then
 			entity:EmitSound("items/ammo_pickup.wav")
-			entity:SetNWAmmo( entity:GetAmmo() )
 		end
 
 		entity:OnMaintenance()
