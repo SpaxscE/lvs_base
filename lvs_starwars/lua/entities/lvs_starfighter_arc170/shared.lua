@@ -190,6 +190,66 @@ function ENT:InitWeapons()
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
+
+
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/hmg.png")
+	weapon.Ammo = 1000
+	weapon.Delay = 0.15
+	weapon.HeatRateUp = 0.5
+	weapon.HeatRateDown = 1
+	weapon.Attack = function( ent )
+		local pod = ent:GetDriverSeat()
+
+		if not IsValid( pod ) then return end
+
+		local startpos = pod:LocalToWorld( pod:OBBCenter() )
+		local trace = util.TraceHull( {
+			start = startpos,
+			endpos = (startpos + ent:GetForward() * 50000),
+			mins = Vector( -10, -10, -10 ),
+			maxs = Vector( 10, 10, 10 ),
+			filter = ent:GetCrosshairFilterEnts()
+		} )
+
+		local bullet = {}
+		bullet.Src 	= ent:GetPos()
+		bullet.Dir 	= (trace.HitPos - bullet.Src):GetNormalized()
+		bullet.Spread 	= Vector( 0.025,  0.025, 0 )
+		bullet.TracerName = "lvs_laser_green"
+		bullet.Force	= 10
+		bullet.HullSize 	= 30
+		bullet.Damage	= 40
+		bullet.SplashDamage = 60
+		bullet.SplashDamageRadius = 250
+		bullet.Velocity = 50000
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo)
+			local effectdata = EffectData()
+				effectdata:SetStart( Vector(50,255,50) ) 
+				effectdata:SetOrigin( tr.HitPos )
+				effectdata:SetNormal( tr.HitNormal )
+			util.Effect( "lvs_laser_impact", effectdata )
+		end
+		ent:LVSFireBullet( bullet )
+
+		local effectdata = EffectData()
+		effectdata:SetStart( Vector(50,255,50) )
+		effectdata:SetOrigin( bullet.Src )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle_colorable", effectdata )
+		ent:TakeAmmo()
+	end
+	weapon.OnSelect = function( ent )
+		ent:EmitSound("physics/metal/weapon_impact_soft3.wav")
+	end
+	weapon.OnOverheat = function( ent )
+		ent:EmitSound("lvs/overheat.wav")
+	end
+	self:AddWeapon( weapon, 3 )
 end
 
 ENT.FlyByAdvance = 0.5
