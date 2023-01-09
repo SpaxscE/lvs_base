@@ -61,7 +61,7 @@ function ENT:InitWeapons()
 		if ent.NumPrim > #ent.FirePositions then ent.NumPrim = 1 end
 
 		if not ent:GetFoils() then
-			ent:SetHeat( ent:GetHeat() + 0.1 )
+			ent:SetHeat( ent:GetHeat() + 0.5 )
 		end
 	
 		local pod = ent:GetDriverSeat()
