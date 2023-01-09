@@ -21,7 +21,7 @@ function TOOL:LeftClick( trace )
 
 	if not IsValid( ent ) then return false end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	if not ent.OGMaxHealth then
 		ent.OGMaxHealth = ent.MaxHealth
@@ -38,7 +38,7 @@ function TOOL:RightClick( trace )
 
 	if not IsValid( ent ) then return false end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	if not ent.OGMaxShield then
 		ent.OGMaxShield = ent.MaxShield
@@ -55,7 +55,7 @@ function TOOL:Reload( trace )
 
 	if not IsValid( ent ) then return false end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	if ent.OGMaxHealth then
 		ent.MaxHealth = ent.OGMaxHealth
@@ -80,7 +80,7 @@ function TOOL:Think()
 	local ent = tr.Entity
 	if not IsValid( ent ) then return end
 
-	if not ent.LVS or not ent.LFS then return end
+	if not ent.LVS and not ent.LFS then return end
 
 	local Text = "Health: "..tostring( math.Round( ent:GetHP(), 0 ) ).."/"..tostring( ent.MaxHealth )
 	if ent:GetShield() > 0 then
