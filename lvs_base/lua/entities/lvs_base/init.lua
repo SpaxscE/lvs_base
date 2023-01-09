@@ -83,6 +83,21 @@ function ENT:Initialize()
 
 	self:CallOnRemove( "finish_weapons_on_delete", function( ent )
 		ent:WeaponsFinish()
+
+		for _, pod in pairs( ent:GetPassengerSeats() ) do
+			local weapon = pod:lvsGetWeapon()
+
+			if not IsValid( weapon ) or not weapon._activeWeapon then continue end
+
+			local CurWeapon = self.WEAPONS[ weapon:GetPodIndex() ][ weapon._activeWeapon ]
+
+			if not CurWeapon then continue end
+
+			if CurWeapon.FinishAttack then
+				CurWeapon.FinishAttack( weapon )
+			end
+		end
+
 		ent:WeaponsOnRemove()
 	end)
 end
@@ -108,9 +123,6 @@ function ENT:Think()
 end
 
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
-end
-
-function ENT:OnGunnerChanged( Old, New )
 end
 
 function ENT:OnTick()

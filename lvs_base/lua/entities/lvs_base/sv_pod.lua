@@ -16,23 +16,6 @@ function ENT:AlignView( ply, SetZero )
 end
 
 function ENT:HandleActive()
-	local gPod = self:GetGunnerSeat()
-
-	if IsValid( gPod ) then
-		local Gunner = gPod:GetDriver()
-		local OldGunner = self:GetGunner()
-
-		if Gunner ~= self:GetGunner() then
-			self:SetGunner( Gunner )
-
-			self:OnGunnerChanged( OldGunner, Gunner )
-
-			if IsValid( Gunner ) then
-				Gunner:lvsBuildControls()
-			end
-		end
-	end
-
 	local Pod = self:GetDriverSeat()
 
 	if not IsValid( Pod ) then
@@ -184,6 +167,15 @@ function ENT:AddPassengerSeat( Pos, Ang )
 	Pod.DoNotDuplicate = true
 
 	self.pPodKeyIndex = self.pPodKeyIndex and self.pPodKeyIndex + 1 or 2
+
+	if self.WEAPONS[ self.pPodKeyIndex ] then
+		local weapon = Pod:lvsAddWeapon( self.pPodKeyIndex )
+
+		if IsValid( weapon ) then
+			self:TransferCPPI( weapon )
+			self:DeleteOnRemove( weapon )
+		end
+	end
 
 	Pod:SetNWInt( "pPodIndex", self.pPodKeyIndex )
 

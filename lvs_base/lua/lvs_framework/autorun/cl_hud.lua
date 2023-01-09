@@ -130,14 +130,14 @@ function LVS:OpenEditors()
 
 	local T = CurTime()
 	local ply = LocalPlayer()
-	local vehicle = ply:lvsGetVehicle()
+	local pod = ply:GetVehicle()
 
 	ply.SwitcherTime = T + 9999
 	ply:lvsSetInputDisabled( true )
 
-	if not IsValid( vehicle ) then return end
+	if not IsValid( pod ) then return end
 
-	vehicle._SelectActiveTime = T + 9999
+	pod._SelectActiveTime = T + 9999
 end
 
 function LVS:CloseEditors()
@@ -150,14 +150,14 @@ function LVS:CloseEditors()
 
 	local T = CurTime()
 	local ply = LocalPlayer()
-	local vehicle = ply:lvsGetVehicle()
+	local pod = ply:GetVehicle()
 
 	ply.SwitcherTime = T
 	ply:lvsSetInputDisabled( false )
 
-	if not IsValid( vehicle ) then return end
+	if not IsValid( pod ) then return end
 
-	vehicle._SelectActiveTime = T
+	pod._SelectActiveTime = T
 end
 
 hook.Add( "OnContextMenuClose", "!!!!!LVS_hud", function()

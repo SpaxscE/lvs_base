@@ -46,9 +46,6 @@ end
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
 end
 
-function ENT:OnGunnerChanged( Old, New )
-end
-
  -- use this instead of ENT:Think()
 function ENT:OnTick()
 end

@@ -41,8 +41,6 @@ function ENT:CreateBaseDT()
 
 	self:AddDT( "Entity", "Driver" )
 	self:AddDT( "Entity", "DriverSeat" )
-	self:AddDT( "Entity", "Gunner" )
-	self:AddDT( "Entity", "GunnerSeat" )
 
 	self:AddDT( "Bool", "Active" )
 	self:AddDT( "Bool", "EngineActive" )
@@ -197,6 +195,10 @@ function ENT:GetEveryone()
 	end
 
 	return plys
+end
+
+function ENT:GetPodIndex()
+	return 1
 end
 
 function ENT:PlayAnimation( animation, playbackrate )

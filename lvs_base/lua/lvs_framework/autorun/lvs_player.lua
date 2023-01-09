@@ -29,6 +29,30 @@ function meta:lvsGetVehicle()
 	end
 end
 
+function meta:lvsGetWeaponHandler()
+	if not self:InVehicle() then return NULL end
+
+	local Pod = self:GetVehicle()
+
+	if not IsValid( Pod ) then return NULL end
+
+	local weapon = Pod:lvsGetWeapon()
+
+	if IsValid( weapon ) then
+		return weapon
+	else
+		local veh = self:lvsGetVehicle()
+
+		if not IsValid( veh ) then return NULL end
+
+		if veh:GetDriver() == self then
+			return veh
+		else
+			return NULL
+		end
+	end
+end
+
 function meta:lvsGetControls()
 	if not istable( self.LVS_BINDS ) then
 		self:lvsBuildControls()
@@ -298,8 +322,10 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 
 			if string.StartWith( KeyName, "~SELECT~" ) then
 				local exp_string = string.Explode( "#", KeyName )
-				if exp_string[2] then
-					vehicle:SelectWeapon( tonumber( exp_string[2] ) )
+				local base = ply:lvsGetWeaponHandler()
+
+				if exp_string[2] and IsValid( base ) then
+					base:SelectWeapon( tonumber( exp_string[2] ) )
 				end
 			end
 

@@ -86,6 +86,8 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 0.2
 	weapon.HeatRateDown = 0.25
 	weapon.Attack = function( ent )
+		-- ent is the weapon handler.For seat 1 (which is the driver), ent is equal to self (the vehicle)
+
 		local bullet = {}
 		bullet.Src 	= ent:LocalToWorld( Vector(25,0,30) )
 		bullet.Dir 	= ent:GetForward()
@@ -114,6 +116,9 @@ function ENT:InitWeapons()
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	weapon.OnRemove = function( ent ) end
 	self:AddWeapon( weapon )
+
+	--self:AddWeapon( weapon, 2 ) -- this would register to weapon to seat 2
+	--self:AddWeapon( weapon, 3 ) -- seat 3.. ect
 
 --[[
 	-- or use presets (defined in "lvs_base\lua\lvs_framework\autorun\lvs_defaultweapons.lua"):

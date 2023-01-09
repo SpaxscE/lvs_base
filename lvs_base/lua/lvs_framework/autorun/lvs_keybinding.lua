@@ -101,7 +101,7 @@ if SERVER then return end
 hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pressed )
 	if not ply.lvsGetVehicle then return end
 
-	local vehicle = ply:lvsGetVehicle() 
+	local vehicle = ply:lvsGetVehicle()
 
 	if not IsValid( vehicle ) then return end
 

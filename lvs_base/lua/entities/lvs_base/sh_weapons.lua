@@ -1,11 +1,21 @@
 
-ENT.WEAPONS = {}
+ENT.WEAPONS = {
+	[1] = {},
+}
 
 function ENT:InitWeapons()
 end
 
-function ENT:AddWeapon( data )
+function ENT:AddWeapon( data, PodID )
 	if not istable( data ) then print("[LVS] couldn't register weapon") return end
+
+	if not PodID or PodID <= 1 then
+		PodID = 1
+	end
+
+	if not self.WEAPONS[ PodID ] then
+		self.WEAPONS[ PodID ] = {}
+	end
 
 	local default = LVS:GetWeaponPreset( "DEFAULT" )
 
@@ -23,15 +33,15 @@ function ENT:AddWeapon( data )
 	data.OnRemove = data.OnRemove or default.OnRemove
 	data.UseableByAI = data.UseableByAI ~= false
 
-	table.insert( self.WEAPONS, data )
+	table.insert( self.WEAPONS[ PodID ], data )
 end
 
 function ENT:HasWeapon( ID )
-	return istable( self.WEAPONS[ ID ] )
+	return istable( self.WEAPONS[1][ ID ] )
 end
 
 function ENT:AIHasWeapon( ID )
-	local weapon = self.WEAPONS[ ID ]
+	local weapon = self.WEAPONS[1][ ID ]
 	if not istable( weapon ) then return false end
 
 	return weapon.UseableByAI
@@ -39,7 +49,7 @@ end
 
 function ENT:GetActiveWeapon()
 	local SelectedID = self:GetSelectedWeapon()
-	local CurWeapon = self.WEAPONS[ SelectedID ]
+	local CurWeapon = self.WEAPONS[1][ SelectedID ]
 
 	return CurWeapon, SelectedID
 end
@@ -53,32 +63,20 @@ function ENT:GetMaxAmmo()
 end
 
 if SERVER then
-	util.AddNetworkString( "lvs_select_weapon" )
-
-	net.Receive( "lvs_select_weapon", function( length, ply )
-		if not IsValid( ply ) then return end
-
-		local ID = net.ReadInt( 5 )
-
-		local vehicle = ply:lvsGetVehicle()
-
-		if not IsValid( vehicle ) or vehicle:GetDriver() ~= ply then return end
-
-		vehicle:SelectWeapon( ID )
-	end)
-
 	function ENT:WeaponsOnRemove()
-		for ID, Weapon in pairs( self.WEAPONS ) do
-			if not Weapon.OnRemove then continue end
+		for _, data in pairs( self.WEAPONS ) do
+			for ID, Weapon in pairs( data ) do
+				if not Weapon.OnRemove then continue end
 
-			Weapon.OnRemove( self )
+				Weapon.OnRemove( self )
+			end
 		end
 	end
 
 	function ENT:WeaponsFinish()
 		if not self._activeWeapon then return end
 
-		local CurWeapon = self.WEAPONS[ self._activeWeapon ]
+		local CurWeapon = self.WEAPONS[1][ self._activeWeapon ]
 
 		if not CurWeapon then return end
 
@@ -183,7 +181,7 @@ if SERVER then
 		local FT = FrameTime()
 		local CurWeapon, SelectedID = self:GetActiveWeapon()
 	
-		for ID, Weapon in pairs( self.WEAPONS ) do
+		for ID, Weapon in pairs( self.WEAPONS[1] ) do
 			local IsActive = ID == SelectedID
 			if Weapon.OnThink then Weapon.OnThink( self, IsActive ) end
 
@@ -249,7 +247,7 @@ if SERVER then
 	function ENT:SelectWeapon( ID )
 		if not isnumber( ID ) then return end
 
-		if self.WEAPONS[ ID ] then
+		if self.WEAPONS[1][ ID ] then
 			self:SetSelectedWeapon( ID )
 		end
 
@@ -266,27 +264,18 @@ if SERVER then
 
 		self:WeaponsFinish()
 
-		local PrevWeapon = self.WEAPONS[ old ]
+		local PrevWeapon = self.WEAPONS[1][ old ]
 		if PrevWeapon and PrevWeapon.OnDeselect then
 			PrevWeapon.OnDeselect( self )
 		end
 
-		local NextWeapon = self.WEAPONS[ new ]
+		local NextWeapon = self.WEAPONS[1][ new ]
 		if NextWeapon and NextWeapon.OnSelect then
 			NextWeapon.OnSelect( self )
 			self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
 		end
 	end
 else
-	net.Receive( "lvs_select_weapon", function( length)
-		local ply = LocalPlayer()
-		local vehicle = ply:lvsGetVehicle()
-
-		if not IsValid( vehicle ) or vehicle:GetDriver() ~= ply then return end
-
-		vehicle._SelectActiveTime = CurTime() + 2
-	end)
-
 	function ENT:SelectWeapon( ID )
 		if not isnumber( ID ) then return end
 
@@ -312,11 +301,19 @@ else
 	)
 
 	function ENT:GetAmmoID( ID )
-		local selected = self:GetSelectedWeapon()
-		local weapon = self.WEAPONS[ ID ]
+		local ply = LocalPlayer()
+
+		if not IsValid( ply ) then return end
+
+		local Base = ply:lvsGetWeaponHandler()
+
+		if not IsValid( Base ) then return -1 end
+
+		local selected = Base:GetSelectedWeapon()
+		local weapon = self.WEAPONS[ Base:GetPodIndex() ][ ID ]
 
 		if ID == selected then
-			weapon._CurAmmo = self:GetNWAmmo()
+			weapon._CurAmmo = Base:GetNWAmmo()
 		else
 			weapon._CurAmmo = weapon._CurAmmo or weapon.Ammo or -1
 		end
@@ -358,11 +355,13 @@ else
 	ENT.HeatMat = Material( "lvs/heat.png" )
 
 	function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
-		if ply ~= self:GetDriver() then return end
+		local Base = ply:lvsGetWeaponHandler()
 
-		if not self:HasWeapon( self:GetSelectedWeapon() ) then return end
+		if not IsValid( Base ) then return end
 
-		local Heat = self:GetNWHeat()
+		if not Base:HasWeapon( Base:GetSelectedWeapon() ) then return end
+
+		local Heat = Base:GetNWHeat()
 		local hX = X + w - h * 0.5
 		local hY = Y + h * 0.25 + h * 0.25
 		local hAng = math.cos( CurTime() * 50 ) * 5 * Heat ^ 2
@@ -378,13 +377,17 @@ else
 		if self:GetMaxAmmo() <= 0 then return end
 
 		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
-		draw.DrawText( self:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
+		draw.DrawText( Base:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
 	end
 
 	function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
-		if ply ~= self:GetDriver() then return end
+		local Base = ply:lvsGetWeaponHandler()
 
-		local num = #self.WEAPONS
+		if not IsValid( Base ) then return end
+
+		local PodID = Base:GetPodIndex()
+
+		local num = #self.WEAPONS[ PodID ]
 
 		if num <= 1 then return end
 
@@ -399,7 +402,7 @@ else
 		local gap = 4
 		local SizeY = h - gap
 
-		local Selected = self:GetSelectedWeapon()
+		local Selected = Base:GetSelectedWeapon()
 		if Selected ~= self._OldSelected then
 			self._OldSelected = Selected
 			self._SelectActiveTime = T + 2
@@ -441,7 +444,7 @@ else
 			else
 				surface.SetDrawColor( 255, 255, 255, A255 )
 			end
-			surface.SetMaterial( self.WEAPONS[ID].Icon )
+			surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
 			surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
 
 			local ammo = self:GetAmmoID( ID )
