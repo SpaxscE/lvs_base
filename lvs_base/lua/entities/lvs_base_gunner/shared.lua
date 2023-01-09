@@ -35,11 +35,13 @@ function ENT:GetVehicle()
 end
 
 function ENT:GetAI()
+	if self:GetDriver() then return false end
+
 	local veh = self:GetVehicle()
 
 	if not IsValid( veh ) then return false end
 
-	return 
+	return veh:GetAI()
 end
 
 function ENT:HasWeapon( ID )
