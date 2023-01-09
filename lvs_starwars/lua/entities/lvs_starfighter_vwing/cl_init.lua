@@ -8,12 +8,13 @@ ENT.EnginePos = {
 	[2] = Vector(-155,0,41.82),
 }
 
-function ENT:CalcViewDriver( ply, pos, angles, fov, pod )
-	pos = pos + self:GetForward() * 37 + self:GetUp() * 8
-	if ply:lvsMouseAim() then
-		return self:CalcViewMouseAim( ply, pos, angles, fov, pod )
+function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+	if self:GetDriver() == ply then
+		local newpos = pos + self:GetForward() * 37 + self:GetUp() * 8
+
+		return newpos, angles, fov
 	else
-		return self:CalcViewDirectInput( ply, pos, angles, fov, pod )
+		return pos, angles, fov
 	end
 end
 

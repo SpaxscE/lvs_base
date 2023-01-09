@@ -45,8 +45,8 @@ end
 function ENT:OnActiveChanged( Active )
 end
 
---[[ -- edit passenger view here. For Driver view see lvs_base_fighterplane/cl_camera.lua
-function ENT:CalcViewPassenger( ply, pos, angles, fov, pod )
-	return LVS:CalcView( self, ply, pos, angles, fov, pod )
+--[[ -- edit view here. This is run before the LVS' camera is run
+function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+	return pos, angles, fov
 end
 ]]

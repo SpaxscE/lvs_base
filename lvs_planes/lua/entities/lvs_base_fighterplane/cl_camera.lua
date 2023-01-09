@@ -134,6 +134,10 @@ function ENT:CalcViewMouseAim( ply, pos, angles, fov, pod )
 	return view
 end
 
+function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+	return pos, angles, fov
+end
+
 function ENT:CalcViewDriver( ply, pos, angles, fov, pod )
 	if ply:lvsMouseAim() then
 		return self:CalcViewMouseAim( ply, pos, angles, fov, pod )
@@ -146,7 +150,9 @@ function ENT:CalcViewPassenger( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
 end
 
-function ENT:LVSCalcView( ply, pos, angles, fov, pod )
+function ENT:LVSCalcView( ply, original_pos, original_angles, original_fov, pod )
+	local pos, angles, fov = self:CalcViewOverride( ply, original_pos, original_angles, original_fov, pod )
+
 	if self:GetDriverSeat() == pod then
 		return self:CalcViewDriver( ply, pos, angles, fov, pod )
 	else
