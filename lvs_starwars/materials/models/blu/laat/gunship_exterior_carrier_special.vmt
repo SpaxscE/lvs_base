@@ -1,0 +1,27 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/blu/laat/gunship_exterior_carrier_special"
+	"$bumpmap"	"models/blu/laat/gunship_exterior_carrier_nm"
+	"$blendtintbybasealpha"	1
+
+	$halflambert 1
+	$nocull 1
+
+	$Normalmapalphaenvmapmask 1	
+
+
+	"$detail" "models/blu/laat/details/detail_metal"
+	"$detailscale"		"13"
+	"$detailblendfactor"		"1"	
+
+    $phong 1
+	// $phongexponent 7
+	$phongexponenttexture "models/blu/laat/details/halosp"
+	$phongboost	1
+	$phongalbedotint 1
+	$phongfresnelranges	"[0.8 0.8 0.8]"
+
+	$rimlight 1
+	$rimlightexponent 50
+	$rimlightboost 0.05
+}

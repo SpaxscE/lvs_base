@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/blu/laat/rep_atte_body1_blue"
+	"$bumpmap"	"models/blu/laat/rep_atte_body1_nm"
+	"$phongexponenttexture"  "models/blu/laat/rep_atte_body1_exp"
+	
+	"$detail" "models/blu/laat/details/detail_metal"
+	"$detailscale"		"13"
+	"$detailblendfactor"		"0.75"	
+
+	"$halflambert" "1"
+}

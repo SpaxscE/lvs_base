@@ -1,0 +1,29 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/blu/laat/cockpit_joystick"
+	"$bumpmap"	"models/blu/laat/cockpit_bump"
+
+	"$blendtintbybasealpha"	1
+
+	$halflambert 1
+	$nocull 1
+
+	$Normalmapalphaenvmapmask 1	
+
+
+	"$detail" "models/blu/laat/details/detail_carbonfiber"
+	"$detailscale"		"10"
+	"$detailblendfactor"		"1"	
+
+    $phong 1
+	// $phongexponent 7
+	$phongexponenttexture "models/blu/laat/details/halosp"
+	$phongboost	2
+	$phongalbedotint 1
+	$phongfresnelranges	"[0.8 0.8 0.8]"
+
+	$rimlight 1
+	$rimlightexponent 50
+	$rimlightboost 0.05
+
+}

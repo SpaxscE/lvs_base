@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/blu/laat/imp_hover_fightertank"
+	
+	"$detail" "models/blu/laat/details/detail_metal"
+	"$detailscale"		"13"
+	"$detailblendfactor"		"0.75"	
+
+	"$halflambert" "1"
+}
