@@ -62,16 +62,15 @@ function ENT:CalcAero( phys, deltatime )
 		end
 	end
 
+	local VtolMove = self:GetVtolMove()
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 4
 	local Yaw = math.Clamp(-Steer.x + GravityYaw,-1,1) * self.TurnRateYaw * 4
-	local Roll = math.Clamp( self:WorldToLocalAngles( Angle( 0, self:GetAngles().y, Steer.x * math.min( self:GetThrottle() ^ 2, 1 ) * 45 ) ).r / 90 ,-1,1) * self.TurnRateRoll * 12
+	local Roll = math.Clamp( self:WorldToLocalAngles( Angle( 0, self:GetAngles().y, (Steer.x * math.min( self:GetThrottle() ^ 2, 1 ) - (VtolMove.y / self.ThrustVtol) * 0.25) * 45 ) ).r / 90,-1,1) * self.TurnRateRoll * 12
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
 	local MulZ = (math.max( math.deg( math.acos( math.Clamp( VelForward:Dot( Forward ) ,-1,1) ) ) - math.abs( Steer.y ), 0 ) / 90) * 0.3
 	local MulY = (math.max( math.abs( math.deg( math.acos( math.Clamp( VelForward:Dot( Left ) ,-1,1) ) ) - 90 ) - math.abs( Steer.z ), 0 ) / 90) * 0.15
-
-	local VtolMove = self:GetVtolMove()
 
 	local Move = Vector( (VtolMove.x < 0) and -math.min(VelL.x * 0.15,0) or 0, -VelL.y * MulY, -VelL.z * MulZ ) + VtolMove
 

@@ -30,7 +30,7 @@ end
 
 function ENT:GetVtolMove()
 	if self:GetEngineActive() and not self:GetAI() then
-		return self:GetNWVtolMove() * self.ThrustVtol * (1 - math.min( self:GetThrottle(), 1 ) ^ 2)
+		return self:GetNWVtolMove() * self.ThrustVtol
 	else
 		return Vector(0,0,0)
 	end
