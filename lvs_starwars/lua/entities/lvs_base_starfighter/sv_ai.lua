@@ -126,6 +126,10 @@ function ENT:RunAI()
 									elseif CurWeapon == 2 then
 										self:AISelectWeapon( 1 )
 									end
+								else
+									if CurHeat == 0 and math.cos( T ) > 0 then
+										self:AISelectWeapon( 1 )
+									end
 								end
 							end
 

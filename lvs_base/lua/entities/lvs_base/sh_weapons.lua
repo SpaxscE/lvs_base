@@ -264,11 +264,14 @@ if SERVER then
 
 			local ShootDelay = (CurWeapon.Delay or 0)
 
-			self:SetNextAttack( CurTime() + ShootDelay )
+			self:SetNextAttack( T + ShootDelay )
 			self:SetHeat( CurHeat + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT) )
 
-			if CurWeapon.Attack then
-				CurWeapon.Attack( self )
+			if not CurWeapon.Attack then return end
+
+			if CurWeapon.Attack( self ) then
+				self:SetHeat( CurHeat - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
+				self:SetNextAttack( T )
 			end
 		else
 			self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )

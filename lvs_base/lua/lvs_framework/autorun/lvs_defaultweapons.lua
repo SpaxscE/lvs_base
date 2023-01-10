@@ -101,7 +101,7 @@ WEAPON["TABLE_POINT_MG"] = {
 			ent:LVSFireBullet( bullet )
 		end
 
-		ent:TakeAmmo()
+		ent:TakeAmmo( 2 )
 	end,
 	StartAttack = function( ent )
 		if not IsValid( ent.SoundEmitter1 ) then

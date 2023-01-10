@@ -8,7 +8,8 @@ function LVS:CalcView( vehicle, ply, pos, angles, fov, pod )
 
 	if not pod:GetThirdPersonMode() then return view end
 
-	local mn, mx = vehicle:GetRenderBounds()
+	local mn = vehicle:OBBMins()
+	local mx = vehicle:OBBMaxs()
 	local radius = ( mn - mx ):Length()
 	local radius = radius + radius * pod:GetCameraDistance()
 

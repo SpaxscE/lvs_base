@@ -18,6 +18,9 @@ function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
 	return pos, angles, fov
 end
 
+ENT.RED = Color(255,0,0,255)
+ENT.WHITE = Color(255,255,255,255)
+
 function ENT:LVSPreHudPaint( X, Y, ply )
 	local Pod = self:GetTailGunnerSeat()
 
@@ -27,19 +30,13 @@ function ENT:LVSPreHudPaint( X, Y, ply )
 
 	if not IsValid( weapon ) then return true end
 
-	local startpos = weapon:GetPos()
-	local trace = util.TraceHull( {
-		start = startpos,
-		endpos = (startpos + weapon:GetAimVector() * 50000),
-		mins = Vector( -10, -10, -10 ),
-		maxs = Vector( 10, 10, 10 ),
-		filter = weapon:GetCrosshairFilterEnts()
-	} )
+	local Col = (self:AngleBetweenNormal( weapon:GetAimVector(), weapon:GetForward() ) > 60) and self.RED or self.WHITE
 
-	local Pos2D = trace.HitPos:ToScreen() 
+	local Pos2D = weapon:GetEyeTrace().HitPos:ToScreen() 
 
-	self:PaintCrosshairCenter( Pos2D )
-	self:PaintCrosshairOuter( Pos2D )
+	self:PaintCrosshairCenter( Pos2D, Col )
+	self:PaintCrosshairOuter( Pos2D, Col )
+	self:LVSPaintHitMarker( Pos2D )
 
 	return true
 end
@@ -53,6 +50,7 @@ function ENT:OnFrame()
 	self:EngineEffects()
 	self:AnimAstromech()
 	self:AnimWings()
+	self:AnimGunner()
 end
 
 function ENT:EngineEffects()
@@ -90,6 +88,28 @@ function ENT:EngineEffects()
 		particle:SetRoll( math.Rand(-1,1) * 100 )
 		particle:SetColor( 255, 50, 200 )
 	end
+end
+
+function ENT:AnimGunner()
+	local Pod = self:GetTailGunnerSeat()
+
+	if not IsValid( Pod ) then return end
+
+	local weapon = Pod:lvsGetWeapon()
+
+	if not IsValid( weapon ) then return end
+
+	local EyeAngles = self:WorldToLocalAngles( weapon:GetAimVector():Angle() )
+	EyeAngles:RotateAroundAxis( EyeAngles:Up(), 180 )
+
+	local Yaw = math.Clamp( EyeAngles.y,-60,60)
+	local Pitch = math.Clamp( EyeAngles.p,-60,60 )
+
+	self:ManipulateBoneAngles( 5, Angle(Yaw,0,0) )
+	self:ManipulateBoneAngles( 6, Angle(0,0, math.max( Pitch, -25 ) ) )
+
+	self:ManipulateBoneAngles( 2, Angle( math.Clamp( Yaw, -30, 30 ),0,0) )
+	self:ManipulateBoneAngles( 3, Angle(0,0, math.Clamp( Pitch, -60, 12 ) ) )
 end
 
 function ENT:AnimAstromech()

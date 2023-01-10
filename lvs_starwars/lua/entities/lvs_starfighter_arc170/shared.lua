@@ -197,34 +197,33 @@ function ENT:InitWeapons()
 
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/hmg.png")
-	weapon.Delay = 0.25
-	weapon.HeatRateUp = 0.25
-	weapon.HeatRateDown = 1
+	weapon.Delay = 0.15
 	weapon.Attack = function( ent )
 		local pod = ent:GetDriverSeat()
 
 		if not IsValid( pod ) then return end
 
-		local startpos = ent:GetPos()
-		local trace = util.TraceHull( {
-			start = startpos,
-			endpos = (startpos + ent:GetAimVector() * 50000),
-			mins = Vector( -10, -10, -10 ),
-			maxs = Vector( 10, 10, 10 ),
-			filter = ent:GetCrosshairFilterEnts()
-		} )
+		local dir = ent:GetAimVector()
+
+		if ent:AngleBetweenNormal( dir, ent:GetForward() ) > 60 then return true end
+
+		local trace = ent:GetEyeTrace()
 
 		ent.SwapTopBottom = not ent.SwapTopBottom
 
+		local veh = ent:GetVehicle()
+
+		veh.SNDTail:PlayOnce( 100 + math.Rand(-3,3), 1 )
+
 		local bullet = {}
-		bullet.Src = ent:GetVehicle():LocalToWorld( ent.SwapTopBottom and Vector(-175.81,0,50.26) or Vector(-171.69,0,5.81) )
+		bullet.Src = veh:LocalToWorld( ent.SwapTopBottom and Vector(-175.81,0,50.26) or Vector(-171.69,0,5.81) )
 		bullet.Dir = (trace.HitPos - bullet.Src):GetNormalized()
-		bullet.Spread 	= Vector( 0.025,  0.025, 0 )
+		bullet.Spread 	= Vector( 0.03,  0.03, 0.03 )
 		bullet.TracerName = "lvs_laser_green"
 		bullet.Force	= 10
-		bullet.HullSize 	= 30
-		bullet.Damage	= 125
-		bullet.Velocity = 50000
+		bullet.HullSize 	= 25
+		bullet.Damage	= 45
+		bullet.Velocity = 30000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
 			local effectdata = EffectData()

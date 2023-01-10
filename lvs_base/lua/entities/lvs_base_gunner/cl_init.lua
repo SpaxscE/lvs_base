@@ -22,6 +22,6 @@ function ENT:GetAimVector()
 	if IsValid( Driver ) then
 		return Driver:GetAimVector()
 	else
-		return self.VectorNull
+		return self:GetForward()
 	end
 end

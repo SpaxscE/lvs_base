@@ -29,6 +29,20 @@ function ENT:SetupDataTables()
 	end
 end
 
+
+function ENT:GetEyeTrace()
+	local startpos = self:GetPos()
+
+	local trace = util.TraceLine( {
+		start = startpos,
+		endpos = (startpos + self:GetAimVector() * 50000),
+		filter = self:GetCrosshairFilterEnts()
+	} )
+
+	return trace
+end
+
+
 function ENT:GetAI()
 	if IsValid( self:GetDriver() ) then return false end
 
@@ -101,4 +115,28 @@ function ENT:GetCrosshairFilterEnts()
 	if not IsValid( Base ) then return {} end
 
 	return Base:GetCrosshairFilterEnts()
+end
+
+function ENT:Sign( n )
+	if n > 0 then return 1 end
+
+	if n < 0 then return -1 end
+
+	return 0
+end
+
+function ENT:VectorSubtractNormal( Normal, Velocity )
+	local VelForward = Velocity:GetNormalized()
+
+	local Ax = math.acos( math.Clamp( Normal:Dot( VelForward ) ,-1,1) )
+
+	local Fx = math.cos( Ax ) * Velocity:Length()
+
+	local NewVelocity = Velocity - Normal * math.abs( Fx )
+
+	return NewVelocity
+end
+
+function ENT:AngleBetweenNormal( Dir1, Dir2 )
+	return math.deg( math.acos( math.Clamp( Dir1:Dot( Dir2 ) ,-1,1) ) )
 end

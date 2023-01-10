@@ -24,6 +24,9 @@ function ENT:OnSpawn( PObj )
 	self.SNDRight = self:AddSoundEmitter( Vector(207.65,-303.52,-48.35), "lvs/vehicles/arc170/fire.mp3", "lvs/vehicles/arc170/fire.mp3" )
 	self.SNDRight:SetSoundLevel( 110 )
 
+	self.SNDTail = self:AddSoundEmitter( Vector(-171.69,0,45), "lvs/vehicles/arc170/fire_gunner.mp3", "lvs/vehicles/arc170/fire_gunner.mp3" )
+	self.SNDTail:SetSoundLevel( 110 )
+
 	self:SetMaxThrottle( 1.2 )
 end
 
