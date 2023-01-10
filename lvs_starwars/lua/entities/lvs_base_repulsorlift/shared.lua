@@ -6,8 +6,8 @@ ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
 
-ENT.ThrustVtol = 25
-ENT.ThrustRateVtol = 3
+ENT.ThrustVtol = 30
+ENT.ThrustRateVtol = 2
 
 function ENT:CalcVtolThrottle( ply, cmd )
 	local Delta = FrameTime()
@@ -30,7 +30,7 @@ end
 
 function ENT:GetVtolMove()
 	if self:GetEngineActive() and not self:GetAI() then
-		return self:GetNWVtolMove() * self.ThrustVtol
+		return self:GetNWVtolMove() * self.ThrustVtol * (1 - math.min( self:GetThrottle(), 1 ) ^ 2)
 	else
 		return Vector(0,0,0)
 	end

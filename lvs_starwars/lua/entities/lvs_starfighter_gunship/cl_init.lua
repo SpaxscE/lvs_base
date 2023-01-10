@@ -1,15 +1,5 @@
 include("shared.lua")
 
-function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
-	if self:GetDriver() == ply then
-		local newpos = pos + self:GetForward() * 37 + self:GetUp() * 8
-
-		return newpos, angles, fov
-	else
-		return pos, angles, fov
-	end
-end
-
 function ENT:OnSpawn()
 end
 
