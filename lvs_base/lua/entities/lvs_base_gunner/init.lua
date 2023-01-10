@@ -280,11 +280,3 @@ function ENT:LVSFireBullet( data )
 
 	LVS:FireBullet( data )
 end
-
-function ENT:GetCrosshairFilterEnts()
-	local Base = self:GetVehicle()
-
-	if not IsValid( Base ) then return {} end
-
-	return Base:GetCrosshairFilterEnts()
-end

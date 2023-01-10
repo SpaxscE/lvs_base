@@ -139,3 +139,56 @@ function ENT:LVSPaintHitMarker( scr )
 		surface.DrawTexturedRectRotated( scr.x - Start, scr.y - Start, 5, 20, 45 )
 	end
 end
+
+function ENT:PaintCrosshairCenter( Pos2D, Col )
+	if not Col then
+		Col = Color( 255, 255, 255, 255 )
+	end
+
+	local Alpha = Col.a / 255
+	local Shadow = Color( 0, 0, 0, 80 * Alpha )
+
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 4, Shadow )
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 5, Col )
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 6, Shadow )
+end
+
+function ENT:PaintCrosshairOuter( Pos2D, Col )
+	if not Col then
+		Col = Color( 255, 255, 255, 255 )
+	end
+
+	local Alpha = Col.a / 255
+	local Shadow = Color( 0, 0, 0, 80 * Alpha )
+
+	surface.DrawCircle( Pos2D.x,Pos2D.y, 17, Shadow )
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 18, Col )
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Color( Col.r, Col.g, Col.b, 150 * Alpha ) )
+	surface.DrawCircle( Pos2D.x, Pos2D.y, 20, Shadow )
+end
+
+local Circles = {
+	[1] = {r = -1, col = Color(0,0,0,200)},
+	[2] = {r = 0, col = Color(255,255,255,200)},
+	[3] = {r = 1, col = Color(255,255,255,255)},
+	[4] = {r = 2, col = Color(255,255,255,200)},
+	[5] = {r = 3, col = Color(0,0,0,200)},
+}
+
+function ENT:LVSDrawCircle( X, Y, target_radius, value )
+	local endang = 360 * value
+
+	if endang == 0 then return end
+
+	for i = 1, #Circles do
+		local data = Circles[ i ]
+		local radius = target_radius + data.r
+		local segmentdist = endang / ( math.pi * radius / 2 )
+
+		for a = 0, endang, segmentdist do
+			surface.SetDrawColor( data.col )
+
+			surface.DrawLine( X - math.sin( math.rad( a ) ) * radius, Y + math.cos( math.rad( a ) ) * radius, X - math.sin( math.rad( a + segmentdist ) ) * radius, Y + math.cos( math.rad( a + segmentdist ) ) * radius )
+		end
+	end
+end

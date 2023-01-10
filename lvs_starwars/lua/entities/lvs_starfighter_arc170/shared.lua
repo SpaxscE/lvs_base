@@ -38,6 +38,7 @@ ENT.MaxShield = 100
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "Foils" )
+	self:AddDT( "Entity", "TailGunnerSeat" )
 
 	if SERVER then
 		self:NetworkVarNotify( "Foils", self.OnFoilsChanged )
@@ -196,16 +197,15 @@ function ENT:InitWeapons()
 
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/hmg.png")
-	weapon.Ammo = 1000
-	weapon.Delay = 0.15
-	weapon.HeatRateUp = 0.5
+	weapon.Delay = 0.25
+	weapon.HeatRateUp = 0.25
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
 		local pod = ent:GetDriverSeat()
 
 		if not IsValid( pod ) then return end
 
-		local startpos = pod:LocalToWorld( pod:OBBCenter() )
+		local startpos = ent:GetPos()
 		local trace = util.TraceHull( {
 			start = startpos,
 			endpos = (startpos + ent:GetAimVector() * 50000),
@@ -214,16 +214,16 @@ function ENT:InitWeapons()
 			filter = ent:GetCrosshairFilterEnts()
 		} )
 
+		ent.SwapTopBottom = not ent.SwapTopBottom
+
 		local bullet = {}
-		bullet.Src 	= ent:GetPos()
-		bullet.Dir 	= (trace.HitPos - bullet.Src):GetNormalized()
+		bullet.Src = ent:GetVehicle():LocalToWorld( ent.SwapTopBottom and Vector(-175.81,0,50.26) or Vector(-171.69,0,5.81) )
+		bullet.Dir = (trace.HitPos - bullet.Src):GetNormalized()
 		bullet.Spread 	= Vector( 0.025,  0.025, 0 )
 		bullet.TracerName = "lvs_laser_green"
 		bullet.Force	= 10
 		bullet.HullSize 	= 30
-		bullet.Damage	= 40
-		bullet.SplashDamage = 60
-		bullet.SplashDamageRadius = 250
+		bullet.Damage	= 125
 		bullet.Velocity = 50000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
@@ -234,14 +234,6 @@ function ENT:InitWeapons()
 			util.Effect( "lvs_laser_impact", effectdata )
 		end
 		ent:LVSFireBullet( bullet )
-
-		local effectdata = EffectData()
-		effectdata:SetStart( Vector(50,255,50) )
-		effectdata:SetOrigin( bullet.Src )
-		effectdata:SetNormal( ent:GetForward() )
-		effectdata:SetEntity( ent )
-		util.Effect( "lvs_muzzle_colorable", effectdata )
-		ent:TakeAmmo()
 	end
 	weapon.OnSelect = function( ent )
 		ent:EmitSound("physics/metal/weapon_impact_soft3.wav")

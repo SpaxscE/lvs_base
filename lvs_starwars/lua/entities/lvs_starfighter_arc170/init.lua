@@ -8,8 +8,11 @@ function ENT:OnSpawn( PObj )
 	PObj:SetMass( 1000 )
 
 	self:AddDriverSeat( Vector(45,0,5), Angle(0,-90,0) )
+
 	self:AddPassengerSeat( Vector(-30,0,18), Angle(0,-90,0) )
-	self:AddPassengerSeat( Vector(-107,0,18), Angle(0,90,0) )
+
+	local Pod = self:AddPassengerSeat( Vector(-107,0,18), Angle(0,90,0) )
+	self:SetTailGunnerSeat( Pod )
 
 	self:AddEngine( Vector(-95,65,7) )
 	self:AddEngine( Vector(-95,-65,7) )

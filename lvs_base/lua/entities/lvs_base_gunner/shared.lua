@@ -44,7 +44,7 @@ function ENT:GetAITEAM()
 
 	if not IsValid( Base ) then return 0 end
 
-	return Base:GetAITeam()
+	return Base:GetAITEAM()
 end
 
 function ENT:GetVehicle()
@@ -93,4 +93,12 @@ function ENT:GetMaxAmmo()
 	if not CurWeapon then return -1 end
 
 	return CurWeapon.Ammo or -1
+end
+
+function ENT:GetCrosshairFilterEnts()
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return {} end
+
+	return Base:GetCrosshairFilterEnts()
 end

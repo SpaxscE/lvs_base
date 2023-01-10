@@ -422,7 +422,7 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 
 	DrawCircle( hX, hY, h * 0.35, Heat )
 
-	if self:GetMaxAmmo() <= 0 then return end
+	if Base:GetMaxAmmo() <= 0 then return end
 
 	draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
 	draw.DrawText( Base:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )

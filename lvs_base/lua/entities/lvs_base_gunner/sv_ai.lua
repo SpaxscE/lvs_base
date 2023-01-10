@@ -41,24 +41,26 @@ function ENT:RunAI()
 
 	self._ai_look_dir = (Target:GetPos() - self:GetPos()):GetNormalized()
 
-	if self:AITargetInFront( Target, 45 ) then
-		local StartPos = self:GetPos()
+	local StartPos = self:GetPos()
 
-		local trace = util.TraceHull( {
-			start =  StartPos,
-			endpos = (StartPos + self._ai_look_dir * 50000),
-			mins = Vector( -50, -50, -50 ),
-			maxs = Vector( 50, 50, 50 ),
-			filter = self:GetCrosshairFilterEnts()
-		} )
+	local trace = util.TraceHull( {
+		start =  StartPos,
+		endpos = (StartPos + self._ai_look_dir * 50000),
+		mins = Vector( -50, -50, -50 ),
+		maxs = Vector( 50, 50, 50 ),
+		filter = self:GetCrosshairFilterEnts()
+	} )
 
-		if IsValid( trace.Entity ) and trace.Entity.GetAITEAM then
-			self._AIFireInput = (trace.Entity:GetAITEAM() ~= self:GetAITEAM() or trace.Entity:GetAITEAM() == 0)
-		else
-			self._AIFireInput = true
-		end
-	else
+	if not self:AIHasWeapon( self:GetSelectedWeapon() ) then
 		self._AIFireInput = false
+
+		return
+	end
+
+	if IsValid( trace.Entity ) and trace.Entity.GetAITEAM then
+		self._AIFireInput = (trace.Entity:GetAITEAM() ~= self:GetAITEAM() or trace.Entity:GetAITEAM() == 0)
+	else
+		self._AIFireInput = true
 	end
 end
 

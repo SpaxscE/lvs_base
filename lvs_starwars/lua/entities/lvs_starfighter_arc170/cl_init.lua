@@ -7,6 +7,43 @@ ENT.EnginePos = {
 	Vector(-163.81,-64.51,8.36),
 }
 
+function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+
+	if self:GetTailGunnerSeat() == ply:GetVehicle() then
+		if pod:GetThirdPersonMode() then
+			return pos + self:GetUp() * 100, angles, fov
+		end
+	end
+
+	return pos, angles, fov
+end
+
+function ENT:LVSPreHudPaint( X, Y, ply )
+	local Pod = self:GetTailGunnerSeat()
+
+	if Pod ~= ply:GetVehicle() then return true end
+
+	local weapon = Pod:lvsGetWeapon()
+
+	if not IsValid( weapon ) then return true end
+
+	local startpos = weapon:GetPos()
+	local trace = util.TraceHull( {
+		start = startpos,
+		endpos = (startpos + weapon:GetAimVector() * 50000),
+		mins = Vector( -10, -10, -10 ),
+		maxs = Vector( 10, 10, 10 ),
+		filter = weapon:GetCrosshairFilterEnts()
+	} )
+
+	local Pos2D = trace.HitPos:ToScreen() 
+
+	self:PaintCrosshairCenter( Pos2D )
+	self:PaintCrosshairOuter( Pos2D )
+
+	return true
+end
+
 function ENT:OnSpawn()
 	self:RegisterTrail( Vector(-34,326,-13), 0, 20, 2, 1000, 150 )
 	self:RegisterTrail( Vector(-34,-326,-13), 0, 20, 2, 1000, 150 )
