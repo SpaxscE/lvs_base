@@ -1,5 +1,16 @@
 include("shared.lua")
 
+function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+
+	if self:GetDriverSeat() == ply:GetVehicle() then
+		if pod:GetThirdPersonMode() then
+			return pos + self:GetUp() * 100, angles, fov
+		end
+	end
+
+	return pos, angles, fov
+end
+
 function ENT:OnSpawn()
 end
 
