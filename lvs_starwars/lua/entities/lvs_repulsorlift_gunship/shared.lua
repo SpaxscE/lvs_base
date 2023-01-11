@@ -34,6 +34,12 @@ ENT.MaxHealth = 4000
 
 ENT.AutomaticFrameAdvance = true
 
+function ENT:OnSetupDataTables()
+	self:AddDT( "Entity", "GunnerSeat" )
+	self:AddDT( "Entity", "BTPodL" )
+	self:AddDT( "Entity", "BTPodR" )
+end
+
 function ENT:InitWeapons()
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/dual_mg.png")
@@ -42,6 +48,8 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 0
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
+		if math.abs( ent.frontgunYaw ) > 100 then return end
+
 		local ID_L = self:LookupAttachment( "muzzle_frontgun_left" )
 		local ID_R = self:LookupAttachment( "muzzle_frontgun_right" )
 		local Muzzle = {
@@ -98,6 +106,13 @@ function ENT:InitWeapons()
 
 		ent.frontgunYaw = -AimAngles.y
 
+		if math.abs( ent.frontgunYaw ) > 100 then
+			ent:SetPoseParameter("frontgun_pitch", 0 )
+			ent:SetPoseParameter("frontgun_yaw", 0 )
+
+			return
+		end
+
 		ent:SetPoseParameter("frontgun_pitch", -AimAngles.p )
 		ent:SetPoseParameter("frontgun_yaw", -AimAngles.y )
 	end
@@ -120,6 +135,10 @@ function ENT:InitWeapons()
 			ent._nextMissleTracking = T + 0.1 -- 0.1 second interval because those find functions can be expensive
 
 			ent._ProtonTorpedo:FindTarget( ent:GetPos(), ent:GetForward(), 30, 7500 )
+
+			if IsValid( ent._ProtonTorpedo:GetTarget() ) then
+				ent:SetBodygroup( 1, 1 )
+			end
 
 			return
 		end
@@ -153,6 +172,8 @@ function ENT:InitWeapons()
 		ent:SetNextAttack( CurTime() + 0.1 ) -- wait 0.1 second before starting to track
 	end
 	weapon.FinishAttack = function( ent )
+		ent:SetBodygroup( 1, 0 )
+
 		if not IsValid( ent._ProtonTorpedo ) then return end
 
 		local projectile = ent._ProtonTorpedo
