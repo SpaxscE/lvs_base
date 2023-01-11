@@ -13,17 +13,17 @@ ENT.MDL = "models/blu/laat.mdl"
 
 ENT.AITEAM = 2
 
-ENT.MaxVelocity = 2000
-ENT.MaxThrust = 2000
+ENT.MaxVelocity = 2400
+ENT.MaxThrust = 2400
 
 ENT.MaxPitch = 60
 
-ENT.ThrustVtol =30
+ENT.ThrustVtol = 50
 ENT.ThrustRateVtol = 2
 
-ENT.TurnRatePitch = 1
-ENT.TurnRateYaw = 1
-ENT.TurnRateRoll = 1
+ENT.TurnRatePitch = 0.7
+ENT.TurnRateYaw = 0.7
+ENT.TurnRateRoll = 0.7
 
 ENT.ForceLinearMultiplier = 1
 
