@@ -114,9 +114,9 @@ function ENT:InitWeapons()
 		ent:TakeAmmo()
 
 		if CurPos.y > 0 then
-			ent.SNDLeft:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+			ent.SNDLeft:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 		else
-			ent.SNDRight:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+			ent.SNDRight:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 		end
 	end
 	weapon.OnSelect = function( ent )

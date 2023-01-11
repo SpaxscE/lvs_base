@@ -95,7 +95,7 @@ function ENT:InitWeapons()
 
 		ent:TakeAmmo()
 
-		ent.PrimarySND:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+		ent.PrimarySND:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
@@ -132,7 +132,7 @@ function ENT:InitWeapons()
 
 		ent:TakeAmmo()
 
-		ent.SecondarySND:PlayOnce( 100 + math.cos( CurTime() + self:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+		ent.SecondarySND:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
