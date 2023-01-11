@@ -9,7 +9,7 @@ function ENT:OnSpawn( PObj )
 
 	self:AddDriverSeat( Vector(207,0,120), Angle(0,-90,0) ):SetCameraDistance( 1 )
 
-	self:AddEngine(  Vector(-105,0,58) )
+	self:AddEngine(  Vector(-385,0,255) )
 	self:AddEngineSound( Vector(-105,0,58) )
 end
 

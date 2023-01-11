@@ -35,14 +35,26 @@ ENT.MaxHealth = 4000
 function ENT:InitWeapons()
 end
 
-ENT.FlyByAdvance = 0.5
-ENT.FlyBySound = "lvs/vehicles/vwing/flyby.wav" 
+
+sound.Add( {
+	name = "LVS.LAAT.FLYBY",
+	sound = {
+		"lvs/vehicles/laat/flyby1.wav",
+		"lvs/vehicles/laat/flyby2.wav",
+		"lvs/vehicles/laat/flyby3.wav",
+		"lvs/vehicles/laat/flyby4.wav",
+		"lvs/vehicles/laat/flyby5.wav",
+	}
+} )
+
+
+ENT.FlyByAdvance = 1
+ENT.FlyBySound = "LVS.LAAT.FLYBY" 
 ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"
 
 ENT.EngineSounds = {
 	{
-		sound = "lvs/vehicles/vwing/loop.wav",
-		sound_int = "lvs/vehicles/vwing/loop_interior.wav",
+		sound = "lvs/vehicles/laat/loop.wav",
 		Pitch = 80,
 		PitchMin = 0,
 		PitchMax = 255,
@@ -51,5 +63,19 @@ ENT.EngineSounds = {
 		FadeOut = 1,
 		FadeSpeed = 1.5,
 		UseDoppler = true,
+	},
+	{
+		sound = "^lvs/vehicles/laat/dist.wav",
+		Pitch = 80,
+		PitchMin = 0,
+		PitchMax = 255,
+		PitchMul = 40,
+		FadeIn = 0.35,
+		FadeOut = 1,
+		FadeSpeed = 1.5,
+		UseDoppler = true,
+		VolumeMin = 0,
+		VolumeMax = 1,
+		SoundLevel = 110,
 	},
 }
