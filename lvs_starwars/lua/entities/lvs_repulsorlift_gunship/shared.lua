@@ -32,6 +32,8 @@ ENT.ForceAngleDampingMultiplier = 1
 
 ENT.MaxHealth = 4000
 
+ENT.AutomaticFrameAdvance = true
+
 function ENT:InitWeapons()
 
 
@@ -50,6 +52,9 @@ function ENT:InitWeapons()
 		}
 
 		for id = 1, 2 do
+			if id == 1 and ent.frontgunYaw > 5 then continue end
+			if id == 2 and ent.frontgunYaw < -5 then continue end
+
 			local att = Muzzle[ id ]
 
 			local bullet = {}
@@ -71,12 +76,21 @@ function ENT:InitWeapons()
 			end
 
 			ent:LVSFireBullet( bullet )
+			ent:TakeAmmo()
 		end
-
-		ent:TakeAmmo()
 	end
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	weapon.OnThink = function( ent, active )
+		local trace = ent:GetEyeTrace()
+
+		local AimAngles = ent:WorldToLocalAngles( (trace.HitPos - self:LocalToWorld(  Vector(256,0,36) ) ):GetNormalized():Angle() )
+
+		ent.frontgunYaw = -AimAngles.y
+
+		ent:SetPoseParameter("frontgun_pitch", -AimAngles.p )
+		ent:SetPoseParameter("frontgun_yaw", -AimAngles.y )
+	end
 	self:AddWeapon( weapon )
 end
 
