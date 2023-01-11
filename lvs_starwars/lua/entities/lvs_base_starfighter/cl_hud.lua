@@ -33,19 +33,20 @@ function ENT:LVSPreHudPaint( X, Y, ply )
 	return true
 end
 
+
 function ENT:LVSHudPaint( X, Y, ply )
 	if not self:LVSPreHudPaint( X, Y, ply ) then return end
 
 	if ply ~= self:GetDriver() then return end
 
 	local HitPlane = self:GetEyeTrace( true ).HitPos:ToScreen()
+	local HitPilot = self:GetEyeTrace().HitPos:ToScreen()
 
-	if ply:lvsMouseAim() then
-		local HitPilot = self:GetEyeTrace().HitPos:ToScreen()
+	self:PaintCrosshairCenter( HitPlane )
+	self:PaintCrosshairOuter( HitPilot )
 
-		self:LVSHudPaintMouseAim( HitPlane, HitPilot, ply:lvsKeyDown( "FREELOOK" ) )
-	else
-		self:LVSHudPaintDirectInput( HitPlane )
+	if ply:lvsMouseAim() and not ply:lvsKeyDown( "FREELOOK" ) then
+		self:LVSHudPaintMouseAim( HitPlane, HitPilot )
 	end
 
 	self:LVSPaintHitMarker( HitPlane )
@@ -56,16 +57,13 @@ function ENT:LVSHudPaintDirectInput( Pos2D )
 	self:PaintCrosshairOuter( Pos2D )
 end
 
-function ENT:LVSHudPaintMouseAim( HitPlane, HitPilot, FreeLook )
-	self:PaintCrosshairCenter( HitPlane )
-	self:PaintCrosshairOuter( HitPilot )
-
+function ENT:LVSHudPaintMouseAim( HitPlane, HitPilot )
 	local Sub = Vector(HitPilot.x,HitPilot.y,0) - Vector(HitPlane.x,HitPlane.y,0)
 	local Len = Sub:Length()
 	local Dir = Sub:GetNormalized()
 
 	surface.SetDrawColor( 255, 255, 255, 100 )
-	if Len > 20 and not FreeLook then
+	if Len > 20 then
 		surface.DrawLine( HitPlane.x + Dir.x * 5, HitPlane.y + Dir.y * 5, HitPilot.x - Dir.x * 20, HitPilot.y- Dir.y * 20 )
 
 		-- shadow

@@ -33,8 +33,52 @@ ENT.ForceAngleDampingMultiplier = 1
 ENT.MaxHealth = 4000
 
 function ENT:InitWeapons()
-end
 
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/dual_mg.png")
+	weapon.Ammo = 1400
+	weapon.Delay = 0.25
+	weapon.HeatRateUp = 0.25
+	weapon.HeatRateDown = 0.25
+	weapon.Attack = function( ent )
+		local ID_L = self:LookupAttachment( "muzzle_frontgun_left" )
+		local ID_R = self:LookupAttachment( "muzzle_frontgun_right" )
+		local Muzzle = {
+			[1] = self:GetAttachment( ID_L ),
+			[2] = self:GetAttachment( ID_R ),
+		}
+
+		for id = 1, 2 do
+			local att = Muzzle[ id ]
+
+			local bullet = {}
+			bullet.Src 	= att.Pos
+			bullet.Dir 	= att.Ang:Up()
+			bullet.Spread 	= Vector( 0.015,  0.015, 0 )
+			bullet.TracerName = "lvs_laser_green"
+			bullet.Force	= 10
+			bullet.HullSize 	= 25
+			bullet.Damage	= 40
+			bullet.Velocity = 60000
+			bullet.Attacker 	= ent:GetDriver()
+			bullet.Callback = function(att, tr, dmginfo)
+				local effectdata = EffectData()
+					effectdata:SetStart( Vector(50,255,50) ) 
+					effectdata:SetOrigin( tr.HitPos )
+					effectdata:SetNormal( tr.HitNormal )
+				util.Effect( "lvs_laser_impact", effectdata )
+			end
+
+			ent:LVSFireBullet( bullet )
+		end
+
+		ent:TakeAmmo()
+	end
+	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	self:AddWeapon( weapon )
+end
 
 sound.Add( {
 	name = "LVS.LAAT.FLYBY",
