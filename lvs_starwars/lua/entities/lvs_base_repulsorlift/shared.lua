@@ -9,13 +9,20 @@ ENT.Category = "[LVS]"
 ENT.ThrustVtol = 30
 ENT.ThrustRateVtol = 2
 
+ENT.MaxPitch = 60
+
 function ENT:CalcVtolThrottle( ply, cmd )
 	local Delta = FrameTime()
 
 	local ThrottleZero = self:GetThrottle() <= 0
 
 	local VtolX = ThrottleZero and (ply:lvsKeyDown( "-VTOL_X_SF" ) and -1 or 0) or 0
-	local VtolY = ((ply:lvsKeyDown( "+VTOL_Y_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Y_SF" ) and 1 or 0)) + ((ply:lvsKeyDown( "-ROLL_SF" ) and 1 or 0) - (ply:lvsKeyDown( "+ROLL_SF" ) and 1 or 0))
+	local VtolY = ((ply:lvsKeyDown( "+VTOL_Y_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Y_SF" ) and 1 or 0))
+
+	if ply:lvsMouseAim() then
+		VtolY = math.Clamp( VtolY + ((ply:lvsKeyDown( "-ROLL_SF" ) and 1 or 0) - (ply:lvsKeyDown( "+ROLL_SF" ) and 1 or 0)), -1 , 1)
+	end
+
 	local VtolZ = ((ply:lvsKeyDown( "+VTOL_Z_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Z_SF" ) and 1 or 0))
 
 	local DesiredVtol = Vector(VtolX,VtolY,VtolZ)
@@ -34,4 +41,52 @@ function ENT:GetVtolMove()
 	else
 		return Vector(0,0,0)
 	end
+end
+
+function ENT:PlayerDirectInput( ply, cmd )
+	local Pod = self:GetDriverSeat()
+
+	local Delta = FrameTime()
+
+	local KeyLeft = ply:lvsKeyDown( "-ROLL_SF" )
+	local KeyRight = ply:lvsKeyDown( "+ROLL_SF" )
+	local KeyPitchUp = ply:lvsKeyDown( "+PITCH_SF" )
+	local KeyPitchDown = ply:lvsKeyDown( "-PITCH_SF" )
+
+	local MouseX = cmd:GetMouseX()
+	local MouseY = cmd:GetMouseY()
+
+	if ply:lvsKeyDown( "FREELOOK" ) and not Pod:GetThirdPersonMode() then
+		MouseX = 0
+		MouseY = 0
+	else
+		ply:SetEyeAngles( Angle(0,90,0) )
+	end
+
+	local SensX, SensY, ReturnDelta = ply:lvsMouseSensitivity()
+
+	if KeyPitchDown then MouseY = 10 * ReturnDelta end
+	if KeyPitchUp then MouseY = -10 * ReturnDelta end
+	if KeyLeft then MouseX = -10 * ReturnDelta end
+	if KeyRight then MouseX = 10 * ReturnDelta end
+
+	local Input = Vector( MouseX * 0.4 * SensX, MouseY * SensY, 0 )
+
+	local Cur = self:GetSteer()
+
+	local Rate = Delta * 3 * ReturnDelta
+
+	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5 * ReturnDelta,-Rate,Rate), math.Clamp(Cur.y * Delta * 5 * ReturnDelta,-Rate,Rate), 0)
+
+	local Target = New + Input * Delta * 0.8
+
+	local Fx = math.Clamp( Target.x, -1, 1 )
+	local Fy = math.Clamp( Target.y, -1, 1 )
+
+	local TargetFz = (KeyLeft and 1 or 0) - (KeyRight and 1 or 0)
+	local Fz = Cur.z + math.Clamp(TargetFz - Cur.z,-Rate * 3,Rate * 3)
+
+	local F = Cur + (Vector( Fx, Fy, Fz ) - Cur) * math.min(Delta * 100,1)
+
+	self:SetSteer( F )
 end

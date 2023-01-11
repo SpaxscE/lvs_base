@@ -62,10 +62,27 @@ function ENT:CalcAero( phys, deltatime )
 		end
 	end
 
-	local VtolMove = self:GetVtolMove()
+	local Ang = self:GetAngles()
+
+	Steer.y = math.max(math.abs( Steer.y ) - math.min( math.abs( Ang.p / 90 ), 1 ) ^ 3,0) * self:Sign( Steer.y )
+
+	if Ang.p > self.MaxPitch and Steer.y > 0 then
+		Steer.y = 0
+	end
+
+	if Ang.p < -self.MaxPitch and Steer.y < 0 then
+		Steer.y = 0
+	end
+
 	local Pitch = math.Clamp(Steer.y - GravityPitch,-1,1) * self.TurnRatePitch * 4
 	local Yaw = math.Clamp(-Steer.x + GravityYaw,-1,1) * self.TurnRateYaw * 4
-	local Roll = math.Clamp( self:WorldToLocalAngles( Angle( 0, self:GetAngles().y, (Steer.x * math.min( self:GetThrottle() ^ 2, 1 ) - (VtolMove.y / self.ThrustVtol) * 0.25) * 45 ) ).r / 90,-1,1) * self.TurnRateRoll * 12
+
+	local VtolMove = self:GetVtolMove()
+
+	local RollMul = (math.abs(self:AngleBetweenNormal( Vector(0,0,1) , self:GetForward() ) - 90) / 90) ^ 2
+	local TargetRoll = (Steer.x * math.min( self:GetThrottle() ^ 2, 1 ) - (VtolMove.y / self.ThrustVtol) * 0.25) * 45 * (1 - RollMul)
+
+	local Roll = math.Clamp( self:WorldToLocalAngles( Angle( 0, Ang.y, TargetRoll ) ).r / 90,-1,1) * self.TurnRateRoll * 12
 
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 

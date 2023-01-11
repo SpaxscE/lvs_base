@@ -16,6 +16,8 @@ ENT.AITEAM = 2
 ENT.MaxVelocity = 2000
 ENT.MaxThrust = 2000
 
+ENT.MaxPitch = 60
+
 ENT.ThrustVtol =30
 ENT.ThrustRateVtol = 2
 
