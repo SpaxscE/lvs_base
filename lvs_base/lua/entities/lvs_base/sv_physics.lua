@@ -102,6 +102,10 @@ function ENT:TakeCollisionDamage( damage, attacker )
 	self:TakeDamageInfo( dmginfo )
 end
 
+function ENT:OnCollision( data, physobj )
+	return false
+end
+
 function ENT:OnSkyCollide( data, physobj )
 	return true
 end
@@ -116,6 +120,8 @@ function ENT:PhysicsCollide( data, physobj )
 	if self:IsDestroyed() then
 		self.MarkForDestruction = true
 	end
+
+	if self:OnCollision( data, physobj ) then return end
 
 	self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
 

@@ -47,7 +47,6 @@ sound.Add( {
 	}
 } )
 
-
 ENT.FlyByAdvance = 1
 ENT.FlyBySound = "LVS.LAAT.FLYBY" 
 ENT.DeathSound = "lvs/vehicles/generic_starfighter/crash.wav"

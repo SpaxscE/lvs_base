@@ -68,4 +68,8 @@ end
 function ENT:OnMaintenance()
 end
 
-
+--[[
+function ENT:OnCollision( data, physobj )
+	return true -- returning true will prevent default collision mechanics from being run
+end
+]]
