@@ -1,6 +1,7 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_camera.lua" )
+AddCSLuaFile( "sh_camera_eyetrace.lua" )
 AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_flyby.lua" )
 AddCSLuaFile( "cl_deathsound.lua" )
@@ -8,6 +9,7 @@ include("shared.lua")
 include("sv_ai.lua")
 include("sv_components.lua")
 include("sv_vehiclespecific.lua")
+include("sh_camera_eyetrace.lua")
 
 DEFINE_BASECLASS( "lvs_base" )
 
@@ -40,6 +42,8 @@ end
 
 function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll, FreeMovement )
 	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
+
+	if self:GetAI() then self:SetAIAimVector( LocalAngles:Forward() ) end
 
 	local LocalAngPitch = LocalAngles.p
 	local LocalAngYaw = LocalAngles.y

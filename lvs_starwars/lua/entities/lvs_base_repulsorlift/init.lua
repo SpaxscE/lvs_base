@@ -4,6 +4,8 @@ include("shared.lua")
 
 function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll, FreeMovement )
 
+	if self:GetAI() then self:SetAIAimVector( self:WorldToLocalAngles( TargetAngle ):Forward() ) end
+
 	local Ang = self:WorldToLocalAngles( Angle( TargetAngle.p, TargetAngle.y, self:GetAngles().r ) )
 
 	local LocalAngPitch = Ang.p
@@ -93,3 +95,43 @@ function ENT:CalcAero( phys, deltatime )
 
 	return Move, Vector( Roll, Pitch, Yaw )
 end
+
+function ENT:AddEngine( pos )
+	local Engine = ents.Create( "lvs_repulsorlift_engine" )
+
+	if not IsValid( Engine ) then
+		self:Remove()
+
+		print("LVS: Failed to create engine entity. Vehicle terminated.")
+
+		return
+	end
+
+	Engine:SetPos( self:LocalToWorld( pos ) )
+	Engine:SetAngles( self:GetAngles() )
+	Engine:Spawn()
+	Engine:Activate()
+	Engine:SetParent( self )
+	Engine:SetBase( self )
+
+	self:DeleteOnRemove( Engine )
+
+	self:TransferCPPI( Engine )
+
+	self:AddDS( {
+		pos = pos,
+		ang = Angle(0,0,0),
+		mins = Vector(-40,-20,-30),
+		maxs =  Vector(40,20,30),
+		Callback = function( tbl, ent, dmginfo )
+			if dmginfo:GetDamage() <= 0 then return end
+
+			dmginfo:ScaleDamage( 2 )
+
+			Engine:TakeDamageInfo( dmginfo )
+		end
+	} )
+
+	return Engine
+end
+

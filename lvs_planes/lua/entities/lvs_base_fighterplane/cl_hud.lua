@@ -38,24 +38,10 @@ function ENT:LVSHudPaint( X, Y, ply )
 
 	if ply ~= self:GetDriver() then return end
 
-	local pod = self:GetDriverSeat()
-
-	if not IsValid( pod ) then return end
-
-	local pos = pod:LocalToWorld( pod:OBBCenter() )
-
-	local HitPlane = util.TraceLine( {
-		start = pos,
-		endpos = (pos + self:GetForward() * 50000),
-		filter = self:GetCrosshairFilterEnts()
-	} ).HitPos:ToScreen()
+	local HitPlane = self:GetEyeTrace( true ).HitPos:ToScreen()
 
 	if ply:lvsMouseAim() then
-		local HitPilot = util.TraceLine( {
-			start = pos,
-			endpos = (pos + ply:EyeAngles():Forward() * 50000),
-			filter = self:GetCrosshairFilterEnts()
-		} ).HitPos:ToScreen()
+		local HitPilot = self:GetEyeTrace().HitPos:ToScreen()
 
 		self:LVSHudPaintMouseAim( HitPlane, HitPilot, ply:lvsKeyDown( "FREELOOK" ) )
 	else

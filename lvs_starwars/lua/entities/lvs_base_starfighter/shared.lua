@@ -31,6 +31,7 @@ function ENT:SetupDataTables()
 	self:CreateBaseDT()
 
 	self:AddDT( "Vector", "Steer" )
+	self:AddDT( "Vector", "AIAimVector" )
 	self:AddDT( "Vector", "NWVtolMove" )
 	self:AddDT( "Float", "NWThrottle" )
 	self:AddDT( "Float", "MaxThrottle" )
