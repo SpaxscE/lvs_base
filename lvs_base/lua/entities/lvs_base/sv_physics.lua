@@ -107,15 +107,15 @@ function ENT:OnSkyCollide( data, physobj )
 end
 
 function ENT:PhysicsCollide( data, physobj )
-	if util.GetSurfacePropName( data.TheirSurfaceProps ) == "default_silent" then
+	local HitEnt = data.HitEntity
+
+	if not IsValid( data.HitEntity ) and util.GetSurfacePropName( data.TheirSurfaceProps ) == "default_silent" then
 		if self:OnSkyCollide( data, physobj ) then return end
 	end
 
 	if self:IsDestroyed() then
 		self.MarkForDestruction = true
 	end
-
-	local HitEnt = data.HitEntity
 
 	self:PhysicsStartScrape( self:WorldToLocal( data.HitPos ), data.HitNormal )
 
@@ -156,7 +156,9 @@ function ENT:PhysicsCollide( data, physobj )
 		if VelDif > 700 then
 			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 
-			self:TakeCollisionDamage( VelDif, HitEnt )
+			if not self:IsPlayerHolding() then
+				self:TakeCollisionDamage( VelDif, HitEnt )
+			end
 		else
 			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
 		end
