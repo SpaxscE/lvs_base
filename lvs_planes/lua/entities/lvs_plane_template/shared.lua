@@ -128,11 +128,16 @@ function ENT:InitWeapons()
 		return view
 
 		--or use inbuild camera system:
-		if pod:GetThirdPersonMode() then
-			pos = pos + ent:GetUp() * 100 -- move camera 100 units up in third person
-		end
-		
-		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+		--if pod:GetThirdPersonMode() then
+		--	pos = pos + ent:GetUp() * 100 -- move camera 100 units up in third person
+		--end
+		--return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+	end
+	]]
+	--[[
+	weapon.HudPaint = function( ent, X, Y, ply )
+		-- hud paint that is only active when the weapon is selected
+		-- draw stuff like crosshair here
 	end
 	]]
 	self:AddWeapon( weapon )

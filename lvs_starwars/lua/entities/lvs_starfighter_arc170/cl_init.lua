@@ -7,29 +7,6 @@ ENT.EnginePos = {
 	Vector(-163.81,-64.51,8.36),
 }
 
-ENT.RED = Color(255,0,0,255)
-ENT.WHITE = Color(255,255,255,255)
-
-function ENT:LVSPreHudPaint( X, Y, ply )
-	local Pod = self:GetTailGunnerSeat()
-
-	if Pod ~= ply:GetVehicle() then return true end
-
-	local weapon = Pod:lvsGetWeapon()
-
-	if not IsValid( weapon ) then return true end
-
-	local Col = (self:AngleBetweenNormal( weapon:GetAimVector(), weapon:GetForward() ) > 60) and self.RED or self.WHITE
-
-	local Pos2D = weapon:GetEyeTrace().HitPos:ToScreen() 
-
-	self:PaintCrosshairCenter( Pos2D, Col )
-	self:PaintCrosshairOuter( Pos2D, Col )
-	self:LVSPaintHitMarker( Pos2D )
-
-	return true
-end
-
 function ENT:OnSpawn()
 	self:RegisterTrail( Vector(-34,326,-13), 0, 20, 2, 1000, 150 )
 	self:RegisterTrail( Vector(-34,-326,-13), 0, 20, 2, 1000, 150 )

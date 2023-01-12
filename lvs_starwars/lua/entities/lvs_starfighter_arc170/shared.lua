@@ -198,6 +198,9 @@ function ENT:InitWeapons()
 
 
 
+	local COLOR_RED = Color(255,0,0,255)
+	local COLOR_WHITE = Color(255,255,255,255)
+
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/hmg.png")
 	weapon.Delay = 0.15
@@ -249,6 +252,16 @@ function ENT:InitWeapons()
 		end
 
 		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+	end
+	weapon.HudPaint = function( ent, X, Y, ply )
+		local Col = (ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > 60) and COLOR_RED or COLOR_WHITE
+
+		local Pos2D = ent:GetEyeTrace().HitPos:ToScreen() 
+
+		local base = ent:GetVehicle()
+		base:PaintCrosshairCenter( Pos2D, Col )
+		base:PaintCrosshairOuter( Pos2D, Col )
+		base:LVSPaintHitMarker( Pos2D )
 	end
 	self:AddWeapon( weapon, 3 )
 end

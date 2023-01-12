@@ -252,6 +252,19 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	PaintIdentifier( Parent )
 	Parent:LVSHudPaint( X, Y, ply )
 
+	local base = Pod:lvsGetWeapon()
+	if IsValid( base ) then
+		local weapon = base:GetActiveWeapon()
+		if weapon and weapon.HudPaint then
+			weapon.HudPaint( base, X, Y, ply )
+		end
+	else
+		local weapon = Parent:GetActiveWeapon()
+		if weapon and weapon.HudPaint then
+			weapon.HudPaint( Parent, X, Y, ply )
+		end
+	end
+
 	for id, editor in pairs( LVS.HudEditors ) do
 		local ScaleX = editor.w / editor.DefaultWidth
 		local ScaleY = editor.h / editor.DefaultHeight
