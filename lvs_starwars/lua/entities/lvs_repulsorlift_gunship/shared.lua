@@ -38,6 +38,15 @@ function ENT:OnSetupDataTables()
 	self:AddDT( "Entity", "GunnerSeat" )
 	self:AddDT( "Entity", "BTPodL" )
 	self:AddDT( "Entity", "BTPodR" )
+
+	self:AddDT( "Bool", "RearHatch" )
+
+	self:AddDT( "Int", "DoorMode" )
+
+	self:AddDT( "Bool", "WingTurretFire" )
+	--self:NetworkVar( "Vector",14, "WingTurretTarget" )
+	--self:NetworkVar( "Bool",19, "BTLFire" )
+	--self:NetworkVar( "Bool",20, "BTRFire" )
 end
 
 function ENT:InitWeapons()
@@ -201,12 +210,57 @@ function ENT:InitWeapons()
 	weapon.Icon = Material("lvs/weapons/gunship_sidedoor.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
-	weapon.Attack = function( ent )
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 0
+	weapon.StartAttack = function( ent )
+		local T = CurTime()
+
+		if (ent.NextDoor or 0) > T then return end
+
+		ent.NextDoor = T + 1
+
+		if ent:GetBodygroup( 2 ) == 0 then
+			local DoorMode = ent:GetDoorMode() + 1
+
+			ent:SetDoorMode( DoorMode )
+			
+			if DoorMode == 1 then
+				ent:EmitSound( "lvs/vehicles/laat/door_open.wav" )
+			end
+			
+			if DoorMode == 2 then
+				ent:PlayAnimation( "doors_open" )
+				ent:EmitSound( "lvs/vehicles/laat/door_large_open.wav" )
+			end
+			
+			if DoorMode == 3 then
+				ent:PlayAnimation( "doors_close" )
+				ent:EmitSound( "lvs/vehicles/laat/door_large_close.wav" )
+			end
+			
+			if DoorMode >= 4 then
+				ent:SetDoorMode( 0 )
+				ent:EmitSound( "lvs/vehicles/laat/door_close.wav" )
+			end
+		else
+			local DoorMode = ent:GetDoorMode() + 1
+
+			ent:SetDoorMode( DoorMode )
+
+			if DoorMode == 1 then
+				ent:PlayAnimation( "doors_open" )
+				ent:EmitSound( "lvs/vehicles/laat/door_large_open.wav" )
+			end
+			
+			if DoorMode >= 2 then
+				ent:PlayAnimation( "doors_close" )
+				ent:EmitSound( "lvs/vehicles/laat/door_large_close.wav" )
+				ent:SetDoorMode( 0 )
+			end
+		end
+
+		ent:OnDoorsChanged()
 	end
-	weapon.FinishAttack = function( ent )
-	end
-	weapon.OnSelect = function( ent ) end
-	weapon.OnOverheat = function( ent ) end
 	self:AddWeapon( weapon )
 
 
@@ -214,13 +268,42 @@ function ENT:InitWeapons()
 	weapon.Icon = Material("lvs/weapons/gunship_reardoor.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
-	weapon.Attack = function( ent )
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 0
+	weapon.StartAttack = function( ent )
+		local T = CurTime()
+
+		if (ent.NextDoor or 0) > T then return end
+
+		ent.NextDoor = T + 1
+
+		local ToggleHatch = not ent:GetRearHatch()
+
+		ent:SetRearHatch( ToggleHatch )
+		
+		if ToggleHatch then
+			ent:EmitSound( "lvs/vehicles/laat/door_open.wav" )
+		else
+			ent:EmitSound( "lvs/vehicles/laat/door_close.wav" )
+		end
+
+		ent:OnDoorsChanged()
 	end
-	weapon.FinishAttack = function( ent )
-	end
-	weapon.OnSelect = function( ent ) end
-	weapon.OnOverheat = function( ent ) end
 	self:AddWeapon( weapon )
+
+
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/gunship_reardoor.png")
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.HeatRateUp = 0.25
+	weapon.HeatRateDown = 0.25
+	weapon.StartAttack = function( ent )
+		PrintChat("runs")
+	end
+	self:AddWeapon( weapon, 2 )
 end
 
 sound.Add( {

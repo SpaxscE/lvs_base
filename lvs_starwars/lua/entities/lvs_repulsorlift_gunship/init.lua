@@ -124,11 +124,25 @@ function ENT:OnBallturretMounted( ismounted, oldvar )
 end
 
 function ENT:OnTick()
+	local DoorMode = self:GetDoorMode()
+	local TargetValue = DoorMode >= 1 and 1 or 0
+	self.SDsm = isnumber( self.SDsm ) and (self.SDsm + math.Clamp((TargetValue - self.SDsm) * 5,-1,2) * FrameTime() ) or 0
+	self:SetPoseParameter("sidedoor_extentions", self.SDsm )
+
+
 	local BTbodygroup = self:GetBodygroup(4)
 
 	if BTbodygroup ~= self.oldBTbodygroup then
 		self:OnBallturretMounted( BTbodygroup == 0, self.oldBTbodygroup == 0 )
 
 		self.oldBTbodygroup = BTbodygroup
+	end
+end
+
+function ENT:OnDoorsChanged()
+	if self:GetDoorMode() == 0 and not self:GetRearHatch() then
+		self:Lock()
+	else
+		self:UnLock()
 	end
 end
