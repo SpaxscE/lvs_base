@@ -115,6 +115,26 @@ function ENT:InitWeapons()
 	weapon.OnThink = function( ent, active ) end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	weapon.OnRemove = function( ent ) end
+	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
+
+		-- build view yourself:
+		local view = {}
+		view.origin = pos
+		view.angles = angles
+		view.fov = fov
+		view.drawviewer = false
+
+		return view
+
+		--or use inbuild camera system:
+		--[[
+		if pod:GetThirdPersonMode() then
+			pos = pos + ent:GetUp() * 100 -- move camera 100 units up in third person
+		end
+		
+		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+		]]
+	end
 	self:AddWeapon( weapon )
 
 	--self:AddWeapon( weapon, 2 ) -- this would register to weapon to seat 2
