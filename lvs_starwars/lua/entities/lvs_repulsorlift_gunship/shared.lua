@@ -198,7 +198,20 @@ function ENT:InitWeapons()
 
 
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/gunship_doors.png")
+	weapon.Icon = Material("lvs/weapons/gunship_sidedoor.png")
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.Attack = function( ent )
+	end
+	weapon.FinishAttack = function( ent )
+	end
+	weapon.OnSelect = function( ent ) end
+	weapon.OnOverheat = function( ent ) end
+	self:AddWeapon( weapon )
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/gunship_reardoor.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
 	weapon.Attack = function( ent )
