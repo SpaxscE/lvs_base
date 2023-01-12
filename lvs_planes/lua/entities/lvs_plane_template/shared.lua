@@ -115,6 +115,7 @@ function ENT:InitWeapons()
 	weapon.OnThink = function( ent, active ) end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	weapon.OnRemove = function( ent ) end
+	--[[
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
 
 		-- build view yourself:
@@ -135,6 +136,7 @@ function ENT:InitWeapons()
 		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
 		]]
 	end
+	]]
 	self:AddWeapon( weapon )
 
 	--self:AddWeapon( weapon, 2 ) -- this would register to weapon to seat 2
