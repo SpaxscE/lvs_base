@@ -128,13 +128,11 @@ function ENT:InitWeapons()
 		return view
 
 		--or use inbuild camera system:
-		--[[
 		if pod:GetThirdPersonMode() then
 			pos = pos + ent:GetUp() * 100 -- move camera 100 units up in third person
 		end
 		
 		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
-		]]
 	end
 	]]
 	self:AddWeapon( weapon )
