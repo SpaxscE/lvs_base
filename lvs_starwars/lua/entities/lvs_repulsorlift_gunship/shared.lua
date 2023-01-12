@@ -194,6 +194,20 @@ function ENT:InitWeapons()
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	self:AddWeapon( weapon )
+
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/gunship_doors.png")
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.Attack = function( ent )
+	end
+	weapon.FinishAttack = function( ent )
+	end
+	weapon.OnSelect = function( ent ) end
+	weapon.OnOverheat = function( ent ) end
+	self:AddWeapon( weapon )
 end
 
 sound.Add( {
@@ -238,3 +252,38 @@ ENT.EngineSounds = {
 		SoundLevel = 110,
 	},
 }
+
+function ENT:CalcMainActivity( ply )
+	local Pod = ply:GetVehicle()
+
+	if Pod == self:GetDriverSeat() or Pod == self:GetGunnerSeat() or Pod == self:GetBTPodL() or Pod == self:GetBTPodR() then return end
+
+	if ply.m_bWasNoclipping then 
+		ply.m_bWasNoclipping = nil 
+		ply:AnimResetGestureSlot( GESTURE_SLOT_CUSTOM ) 
+
+		if CLIENT then 
+			ply:SetIK( true )
+		end 
+	end 
+
+	ply.CalcIdeal = ACT_STAND
+	ply.CalcSeqOverride = ply:LookupSequence( "idle_all_02" )
+
+	if ply:GetAllowWeaponsInVehicle() and IsValid( ply:GetActiveWeapon() ) then
+
+		local holdtype = ply:GetActiveWeapon():GetHoldType()
+
+		if holdtype == "smg" then 
+			holdtype = "smg1"
+		end
+
+		local seqid = ply:LookupSequence( "idle_" .. holdtype )
+
+		if seqid ~= -1 then
+			ply.CalcSeqOverride = seqid
+		end
+	end
+
+	return ply.CalcIdeal, ply.CalcSeqOverride
+end

@@ -7,7 +7,9 @@ ENT.SpawnNormalOffset = 25
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 10000 )
 
-	self:AddDriverSeat( Vector(207,0,120), Angle(0,-90,0) ):SetCameraDistance( 1 )
+	local DriverSeat = self:AddDriverSeat( Vector(207,0,120), Angle(0,-90,0) )
+	DriverSeat:SetCameraDistance( 1 )
+	DriverSeat.ExitPos = Vector(75,0,36)
 
 	self:AddEngine( Vector(-385,0,255) )
 	self:AddEngineSound( Vector(-180,0,230) )
@@ -60,8 +62,8 @@ function ENT:OnSpawn( PObj )
 		local X = i * 35
 		local Y = 30 - i * 3
 		
-		self:AddPassengerSeat( Vector(10 - X,Y,10), Angle(0,0,0) ).ExitPos = Vector(10 - X,25,33)
-		self:AddPassengerSeat( Vector(10 - X,-Y,10), Angle(0,180,0) ).ExitPos = Vector(10 - X,-25,33)
+		self:AddPassengerSeat( Vector(10 - X,Y,10), Angle(0,0,0) ).ExitPos = Vector(10 - X,25,36)
+		self:AddPassengerSeat( Vector(10 - X,-Y,10), Angle(0,180,0) ).ExitPos = Vector(10 - X,-25,36)
 	end
 
 	self:SetPoseParameter("ballturret_left_pitch", 0 )

@@ -1,11 +1,21 @@
 include("shared.lua")
 
 function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
+	if pod == self:GetDriverSeat() then
 
-	if self:GetDriverSeat() == ply:GetVehicle() then
 		if pod:GetThirdPersonMode() then
-			return pos + self:GetUp() * 100, angles, fov
+			pos = pos + self:GetUp() * 200, angles, fov
 		end
+
+		return pos, angles, fov
+	end
+
+	if pod == self:GetGunnerSeat() or pod == self:GetBTPodL() or pod == self:GetBTPodR() then return pos, angles, fov end
+
+	if pod:GetThirdPersonMode() then
+		pos = ply:GetShootPos() + pod:GetUp() * 40
+	else
+		pos = pos + pod:GetUp() * 40
 	end
 
 	return pos, angles, fov
