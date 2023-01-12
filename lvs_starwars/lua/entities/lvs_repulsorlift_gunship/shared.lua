@@ -294,32 +294,75 @@ function ENT:InitWeapons()
 
 
 
+	local COLOR_RED = Color(255,0,0,255)
+	local COLOR_WHITE = Color(255,255,255,255)
+	local MaxRange = 90
+
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/gunship_reardoor.png")
+	weapon.Icon = Material("lvs/weapons/laserbeam.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
-	weapon.HeatRateUp = 0.4
-	weapon.HeatRateDown = 0.4
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 0
+	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
 	weapon.StartAttack = function( ent )
-		local base = ent:GetVehicle()
-		base:SetWingTurretFire( true ) 
+		ent.ShouldFire = true
 	end
 	weapon.FinishAttack = function( ent )
+		ent.ShouldFire = false
+
 		local base = ent:GetVehicle()
-		base:SetWingTurretFire( false ) 
 
-		if IsValid( base.WingRightSND ) then
-			base.WingRightSND:Stop()
-		end
+		local snd = {
+			[-1] = base.WingLeftSND,
+			[1] = base.WingRightSND,
+		}
 
-		if IsValid( base.WingLeftSND ) then
-			base.WingLeftSND:Stop()
+		for _, sound in pairs( snd ) do
+			if not IsValid( sound ) then continue end
+
+			sound:Stop()
 		end
 	end
 	weapon.OnThink = function( ent, active )
-		if not active then return end
-
 		local base = ent:GetVehicle()
+
+		local ShouldFire = (ent.ShouldFire == true) and ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) < MaxRange
+	
+		if base:SetWingTurretFire() ~= ShouldFire then
+			base:SetWingTurretFire( ShouldFire ) 
+		end
+
+		local snd = {
+			[-1] = base.WingLeftSND,
+			[1] = base.WingRightSND,
+		}
+
+		if ent._oldShouldFire ~= ShouldFire then
+			ent._oldShouldFire = ShouldFire
+			if ShouldFire then
+				for _, sound in pairs( snd ) do
+					if not IsValid( sound ) then continue end
+
+					sound:EmitSound( "lvs/vehicles/laat/ballturret_fire.mp3", 110 )
+				end
+			end
+		end
+
+		if not ShouldFire then
+			for _, sound in pairs( snd ) do
+				if not IsValid( sound ) then continue end
+				sound:Stop()
+			end
+
+			ent:SetHeat( ent:GetHeat() - FrameTime() )
+
+			return
+		end
+	
+		if not active then
+			return
+		end
 
 		local trace = ent:GetEyeTrace()
 		local DesEndPos = trace.HitPos
@@ -336,10 +379,7 @@ function ENT:InitWeapons()
 			DesStartPos = Vector(-174.79,350.05,125.98)
 		end
 
-		local snd = {
-			[-1] = base.WingLeftSND,
-			[1] = base.WingRightSND,
-		}
+		local NewHeat = ent:GetHeat()
 
 		for i = -1,1,2 do
 			local StartPos = self:LocalToWorld( DesStartPos * Vector(1,i,1) )
@@ -351,9 +391,15 @@ function ENT:InitWeapons()
 
 			if beam.Entity ~= base then
 				snd[i]:Play()
+				NewHeat = NewHeat + FrameTime() * 0.25
 			else
 				snd[i]:Stop()
 			end
+		end
+
+		ent:SetHeat( NewHeat )
+		if NewHeat >= 1 then
+			ent:SetOverheated( true )
 		end
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
@@ -394,10 +440,13 @@ function ENT:InitWeapons()
 		return view
 	end
 	weapon.HudPaint = function( ent, X, Y, ply )
+		local Col = (ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) >= MaxRange) and COLOR_RED or COLOR_WHITE
+
 		local Pos2D = ent:GetEyeTrace().HitPos:ToScreen() 
+
 		local base = ent:GetVehicle()
-		base:PaintCrosshairCenter( Pos2D, Color(255,255,255,255) )
-		base:PaintCrosshairOuter( Pos2D, Color(255,255,255,255) )
+		base:PaintCrosshairCenter( Pos2D, Col )
+		base:PaintCrosshairOuter( Pos2D, Col )
 		base:LVSPaintHitMarker( Pos2D )
 	end
 
