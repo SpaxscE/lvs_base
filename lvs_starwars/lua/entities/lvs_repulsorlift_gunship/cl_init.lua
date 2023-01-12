@@ -10,8 +10,6 @@ function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
 		return pos, angles, fov
 	end
 
-	if pod == self:GetGunnerSeat() or pod == self:GetBTPodL() or pod == self:GetBTPodR() then return pos, angles, fov end
-
 	if pod:GetThirdPersonMode() then
 		pos = ply:GetShootPos() + pod:GetUp() * 40
 	else

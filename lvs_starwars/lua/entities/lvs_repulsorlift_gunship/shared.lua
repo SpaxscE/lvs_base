@@ -218,8 +218,6 @@ function ENT:InitWeapons()
 
 		if (ent.NextDoor or 0) > T then return end
 
-		ent.NextDoor = T + 1
-
 		if ent:GetBodygroup( 2 ) == 0 then
 			local DoorMode = ent:GetDoorMode() + 1
 
@@ -230,6 +228,8 @@ function ENT:InitWeapons()
 			end
 			
 			if DoorMode == 2 then
+				ent.NextDoor = T + 1
+
 				ent:PlayAnimation( "doors_open" )
 				ent:EmitSound( "lvs/vehicles/laat/door_large_open.wav" )
 			end
@@ -242,8 +242,12 @@ function ENT:InitWeapons()
 			if DoorMode >= 4 then
 				ent:SetDoorMode( 0 )
 				ent:EmitSound( "lvs/vehicles/laat/door_close.wav" )
+
+				ent.NextDoor = T + 1
 			end
 		else
+			ent.NextDoor = T + 1
+
 			local DoorMode = ent:GetDoorMode() + 1
 
 			ent:SetDoorMode( DoorMode )

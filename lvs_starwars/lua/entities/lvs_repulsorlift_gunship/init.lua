@@ -82,7 +82,7 @@ function ENT:OnEngineActiveChanged( Active )
 	if Active then
 		self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/start.wav" )
 	else
-		self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/stop.wav" )
+		self:EmitSound( "lvs/vehicles/laat/landing.wav" )
 	end
 end
 
