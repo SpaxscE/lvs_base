@@ -46,15 +46,11 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 			ply:SetEyeAngles( (Center - exitpoint):Angle() )
 		end
 	else
-		if isvector( Pod.ExitPos ) then
-			exitpoint = Vehicle:LocalToWorld( Pod.ExitPos )
-		end
+		if isvector( Pod.ExitPos ) and util.IsInWorld( Pod.ExitPos ) then
+			local exitpoint = Vehicle:LocalToWorld( Pod.ExitPos )
 
-		if util.IsInWorld( exitpoint ) then
 			ply:SetPos( exitpoint )
 			ply:SetEyeAngles( (Pod:GetPos() - exitpoint):Angle() )
-
-			return
 		end
 
 		local PodPos = Pod:LocalToWorld( Vector(0,0,10) )
