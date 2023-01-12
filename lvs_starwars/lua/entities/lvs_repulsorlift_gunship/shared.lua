@@ -44,7 +44,8 @@ function ENT:OnSetupDataTables()
 	self:AddDT( "Int", "DoorMode" )
 
 	self:AddDT( "Bool", "WingTurretFire" )
-	--self:NetworkVar( "Vector",14, "WingTurretTarget" )
+	self:AddDT( "Vector", "WingTurretTarget" )
+
 	--self:NetworkVar( "Bool",19, "BTLFire" )
 	--self:NetworkVar( "Bool",20, "BTRFire" )
 end
@@ -293,16 +294,113 @@ function ENT:InitWeapons()
 
 
 
-
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/gunship_reardoor.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
-	weapon.HeatRateUp = 0.25
-	weapon.HeatRateDown = 0.25
+	weapon.HeatRateUp = 0.4
+	weapon.HeatRateDown = 0.4
 	weapon.StartAttack = function( ent )
-		PrintChat("runs")
+		local base = ent:GetVehicle()
+		base:SetWingTurretFire( true ) 
 	end
+	weapon.FinishAttack = function( ent )
+		local base = ent:GetVehicle()
+		base:SetWingTurretFire( false ) 
+
+		if IsValid( base.WingRightSND ) then
+			base.WingRightSND:Stop()
+		end
+
+		if IsValid( base.WingLeftSND ) then
+			base.WingLeftSND:Stop()
+		end
+	end
+	weapon.OnThink = function( ent, active )
+		if not active then return end
+
+		local base = ent:GetVehicle()
+
+		local trace = ent:GetEyeTrace()
+		local DesEndPos = trace.HitPos
+
+		base:SetWingTurretTarget( DesEndPos )
+
+		if not base:GetWingTurretFire() then return end
+
+		local DesStartPos
+
+		if base:WorldToLocal( DesEndPos ).z < 0 then
+			DesStartPos = Vector(-172.97,334.04,93.25)
+		else
+			DesStartPos = Vector(-174.79,350.05,125.98)
+		end
+
+		local snd = {
+			[-1] = base.WingLeftSND,
+			[1] = base.WingRightSND,
+		}
+
+		for i = -1,1,2 do
+			local StartPos = self:LocalToWorld( DesStartPos * Vector(1,i,1) )
+			local beam = util.TraceLine( { start = StartPos, endpos = DesEndPos} )
+
+			self:BallturretDamage( beam.Entity, ent:GetDriver(), trace.HitPos, (trace.HitPos - StartPos):GetNormalized() )
+
+			if not IsValid( snd[i] ) then continue end
+
+			if beam.Entity ~= base then
+				snd[i]:Play()
+			else
+				snd[i]:Stop()
+			end
+		end
+	end
+	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
+		local view = {}
+		view.origin = pos
+		view.angles = angles
+		view.fov = fov
+		view.drawviewer = true
+
+		local radius = 800
+		radius = radius + radius * pod:GetCameraDistance()
+
+		local StartPos = ent:LocalToWorld( ent:OBBCenter() ) + view.angles:Up() * 250
+		local EndPos = StartPos - view.angles:Forward() * radius
+
+		local WallOffset = 4
+
+		local tr = util.TraceHull( {
+			start = StartPos,
+			endpos = EndPos,
+			filter = function( e )
+				local c = e:GetClass()
+				local collide = not c:StartWith( "prop_physics" ) and not c:StartWith( "prop_dynamic" ) and not c:StartWith( "prop_ragdoll" ) and not e:IsVehicle() and not c:StartWith( "gmod_" ) and not c:StartWith( "player" ) and not e.LVS
+				
+				return collide
+			end,
+			mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
+			maxs = Vector( WallOffset, WallOffset, WallOffset ),
+		} )
+		
+		view.drawviewer = true
+		view.origin = tr.HitPos
+		
+		if tr.Hit and not tr.StartSolid then
+			view.origin = view.origin + tr.HitNormal * WallOffset
+		end
+
+		return view
+	end
+	weapon.HudPaint = function( ent, X, Y, ply )
+		local Pos2D = ent:GetEyeTrace().HitPos:ToScreen() 
+		local base = ent:GetVehicle()
+		base:PaintCrosshairCenter( Pos2D, Color(255,255,255,255) )
+		base:PaintCrosshairOuter( Pos2D, Color(255,255,255,255) )
+		base:LVSPaintHitMarker( Pos2D )
+	end
+
 	self:AddWeapon( weapon, 2 )
 end
 

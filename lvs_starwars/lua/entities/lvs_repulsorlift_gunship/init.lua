@@ -17,6 +17,12 @@ function ENT:OnSpawn( PObj )
 	self.PrimarySND = self:AddSoundEmitter( Vector(256,0,36), "lvs/vehicles/laat/fire.mp3", "lvs/vehicles/laat/fire.mp3" )
 	self.PrimarySND:SetSoundLevel( 110 )
 
+	self.WingRightSND = self:AddSoundEmitter( Vector(-206,-341,109), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
+	self.WingRightSND:SetSoundLevel( 110 )
+
+	self.WingLeftSND = self:AddSoundEmitter( Vector(-206,-341,109), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
+	self.WingLeftSND:SetSoundLevel( 110 )
+
 	local GunnerSeat = self:AddPassengerSeat( Vector(111.87,0,156), Angle(0,-90,0) )
 	GunnerSeat.ExitPos = Vector(75,0,36)
 
@@ -144,5 +150,20 @@ function ENT:OnDoorsChanged()
 		self:Lock()
 	else
 		self:UnLock()
+	end
+end
+
+function ENT:BallturretDamage( target, attacker, HitPos, HitDir )
+	if not IsValid( target ) or not IsValid( attacker ) then return end
+
+	if target ~= self then
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamage( 1000 * FrameTime() )
+		dmginfo:SetAttacker( attacker )
+		dmginfo:SetDamageType( DMG_SHOCK + DMG_ENERGYBEAM + DMG_AIRBOAT )
+		dmginfo:SetInflictor( self ) 
+		dmginfo:SetDamagePosition( HitPos ) 
+		dmginfo:SetDamageForce( HitDir * 10000 ) 
+		target:TakeDamageInfo( dmginfo )
 	end
 end

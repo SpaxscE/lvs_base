@@ -26,6 +26,21 @@ end
 
 function ENT:OnFrame()
 	self:AnimRearHatch()
+	self:WingTurretProjector()
+end
+
+function ENT:WingTurretProjector()
+	local FireWingTurret = self:GetWingTurretFire()
+
+	if FireWingTurret == self.OldWingTurretFire then return end
+
+	self.OldWingTurretFire = FireWingTurret
+
+	if FireWingTurret then
+		local effectdata = EffectData()
+		effectdata:SetEntity( self )
+		util.Effect( "lvs_laat_wing_projector", effectdata )
+	end
 end
 
 function ENT:AnimRearHatch()
