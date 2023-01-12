@@ -243,6 +243,13 @@ function ENT:InitWeapons()
 	weapon.OnOverheat = function( ent )
 		ent:EmitSound("lvs/overheat.wav")
 	end
+	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
+		if pod:GetThirdPersonMode() then
+			pos = pos + ent:GetUp() * 100
+		end
+
+		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+	end
 	self:AddWeapon( weapon, 3 )
 end
 

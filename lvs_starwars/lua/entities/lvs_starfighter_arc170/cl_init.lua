@@ -7,17 +7,6 @@ ENT.EnginePos = {
 	Vector(-163.81,-64.51,8.36),
 }
 
-function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
-
-	if self:GetTailGunnerSeat() == ply:GetVehicle() then
-		if pod:GetThirdPersonMode() then
-			return pos + self:GetUp() * 100, angles, fov
-		end
-	end
-
-	return pos, angles, fov
-end
-
 ENT.RED = Color(255,0,0,255)
 ENT.WHITE = Color(255,255,255,255)
 

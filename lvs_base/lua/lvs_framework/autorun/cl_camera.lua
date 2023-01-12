@@ -54,5 +54,17 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 
 	local newfov = fov * Zoom + 40 * (1 - Zoom)
 
-	return vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+	local base = pod:lvsGetWeapon()
+
+	if IsValid( base ) then
+		local weapon = base:GetActiveWeapon()
+
+		if weapon and weapon.CalcView then
+			return weapon.CalcView( vehicle, ply, pos, angles, fov, pod )
+		else
+			return vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+		end
+	else
+		return vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+	end
 end )
