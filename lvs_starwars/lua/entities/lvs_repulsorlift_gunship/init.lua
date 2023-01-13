@@ -83,11 +83,6 @@ function ENT:OnSpawn( PObj )
 		self:AddPassengerSeat( Vector(10 - X,Y,10), Angle(0,0,0) ).ExitPos = Vector(10 - X,25,36)
 		self:AddPassengerSeat( Vector(10 - X,-Y,10), Angle(0,180,0) ).ExitPos = Vector(10 - X,-25,36)
 	end
-
-	self:SetPoseParameter("ballturret_left_pitch", 0 )
-	self:SetPoseParameter("ballturret_left_yaw", -70 )
-	self:SetPoseParameter("ballturret_right_pitch", 0 )
-	self:SetPoseParameter("ballturret_right_yaw", -70 )
 end
 
 function ENT:OnEngineActiveChanged( Active )

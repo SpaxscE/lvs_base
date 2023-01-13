@@ -1,4 +1,18 @@
 
+function ENT:SetPosBTR()
+	local BTR = self:GetBTPodR()
+
+	if not IsValid( BTR ) then return end
+
+	local ID = self:LookupAttachment( "muzzle_ballturret_right" )
+	local Muzzle = self:GetAttachment( ID )
+
+	if Muzzle then
+		local PosL = self:WorldToLocal( Muzzle.Pos + Muzzle.Ang:Right() * 28 - Muzzle.Ang:Up() * 65 )
+		BTR:SetLocalPos( PosL )
+	end
+end
+
 function ENT:TraceBTR()
 	local ID = self:LookupAttachment( "muzzle_ballturret_right" )
 	local Muzzle = self:GetAttachment( ID )
@@ -17,7 +31,12 @@ function ENT:TraceBTR()
 end
 
 function ENT:SetPoseParameterBTR( weapon )
-	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then return end
+	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then
+		self:SetPoseParameter("ballturret_right_pitch", 0 )
+		self:SetPoseParameter("ballturret_right_yaw", -70 )
+
+		return
+	end
 
 	local AimAng = weapon:WorldToLocal( weapon:GetPos() + weapon:GetAimVector() ):Angle()
 	AimAng:Normalize()
@@ -43,19 +62,8 @@ function ENT:InitWeaponBTR()
 
 		if not IsValid( base ) then return end
 
-		local BTR = base:GetBTPodR()
-
-		if not IsValid( BTR ) then return end
-
-		local ID = base:LookupAttachment( "muzzle_ballturret_right" )
-		local Muzzle = base:GetAttachment( ID )
-
-		if Muzzle then
-			local PosL = base:WorldToLocal( Muzzle.Pos + Muzzle.Ang:Right() * 28 - Muzzle.Ang:Up() * 65 )
-			BTR:SetLocalPos( PosL )
-		end
-
 		base:SetPoseParameterBTR( ent )
+		base:SetPosBTR()
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
 		local view = {}

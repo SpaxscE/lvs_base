@@ -9,6 +9,7 @@ function ENT:PredictBTL()
 
 	if ply ~= plyL then return end
 
+	self:SetPosBTL()
 	self:SetPoseParameterBTL( pod:lvsGetWeapon() )
 end
 
@@ -22,6 +23,7 @@ function ENT:PredictBTR()
 
 	if ply ~= plyL then return end
 
+	self:SetPosBTR()
 	self:SetPoseParameterBTR( pod:lvsGetWeapon() )
 end
 
