@@ -1,4 +1,8 @@
 include("shared.lua")
+include( "sh_mainweapons.lua" )
+include( "sh_ballturret_left.lua" )
+include( "sh_ballturret_right.lua" )
+include( "sh_wingturret.lua" )
 
 function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
 	if pod == self:GetDriverSeat() then

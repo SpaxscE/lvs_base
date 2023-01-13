@@ -1,6 +1,14 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "sh_mainweapons.lua" )
+AddCSLuaFile( "sh_ballturret_left.lua" )
+AddCSLuaFile( "sh_ballturret_right.lua" )
+AddCSLuaFile( "sh_wingturret.lua" )
 include("shared.lua")
+include( "sh_mainweapons.lua" )
+include( "sh_ballturret_left.lua" )
+include( "sh_ballturret_right.lua" )
+include( "sh_wingturret.lua" )
 
 ENT.SpawnNormalOffset = 25
 
@@ -35,7 +43,7 @@ function ENT:OnSpawn( PObj )
 		local Muzzle = self:GetAttachment( ID )
 
 		if Muzzle then
-			local Pos,Ang = LocalToWorld( Vector(0,-20,-55), Angle(180,0,-90), Muzzle.Pos, Muzzle.Ang )
+			local Pos,Ang = LocalToWorld( Vector(0,-28,-65), Angle(180,0,-90), Muzzle.Pos, Muzzle.Ang )
 
 			BallTurretPod:SetParent( NULL )
 			BallTurretPod:SetPos( Pos )
@@ -52,7 +60,7 @@ function ENT:OnSpawn( PObj )
 		local Muzzle = self:GetAttachment( ID )
 
 		if Muzzle then
-			local Pos,Ang = LocalToWorld( Vector(0,-20,-55), Angle(180,0,-90), Muzzle.Pos, Muzzle.Ang )
+			local Pos,Ang = LocalToWorld( Vector(0,-28,-65), Angle(180,0,-90), Muzzle.Pos, Muzzle.Ang )
 
 			BallTurretPod:SetParent( NULL )
 			BallTurretPod:SetPos( Pos )
