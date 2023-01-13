@@ -17,12 +17,7 @@ function ENT:TraceBTL()
 end
 
 function ENT:SetPoseParameterBTL( weapon )
-	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then
-		self:SetPoseParameter("ballturret_left_pitch", 0 )
-		self:SetPoseParameter("ballturret_left_yaw", -70 )
-
-		return
-	end
+	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then return end
 
 	local AimAng = weapon:WorldToLocal( weapon:GetPos() + weapon:GetAimVector() ):Angle()
 	AimAng:Normalize()
