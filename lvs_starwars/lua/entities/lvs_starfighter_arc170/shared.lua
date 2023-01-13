@@ -247,11 +247,17 @@ function ENT:InitWeapons()
 		ent:EmitSound("lvs/overheat.wav")
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
-		if pod:GetThirdPersonMode() then
-			pos = pos + ent:GetUp() * 100
+		local base = ent:GetVehicle()
+
+		if not IsValid( base ) then 
+			return LVS:CalcView( ent, ply, pos, angles, fov, pod )
 		end
 
-		return LVS:CalcView( ent, ply, pos, angles, fov, pod )
+		if pod:GetThirdPersonMode() then
+			pos = pos + base:GetUp() * 100
+		end
+
+		return LVS:CalcView( base, ply, pos, angles, fov, pod )
 	end
 	weapon.HudPaint = function( ent, X, Y, ply )
 		local Col = (ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > 60) and COLOR_RED or COLOR_WHITE

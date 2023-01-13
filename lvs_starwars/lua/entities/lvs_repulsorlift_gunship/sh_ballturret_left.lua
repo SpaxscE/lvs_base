@@ -61,14 +61,18 @@ function ENT:InitWeaponBTL()
 		base:SetPosBTL()
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
+		local base = ent:GetVehicle()
+
 		local view = {}
 		view.origin = pos
 		view.angles = angles
 		view.fov = fov
 		view.drawviewer = false
 
-		local ID = ent:LookupAttachment( "muzzle_ballturret_left" )
-		local Muzzle = ent:GetAttachment( ID )
+		if not IsValid( base ) then return view end
+
+		local ID = base:LookupAttachment( "muzzle_ballturret_left" )
+		local Muzzle = base:GetAttachment( ID )
 
 		if Muzzle then
 			local Pos,Ang = LocalToWorld( Vector(0,25,-45), Angle(270,0,-90), Muzzle.Pos, Muzzle.Ang )

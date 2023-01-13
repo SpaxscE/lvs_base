@@ -109,16 +109,20 @@ function ENT:InitWeaponGunner()
 		end
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
+		local base = ent:GetVehicle()
+
 		local view = {}
 		view.origin = pos
 		view.angles = angles
 		view.fov = fov
-		view.drawviewer = true
+		view.drawviewer = false
+
+		if not IsValid( base ) then return view end
 
 		local radius = 800
 		radius = radius + radius * pod:GetCameraDistance()
 
-		local StartPos = ent:LocalToWorld( ent:OBBCenter() ) + view.angles:Up() * 250
+		local StartPos = base:LocalToWorld( base:OBBCenter() ) + view.angles:Up() * 250
 		local EndPos = StartPos - view.angles:Forward() * radius
 
 		local WallOffset = 4
@@ -135,10 +139,10 @@ function ENT:InitWeaponGunner()
 			mins = Vector( -WallOffset, -WallOffset, -WallOffset ),
 			maxs = Vector( WallOffset, WallOffset, WallOffset ),
 		} )
-		
+
 		view.drawviewer = true
 		view.origin = tr.HitPos
-		
+
 		if tr.Hit and not tr.StartSolid then
 			view.origin = view.origin + tr.HitNormal * WallOffset
 		end
