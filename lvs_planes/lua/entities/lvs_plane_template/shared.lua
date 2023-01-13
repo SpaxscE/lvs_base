@@ -86,7 +86,10 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 0.2
 	weapon.HeatRateDown = 0.25
 	weapon.Attack = function( ent )
-		-- ent is the weapon handler.For seat 1 (which is the driver), ent is equal to self (the vehicle)
+		-- "ent" can be either the weapon handler or the vehicle(which has a integrated weapon handler)
+		-- "ent" is where ent:SetHeat, ent:GetHeat, ent:GetAmmo ect functions are called on.
+		-- for seat 1 (which is the driver), ent is equal to self (the vehicle), passenger seats usually return the weapon handler
+		-- if you want to be 100% sure you are getting the actual vehicle, just call ent:GetVehicle() it will always return the base vehicle.
 
 		local bullet = {}
 		bullet.Src 	= ent:LocalToWorld( Vector(25,0,30) )
