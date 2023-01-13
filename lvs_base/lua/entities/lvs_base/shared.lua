@@ -214,3 +214,7 @@ function ENT:PlayAnimation( animation, playbackrate )
 	self:SetPlaybackRate( playbackrate )
 	self:SetSequence( sequence )
 end
+
+function ENT:GetVehicle()
+	return self
+end
