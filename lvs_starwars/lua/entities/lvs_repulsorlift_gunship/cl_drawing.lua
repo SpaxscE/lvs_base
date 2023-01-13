@@ -1,0 +1,31 @@
+function ENT:PreDraw()
+	return false
+end
+
+function ENT:PreDrawTranslucent()
+	self:DrawDriverBTL()
+
+	return true
+end
+
+function ENT:DrawDriverBTL()
+	local pod = self:GetBTPodL()
+
+	if not IsValid( pod ) then return end
+
+	local plyL = LocalPlayer()
+	local ply = pod:GetDriver()
+
+	if not IsValid( ply ) or (ply == plyL and plyL:GetViewEntity() == plyL) then return end
+
+	local ID = self:LookupAttachment( "muzzle_ballturret_left" )
+	local Muzzle = self:GetAttachment( ID )
+
+	if not Muzzle then return end
+
+	local _,Ang = LocalToWorld( Vector(0,0,0), Angle(-90,0,-90), Muzzle.Pos, Muzzle.Ang )
+
+	ply:SetSequence( "drive_jeep" )
+	ply:SetRenderAngles( Ang )
+	ply:DrawModel()
+end

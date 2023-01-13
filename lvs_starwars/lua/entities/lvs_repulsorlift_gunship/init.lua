@@ -1,9 +1,11 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_prediction.lua" )
 AddCSLuaFile( "sh_mainweapons.lua" )
 AddCSLuaFile( "sh_ballturret_left.lua" )
 AddCSLuaFile( "sh_ballturret_right.lua" )
 AddCSLuaFile( "sh_wingturret.lua" )
+AddCSLuaFile( "cl_drawing.lua" )
 include("shared.lua")
 include( "sh_mainweapons.lua" )
 include( "sh_ballturret_left.lua" )
@@ -38,6 +40,7 @@ function ENT:OnSpawn( PObj )
 
 	do
 		local BallTurretPod = self:AddPassengerSeat( Vector(0,0,100), Angle(0,-90,0) )
+		BallTurretPod.HidePlayer = true
 
 		local ID = self:LookupAttachment( "muzzle_ballturret_left" )
 		local Muzzle = self:GetAttachment( ID )
@@ -48,13 +51,14 @@ function ENT:OnSpawn( PObj )
 			BallTurretPod:SetParent( NULL )
 			BallTurretPod:SetPos( Pos )
 			BallTurretPod:SetAngles( Ang )
-			BallTurretPod:SetParent( self, ID )
+			BallTurretPod:SetParent( self )
 			self:SetBTPodL( BallTurretPod )
 		end
 	end
 
 	do
 		local BallTurretPod = self:AddPassengerSeat( Vector(0,0,100), Angle(0,-90,0) )
+		BallTurretPod.HidePlayer = true
 
 		local ID = self:LookupAttachment( "muzzle_ballturret_right" )
 		local Muzzle = self:GetAttachment( ID )
@@ -65,7 +69,7 @@ function ENT:OnSpawn( PObj )
 			BallTurretPod:SetParent( NULL )
 			BallTurretPod:SetPos( Pos )
 			BallTurretPod:SetAngles( Ang )
-			BallTurretPod:SetParent( self, ID )
+			BallTurretPod:SetParent( self )
 			self:SetBTPodR( BallTurretPod )
 		end
 	end
@@ -79,11 +83,6 @@ function ENT:OnSpawn( PObj )
 		self:AddPassengerSeat( Vector(10 - X,Y,10), Angle(0,0,0) ).ExitPos = Vector(10 - X,25,36)
 		self:AddPassengerSeat( Vector(10 - X,-Y,10), Angle(0,180,0) ).ExitPos = Vector(10 - X,-25,36)
 	end
-
-	self:SetPoseParameter("ballturret_left_pitch", 0 )
-	self:SetPoseParameter("ballturret_left_yaw", -70 )
-	self:SetPoseParameter("ballturret_right_pitch", 0 )
-	self:SetPoseParameter("ballturret_right_yaw", -70 )
 end
 
 function ENT:OnEngineActiveChanged( Active )

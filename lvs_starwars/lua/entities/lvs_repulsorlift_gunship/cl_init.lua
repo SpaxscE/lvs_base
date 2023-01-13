@@ -3,6 +3,8 @@ include( "sh_mainweapons.lua" )
 include( "sh_ballturret_left.lua" )
 include( "sh_ballturret_right.lua" )
 include( "sh_wingturret.lua" )
+include( "cl_drawing.lua" )
+include( "cl_prediction.lua" )
 
 function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
 	if pod == self:GetDriverSeat() then
@@ -29,6 +31,7 @@ end
 function ENT:OnFrame()
 	self:AnimRearHatch()
 	self:WingTurretProjector()
+	self:PredictPoseParamaters()
 end
 
 function ENT:WingTurretProjector()
