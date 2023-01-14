@@ -67,13 +67,14 @@ function ENT:SetPassenger( ply )
 		local Dist = 500000
 
 		for _, v in pairs( self:GetPassengerSeats() ) do
-			if IsValid( v ) and not IsValid( v:GetDriver() ) then
-				local cDist = (v:GetPos() - ply:GetPos()):Length()
-				
-				if cDist < Dist then
-					Seat = v
-					Dist = cDist
-				end
+			if not IsValid( v ) or IsValid( v:GetDriver() ) then continue end
+			if v:GetNWInt( "pPodIndex" ) == -1 then continue end
+
+			local cDist = (v:GetPos() - ply:GetPos()):Length()
+
+			if cDist < Dist then
+				Seat = v
+				Dist = cDist
 			end
 		end
 
