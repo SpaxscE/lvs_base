@@ -6,6 +6,7 @@ AddCSLuaFile( "sh_ballturret_left.lua" )
 AddCSLuaFile( "sh_ballturret_right.lua" )
 AddCSLuaFile( "sh_wingturret.lua" )
 AddCSLuaFile( "cl_drawing.lua" )
+AddCSLuaFile( "cl_lights.lua" )
 include("shared.lua")
 include( "sh_mainweapons.lua" )
 include( "sh_ballturret_left.lua" )
@@ -33,6 +34,9 @@ function ENT:OnSpawn( PObj )
 	self.WingLeftSND = self:AddSoundEmitter( Vector(-206,-341,109), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
 	self.WingLeftSND:SetSoundLevel( 110 )
 
+	self.SNDTail = self:AddSoundEmitter( Vector(-440,0,157), "lvs/vehicles/arc170/fire_gunner.mp3", "lvs/vehicles/arc170/fire_gunner.mp3" )
+	self.SNDTail:SetSoundLevel( 110 )
+
 	local GunnerSeat = self:AddPassengerSeat( Vector(111.87,0,156), Angle(0,-90,0) )
 	GunnerSeat.ExitPos = Vector(75,0,36)
 
@@ -53,6 +57,13 @@ function ENT:OnSpawn( PObj )
 			BallTurretPod:SetAngles( Ang )
 			BallTurretPod:SetParent( self )
 			self:SetBTPodL( BallTurretPod )
+
+			self.sndBTL = self:AddSoundEmitter( Vector(0,0,0), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
+			self.sndBTL:SetSoundLevel( 110 )
+			self.sndBTL:SetParent( NULL )
+			self.sndBTL:SetPos( Muzzle.Pos )
+			self.sndBTL:SetAngles( Muzzle.Ang )
+			self.sndBTL:SetParent( self, ID )
 		end
 	end
 
@@ -71,6 +82,13 @@ function ENT:OnSpawn( PObj )
 			BallTurretPod:SetAngles( Ang )
 			BallTurretPod:SetParent( self )
 			self:SetBTPodR( BallTurretPod )
+
+			self.sndBTR = self:AddSoundEmitter( Vector(0,0,0), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
+			self.sndBTR:SetSoundLevel( 110 )
+			self.sndBTR:SetParent( NULL )
+			self.sndBTR:SetPos( Muzzle.Pos )
+			self.sndBTR:SetAngles( Muzzle.Ang )
+			self.sndBTR:SetParent( self, ID )
 		end
 	end
 
@@ -100,6 +118,8 @@ end
 
 function ENT:OnBallturretMounted( ismounted, oldvar )
 	if ismounted == oldvar then return end
+
+	self._CanUseBT = ismounted
 
 	if ismounted then
 		if IsValid( self.BTPodR_ent_orig ) then 
@@ -166,7 +186,11 @@ function ENT:OnDoorsChanged()
 end
 
 function ENT:BallturretDamage( target, attacker, HitPos, HitDir )
-	if not IsValid( target ) or not IsValid( attacker ) then return end
+	if not IsValid( target ) then return end
+
+	if not IsValid( attacker ) then
+		attacker = self
+	end
 
 	if target ~= self then
 		local dmginfo = DamageInfo()
@@ -178,4 +202,18 @@ function ENT:BallturretDamage( target, attacker, HitPos, HitDir )
 		dmginfo:SetDamageForce( HitDir * 10000 ) 
 		target:TakeDamageInfo( dmginfo )
 	end
+end
+
+function ENT:OnVehicleSpecificToggled( IsActive )
+	if self:GetBodygroup( 5 ) ~= 2 or self:GetAI() then
+		if not self:GetLightsActive() then return end
+
+		self:SetLightsActive( false )
+
+		return
+	end
+
+	self:SetLightsActive( IsActive )
+
+	self:EmitSound( "buttons/lightswitch2.wav", 75, 105 )
 end

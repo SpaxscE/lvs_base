@@ -45,12 +45,44 @@ function ENT:InitWeaponBTR()
 	weapon.Icon = Material("lvs/weapons/laserbeam.png")
 	weapon.Ammo = -1
 	weapon.Delay = 0
-	weapon.HeatRateUp = 0
-	weapon.HeatRateDown = 0
+	weapon.HeatRateUp = 0.25
+	weapon.HeatRateDown = 0.3
 	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	weapon.Attack = function( ent )
+		local base = ent:GetVehicle()
+
+		if not IsValid( base ) then return end
+
+		if not base._CanUseBT then return end
+
+		local trace = base:TraceBTR()
+
+		base:BallturretDamage( trace.Entity, ent:GetDriver(), trace.HitPos, (trace.HitPos - ent:GetPos()):GetNormalized() )
+	end
 	weapon.StartAttack = function( ent )
+		local base = ent:GetVehicle()
+
+		if not IsValid( base ) then return end
+
+		if not base._CanUseBT then return end
+
+		base:SetBTRFire( true )
+
+		if not IsValid( self.sndBTR ) then return end
+
+		self.sndBTR:Play()
+		self.sndBTR:EmitSound( "lvs/vehicles/laat/ballturret_fire.mp3", 110 )
 	end
 	weapon.FinishAttack = function( ent )
+		local base = ent:GetVehicle()
+
+		if not IsValid( base ) then return end
+
+		base:SetBTRFire( false )
+
+		if not IsValid( self.sndBTR ) then return end
+
+		self.sndBTR:Stop()
 	end
 	weapon.OnThink = function( ent, active )
 		local base = ent:GetVehicle()
@@ -59,6 +91,17 @@ function ENT:InitWeaponBTR()
 
 		base:SetPoseParameterBTR( ent )
 		base:SetPosBTR()
+
+		if not ent:GetAI() then return end
+
+		local ID = base:LookupAttachment( "muzzle_ballturret_right" )
+		local Muzzle = base:GetAttachment( ID )
+		if not Muzzle then return end
+
+		if ent:AngleBetweenNormal(Muzzle.Ang:Up(),ent:GetAimVector()) > 5 then
+			ent:SetHeat( 1 )
+			ent:SetOverheated( true )
+		end
 	end
 	weapon.CalcView = function( ent, ply, pos, angles, fov, pod )
 		local base = ent:GetVehicle()

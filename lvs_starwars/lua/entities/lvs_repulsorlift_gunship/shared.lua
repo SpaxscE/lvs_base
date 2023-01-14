@@ -46,8 +46,10 @@ function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "WingTurretFire" )
 	self:AddDT( "Vector", "WingTurretTarget" )
 
-	--self:NetworkVar( "Bool",19, "BTLFire" )
-	--self:NetworkVar( "Bool",20, "BTRFire" )
+	self:AddDT( "Bool", "BTLFire" )
+	self:AddDT( "Bool", "BTRFire" )
+
+	self:AddDT( "Bool", "LightsActive" )
 end
 
 function ENT:InitWeapons()

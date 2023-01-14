@@ -5,6 +5,7 @@ include( "sh_ballturret_right.lua" )
 include( "sh_wingturret.lua" )
 include( "cl_drawing.lua" )
 include( "cl_prediction.lua" )
+include( "cl_lights.lua" )
 
 function ENT:CalcViewOverride( ply, pos, angles, fov, pod )
 	if pod == self:GetDriverSeat() then
@@ -30,8 +31,38 @@ end
 
 function ENT:OnFrame()
 	self:AnimRearHatch()
+	self:AnimLights()
 	self:WingTurretProjector()
+	self:BTLProjector()
+	self:BTRProjector()
 	self:PredictPoseParamaters()
+end
+
+function ENT:BTRProjector()
+	local Fire = self:GetBTRFire()
+	if Fire == self.OldFireBTR then return end
+
+	self.OldFireBTR = Fire
+
+	if Fire then
+		local effectdata = EffectData()
+		effectdata:SetEntity( self )
+		util.Effect( "lvs_laat_right_projector", effectdata )
+	end
+end
+	
+function ENT:BTLProjector()
+	local Fire = self:GetBTLFire()
+
+	if Fire == self.OldFireBTL then return end
+
+	self.OldFireBTL = Fire
+	
+	if Fire then
+		local effectdata = EffectData()
+		effectdata:SetEntity( self )
+		util.Effect( "lvs_laat_left_projector", effectdata )
+	end
 end
 
 function ENT:WingTurretProjector()
