@@ -30,7 +30,7 @@ function EFFECT:Init( data )
 	if not IsValid( emitter ) then return end
 
 	for i = 0,30 do
-		local particle = emitter:Add(  Materials[ math.random(1, #Materials ) ], self.Pos )
+		local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], self.Pos )
 		
 		if particle then
 			particle:SetVelocity( VectorRand(-1,1) * 800 )
