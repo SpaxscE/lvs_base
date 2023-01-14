@@ -93,22 +93,13 @@ function ENT:StartCommand( ply, cmd )
 end
 
 function ENT:HitGround()
-	if not isvector( self.obbvc ) or not isnumber( self.obbvm ) then
-		self.obbvc = self:OBBCenter() 
-		self.obbvm = self:OBBMins().z
-	end
-
-	local tr = util.TraceLine( {
-		start = self:LocalToWorld( self.obbvc ),
-		endpos = self:LocalToWorld( self.obbvc + Vector(0,0,self.obbvm - 100) ),
-		filter = function( ent ) 
-			if ( ent == self ) then 
-				return false
-			end
-		end
+	local trace = util.TraceLine( {
+		start = self:LocalToWorld( self:OBBCenter() ),
+		endpos = self:LocalToWorld( Vector(0,0,self:OBBMins().z - 10) ),
+		filter = self:GetCrosshairFilterEnts()
 	} )
 	
-	return tr.Hit 
+	return trace.Hit 
 end
 
 function ENT:Sign( n )
