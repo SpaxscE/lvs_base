@@ -47,7 +47,10 @@ function ENT:InitWeaponBTR()
 	weapon.Delay = 0
 	weapon.HeatRateUp = 0.25
 	weapon.HeatRateDown = 0.3
-	weapon.OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end
+	weapon.OnOverheat = function( ent )
+		if ent:GetAI() then return end
+		ent:EmitSound("lvs/overheat.wav")
+	end
 	weapon.Attack = function( ent )
 		local base = ent:GetVehicle()
 
