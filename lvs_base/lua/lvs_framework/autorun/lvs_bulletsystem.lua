@@ -221,6 +221,9 @@ if SERVER then
 		table.insert(LVS._ActiveBullets, bullet )
 	end
 else
+	local Index = 0
+	local MaxIndex = 4094 -- this is the util.effect limit
+
 	net.Receive( "lvs_fire_bullet", function( length )
 		local bullet = {}
 
@@ -236,17 +239,17 @@ else
 		bullet.Velocity = net.ReadFloat()
 		bullet.StartTimeCL = CurTime()
 
-		local index = 1
-		for _,_ in ipairs( LVS._ActiveBullets ) do
-			index = index + 1
+		Index = Index + 1
+		if Index > 4094 then
+			Index = 1
 		end
 
-		LVS._ActiveBullets[ index ] = bullet
+		LVS._ActiveBullets[ Index ] = bullet
 
 		local effectdata = EffectData()
 		effectdata:SetOrigin( bullet.Src )
 		effectdata:SetNormal( bullet.Dir )
-		effectdata:SetMaterialIndex( index )
+		effectdata:SetMaterialIndex( Index )
 		util.Effect( bullet.TracerName, effectdata )
 	end )
 
