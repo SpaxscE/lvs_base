@@ -39,7 +39,17 @@ function ENT:RunAI()
 		return
 	end
 
-	self._ai_look_dir = (Target:GetPos() - self:GetPos()):GetNormalized()
+	local TargetPos = Target:GetPos()
+
+	if self._AIFireInput then
+		local T = CurTime() * 0.5 + self:EntIndex()
+		local X = math.cos( T ) * 32
+		local Y = math.sin( T ) * 32
+		local Z = math.sin( math.cos( T / 0.5 ) * math.pi ) * 32
+		TargetPos = Target:LocalToWorld( Vector(X,Y,Z) )
+	end
+
+	self._ai_look_dir = (TargetPos - self:GetPos()):GetNormalized()
 
 	local StartPos = self:GetPos()
 
