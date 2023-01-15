@@ -171,10 +171,11 @@ function ENT:BecomeRagdoll()
 	for k, v in pairs( legs ) do
 		if not IsValid( v.relative ) then continue end
 
-		local ent = ents.Create( "prop_physics" )
+		local ent = ents.Create( "lvs_walker_atte_component" )
 		ent:SetModel( v.mdl )
 		ent:SetPos( v.relative:LocalToWorld( v.pos ) )
 		ent:SetAngles( v.relative:LocalToWorldAngles( v.ang ) )
+		ent:SetBase( self )
 		ent:Spawn()
 		ent:Activate()
 		ent:SetCollisionGroup( COLLISION_GROUP_WORLD )

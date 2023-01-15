@@ -1,13 +1,6 @@
 AddCSLuaFile()
 
-ENT.Type            = "anim"
-
-ENT.AutomaticFrameAdvance = true
-ENT.DoNotDuplicate = true
-
-function ENT:SetupDataTables()
-	self:NetworkVar( "Entity",0, "Base" )
-end
+ENT.Base = "lvs_walker_atte_component"
 
 if SERVER then
 	function ENT:Initialize()	
@@ -24,47 +17,10 @@ if SERVER then
 		return true
 	end
 
-	function ENT:OnTakeDamage( dmginfo )
-		local base = self:GetBase()
-
-		if not IsValid( base ) then return end
-
-		base:OnTakeDamage( dmginfo )
-	end
-
-	function ENT:PhysicsCollide( data, phys )
-		local base = self:GetBase()
-
-		if not IsValid( base ) then return end
-
-		base:PhysicsCollide( data, phys )
-	end
-
-	function ENT:Use( ply )
-		if (ply._lvsNextUse or 0) > CurTime() then return end
-
-		local base = self:GetBase()
-
-		if not IsValid( base ) then return end
-
-		base:Use( ply )
-	end
-
-	function ENT:UpdateTransmitState() 
-		return TRANSMIT_ALWAYS
-	end
-
 	return
 end
 
 include("entities/lvs_walker_atte/cl_ikfunctions.lua")
-
-function ENT:Draw()
-	self:DrawModel()
-end
-
-function ENT:Think()
-end
 
 function ENT:OnRemove()
 	self:OnRemoved()
