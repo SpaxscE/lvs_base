@@ -146,7 +146,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		if ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange then return true end
+		if ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange then return true end
 
 		local trace = ent:GetEyeTrace()
 
@@ -185,7 +185,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		if ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange then base:SetPoseParameter("reargun_yaw", 0 ) return end
+		if ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange then base:SetPoseParameter("reargun_yaw", 0 ) return end
 
 		local trace = ent:GetEyeTrace()
 
@@ -245,7 +245,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		local RearGunInRange = ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange
+		local RearGunInRange = ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange
 
 		local Col = RearGunInRange and COLOR_RED or COLOR_WHITE
 
