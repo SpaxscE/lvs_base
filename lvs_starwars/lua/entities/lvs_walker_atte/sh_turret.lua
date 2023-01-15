@@ -128,7 +128,7 @@ function ENT:InitTurret()
 			maxs = Vector( WallOffset, WallOffset, WallOffset ),
 		} )
 
-		view.angles = angles + Angle(10,0,0)
+		view.angles = angles + Angle(5,0,0)
 		view.origin = tr.HitPos
 
 		if tr.Hit and  not tr.StartSolid then
