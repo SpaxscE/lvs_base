@@ -54,7 +54,9 @@ function ENT:OnFrame()
 		Cycl6 = 0
 		IsMoving = true
 	end
-	
+
+	local MoveRoll = math.cos( math.rad(self:GetMove()) ) * 2
+
 	-- FRONT LEFT
 	local X = 20 + math.cos( math.rad(Cycl1) ) * Stride
 	local Z = math.max( math.sin( math.rad(-Cycl1) ), 0) * Lift
@@ -82,7 +84,7 @@ function ENT:OnFrame()
 	local ATTACHMENTS = {
 		Leg1 = {MDL = "models/blu/atte_smallleg_part3.mdl", Ang = Angle(-90,-90,0), Pos = Vector(0,0,0)},
 		Leg2 = {MDL = "models/blu/atte_smallleg_part2.mdl", Ang = Angle(-90,-90,0), Pos = Vector(3,4,0)},
-		Foot = {MDL = "models/blu/atte_smallleg_part1.mdl", Ang = Angle(0,0,0), Pos = Vector(0,-4,0)}
+		Foot = {MDL = "models/blu/atte_smallleg_part1.mdl", Ang = Angle(0,0,MoveRoll), Pos = Vector(0,-4,0)}
 	}
 	self:GetLegEnts( 1, 60, 65, self:LocalToWorldAngles( Angle(90,-10,0) ), STARTPOS, ENDPOS, ATTACHMENTS )
 	
@@ -114,7 +116,7 @@ function ENT:OnFrame()
 	local ATTACHMENTS = {
 		Leg1 = {MDL = "models/blu/atte_smallleg_part3.mdl", Ang = Angle(-90,90,0), Pos = Vector(0,0,0)},
 		Leg2 = {MDL = "models/blu/atte_smallleg_part2.mdl", Ang = Angle(-90,90,0), Pos = Vector(-3,-4,0)},
-		Foot = {MDL = "models/blu/atte_smallleg_part1.mdl", Ang = Angle(0,180,0), Pos = Vector(0,4,0)}
+		Foot = {MDL = "models/blu/atte_smallleg_part1.mdl", Ang = Angle(0,180,-MoveRoll), Pos = Vector(0,4,0)}
 	}
 	
 	self:GetLegEnts( 2, 60, 65, self:LocalToWorldAngles( Angle(90,10,0) ), STARTPOS, ENDPOS, ATTACHMENTS )

@@ -88,7 +88,7 @@ function ENT:GetAlignment( ent, phys )
 	end
 
 	local P = math.cos( math.rad(Move * 2) ) * 3
-	local R = math.cos( math.rad(Move) ) * 3
+	local R = math.cos( math.rad(Move) ) * 2
 
 	local trace = self:ClimbTrace()
 

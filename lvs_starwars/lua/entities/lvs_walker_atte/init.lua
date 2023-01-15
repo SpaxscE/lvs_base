@@ -224,3 +224,13 @@ end
 function ENT:OnMaintenance()
 	self:UnRagdoll()
 end
+
+function ENT:AlignView( ply, SetZero )
+	if not IsValid( ply ) then return end
+
+	timer.Simple( 0, function()
+		if not IsValid( ply ) or not IsValid( self ) then return end
+
+		ply:SetEyeAngles( Angle(0,90,0) )
+	end)
+end
