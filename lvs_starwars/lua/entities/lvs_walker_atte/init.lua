@@ -51,6 +51,51 @@ function ENT:OnSpawn( PObj )
 	for i =1,4 do
 		self:AddPassengerSeat( Vector(75,-62.5 + i * 25,150), Angle(0,-90,0) ).HidePlayer = true
 	end
+
+	-- weak spots
+	self:AddDS( {
+		pos = Vector(215,0,150),
+		ang = Angle(0,0,0),
+		mins = Vector(-25,-25,-50),
+		maxs =  Vector(25,25,50),
+		Callback = function( tbl, ent, dmginfo )
+			if dmginfo:GetDamage() <= 0 then return end
+
+			dmginfo:ScaleDamage( 1.5 )
+
+			if ent:GetHP() > 4000 or self:GetIsRagdoll() then return end
+
+			ent:BecomeRagdoll()
+
+			local effectdata = EffectData()
+				effectdata:SetOrigin( self:LocalToWorld( Vector(0,0,80) ) )
+			util.Effect( "lvs_explosion_nodebris", effectdata )
+		end
+	} )
+
+	local data = {
+		pos = Vector(0,-40,100),
+		ang = Angle(0,0,0),
+		mins = Vector(-50,-1,-25),
+		maxs =  Vector(50,1,75),
+		Callback = function( tbl, ent, dmginfo )
+			if dmginfo:GetDamage() <= 0 then return end
+
+			dmginfo:ScaleDamage( 1.5 )
+
+			if ent:GetHP() > 4000 or self:GetIsRagdoll() then return end
+
+			ent:BecomeRagdoll()
+
+			local effectdata = EffectData()
+				effectdata:SetOrigin( self:LocalToWorld( Vector(0,0,80) ) )
+			util.Effect( "lvs_explosion_nodebris", effectdata )
+		end
+	}
+	self:AddDS( data )
+
+	data.pos = Vector(0,40,100)
+	self:AddDS( data )
 end
 
 function ENT:InitRear()
