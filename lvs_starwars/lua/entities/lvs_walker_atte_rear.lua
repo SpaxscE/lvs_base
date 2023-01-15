@@ -49,6 +49,10 @@ if SERVER then
 		base:Use( ply )
 	end
 
+	function ENT:UpdateTransmitState() 
+		return TRANSMIT_ALWAYS
+	end
+
 	return
 end
 
