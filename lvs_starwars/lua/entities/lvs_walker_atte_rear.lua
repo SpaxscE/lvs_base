@@ -19,9 +19,6 @@ if SERVER then
 		self:AddFlags( FL_OBJECT )
 	end
 
-	function ENT:Use( ply )
-	end
-
 	function ENT:Think()
 		return false
 	end

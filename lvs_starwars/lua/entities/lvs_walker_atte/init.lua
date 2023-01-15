@@ -83,11 +83,13 @@ function ENT:InitRear()
 
 	self:AddToMotionController( rPObj )
 
-	self._rPObj = rPObj
+	-- clear the filters, because they might have been build by now
+	self.CrosshairFilterEnts = nil
+	self._EntityLookUp = nil
 end
 
 function ENT:OnTick()
-	self:InitRear()
+	self:InitRear() -- this fixes a gmod bug
 	self:ContraptionThink()
 end
 
