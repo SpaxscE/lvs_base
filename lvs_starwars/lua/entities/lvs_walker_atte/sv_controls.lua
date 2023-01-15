@@ -120,9 +120,7 @@ function ENT:ClimbTrace()
 end
 
 function ENT:CalcMove( speed )
-	local FT = FrameTime()
-
-	self:SetMove( self:GetMove() + speed * FT * 1.8 )
+	self:SetMove( self:GetMove() + speed * 0.027 )
 
 	local Move = self:GetMove()
 
@@ -135,7 +133,7 @@ function ENT:CalcMove( speed )
 	end
 end
 
-function ENT:GetMoveXY( ent, phys )
+function ENT:GetMoveXY( ent, phys, deltatime )
 	local VelL = ent:WorldToLocal( ent:GetPos() + ent:GetVelocity() )
 
 	local X = (self:GetTargetSpeed() - VelL.x)
