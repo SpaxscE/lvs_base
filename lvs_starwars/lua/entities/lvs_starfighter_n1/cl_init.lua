@@ -73,10 +73,10 @@ function ENT:AnimAstromech()
 		local HasShield = self:GetShield() > 0
 
 		if self.OldShield == true and not HasShield then
-			self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/astromech/shieldsdown"..math.random(1,2)..".ogg" )
+			self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/astromech/shieldsdown"..math.random(1,2)..".ogg", 100 )
 		else
 			if math.random(0,4) == 3 then
-				self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/astromech/"..math.random(1,11)..".ogg" )
+				self:EmitSound( "lvs/vehicles/naboo_n1_starfighter/astromech/"..math.random(1,11)..".ogg", 70 )
 			end
 		end
 		
