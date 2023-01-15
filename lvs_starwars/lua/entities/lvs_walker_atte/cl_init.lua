@@ -4,6 +4,7 @@ include( "cl_camera.lua" )
 include( "cl_legs.lua" )
 include( "cl_prediction.lua" )
 include("sh_turret.lua")
+include("sh_gunner.lua")
 
 function ENT:PreDraw()
 	return false
@@ -60,7 +61,9 @@ function ENT:LVSHudPaint( X, Y, ply )
 	if self:GetIsCarried() then return end
 
 	if ply ~= self:GetDriver() then
-		if ply:GetVehicle() == self:GetTurretSeat() then
+		local pod = ply:GetVehicle()
+
+		if pod == self:GetTurretSeat() or pod == self:GetGunnerSeat() then
 			self:PaintZoom( X, Y, ply )
 		end
 

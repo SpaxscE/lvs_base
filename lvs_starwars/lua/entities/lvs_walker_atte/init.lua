@@ -5,12 +5,14 @@ AddCSLuaFile( "cl_camera.lua" )
 AddCSLuaFile( "cl_legs.lua" )
 AddCSLuaFile( "cl_prediction.lua" )
 AddCSLuaFile( "sh_turret.lua" )
+AddCSLuaFile( "sh_gunner.lua")
 include("shared.lua")
 include("sv_ragdoll.lua")
 include("sv_controls.lua")
 include("sv_contraption.lua")
 include("sv_ai.lua")
 include("sh_turret.lua")
+include("sh_gunner.lua")
 
 ENT.SpawnNormalOffset = 0
 
@@ -42,8 +44,9 @@ function ENT:OnSpawn( PObj )
 		TurretSeat:SetParent( self )
 	end
 
-	local GunnerSeat = self:AddPassengerSeat( Vector(150,0,150), Angle(0,-90,0) )
+	local GunnerSeat = self:AddPassengerSeat( Vector(-150,0,150), Angle(0,90,0) )
 	GunnerSeat.HidePlayer = true
+	self:SetGunnerSeat( GunnerSeat )
 
 	for i =1,4 do
 		self:AddPassengerSeat( Vector(75,-62.5 + i * 25,150), Angle(0,-90,0) ).HidePlayer = true
@@ -93,6 +96,13 @@ function ENT:InitRear()
 	self:TransferCPPI( ballsocket )
 
 	self:AddToMotionController( rPObj )
+
+	self.SNDRear = self:AddSoundEmitter( Vector(0,0,0), "lvs/vehicles/atte/fire.mp3", "lvs/vehicles/atte/fire.mp3" )
+	self.SNDRear:SetSoundLevel( 110 )
+
+	self.SNDRear:SetParent( NULL )
+	self.SNDRear:SetPos( ent:LocalToWorld( Vector(-245,0,165) ) )
+	self.SNDRear:SetParent( ent )
 
 	-- clear the filters, because they might have been build by now
 	self.CrosshairFilterEnts = nil

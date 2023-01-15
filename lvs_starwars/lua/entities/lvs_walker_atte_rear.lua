@@ -20,7 +20,8 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		return false
+		self:NextThink( CurTime() )
+		return true
 	end
 
 	function ENT:OnTakeDamage( dmginfo )

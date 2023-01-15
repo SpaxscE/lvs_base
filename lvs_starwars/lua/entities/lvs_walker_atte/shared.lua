@@ -42,6 +42,7 @@ ENT.CanMoveOn = {
 function ENT:OnSetupDataTables()
 	self:AddDT( "Entity", "RearEntity" )
 	self:AddDT( "Entity", "TurretSeat" )
+	self:AddDT( "Entity", "GunnerSeat" )
 
 	self:AddDT( "Float", "Move" )
 	self:AddDT( "Bool", "IsMoving" )
@@ -115,8 +116,6 @@ function ENT:InitWeapons()
 	weapon.Attack = function( ent )
 		if ent:GetIsCarried() then ent:SetHeat( 0 ) return true end
 
-		local T = CurTime()
-
 		local ID1 = ent:LookupAttachment( "muzzle_right_up" )
 		local ID2 = ent:LookupAttachment( "muzzle_left_up" )
 		local ID3 = ent:LookupAttachment( "muzzle_right_dn" )
@@ -138,7 +137,7 @@ function ENT:InitWeapons()
 
 		ent.FireIndex = ent.FireIndex and ent.FireIndex + 1 or 2
 	
-		if ent.FireIndex > 4 then
+		if ent.FireIndex > #FirePos then
 			ent.FireIndex = 1
 		end
 
@@ -195,4 +194,5 @@ function ENT:InitWeapons()
 	self:AddWeapon( weapon )
 
 	self:InitTurret()
+	self:InitGunner()
 end
