@@ -1,13 +1,13 @@
 
 function ENT:PreDraw()
-	return false
-end
-
-function ENT:PreDrawTranslucent()
 	self:DrawDriverBTL()
 	self:DrawDriverBTR()
 
 	return true
+end
+
+function ENT:PreDrawTranslucent()
+	return false
 end
 
 function ENT:DrawDriverBTL()
