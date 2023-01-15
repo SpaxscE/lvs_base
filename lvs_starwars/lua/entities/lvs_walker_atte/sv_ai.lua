@@ -2,6 +2,8 @@
 function ENT:RunAI()
 	local RangerLength = 25000
 
+	local Target = self:AIGetTarget()
+
 	local StartPos = self:LocalToWorld( self:OBBCenter() )
 
 	local TraceFilter = self:GetCrosshairFilterEnts()
@@ -16,14 +18,15 @@ function ENT:RunAI()
 
 	local MovementTargetPos = (Front.HitPos + FrontLeft.HitPos + FrontRight.HitPos + FrontLeft1.HitPos + FrontRight1.HitPos + FrontLeft2.HitPos + FrontRight2.HitPos) / 7
 
-	self._smTargetPos = self._smTargetPos and self._smTargetPos + (MovementTargetPos - self._smTargetPos) * FrameTime() or MovementTargetPos
+	if IsValid( Target ) then
+		MovementTargetPos = (MovementTargetPos + Target:GetPos()) * 0.5
+	end
+
+	self._smTargetPos = self._smTargetPos and self._smTargetPos + (MovementTargetPos - self._smTargetPos) * FrameTime() * 0.5 or MovementTargetPos
 
 	local TargetPosLocal = self:WorldToLocal( self._smTargetPos )
 
 	local Dir = math.Clamp( TargetPosLocal.y / 100, -1, 1 ) * 0.2 * math.abs( self:GetTargetSpeed() )
-
-	self:SetTargetSteer( Dir )
-	self:SetTargetSpeed( TargetPosLocal.x > 1000 and 150 or -150 )
 
 	local TargetPos = self:LocalToWorld( Vector(2000,0,150) )
 
@@ -34,15 +37,22 @@ function ENT:RunAI()
 		if self:AITargetInFront( self:GetHardLockTarget(), 65 ) then
 			self._AIFireInput = true
 		end
-	else
-		local Target = self:AIGetTarget()
 
+		self:SetTargetSteer( Dir )
+		self:SetTargetSpeed( TargetPosLocal.x > 1000 and 150 or -150 )
+	else
 		if IsValid( Target ) then
-			TargetPos = Target:GetPos()
+			TargetPos = Target:LocalToWorld( Target:OBBCenter() )
 
 			if self:AITargetInFront( Target, 65 ) then
 				self._AIFireInput = true
 			end
+
+			self:SetTargetSteer( Dir )
+			self:SetTargetSpeed( TargetPosLocal.x > 1000 and 150 or -150 )
+		else
+			self:SetTargetSteer( 0 )
+			self:SetTargetSpeed( 0 )
 		end
 	end
 
