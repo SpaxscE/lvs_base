@@ -157,7 +157,7 @@ end
 function ENT:GetSteer( ent, phys )
 	local Steer = -phys:GetAngleVelocity().z * 0.5
 
-	if not IsValid( self:GetDriver() ) then return Steer end
+	if not IsValid( self:GetDriver() ) and not self:GetAI() then return Steer end
 
 	if self:GetTargetSpeed() > 0 then
 		if ent == self:GetRearEntity() then

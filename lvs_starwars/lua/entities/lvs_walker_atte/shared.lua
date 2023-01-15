@@ -41,6 +41,7 @@ ENT.CanMoveOn = {
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Entity", "RearEntity" )
+	self:AddDT( "Entity", "TurretSeat" )
 
 	self:AddDT( "Float", "Move" )
 	self:AddDT( "Bool", "IsMoving" )
@@ -112,7 +113,7 @@ function ENT:InitWeapons()
 	weapon.HeatRateUp = 2.5
 	weapon.HeatRateDown = 1
 	weapon.Attack = function( ent )
-		if ent:GetIsCarried() then return end
+		if ent:GetIsCarried() then ent:SetHeat( 0 ) return true end
 
 		local T = CurTime()
 
@@ -182,10 +183,16 @@ function ENT:InitWeapons()
 		ent.SNDPrimary:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
 	weapon.OnThink = function( ent, active )
+		local base = ent:GetVehicle()
+
+		if IsValid( base ) and base:GetIsCarried() then return end
+
 		local AimAngles = ent:GetAimAngles()
 
 		ent:SetPoseParameter("frontgun_pitch", math.Clamp(AimAngles.p,-5,5) )
 		ent:SetPoseParameter("frontgun_yaw", AimAngles.y )
 	end
 	self:AddWeapon( weapon )
+
+	self:InitTurret()
 end

@@ -1,5 +1,7 @@
 
 function ENT:OnFrame()
+	self:PredictPoseParamaters()
+
 	local RearEnt = self:GetRearEntity()
 
 	if not IsValid( RearEnt ) then return end

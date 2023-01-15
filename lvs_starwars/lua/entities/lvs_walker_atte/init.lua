@@ -3,10 +3,16 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_ikfunctions.lua" )
 AddCSLuaFile( "cl_camera.lua" )
 AddCSLuaFile( "cl_legs.lua" )
+AddCSLuaFile( "cl_prediction.lua" )
+AddCSLuaFile( "sh_turret.lua" )
 include("shared.lua")
 include("sv_ragdoll.lua")
 include("sv_controls.lua")
 include("sv_contraption.lua")
+include("sv_ai.lua")
+include("sh_turret.lua")
+
+ENT.SpawnNormalOffset = 0
 
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 5000 )
@@ -16,8 +22,13 @@ function ENT:OnSpawn( PObj )
 
 	self.SNDPrimary = self:AddSoundEmitter( Vector(250,0,148), "lvs/vehicles/atte/fire.mp3", "lvs/vehicles/atte/fire.mp3" )
 	self.SNDPrimary:SetSoundLevel( 110 )
-	
+
+	self.SNDTurret = self:AddSoundEmitter( Vector(95,0,280), "lvs/vehicles/atte/fire_turret.mp3", "lvs/vehicles/atte/fire_turret.mp3" )
+	self.SNDTurret:SetSoundLevel( 110 )
+
 	local TurretSeat = self:AddPassengerSeat( Vector(150,0,150), Angle(0,-90,0) )
+	TurretSeat.HidePlayer = true
+	self:SetTurretSeat( TurretSeat )
 
 	local ID = self:LookupAttachment( "driver_turret" )
 	local Attachment = self:GetAttachment( ID )

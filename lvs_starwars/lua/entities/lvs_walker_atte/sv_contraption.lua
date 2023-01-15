@@ -2,7 +2,7 @@
 function ENT:ContraptionThink()
 	local OnMoveableFloor = self:CheckGround()
 
-	if not IsValid( self:GetDriver() ) then
+	if not IsValid( self:GetDriver() ) and not self:GetAI() then
 		self:ApproachTargetSpeed( 0 )
 		self:SetTargetSteer( 0 )
 	end
