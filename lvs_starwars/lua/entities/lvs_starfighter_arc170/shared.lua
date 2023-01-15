@@ -97,10 +97,9 @@ function ENT:InitWeapons()
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
 			local effectdata = EffectData()
-				effectdata:SetStart( Vector(50,255,50) ) 
+				effectdata:SetStart( Vector(0,255,0) ) 
 				effectdata:SetOrigin( tr.HitPos )
-				effectdata:SetNormal( tr.HitNormal )
-			util.Effect( "lvs_laser_impact", effectdata )
+			util.Effect( "lvs_laser_explosion", effectdata )
 		end
 		ent:LVSFireBullet( bullet )
 

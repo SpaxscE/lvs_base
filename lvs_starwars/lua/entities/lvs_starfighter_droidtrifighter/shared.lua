@@ -121,6 +121,12 @@ function ENT:InitWeapons()
 		bullet.SplashDamageRadius = 200
 		bullet.Velocity = 30000
 		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo)
+			local effectdata = EffectData()
+				effectdata:SetStart( Vector(255,0,0) ) 
+				effectdata:SetOrigin( tr.HitPos )
+			util.Effect( "lvs_laser_explosion", effectdata )
+		end
 		ent:LVSFireBullet( bullet )
 
 		local effectdata = EffectData()

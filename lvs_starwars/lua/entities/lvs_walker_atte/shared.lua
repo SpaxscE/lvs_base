@@ -46,6 +46,7 @@ function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "IsMoving" )
 	self:AddDT( "Bool", "IsCarried" )
 	self:AddDT( "Bool", "IsRagdoll" )
+	self:AddDT( "Vector", "AIAimVector" )
 
 	if SERVER then
 		self:NetworkVarNotify( "IsCarried", self.OnIsCarried )
@@ -54,4 +55,112 @@ end
 
 function ENT:GetContraption()
 	return {self, self:GetRearEntity()}
+end
+
+function ENT:GetEyeTrace()
+	local startpos = self:GetPos()
+
+	local pod = self:GetDriverSeat()
+
+	if IsValid( pod ) then
+		startpos = pod:LocalToWorld( Vector(0,0,33) )
+	end
+
+	local trace = util.TraceLine( {
+		start = startpos,
+		endpos = (startpos + self:GetAimVector() * 50000),
+		filter = self:GetCrosshairFilterEnts()
+	} )
+
+	return trace
+end
+
+function ENT:GetAimVector()
+	if self:GetAI() then
+		return self:GetAIAimVector()
+	end
+
+	local Driver = self:GetDriver()
+
+	if IsValid( Driver ) then
+		return Driver:GetAimVector()
+	else
+		return self:GetForward()
+	end
+end
+
+function ENT:InitWeapons()
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/hmg.png")
+	weapon.Ammo = 1000
+	weapon.Delay = 0.1
+	weapon.HeatRateUp = 2.5
+	weapon.HeatRateDown = 1
+	weapon.Attack = function( ent )
+		if ent:GetIsCarried() then return end
+
+		local T = CurTime()
+
+		local ID1 = ent:LookupAttachment( "muzzle_right_up" )
+		local ID2 = ent:LookupAttachment( "muzzle_left_up" )
+		local ID3 = ent:LookupAttachment( "muzzle_right_dn" )
+		local ID4 = ent:LookupAttachment( "muzzle_left_dn" )
+
+		local Muzzle1 = ent:GetAttachment( ID3 )
+		local Muzzle2 = ent:GetAttachment( ID2 )
+		local Muzzle3 = ent:GetAttachment( ID1 )
+		local Muzzle4 = ent:GetAttachment( ID4 )
+
+		if not Muzzle1 or not Muzzle2 or not Muzzle3 or not Muzzle4 then return end
+
+		local FirePos = {
+			[1] = Muzzle1,
+			[2] = Muzzle2,
+			[3] = Muzzle3,
+			[4] = Muzzle4,
+		}
+
+		ent.FireIndex = ent.FireIndex and ent.FireIndex + 1 or 2
+	
+		if ent.FireIndex > 4 then
+			ent.FireIndex = 1
+		end
+
+		local Pos = FirePos[ent.FireIndex].Pos
+		local Dir = FirePos[ent.FireIndex].Ang:Up()
+
+		local bullet = {}
+		bullet.Src 	= Pos
+		bullet.Dir 	= Dir
+		bullet.Spread 	= Vector( 0.01,  0.01, 0 )
+		bullet.TracerName = "lvs_laser_green_short"
+		bullet.Force	= 10
+		bullet.HullSize 	= 30
+		bullet.Damage	= 100
+		bullet.SplashDamage = 200
+		bullet.SplashDamageRadius = 200
+		bullet.Velocity = 8000
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo)
+			local effectdata = EffectData()
+				effectdata:SetStart( Vector(0,255,0) ) 
+				effectdata:SetOrigin( tr.HitPos )
+			util.Effect( "lvs_laser_explosion", effectdata )
+		end
+		ent:LVSFireBullet( bullet )
+
+		local effectdata = EffectData()
+		effectdata:SetStart( Vector(50,255,50) )
+		effectdata:SetOrigin( bullet.Src )
+		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle_colorable", effectdata )
+
+		ent:TakeAmmo()
+
+		if not IsValid( ent.SNDPrimary ) then return end
+
+		ent.SNDPrimary:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+	end
+	self:AddWeapon( weapon )
 end
