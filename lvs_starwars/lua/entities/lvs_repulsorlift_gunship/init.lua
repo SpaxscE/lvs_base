@@ -37,7 +37,7 @@ function ENT:OnSpawn( PObj )
 	self.SNDTail = self:AddSoundEmitter( Vector(-440,0,157), "lvs/vehicles/arc170/fire_gunner.mp3", "lvs/vehicles/arc170/fire_gunner.mp3" )
 	self.SNDTail:SetSoundLevel( 110 )
 
-	local GunnerSeat = self:AddPassengerSeat( Vector(111.87,0,156), Angle(0,-90,0) )
+	local GunnerSeat = self:AddPassengerSeat( Vector(111.87,0,156), Angle(0,90,0) )
 	GunnerSeat.ExitPos = Vector(75,0,36)
 
 	self:SetGunnerSeat( GunnerSeat )

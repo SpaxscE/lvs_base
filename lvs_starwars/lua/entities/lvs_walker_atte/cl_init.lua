@@ -6,6 +6,53 @@ include( "cl_prediction.lua" )
 include("sh_turret.lua")
 include("sh_gunner.lua")
 
+function ENT:DamageFX()
+	self.nextDFX = self.nextDFX or 0
+
+	if self.nextDFX < CurTime() then
+		self.nextDFX = CurTime() + 0.05
+
+		if self:GetIsRagdoll() then
+			if math.random(0,45) < 3 then
+				if math.random(1,2) == 1 then
+					local Pos = self:LocalToWorld( Vector(0,0,70) + VectorRand() * 80 )
+					local effectdata = EffectData()
+						effectdata:SetOrigin( Pos )
+					util.Effect( "cball_explode", effectdata, true, true )
+					
+					sound.Play( "lvs/vehicles/atte/spark"..math.random(1,4)..".ogg", Pos, 75 )
+				end
+			end
+		end
+
+		local HP = self:GetHP()
+		local MaxHP = self:GetMaxHP()
+
+		if HP > MaxHP * 0.5 then return end
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:LocalToWorld( Vector(0,0,160) ) )
+			effectdata:SetEntity( self )
+		util.Effect( "lvs_engine_blacksmoke", effectdata )
+
+		if HP <= MaxHP * 0.25 then
+			local effectdata = EffectData()
+				effectdata:SetOrigin( self:LocalToWorld( Vector(0,20,180) ) )
+				effectdata:SetNormal( self:GetUp() )
+				effectdata:SetMagnitude( math.Rand(1,3) )
+				effectdata:SetEntity( self )
+			util.Effect( "lvs_exhaust_fire", effectdata )
+
+			local effectdata = EffectData()
+				effectdata:SetOrigin( self:LocalToWorld( Vector(0,-20,180) ) )
+				effectdata:SetNormal( self:GetUp() )
+				effectdata:SetMagnitude( math.Rand(1,3) )
+				effectdata:SetEntity( self )
+			util.Effect( "lvs_exhaust_fire", effectdata )
+		end
+	end
+end
+
 function ENT:PreDraw()
 	return false
 end

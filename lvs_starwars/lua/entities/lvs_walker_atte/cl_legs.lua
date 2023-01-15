@@ -1,6 +1,7 @@
 
 function ENT:OnFrame()
 	self:PredictPoseParamaters()
+	self:DamageFX()
 
 	local RearEnt = self:GetRearEntity()
 
