@@ -191,7 +191,7 @@ if SERVER then
 		bullet.Force = data.Force or 10
 		bullet.HullSize = data.HullSize or 5
 		bullet.Velocity = data.Velocity or 2500
-		bullet.Attacker = data.Attacker or NULL
+		bullet.Attacker = IsValid( data.Attacker ) and data.Attacker or (IsValid( data.Entity ) and data.Entity or game.GetWorld())
 		bullet.Damage = data.Damage or 10
 		bullet.Entity = data.Entity
 		bullet.Filter = data.Filter or bullet.Entity
