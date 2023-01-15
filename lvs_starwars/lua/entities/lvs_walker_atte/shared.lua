@@ -89,6 +89,21 @@ function ENT:GetAimVector()
 	end
 end
 
+function ENT:GetAimAngles()
+	local trace = self:GetEyeTrace()
+
+	local AimAngles = self:WorldToLocalAngles( (trace.HitPos - self:LocalToWorld( Vector(265,0,100)) ):GetNormalized():Angle() )
+
+	local ID = self:LookupAttachment( "muzzle_right_up" )
+	local Muzzle = self:GetAttachment( ID )
+
+	if not Muzzle then return AimAngles, trace.HitPos, false end
+
+	local DirAng = self:WorldToLocalAngles( (trace.HitPos - self:GetDriverSeat():LocalToWorld( Vector(0,0,33) ) ):Angle() )
+
+	return AimAngles, trace.HitPos, (math.abs( DirAng.p ) < 12 and math.abs( DirAng.y ) < 35)
+end
+
 function ENT:InitWeapons()
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/hmg.png")
@@ -126,8 +141,12 @@ function ENT:InitWeapons()
 			ent.FireIndex = 1
 		end
 
+		local AimAngles, AimPos, InRange = ent:GetAimAngles()
+
 		local Pos = FirePos[ent.FireIndex].Pos
-		local Dir = FirePos[ent.FireIndex].Ang:Up()
+		local Dir = (AimPos - Pos):GetNormalized()
+
+		if not InRange then return true end
 
 		local bullet = {}
 		bullet.Src 	= Pos
@@ -161,6 +180,12 @@ function ENT:InitWeapons()
 		if not IsValid( ent.SNDPrimary ) then return end
 
 		ent.SNDPrimary:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
+	end
+	weapon.OnThink = function( ent, active )
+		local AimAngles = ent:GetAimAngles()
+
+		ent:SetPoseParameter("frontgun_pitch", math.Clamp(AimAngles.p,-5,5) )
+		ent:SetPoseParameter("frontgun_yaw", AimAngles.y )
 	end
 	self:AddWeapon( weapon )
 end
