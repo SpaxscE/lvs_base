@@ -15,7 +15,7 @@ end
 function ENT:InitRear()
 	if IsValid( self:GetRearEntity() ) then return end
 
-	local ent = ents.Create( "lvs_atte_rear" )
+	local ent = ents.Create( "lvs_walker_atte_rear" )
 
 	if not IsValid( ent ) then
 		self:Remove()

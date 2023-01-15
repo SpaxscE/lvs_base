@@ -85,7 +85,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local ForceLinear = Vector(X,Y,Z) * 2000 * deltatime * self.ForceLinearMultiplier
 	local ForceAngle = ( Vector(-Roll,-Pitch, self:GetSteer( base, phys ) ) * 12 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * self.ForceAngleDampingMultiplier) * 400 * deltatime
 
-	local SIMULATE = OnGround and  SIM_LOCAL_ACCELERATION or SIM_NOTHING
+	local SIMULATE = OnGround and SIM_LOCAL_ACCELERATION or SIM_NOTHING
 
 	return ForceAngle, ForceLinear, SIMULATE
 end
