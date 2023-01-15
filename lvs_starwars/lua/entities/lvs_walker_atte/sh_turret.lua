@@ -53,6 +53,8 @@ function ENT:InitTurret()
 
 		if not Muzzle then return end
 
+		local Driver = ent:GetDriver()
+
 		local projectile = ents.Create( "lvs_protontorpedo" )
 		projectile:SetPos( Muzzle.Pos )
 		projectile:SetAngles( Muzzle.Ang:Up():Angle() )
