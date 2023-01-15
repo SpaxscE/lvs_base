@@ -20,7 +20,7 @@ function ENT:RunAI()
 
 	local TargetPosLocal = self:WorldToLocal( self._smTargetPos )
 
-	local Dir = math.Clamp( TargetPosLocal.y / 2000, -1, 1 ) * 0.2 * math.abs( self:GetTargetSpeed() )
+	local Dir = math.Clamp( TargetPosLocal.y / 100, -1, 1 ) * 0.2 * math.abs( self:GetTargetSpeed() )
 
 	self:SetTargetSteer( Dir )
 	self:SetTargetSpeed( TargetPosLocal.x > 1000 and 150 or -150 )
