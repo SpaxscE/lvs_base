@@ -209,12 +209,8 @@ function ENT:InitWeapons()
 		local radius = 800
 		radius = radius + radius * pod:GetCameraDistance()
 
-		local clamped_angles = pod:WorldToLocalAngles( angles )
-		clamped_angles.p = math.max( clamped_angles.p, -20 )
-		clamped_angles = pod:LocalToWorldAngles( clamped_angles )
-
-		local StartPos = base:LocalToWorld( base:OBBCenter() ) + clamped_angles :Up() * 250
-		local EndPos = StartPos - clamped_angles:Forward() * radius
+		local StartPos = pod:LocalToWorld( pod:OBBCenter() ) + angles :Up() * 250
+		local EndPos = StartPos - angles:Forward() * radius
 
 		local WallOffset = 4
 
