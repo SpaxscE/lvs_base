@@ -313,3 +313,26 @@ ENT.EngineSounds = {
 		SoundLevel = 110,
 	},
 }
+
+function ENT:ResetFilters()
+	-- clear the filters, so they can be rebuild
+	self.CrosshairFilterEnts = nil
+end
+
+function ENT:BuildFilter()
+	if not istable( self.CrosshairFilterEnts ) then
+		self:GetCrosshairFilterEnts()
+	end
+
+	local HeldEnt = self:GetHeldEntity()
+
+	if not IsValid( HeldEnt ) then return end
+
+	if HeldEnt.GetCrosshairFilterEnts then
+		for _, ent in pairs( HeldEnt:GetCrosshairFilterEnts() ) do
+			table.insert( self.CrosshairFilterEnts, ent )
+		end
+	else
+		table.insert( self.CrosshairFilterEnts , HeldEnt )
+	end
+end

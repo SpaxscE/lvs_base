@@ -38,19 +38,6 @@ function ENT:OnTick()
 	self:Grabber()
 end
 
-function ENT:ResetFilters()
-	-- clear the filters, so they can be rebuild
-	self.CrosshairFilterEnts = nil
-end
-
-function ENT:BuildFilter()
-	if not istable( self.CrosshairFilterEnts ) then
-		self:GetCrosshairFilterEnts()
-	end
-
-	table.insert( self.CrosshairFilterEnts , self:GetHeldEntity() )
-end
-
 function ENT:ToggleGrabber()
 	self.GrabberEnabled = not self.GrabberEnabled
 

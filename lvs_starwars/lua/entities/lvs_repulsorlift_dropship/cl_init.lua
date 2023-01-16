@@ -17,6 +17,19 @@ function ENT:OnSpawn()
 end
 
 function ENT:OnFrame()
+	local HeldEntity = self:GetHeldEntity()
+
+	local IsHeld = IsValid( HeldEntity )
+
+	if IsHeld ~= self._oldHeldEntity then
+		self._oldHeldEntity = IsHeld
+
+		if IsHeld then
+			self:BuildFilter()
+		else
+			self:ResetFilters()
+		end
+	end
 end
 
 function ENT:OnStartBoost()
