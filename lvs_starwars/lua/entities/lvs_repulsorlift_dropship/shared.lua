@@ -10,6 +10,16 @@ ENT.Spawnable			= true
 ENT.AdminSpawnable		= false
 
 ENT.MDL = "models/blu/laat_c.mdl"
+ENT.GibModels = {
+	"models/gibs/helicopter_brokenpiece_01.mdl",
+	"models/gibs/helicopter_brokenpiece_02.mdl",
+	"models/gibs/helicopter_brokenpiece_03.mdl",
+	"models/combine_apc_destroyed_gib02.mdl",
+	"models/combine_apc_destroyed_gib04.mdl",
+	"models/combine_apc_destroyed_gib05.mdl",
+	"models/props_c17/trappropeller_engine.mdl",
+	"models/gibs/airboat_broken_engine.mdl",
+}
 
 ENT.AITEAM = 2
 
@@ -146,7 +156,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		if ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange then return true end
+		if ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange then return true end
 
 		local trace = ent:GetEyeTrace()
 
@@ -185,7 +195,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		if ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange then base:SetPoseParameter("reargun_yaw", 0 ) return end
+		if ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange then base:SetPoseParameter("reargun_yaw", 0 ) return end
 
 		local trace = ent:GetEyeTrace()
 
@@ -209,12 +219,8 @@ function ENT:InitWeapons()
 		local radius = 800
 		radius = radius + radius * pod:GetCameraDistance()
 
-		local clamped_angles = pod:WorldToLocalAngles( angles )
-		clamped_angles.p = math.max( clamped_angles.p, -20 )
-		clamped_angles = pod:LocalToWorldAngles( clamped_angles )
-
-		local StartPos = base:LocalToWorld( base:OBBCenter() ) + clamped_angles :Up() * 250
-		local EndPos = StartPos - clamped_angles:Forward() * radius
+		local StartPos = pod:LocalToWorld( pod:OBBCenter() ) + angles :Up() * 250
+		local EndPos = StartPos - angles:Forward() * radius
 
 		local WallOffset = 4
 
@@ -245,7 +251,7 @@ function ENT:InitWeapons()
 
 		if not IsValid( base ) then return end
 
-		local RearGunInRange = ent:AngleBetweenNormal( ent:GetAimVector(), -ent:GetForward() ) > base.RearGunAngleRange
+		local RearGunInRange = ent:AngleBetweenNormal( ent:GetAimVector(), ent:GetForward() ) > base.RearGunAngleRange
 
 		local Col = RearGunInRange and COLOR_RED or COLOR_WHITE
 
@@ -307,3 +313,26 @@ ENT.EngineSounds = {
 		SoundLevel = 110,
 	},
 }
+
+function ENT:ResetFilters()
+	-- clear the filters, so they can be rebuild
+	self.CrosshairFilterEnts = nil
+end
+
+function ENT:BuildFilter()
+	if not istable( self.CrosshairFilterEnts ) then
+		self:GetCrosshairFilterEnts()
+	end
+
+	local HeldEnt = self:GetHeldEntity()
+
+	if not IsValid( HeldEnt ) then return end
+
+	if HeldEnt.GetCrosshairFilterEnts then
+		for _, ent in pairs( HeldEnt:GetCrosshairFilterEnts() ) do
+			table.insert( self.CrosshairFilterEnts, ent )
+		end
+	else
+		table.insert( self.CrosshairFilterEnts , HeldEnt )
+	end
+end

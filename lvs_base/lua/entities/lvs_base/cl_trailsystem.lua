@@ -1,5 +1,9 @@
 
 ENT.TrailMaterial = Material( "trails/smoke" )
+ENT.TrailRed = 255
+ENT.TrailGreen = 255
+ENT.TrailBlue = 255
+ENT.TrailAlpha = 100
 
 function ENT:OnTrail( active, id )
 end
@@ -127,7 +131,7 @@ function ENT:DrawTrail()
 			local Scale = (pos_data.time + data.lifetime - Time) / data.lifetime
 			local InvScale = 1 - Scale
 
-			render.AddBeam( pos_data.pos, data.start_size * Scale + data.end_size * InvScale, pos_data.time * 50, Color( 255, 255, 255, 255 * Scale ^ 2 ) )
+			render.AddBeam( pos_data.pos, data.start_size * Scale + data.end_size * InvScale, pos_data.time * 50, Color( self.TrailRed, self.TrailGreen, self.TrailBlue, self.TrailAlpha * Scale ^ 2 ) )
 		end
 
 		render.EndBeam()

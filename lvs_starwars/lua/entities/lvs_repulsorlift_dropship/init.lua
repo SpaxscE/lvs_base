@@ -11,7 +11,7 @@ function ENT:OnSpawn( PObj )
 	DriverSeat:SetCameraDistance( 1 )
 	DriverSeat.ExitPos = Vector(75,0,36)
 
-	local GunnerSeat = self:AddPassengerSeat( Vector(111.87,0,156), Angle(0,-90,0) )
+	local GunnerSeat = self:AddPassengerSeat( Vector(-250,0,250), Angle(0,90,0) )
 	GunnerSeat.ExitPos = Vector(75,0,36)
 	GunnerSeat.HidePlayer = true
 	self:SetGunnerSeat( GunnerSeat )
@@ -36,19 +36,6 @@ end
 
 function ENT:OnTick()
 	self:Grabber()
-end
-
-function ENT:ResetFilters()
-	-- clear the filters, so they can be rebuild
-	self.CrosshairFilterEnts = nil
-end
-
-function ENT:BuildFilter()
-	if not istable( self.CrosshairFilterEnts ) then
-		self:GetCrosshairFilterEnts()
-	end
-
-	table.insert( self.CrosshairFilterEnts , self:GetHeldEntity() )
 end
 
 function ENT:ToggleGrabber()

@@ -129,3 +129,31 @@ function ENT:LVSHudPaint( X, Y, ply )
 
 	self:PaintZoom( X, Y, ply )
 end
+
+ENT.IconEngine = Material( "lvs/engine.png" )
+
+function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
+	local Vel = self:GetVelocity():Length()
+	local kmh = math.Round(Vel * 0.09144,0)
+
+	draw.DrawText( "km/h ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
+	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
+
+	if ply ~= self:GetDriver() then return end
+
+	local hX = X + W - H * 0.5
+	local hY = Y + H * 0.25 + H * 0.25
+
+	surface.SetMaterial( self.IconEngine )
+	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.DrawTexturedRectRotated( hX + 4, hY + 1, H * 0.5, H * 0.5, 0 )
+	surface.SetDrawColor( color_white )
+	surface.DrawTexturedRectRotated( hX + 2, hY - 1, H * 0.5, H * 0.5, 0 )
+
+	if self:GetIsCarried() then
+		draw.SimpleText( "X" , "LVS_FONT",  hX, hY, Color(0,0,0,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	else
+		local Throttle = Vel / 150
+		self:LVSDrawCircle( hX, hY, H * 0.35, math.min( Throttle, 1 ) )
+	end
+end

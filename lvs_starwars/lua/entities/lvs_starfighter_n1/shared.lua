@@ -10,6 +10,16 @@ ENT.Spawnable			= true
 ENT.AdminSpawnable		= false
 
 ENT.MDL = "models/blu/naboostarfighter.mdl"
+ENT.GibModels = {
+	"models/gibs/helicopter_brokenpiece_01.mdl",
+	"models/gibs/helicopter_brokenpiece_02.mdl",
+	"models/gibs/helicopter_brokenpiece_03.mdl",
+	"models/combine_apc_destroyed_gib02.mdl",
+	"models/combine_apc_destroyed_gib04.mdl",
+	"models/combine_apc_destroyed_gib05.mdl",
+	"models/props_c17/trappropeller_engine.mdl",
+	"models/gibs/airboat_broken_engine.mdl",
+}
 
 ENT.AITEAM = 2
 

@@ -5,6 +5,8 @@ include("cl_hud.lua")
 include("cl_flyby.lua")
 include("cl_deathsound.lua")
 
+ENT.TrailAlpha = 25
+
 DEFINE_BASECLASS( "lvs_base" )
 
 function ENT:Think()
