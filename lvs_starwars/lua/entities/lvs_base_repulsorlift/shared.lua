@@ -23,6 +23,7 @@ function ENT:CalcVtolThrottle( ply, cmd )
 		VtolY = math.Clamp( VtolY + ((ply:lvsKeyDown( "-ROLL_SF" ) and 1 or 0) - (ply:lvsKeyDown( "+ROLL_SF" ) and 1 or 0)), -1 , 1)
 	end
 
+	VtolY = VtolY * math.max( 1 - self:GetThrottle() ^ 2, 0 )
 	local VtolZ = ((ply:lvsKeyDown( "+VTOL_Z_SF" ) and 1 or 0) - (ply:lvsKeyDown( "-VTOL_Z_SF" ) and 1 or 0))
 
 	local DesiredVtol = Vector(VtolX,VtolY,VtolZ)
