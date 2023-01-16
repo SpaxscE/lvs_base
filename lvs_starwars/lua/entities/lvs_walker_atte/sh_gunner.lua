@@ -81,7 +81,7 @@ function ENT:InitGunner()
 		local effectdata = EffectData()
 		effectdata:SetStart( Vector(50,255,50) )
 		effectdata:SetOrigin( bullet.Src )
-		effectdata:SetNormal( ent:GetForward() )
+		effectdata:SetNormal( Dir )
 		effectdata:SetEntity( ent )
 		util.Effect( "lvs_muzzle_colorable", effectdata )
 

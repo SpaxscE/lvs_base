@@ -2,6 +2,16 @@
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
+	local KeyJump = ply:lvsKeyDown( "VSPEC" )
+
+	if self._lvsOldKeyJump ~= KeyJump then
+		self._lvsOldKeyJump = KeyJump
+
+		if KeyJump then
+			self:ToggleVehicleSpecific()
+		end
+	end
+
 	local Forward = cmd:KeyDown( IN_FORWARD )
 	local Back = cmd:KeyDown( IN_BACK )
 	local Left = cmd:KeyDown( IN_MOVELEFT )
@@ -12,16 +22,28 @@ function ENT:StartCommand( ply, cmd )
 	local Y = (Left and 1 or 0) - (Right and 1 or 0)
 
 	self:SetMove( X, Y, Boost )
+
+	local pod = self:GetDriverSeat()
+
+	if not IsValid( pod ) then return end
+
+	if ply:lvsKeyDown( "FREELOOK" ) then
+		return
+	end
+
+	self:SetSteerTo( pod:WorldToLocalAngles( ply:EyeAngles() ).y )
 end
 
-function ENT:SetSteer( Steer )
+function ENT:SetSteerTo( Steer )
 	if not isnumber( Steer ) then return end
 
-	self._steer = math.Clamp( Steer, -1, 1 )
+	self._steer = Steer
 end
 
-function ENT:GetSteer()
-	return (self._steer or 0)
+function ENT:GetSteerTo()
+	if not self:GetEngineActive() then return self:GetAngles().y end
+
+	return (self._steer or self:GetAngles().y)
 end
 
 function ENT:SetMove( X, Y, Boost )
@@ -35,5 +57,7 @@ function ENT:SetMove( X, Y, Boost )
 end
 
 function ENT:GetMove()
+	if not self:GetEngineActive() then return Vector(0,0,0) end
+
 	return (self._move or Vector(0,0,0))
 end

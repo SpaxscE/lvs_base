@@ -5,13 +5,13 @@ AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "sh_camera_eyetrace.lua" )
 include("shared.lua")
 include("sv_controls.lua")
-include("sv_wheels.lua")
+include("sv_components.lua")
+include("sv_vehiclespecific.lua")
 include("sh_camera_eyetrace.lua")
 
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
 	if VehicleIsActive then return end
 
-	self:SetSteer( 0 )
 	self:SetMove( 0, 0 )
 end
 
@@ -29,8 +29,40 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local MoveX = (self.MaxVelocityX + self.BoostAddVelocityX * InputMove.z) * self._smMove.x
 	local MoveY = (self.MaxVelocityY + self.BoostAddVelocityY * InputMove.z) * self._smMove.y
 
-	local ForceLinear = ((Vector( MoveX, MoveY, 0 ) - Vector(VelL.x,VelL.y,0)) * self.ForceLinearMultiplier) * OnGroundMul * deltatime * 500
-	local ForceAngle = (-phys:GetAngleVelocity() * self.ForceAngleDampingMultiplier * OnGroundMul) * 400 * deltatime
+	local Ang = self:GetAngles()
 
-	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
+	if not self:GetEngineActive() then
+		self:SetSteerTo( Ang.y )
+		self.smY = Ang.y
+	end
+
+	self.smY = self.smY and math.ApproachAngle( self.smY, self:GetSteerTo(), self.MaxTurnRate * deltatime * 100 ) or Ang.y
+
+	local Steer = self:WorldToLocalAngles( Angle(Ang.p,self.smY,Ang.y) ).y
+
+	local ForceLinear = ((Vector( MoveX, MoveY, 0 ) - Vector(VelL.x,VelL.y,0)) * self.ForceLinearMultiplier) * OnGroundMul * deltatime * 500
+	local ForceAngle = (Vector(0,0,Steer) * self.ForceAngleMultiplier * 2 - phys:GetAngleVelocity() * self.ForceAngleDampingMultiplier) * OnGroundMul * deltatime * 600 
+
+	local SIMULATE = self:GetDisabled() and SIM_NOTHING or SIM_LOCAL_ACCELERATION
+
+	return ForceAngle, ForceLinear, SIMULATE
+end
+
+function ENT:IsEngineStartAllowed()
+	if hook.Run( "LVS.IsEngineStartAllowed", self ) == false then return false end
+
+	if self:GetDisabled() then return false end
+
+	if self:WaterLevel() > self.WaterLevelPreventStart then return false end
+
+	return true
+end
+
+function ENT:OnDisabled( name, old, new)
+	if new == old then return end
+
+	if new then
+		if not self:GetEngineActive() then return end
+		self:SetEngineActive( false )
+	end
 end

@@ -10,11 +10,12 @@ ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
 ENT.ForceLinearMultiplier = 1
-
 ENT.ForceLinearRate = 1
 
 ENT.MaxVelocityX = 300
 ENT.MaxVelocityY = 300
+
+ENT.MaxTurnRate = 1
 
 ENT.BoostAddVelocityX = 200
 ENT.BoostAddVelocityY = 200
@@ -27,6 +28,11 @@ function ENT:SetupDataTables()
 	self:CreateBaseDT()
 
 	self:AddDT( "Vector", "AIAimVector" )
+	self:AddDT( "Bool", "Disabled" )
+
+	if SERVER then
+		self:NetworkVarNotify( "Disabled", self.OnDisabled )
+	end
 end
 
 function ENT:HitGround()
@@ -45,4 +51,16 @@ function ENT:HitGround()
 	local traceWater = util.TraceHull( data )
 
 	return (trace.Hit or (traceWater.Hit and self.GroundTraceHitWater))
+end
+
+function ENT:GetThrottle()
+	return math.min( self:GetVelocity():Length() / math.abs( self.MaxVelocityX + self.BoostAddVelocityX, self.MaxVelocityY + self.BoostAddVelocityY ), 1 )
+end
+
+function ENT:GetMaxThrottle()
+	return 1
+end
+
+function ENT:GetThrustStrenght()
+	return 0
 end

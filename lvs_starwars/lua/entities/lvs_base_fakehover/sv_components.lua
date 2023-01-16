@@ -22,6 +22,7 @@ function ENT:AddWheel( pos, radius, mass, buoyancyratio, brakeforce )
 	wheel:SetAngles( self:LocalToWorldAngles( Angle(0,90,0) ) )
 	wheel:Spawn()
 	wheel:Activate()
+	wheel:SetBase( self )
 	wheel:SetNoDraw( true )
 	wheel:DrawShadow( false )
 	wheel.DoNotDuplicate = true
@@ -58,4 +59,29 @@ function ENT:AddWheel( pos, radius, mass, buoyancyratio, brakeforce )
 	PhysObj:EnableMotion( true )
 
 	return wheel
+end
+
+function ENT:AddEngineSound( pos )
+	local EngineSND = ents.Create( "lvs_fakehover_soundemitter" )
+
+	if not IsValid( EngineSND ) then
+		self:Remove()
+
+		print("LVS: Failed to create engine sound entity. Vehicle terminated.")
+
+		return
+	end
+
+	EngineSND:SetPos( self:LocalToWorld( pos ) )
+	EngineSND:SetAngles( self:GetAngles() )
+	EngineSND:Spawn()
+	EngineSND:Activate()
+	EngineSND:SetParent( self )
+	EngineSND:SetBase( self )
+
+	self:DeleteOnRemove( EngineSND )
+
+	self:TransferCPPI( EngineSND )
+
+	return EngineSND
 end
