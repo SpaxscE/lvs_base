@@ -1,0 +1,14 @@
+VertexLitGeneric
+{
+	$basetexture "models/blu/aat/main"
+	$bumpmap    "models/blu/aat/main_nm"
+	
+
+	$envmap "env_cubemap"
+	$envmaptint "[.01 .01 .01]"
+
+	$phong 			1
+	$phongexponent 		10
+	$phongboost	 	2
+	$phongfresnelranges	"[0 0.5 1]"
+}
