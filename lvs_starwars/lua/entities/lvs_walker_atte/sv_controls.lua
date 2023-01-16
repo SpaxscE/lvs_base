@@ -116,6 +116,8 @@ function ENT:ClimbTrace()
 	local trace = util.TraceLine( tracedata )
 	trace.InvFraction = (1 - math.max(trace.Fraction - 0.3,0) / 0.7) ^ 2
 
+	trace.Hit = trace.Hit and not trace.HitSky
+
 	return trace
 end
 
