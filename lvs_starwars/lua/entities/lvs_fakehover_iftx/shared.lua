@@ -11,6 +11,8 @@ ENT.AdminSpawnable		= false
 
 ENT.MDL = "models/blu/iftx.mdl"
 
+ENT.AITEAM = 2
+
 ENT.MaxHealth = 2700
 
 ENT.ForceAngleMultiplier = 2
@@ -39,6 +41,7 @@ ENT.LAATC_PICKUP_Angle = Angle(0,0,0)
 function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "BTLFire" )
 	self:AddDT( "Bool", "IsCarried" )
+	self:AddDT( "Entity", "GunnerSeat" )
 
 	if SERVER then
 		self:NetworkVarNotify( "IsCarried", self.OnIsCarried )
@@ -55,17 +58,16 @@ function ENT:GetAimAngles()
 end
 
 function ENT:WeaponsInRange()
+	if self:GetIsCarried() then return false end
+
 	local AimAnglesR, AimAnglesL = self:GetAimAngles()
 
 	return not ((AimAnglesR.p >= 10 and AimAnglesL.p >= 10) or (AimAnglesR.p <= -25 and AimAnglesL.p <= -25) or (math.abs(AimAnglesL.y) + math.abs(AimAnglesL.y)) >= 30)
 end
 
 function ENT:InitWeapons()
-	local COLOR_RED = Color(255,0,0,255)
-	local COLOR_WHITE = Color(255,255,255,255)
-
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/hmg.png")
+	weapon.Icon = Material("lvs/weapons/laserbeam.png")
 	weapon.Ammo = 600
 	weapon.Delay = 0.2
 	weapon.HeatRateUp = 0.25
@@ -152,18 +154,81 @@ function ENT:InitWeapons()
 		self:SetPoseParameter("cannon_left_pitch", AimAnglesL.p )
 		self:SetPoseParameter("cannon_left_yaw", AimAnglesL.y )
 	end
-	weapon.HudPaint = function( ent, X, Y, ply )
-		if ent:GetIsCarried() then return end
+	self:AddWeapon( weapon )
 
-		local Col = ent:WeaponsInRange() and COLOR_WHITE or COLOR_RED
 
-		local Pos2D = ent:GetEyeTrace().HitPos:ToScreen() 
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/missile.png")
+	weapon.Ammo = 60
+	weapon.Delay = 1
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 0.2
+	weapon.Attack = function( ent )
+		if not ent:WeaponsInRange() then return true end
 
-		ent:PaintCrosshairCenter( Pos2D, Col )
-		ent:PaintCrosshairOuter( Pos2D, Col )
-		ent:LVSPaintHitMarker( Pos2D )
+		local Driver = ent:GetDriver()
+
+		for i = 1, 6 do
+			timer.Simple( (i / 5) * 0.75, function()
+				if not IsValid( ent ) then return end
+
+				if ent:GetAmmo() <= 0 then ent:SetHeat( 1 ) return end
+	
+				ent:TakeAmmo()
+
+				local ID_L = ent:LookupAttachment( "muzzle_left" )
+				local ID_R = ent:LookupAttachment( "muzzle_right" )
+				local MuzzleL = ent:GetAttachment( ID_L )
+				local MuzzleR = ent:GetAttachment( ID_R )
+
+				if not MuzzleL or not MuzzleR then return end
+
+				ent.MirrorPrimary = not ent.MirrorPrimary
+
+				local Pos = ent.MirrorPrimary and MuzzleL.Pos or MuzzleR.Pos
+				local Dir =  (ent.MirrorPrimary and MuzzleL.Ang or MuzzleR.Ang):Up()
+
+				local projectile = ents.Create( "lvs_concussionmissile" )
+				projectile:SetPos( Pos )
+				projectile:SetAngles( Dir:Angle() )
+				projectile:SetParent( ent )
+				projectile:Spawn()
+				projectile:Activate()
+				projectile.GetTarget = function( missile ) return missile end
+				projectile.GetTargetPos = function( missile )
+					return missile:LocalToWorld( Vector(150,0,0) + VectorRand() * math.random(-10,10) )
+				end
+	
+				projectile:SetAttacker( IsValid( Driver ) and Driver or self )
+				projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
+				projectile:SetSpeed( 4000 )
+				projectile:SetDamage( 300 )
+				projectile:SetRadius( 150 )
+				projectile:Enable()
+				projectile:EmitSound( "LVS.IFTX.FIRE_MISSILE" )
+
+				ent:SetHeat( ent:GetHeat() + 0.2 )
+
+				if i == 6 then
+					ent:SetHeat( 1 )
+				end
+
+				if ent.MirrorPrimary then
+					ent:PlayAnimation( "fire_left" )
+				else
+					ent:PlayAnimation( "fire_right" )
+				end
+			end)
+		end
+
+		ent:SetOverheated( true )
+	end
+	weapon.OnSelect = function( ent )
+		ent:EmitSound("weapons/shotgun/shotgun_cock.wav")
 	end
 	self:AddWeapon( weapon )
+
+	self:InitTurret()
 end
 
 ENT.EngineSounds = {
@@ -203,3 +268,12 @@ ENT.EngineSounds = {
 		SoundLevel = 90,
 	},
 }
+
+sound.Add( {
+	name = "LVS.IFTX.FIRE_MISSILE",
+	channel = CHAN_WEAPON,
+	volume = 1.0,
+	level = 125,
+	pitch = {95, 105},
+	sound = "lvs/vehicles/iftx/fire_missile.mp3"
+} )

@@ -8,10 +8,18 @@ include("sv_controls.lua")
 include("sv_components.lua")
 include("sv_vehiclespecific.lua")
 include("sh_camera_eyetrace.lua")
+include("sv_ai.lua")
 
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
-	if VehicleIsActive then return end
+	if VehicleIsActive then
+		if not self:GetEngineActive() and self:IsEngineStartAllowed() then
+			self:SetEngineActive( true )
+		end
 
+		return
+	end
+
+	self:SetEngineActive( false )
 	self:SetMove( 0, 0 )
 end
 

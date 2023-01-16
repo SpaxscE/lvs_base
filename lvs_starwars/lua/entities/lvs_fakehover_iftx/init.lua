@@ -1,6 +1,9 @@
 AddCSLuaFile( "shared.lua" )
 AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "cl_prediction.lua" )
+AddCSLuaFile( "sh_turret.lua" )
 include("shared.lua")
+include( "sh_turret.lua" )
 
 ENT.SpawnNormalOffset = 25
 
@@ -9,6 +12,30 @@ function ENT:OnSpawn( PObj )
 
 	local DriverSeat = self:AddDriverSeat( Vector(-30,0,43), Angle(0,-90,0) )
 	DriverSeat.HidePlayer = true
+
+	local GunnerSeat = self:AddPassengerSeat( Vector(0,0,0), Angle(0,-90,0) )
+	GunnerSeat.HidePlayer = true
+	self:SetGunnerSeat( GunnerSeat )
+
+	self.sndBTL = self:AddSoundEmitter( Vector(0,0,0), "lvs/vehicles/laat/ballturret_loop.wav", "lvs/vehicles/laat/ballturret_loop.wav" )
+	self.sndBTL:SetSoundLevel( 110 )
+
+	local ID = self:LookupAttachment( "gunner" )
+	local Attachment = self:GetAttachment( ID )
+
+	if Attachment then
+		local Pos,Ang = LocalToWorld( Vector(0,-15,0), Angle(180,0,-90), Attachment.Pos, Attachment.Ang )
+
+		GunnerSeat:SetParent( NULL )
+		GunnerSeat:SetPos( Pos )
+		GunnerSeat:SetAngles( Ang )
+		GunnerSeat:SetParent( self )
+
+		self.sndBTL:SetParent( NULL )
+		self.sndBTL:SetPos( Pos )
+		self.sndBTL:SetAngles( Ang )
+		self.sndBTL:SetParent( self )
+	end
 
 	local WheelMass = 25
 	local WheelRadius = 14
@@ -22,7 +49,6 @@ function ENT:OnSpawn( PObj )
 	}
 
 	for _, Pos in pairs( WheelPos ) do
-		--self:AddWheel( pos, radius, mass, buoyancy_ratio )
 		self:AddWheel( Pos, WheelRadius, WheelMass, 10 )
 	end
 
@@ -45,7 +71,22 @@ function ENT:OnSpawn( PObj )
 	self.SNDRight:SetParent( self, ID )
 end
 
-function ENT:OnTick()
+function ENT:AnimHatch()
+	local pod = self:GetGunnerSeat()
+
+	if not IsValid( pod ) then return end
+
+	local HasTurret = self:GetBodygroup(1) == 2 and not IsValid( pod:GetDriver() )
+
+	local Rate = FrameTime() * 5
+	self.smHatch = self.smHatch and self.smHatch + math.Clamp((HasTurret and 1 or 0) - self.smHatch,-Rate,Rate) or 0
+
+	if not HasTurret and self.smHatch > 0.7 then self.smHatch = 0.7 end
+
+	self:SetPoseParameter( "close_hatch", self.smHatch )
+end
+
+function ENT:AnimMove()
 	local phys = self:GetPhysicsObject()
 
 	if not IsValid( phys ) then return end
@@ -58,6 +99,11 @@ function ENT:OnTick()
 	self:SetPoseParameter( "move_y", math.Clamp(-VelL.y / self.MaxVelocityY + steer / 100,-1,1) )
 end
 
+function ENT:OnTick()
+	self:AnimHatch()
+	self:AnimMove()
+end
+
 function ENT:OnCollision( data, physobj )
 	if self:WorldToLocal( data.HitPos ).z < 0 then return true end -- dont detect collision  when the lower part of the model touches the ground
 
@@ -68,19 +114,14 @@ function ENT:OnIsCarried( name, old, new)
 	if new == old then return end
 
 	if new then
-		self:SetPoseParameter("cannon_right_pitch", 0 )
-		self:SetPoseParameter("cannon_right_yaw", 0 )
-
-		self:SetPoseParameter("cannon_left_pitch", 0 )
-		self:SetPoseParameter("cannon_left_yaw", 0 )
-
 		self:SetPoseParameter( "move_x", 0 )
 		self:SetPoseParameter( "move_y", 0 )
-	
-		self:SetPoseParameter("turret_pitch", 0 )
-		self:SetPoseParameter("turret_yaw", 0 )
 
 		self:SetBTLFire( false )
+
+		self:SetDisabled( true )
+	else
+		self:SetDisabled( false )
 	end
 end
 
@@ -88,3 +129,23 @@ function ENT:OnVehicleSpecificToggled( IsActive )
 	self:SetBodygroup(2, (self:GetBodygroup(2) == 1) and 0 or 1 )
 	self:EmitSound( "buttons/lightswitch2.wav", 75, 105 )
 end
+
+function ENT:BallturretDamage( target, attacker, HitPos, HitDir )
+	if not IsValid( target ) then return end
+
+	if not IsValid( attacker ) then
+		attacker = self
+	end
+
+	if target ~= self then
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamage( 250 * FrameTime() )
+		dmginfo:SetAttacker( attacker )
+		dmginfo:SetDamageType( DMG_SHOCK + DMG_ENERGYBEAM + DMG_AIRBOAT )
+		dmginfo:SetInflictor( self ) 
+		dmginfo:SetDamagePosition( HitPos ) 
+		dmginfo:SetDamageForce( HitDir * 10000 ) 
+		target:TakeDamageInfo( dmginfo )
+	end
+end
+
