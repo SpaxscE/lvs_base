@@ -34,9 +34,9 @@ ENT.HoverTraceLength = 225
 ENT.HoverHullRadius = 20
 
 ENT.LAATC_PICKUPABLE = true
+ENT.LAATC_DROP_IN_AIR = true
 ENT.LAATC_PICKUP_POS = Vector(-220,0,-115)
 ENT.LAATC_PICKUP_Angle = Angle(0,0,0)
-ENT.LAATC_DROP_IN_AIR = true
 
 ENT.CanMoveOn = {
 	["func_door"] = true,
