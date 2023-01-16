@@ -69,7 +69,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG1 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS1 - Up * 50, endpos = self.TRACEPOS1 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end,} ).HitPos + Vector(0,0,45+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS1 - Up * 50, endpos = self.TRACEPOS1 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end,} ).HitPos + Up * (45+Z)
 	if self.FSOG1 ~= self.oldFSOG1 then
 		self.oldFSOG1 = self.FSOG1
 		if self.FSOG1 then
@@ -101,7 +101,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG2 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS2 - Up * 50, endpos = self.TRACEPOS2 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Vector(0,0,45+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS2 - Up * 50, endpos = self.TRACEPOS2 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Up * (45+Z)
 	if self.FSOG2 ~= self.oldFSOG2 then
 		self.oldFSOG2 = self.FSOG2
 		if self.FSOG2 then
@@ -137,7 +137,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG3 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS3 - Up * 50, endpos = self.TRACEPOS3 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Vector(0,0,45+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS3 - Up * 50, endpos = self.TRACEPOS3 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Up * (45+Z)
 	if self.FSOG3 ~= self.oldFSOG3 then
 		self.oldFSOG3 = self.FSOG3
 		if self.FSOG3 then
@@ -170,7 +170,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG4 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS4 - Up * 50, endpos = self.TRACEPOS4 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Vector(0,0,45+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS4 - Up * 50, endpos = self.TRACEPOS4 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Up * (45+Z)
 	if self.FSOG4 ~= self.oldFSOG4 then
 		self.oldFSOG4 = self.FSOG4
 		if self.FSOG4 then
@@ -205,7 +205,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG5 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS5 - Up * 50, endpos = self.TRACEPOS5 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Vector(0,0,60+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS5 - Up * 50, endpos = self.TRACEPOS5 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end, } ).HitPos + Up * (60+Z)
 	if self.FSOG5 ~= self.oldFSOG5 then
 		self.oldFSOG5 = self.FSOG5
 		if self.FSOG5 then
@@ -238,7 +238,7 @@ function ENT:OnFrame()
 	else
 		self.FSOG6 = true
 	end
-	local ENDPOS = util.TraceLine( { start = self.TRACEPOS6 - Up * 50, endpos = self.TRACEPOS6 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end } ).HitPos + Vector(0,0,60+Z)
+	local ENDPOS = util.TraceLine( { start = self.TRACEPOS6 - Up * 50, endpos = self.TRACEPOS6 - Up * 160, filter = function( ent ) if ent == self or ent == self:GetRearEntity() or self.HoverCollisionFilter[ ent:GetCollisionGroup() ] then return false end return true end } ).HitPos + Up * (60+Z)
 	if self.FSOG6 ~= self.oldFSOG6 then
 		self.oldFSOG6 = self.FSOG6
 		if self.FSOG6 then
