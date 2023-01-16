@@ -28,8 +28,6 @@ function EFFECT:Init( data )
 
 	if not IsValid( Ent ) then return end
 
-	self.DieTime = CurTime()
-
 	local Dir = Ent:GetForward()
 
 	local emitter = Ent:GetParticleEmitter( Ent:GetPos() )
@@ -77,10 +75,7 @@ end
 
 
 function EFFECT:Think()
-	if CurTime() > self.DieTime then
-		return false
-	end
-	return true
+	return false
 end
 
 function EFFECT:Render()
