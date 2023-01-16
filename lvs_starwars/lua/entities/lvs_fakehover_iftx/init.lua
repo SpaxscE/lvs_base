@@ -52,7 +52,7 @@ function ENT:OnSpawn( PObj )
 		self:AddWheel( Pos, WheelRadius, WheelMass, 10 )
 	end
 
-	self:AddEngineSound( Vector(0,0,0) )
+	self:AddEngineSound( Vector(0,0,30) )
 
 	self.SNDLeft = self:AddSoundEmitter( Vector(256,0,36), "lvs/vehicles/iftx/fire.mp3", "lvs/vehicles/iftx/fire.mp3" )
 	self.SNDLeft:SetSoundLevel( 110 )
