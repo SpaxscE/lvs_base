@@ -30,7 +30,7 @@ ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
 ENT.HoverHeight = 140
-ENT.HoverTraceLength = 200
+ENT.HoverTraceLength = 225
 ENT.HoverHullRadius = 20
 
 ENT.LAATC_PICKUPABLE = true
