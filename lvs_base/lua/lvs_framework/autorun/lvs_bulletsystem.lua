@@ -154,7 +154,7 @@ local function HandleBullets()
 					dmginfo:SetDamageType( DMG_SONIC )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
-					util.BlastDamageInfo( dmginfo,  trace.HitPos, bullet.SplashDamageRadius )
+					util.BlastDamageInfo( dmginfo, EndPos, bullet.SplashDamageRadius )
 				end
 			else
 				if not traceImpact.HitSky then
