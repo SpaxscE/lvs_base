@@ -55,7 +55,9 @@ ENT.ForceAngleDampingMultiplier = 1 -- how much angular motion is dampened (smal
 ENT.MaxSlipAnglePitch = 20 -- how many degrees the plane is allowed to slip from forward-motion direction vs forward-facing direction
 ENT.MaxSlipAngleYaw = 10 -- same for yaw
 
-ENT.StallVelocity = 150 -- below which velocity is the plane supposed to start stalling
+ENT.StallVelocity = 150 -- below which velocity is the plane supposed to start stalling, not: !!this should never be above ENT.MaxPerfVelocity and be about 1/12th of ENT.MaxPerfVelocity!!
+ENT.StallForceMultiplier = 1 -- multiply the gravitational rotating-force on stall. The Higher this value, the quicker the plane will rotate towards its directional velocity on stall
+ENT.StallForceMax = 15 -- clamp the gravitational rotating-force on stall. 
 
 ENT.MaxHealth = 1000
 

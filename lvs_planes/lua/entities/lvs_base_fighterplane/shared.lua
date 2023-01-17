@@ -29,6 +29,8 @@ ENT.MaxSlipAnglePitch = 20
 ENT.MaxSlipAngleYaw = 10
 
 ENT.StallVelocity = 150
+ENT.StallForceMultiplier = 1
+ENT.StallForceMax = 15
 
 function ENT:SetupDataTables()
 	self:CreateBaseDT()

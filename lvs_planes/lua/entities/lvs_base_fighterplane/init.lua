@@ -96,7 +96,7 @@ function ENT:CalcAero( phys, deltatime )
 	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul
 
-	local StallMul = math.min( -math.min(Vel.z + self.StallVelocity,0) / 100, self.StallVelocity / 10 )
+	local StallMul = math.min( (-math.min(Vel.z + self.StallVelocity,0) / 100) * self.StallForceMultiplier, self.StallForceMax )
 
 	local StallPitch = 0
 	local StallYaw = 0
