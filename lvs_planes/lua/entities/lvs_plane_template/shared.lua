@@ -55,6 +55,8 @@ ENT.ForceAngleDampingMultiplier = 1 -- how much angular motion is dampened (smal
 ENT.MaxSlipAnglePitch = 20 -- how many degrees the plane is allowed to slip from forward-motion direction vs forward-facing direction
 ENT.MaxSlipAngleYaw = 10 -- same for yaw
 
+ENT.StallVelocity = 150 -- below which velocity is the plane supposed to start stalling
+
 ENT.MaxHealth = 1000
 
 function ENT:OnSetupDataTables() -- use this to add networkvariables instead of ENT:SetupDataTables().
