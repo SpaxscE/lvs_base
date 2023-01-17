@@ -31,26 +31,26 @@ hook.Add( "LVS:Initialize", "[LVS] - Planes - Keys", function()
 		{
 			name = "-YAW",
 			category = "LVS-Plane",
-			name_menu = "Yaw Left",
+			name_menu = "Yaw Left [Roll in Direct Input]",
 			cmd = "lvs_plane_yaw_left"
 		},
 		{
 			name = "+YAW",
 			category = "LVS-Plane",
-			name_menu = "Yaw Right",
+			name_menu = "Yaw Right [Roll in Direct Input]",
 			cmd = "lvs_plane_yaw_right"
 		},
 		{
 			name = "-ROLL",
 			category = "LVS-Plane",
-			name_menu = "Roll Left",
+			name_menu = "Roll Left [Yaw in Direct Input]",
 			default = "+moveleft",
 			cmd = "lvs_plane_roll_left"
 		},
 		{
 			name = "+ROLL",
 			category = "LVS-Plane",
-			name_menu = "Roll Right",
+			name_menu = "Roll Right [Yaw in Direct Input]",
 			default = "+moveright",
 			cmd = "lvs_plane_roll_right"
 		},

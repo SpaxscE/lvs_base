@@ -31,26 +31,26 @@ hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
 		{
 			name = "-YAW_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Yaw Left",
+			name_menu = "Yaw Left [Roll in Direct Input]",
 			cmd = "lvs_starfighter_yaw_left"
 		},
 		{
 			name = "+YAW_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Yaw Right",
+			name_menu = "Yaw Right [Roll in Direct Input]",
 			cmd = "lvs_starfighter_yaw_right"
 		},
 		{
 			name = "-ROLL_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Roll Left",
+			name_menu = "Roll Left [Yaw in Direct Input]",
 			default = "+moveleft",
 			cmd = "lvs_starfighter_roll_left"
 		},
 		{
 			name = "+ROLL_SF",
 			category = "LVS-Starfighter",
-			name_menu = "Roll Right",
+			name_menu = "Roll Right [Yaw in Direct Input]",
 			default = "+moveright",
 			cmd = "lvs_starfighter_roll_right"
 		},
