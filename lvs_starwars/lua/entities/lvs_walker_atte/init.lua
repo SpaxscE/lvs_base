@@ -52,16 +52,36 @@ function ENT:OnSpawn( PObj )
 		self:AddPassengerSeat( Vector(75,-62.5 + i * 25,150), Angle(0,-90,0) ).HidePlayer = true
 	end
 
+	-- armor protecting the weakspot
+	self:AddDSArmor( {
+		pos = Vector(100,0,150),
+		ang = Angle(0,0,0),
+		mins = Vector(-50,-70,-80),
+		maxs =  Vector(80,70,60),
+		Callback = function( tbl, ent, dmginfo )
+			-- dont do anything, just prevent it from hitting the critical spot
+		end
+	} )
+	self:AddDSArmor( {
+		pos = Vector(-100,0,150),
+		ang = Angle(0,0,0),
+		mins = Vector(-80,-70,-80),
+		maxs =  Vector(50,70,60),
+		Callback = function( tbl, ent, dmginfo )
+			-- dont do anything, just prevent it from hitting the critical spot
+		end
+	} )
+
 	-- weak spots
 	self:AddDS( {
-		pos = Vector(215,0,150),
+		pos = Vector(0,0,100),
 		ang = Angle(0,0,0),
-		mins = Vector(-25,-25,-50),
-		maxs =  Vector(25,25,50),
+		mins = Vector(-50,-50,-25),
+		maxs =  Vector(50,50,75),
 		Callback = function( tbl, ent, dmginfo )
 			if dmginfo:GetDamage() <= 0 then return end
 
-			dmginfo:ScaleDamage( 1.5 )
+			dmginfo:ScaleDamage( 2 )
 
 			if ent:GetHP() > 4000 or self:GetIsRagdoll() then return end
 
@@ -74,10 +94,10 @@ function ENT:OnSpawn( PObj )
 	} )
 
 	self:AddDS( {
-		pos = Vector(0,0,100),
+		pos = Vector(215,0,150),
 		ang = Angle(0,0,0),
-		mins = Vector(-50,-1,-25),
-		maxs =  Vector(50,1,75),
+		mins = Vector(-25,-25,-50),
+		maxs =  Vector(25,25,50),
 		Callback = function( tbl, ent, dmginfo )
 			if dmginfo:GetDamage() <= 0 then return end
 
