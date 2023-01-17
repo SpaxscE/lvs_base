@@ -66,25 +66,30 @@ function ENT:PreDrawTranslucent()
 		thelamp:SetBrightness( 10 ) 
 		thelamp:SetTexture( "effects/flashlight/soft" )
 		thelamp:SetColor( Color(255,255,255) ) 
-		thelamp:SetEnableShadows( false ) 
+		thelamp:SetEnableShadows( true ) 
 		thelamp:SetFarZ( 2500 ) 
 		thelamp:SetNearZ( 75 ) 
-		thelamp:SetFOV( 30 )
+		thelamp:SetFOV( 60 )
 		self.projector = thelamp
 	end
 
-	local StartPos = self:LocalToWorld( Vector(60,0,10.5) )
-	local Dir = self:GetForward()
+	local Start1 = self:LocalToWorld( Vector(64,6,10.5) )
+	local Start2 = self:LocalToWorld( Vector(64,-6,10.5) )
+
+	local Dir1 = self:LocalToWorldAngles( Angle(0,5,0) ):Forward()
+	local Dir2 = self:LocalToWorldAngles( Angle(0,-5,0) ):Forward()
 
 	render.SetMaterial( self.GlowMaterial )
-	render.DrawSprite( StartPos + Dir * 20, 250, 250, Color( 255, 255, 255, 255) )
+	render.DrawSprite( Start1, 32, 32, Color( 100, 100, 100, 255) )
+	render.DrawSprite( Start2, 32, 32, Color( 100, 100, 100, 255) )
 
 	render.SetMaterial( self.LightMaterial )
-	render.DrawBeam( StartPos - Dir * 10,  StartPos + Dir * 800, 250, 0, 0.99, Color( 255, 255, 255, 10) ) 
+	render.DrawBeam( Start1,  Start1 + Dir1 * 400, 150, 0, 0.99, Color( 100, 100, 100, 5) ) 
+	render.DrawBeam( Start2,  Start2 + Dir2 * 400, 150, 0, 0.99, Color( 100, 100, 100, 5) ) 
 
 	if IsValid( self.projector ) then
-		self.projector:SetPos( StartPos )
-		self.projector:SetAngles( Dir:Angle() )
+		self.projector:SetPos( self:LocalToWorld( Vector(60,0,10.5) ) )
+		self.projector:SetAngles( self:LocalToWorldAngles( Angle(15,0,0) ) )
 		self.projector:Update()
 	end
 
