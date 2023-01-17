@@ -73,8 +73,8 @@ function ENT:OnSpawn( PObj )
 		end
 	} )
 
-	local data = {
-		pos = Vector(0,-40,100),
+	self:AddDS( {
+		pos = Vector(0,0,100),
 		ang = Angle(0,0,0),
 		mins = Vector(-50,-1,-25),
 		maxs =  Vector(50,1,75),
@@ -91,11 +91,7 @@ function ENT:OnSpawn( PObj )
 				effectdata:SetOrigin( self:LocalToWorld( Vector(0,0,80) ) )
 			util.Effect( "lvs_explosion_nodebris", effectdata )
 		end
-	}
-	self:AddDS( data )
-
-	data.pos = Vector(0,40,100)
-	self:AddDS( data )
+	} )
 end
 
 function ENT:InitRear()

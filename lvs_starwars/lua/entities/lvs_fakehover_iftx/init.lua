@@ -54,21 +54,40 @@ function ENT:OnSpawn( PObj )
 
 	self:AddEngineSound( Vector(0,0,30) )
 
-	self.SNDLeft = self:AddSoundEmitter( Vector(256,0,36), "lvs/vehicles/iftx/fire.mp3", "lvs/vehicles/iftx/fire.mp3" )
-	self.SNDLeft:SetSoundLevel( 110 )
-	self.SNDLeft:SetParent( NULL )
 	local ID = self:LookupAttachment( "muzzle_left" )
 	local Muzzle = self:GetAttachment( ID )
-	self.SNDLeft:SetPos( Muzzle.Pos )
+	self.SNDLeft = self:AddSoundEmitter( self:WorldToLocal( Muzzle.Pos ), "lvs/vehicles/iftx/fire.mp3", "lvs/vehicles/iftx/fire.mp3" )
+	self.SNDLeft:SetSoundLevel( 110 )
 	self.SNDLeft:SetParent( self, ID )
 
-	self.SNDRight = self:AddSoundEmitter( Vector(256,0,36), "lvs/vehicles/iftx/fire.mp3", "lvs/vehicles/iftx/fire.mp3" )
-	self.SNDRight:SetSoundLevel( 110 )
-	self.SNDRight:SetParent( NULL )
 	local ID = self:LookupAttachment( "muzzle_right" )
 	local Muzzle = self:GetAttachment( ID )
-	self.SNDRight:SetPos( Muzzle.Pos )
+	self.SNDRight = self:AddSoundEmitter( self:WorldToLocal( Muzzle.Pos ), "lvs/vehicles/iftx/fire.mp3", "lvs/vehicles/iftx/fire.mp3" )
+	self.SNDRight:SetSoundLevel( 110 )
 	self.SNDRight:SetParent( self, ID )
+
+	--Armor spots protecting the weakspots
+	self:AddDSArmor( {
+		pos = Vector(-70,0,35),
+		ang = Angle(0,0,0),
+		mins = Vector(-10,-40,-30),
+		maxs =  Vector(10,40,30),
+		Callback = function( tbl, ent, dmginfo )
+		end
+	} )
+
+	-- weak spots
+	self:AddDS( {
+		pos = Vector(-95,0,35),
+		ang = Angle(0,0,0),
+		mins = Vector(-10,-25,-25),
+		maxs =  Vector(10,25,25),
+		Callback = function( tbl, ent, dmginfo )
+			if dmginfo:GetDamage() <= 0 then return end
+
+			dmginfo:ScaleDamage( 1.5 )
+		end
+	} )
 end
 
 function ENT:AnimHatch()

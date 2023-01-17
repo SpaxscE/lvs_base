@@ -28,7 +28,8 @@ function ENT:OnSpawn( PhysObj )
 
 	self:AddEngine( Vector(40,0,0) ) -- add a engine. This will also register a critical hit point and create black smoke effects when health is low.
 
-	--[[ -- AddEngine internally registers a critical hit point to the damage system like this:
+	--[[
+	-- AddEngine internally registers a critical hit point to the damage system like this:
 	self:AddDS( {
 		pos = Vector(0,0,0),
 		ang = Angle(0,0,0),
@@ -38,6 +39,20 @@ function ENT:OnSpawn( PhysObj )
 			--dmginfo:ScaleDamage( 15 )
 		end
 	} )
+
+	-- you can also add armor spots using this method. If the bullet trace hits this box first, it will not hit the critical hit point:
+	self:AddDSArmor( {
+		pos = Vector(-70,0,35),
+		ang = Angle(0,0,0),
+		mins = Vector(-10,-40,-30),
+		maxs =  Vector(10,40,30),
+		Callback = function( tbl, ent, dmginfo )
+			-- armor also has a callback. You can set damage to 0 here for example:
+			dmginfo:ScaleDamage( 0 )
+		end
+	} )
+
+	NOTE: !!DS parts are inactive while the vehicle has shield!!
 	]]
 
 	-- self:AddRotor( Position ) -- add a rotor sound handler

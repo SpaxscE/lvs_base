@@ -1,4 +1,5 @@
 
+ENT._armorParts = {}
 ENT._dmgParts = {}
 
 function ENT:AddDS( data )
@@ -10,9 +11,23 @@ function ENT:AddDS( data )
 	data.maxs = data.maxs or Vector(1,1,1)
 	data.Callback = data.Callback or function( tbl, ent, dmginfo ) end
 
-	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 50, 50, 50, 150 ) )
+	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 50, 0, 50, 150 ) )
 
 	table.insert( self._dmgParts, data )
+end
+
+function ENT:AddDSArmor( data )
+	if not data then return end
+
+	data.pos = data.pos or Vector(0,0,0)
+	data.ang = data.ang or Angle(0,0,0)
+	data.mins = data.mins or Vector(-1,-1,-1)
+	data.maxs = data.maxs or Vector(1,1,1)
+	data.Callback = data.Callback or function( tbl, ent, dmginfo ) end
+
+	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 0, 50, 50, 150 ) )
+
+	table.insert( self._armorParts, data )
 end
 
 function ENT:CalcComponentDamage( dmginfo )
@@ -23,11 +38,11 @@ function ENT:CalcComponentDamage( dmginfo )
 
 	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
-	local Hit = false
 	local closestPart
 	local closestDist = Len * 2
+	local HitDistance
 
-	for index, part in pairs( self._dmgParts ) do
+	for index, part in ipairs( self._armorParts ) do
 		local mins = part.mins
 		local maxs = part.maxs
 		local pos = self:LocalToWorld( part.pos )
@@ -38,27 +53,72 @@ function ENT:CalcComponentDamage( dmginfo )
 		if HitPos then
 			debugoverlay.Cross( HitPos, 50, 4, Color( 255, 0, 255 ) )
 
-			local dist = (HitPos - pos):Length()
+			local dist = (HitPos - dmgPos):Length()
 
 			if closestDist > dist then
 				closestPart = part
 				closestDist = dist
+				HitDistance = (HitPos - dmgPos):Length()
 			end
 		end
 	end
 
+	local closestPartDS
+	local closestDistDS = Len * 2
+	for index, part in ipairs( self._dmgParts ) do
+		local mins = part.mins
+		local maxs = part.maxs
+		local pos = self:LocalToWorld( part.pos )
+		local ang = self:LocalToWorldAngles( part.ang )
+
+		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
+
+		if HitPos and HitDistance then
+			if HitDistance < (HitPos - dmgPos):Length() then continue end
+
+			closestPart = nil
+			closestDist = Len * 2
+		end
+
+		if not HitPos then continue end
+
+		debugoverlay.Cross( HitPos, 50, 4, Color( 255, 0, 255 ) )
+
+		local dist = (HitPos - pos):Length()
+
+		if closestDistDS > dist then
+			closestPartDS = part
+			closestDistDS = dist
+		end
+	end
+
+	local Hit = false
 	for index, part in pairs( self._dmgParts ) do
 		local mins = part.mins
 		local maxs = part.maxs
 		local pos = self:LocalToWorld( part.pos )
 		local ang = self:LocalToWorldAngles( part.ang )
 
-		if part == closestPart then
+		if part == closestPartDS then
 			Hit = true
 			part:Callback( self, dmginfo )
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
 		else
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 100, 100, 100, 150 ) )
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 50, 0, 50, 150 ) )
+		end
+	end
+
+	for index, part in pairs( self._armorParts ) do
+		local mins = part.mins
+		local maxs = part.maxs
+		local pos = self:LocalToWorld( part.pos )
+		local ang = self:LocalToWorldAngles( part.ang )
+
+		if part == closestPart then
+			part:Callback( self, dmginfo )
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 0, 150, 0, 150 ) )
+		else
+			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 0, 50, 50, 150 ) )
 		end
 	end
 
