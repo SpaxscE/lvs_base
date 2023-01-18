@@ -1,5 +1,5 @@
 
-ENT.Base = "lvs_walker_atte_hoverscript"
+ENT.Base = "lvs_base_attehover"
 
 ENT.PrintName = "ATTE"
 ENT.Author = "Luna"
