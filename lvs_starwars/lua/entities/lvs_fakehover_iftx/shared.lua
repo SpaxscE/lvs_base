@@ -77,7 +77,7 @@ end
 
 function ENT:InitWeapons()
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/laserbeam.png")
+	weapon.Icon = Material("lvs/weapons/hmg.png")
 	weapon.Ammo = 600
 	weapon.Delay = 0.2
 	weapon.HeatRateUp = 0.25
@@ -208,7 +208,6 @@ function ENT:InitWeapons()
 				projectile.GetTargetPos = function( missile )
 					return missile:LocalToWorld( Vector(150,0,0) + VectorRand() * math.random(-10,10) )
 				end
-	
 				projectile:SetAttacker( IsValid( Driver ) and Driver or self )
 				projectile:SetEntityFilter( ent:GetCrosshairFilterEnts() )
 				projectile:SetSpeed( 4000 )
