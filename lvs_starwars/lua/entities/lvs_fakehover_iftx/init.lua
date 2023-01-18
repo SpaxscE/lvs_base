@@ -5,7 +5,7 @@ AddCSLuaFile( "sh_turret.lua" )
 include("shared.lua")
 include( "sh_turret.lua" )
 
-ENT.SpawnNormalOffset = 25
+ENT.SpawnNormalOffset = 45
 
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 2500 )
