@@ -21,7 +21,7 @@ ENT.GibModels = {
 	"models/gibs/airboat_broken_engine.mdl",
 }
 
-ENT.AITEAM = 2
+ENT.AITEAM = 1
 
 ENT.MaxHealth = 2700
 
