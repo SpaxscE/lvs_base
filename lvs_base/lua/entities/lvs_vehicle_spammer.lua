@@ -19,7 +19,7 @@ function ENT:SetupDataTables()
 	for _, v in pairs( AllSents ) do
 		if not v or not istable( v.t ) or not v.t.Spawnable then continue end
 
-		if v.t.Base and (string.StartWith( v.t.Base:lower(), "lvs_base" ) or string.StartWith( v.t.Base:lower(), "lunasflightschool" )) then
+		if v.t.lvsShowInSpawner or (v.t.Base and (string.StartWith( v.t.Base:lower(), "lvs_base" ) or string.StartWith( v.t.Base:lower(), "lunasflightschool" ))) then
 			if v.t.Category and v.t.PrintName then
 				local nicename = v.t.Category.." - "..v.t.PrintName
 				if not table.HasValue( SpawnOptions, nicename ) then
@@ -142,7 +142,11 @@ if SERVER then
 					local spawnedvehicle = ents.Create( Type )
 					
 					if IsValid( spawnedvehicle ) then
-						spawnedvehicle:SetPos( pos + Vector(0,0,spawnedvehicle.SpawnNormalOffset or 0) )
+						if spawnedvehicle.SpawnNormalOffsetSpawner then
+							spawnedvehicle:SetPos( self:LocalToWorld( Vector(0,0,spawnedvehicle.SpawnNormalOffsetSpawner) ) )
+						else
+							spawnedvehicle:SetPos( pos + Vector(0,0,spawnedvehicle.SpawnNormalOffset or 0) )
+						end
 						spawnedvehicle:SetAngles( ang )
 						spawnedvehicle:Spawn()
 						spawnedvehicle:Activate()

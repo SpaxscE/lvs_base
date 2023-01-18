@@ -10,6 +10,7 @@ ENT.Spawnable			= false -- set to "true" to make it spawnable
 ENT.AdminSpawnable		= false
 
 ENT.SpawnNormalOffset = 15 -- spawn normal offset, raise to prevent spawning into the ground
+--ENT.SpawnNormalOffsetSpawner = 0 -- offset for ai vehicle spawner
 
 ENT.MDL = "models/props_wasteland/laundry_cart001.mdl" -- model forward direction must be facing to X+
 --[[

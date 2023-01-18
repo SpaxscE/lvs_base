@@ -1,5 +1,5 @@
 
-ENT.Base = "lvs_base_attehover"
+ENT.Base = "lvs_walker_atte_hoverscript"
 
 ENT.PrintName = "ATTE"
 ENT.Author = "Luna"
@@ -45,6 +45,8 @@ ENT.CanMoveOn = {
 	["func_movelinear"] = true,
 	["prop_physics"] = true,
 }
+
+ENT.lvsShowInSpawner = true
 
 function ENT:OnSetupDataTables()
 	self:AddDT( "Entity", "RearEntity" )

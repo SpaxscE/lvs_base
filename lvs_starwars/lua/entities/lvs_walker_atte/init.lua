@@ -15,6 +15,7 @@ include("sh_turret.lua")
 include("sh_gunner.lua")
 
 ENT.SpawnNormalOffset = 0
+ENT.SpawnNormalOffsetSpawner = 0
 
 function ENT:OnSpawn( PObj )
 	PObj:SetMass( 5000 )
