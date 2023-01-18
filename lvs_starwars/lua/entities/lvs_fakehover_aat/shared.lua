@@ -106,7 +106,7 @@ function ENT:InitWeapons()
 		bullet.Spread 	= Vector( 0.01,  0.01, 0 )
 		bullet.TracerName = "lvs_laser_red_short"
 		bullet.Force	= 100
-		bullet.HullSize 	= 10
+		bullet.HullSize 	= 1
 		bullet.Damage	= 25
 		bullet.Velocity = 12000
 		bullet.Attacker 	= ent:GetDriver()
