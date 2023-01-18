@@ -43,6 +43,28 @@ function ENT:RunAI()
 		end
 	end
 
+	if self._AIFireInput then
+		local CurHeat = self:GetNWHeat()
+		local CurWeapon = self:GetSelectedWeapon()
+
+		if CurWeapon > 2 then
+			self:AISelectWeapon( 1 )
+		else
+			if CurHeat > 0.9 then
+				if CurWeapon == 1 and self:AIHasWeapon( 2 ) then
+					self:AISelectWeapon( 2 )
+
+				elseif CurWeapon == 2 then
+					self:AISelectWeapon( 1 )
+				end
+			else
+				if CurHeat == 0 and math.cos( CurTime() ) > 0 then
+					self:AISelectWeapon( 1 )
+				end
+			end
+		end
+	end
+
 	local DistToTarget = (TargetPos - self:GetPos()):Length()
 	local LocalMove = self:WorldToLocal( TargetPos )
 
@@ -75,6 +97,18 @@ function ENT:OnAITakeDamage( dmginfo )
 	if not self:AITargetInFront( attacker, IsValid( self:AIGetTarget() ) and 120 or 45 ) then
 		self:SetHardLockTarget( attacker )
 	end
+end
+
+function ENT:AISelectWeapon( ID )
+	if ID == self:GetSelectedWeapon() then return end
+
+	local T = CurTime()
+
+	if (self._nextAISwitchWeapon or 0) > T then return end
+
+	self._nextAISwitchWeapon = T + 1
+
+	self:SelectWeapon( ID )
 end
 
 function ENT:SetHardLockTarget( target )
