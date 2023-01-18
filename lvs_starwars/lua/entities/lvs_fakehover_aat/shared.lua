@@ -302,3 +302,17 @@ sound.Add( {
 	pitch = {95, 105},
 	sound = "lvs/vehicles/aat/fire_missile.mp3"
 } )
+
+sound.Add( {
+	name = "LVS.AAT.LASER_EXPLOSION",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 75,
+	pitch = {160, 180},
+	sound = {
+		"lvs/vehicles/aat/turret/impact1.ogg",
+		"lvs/vehicles/aat/turret/impact2.ogg",
+		"lvs/vehicles/aat/turret/impact3.ogg",
+		"lvs/vehicles/aat/turret/impact4.ogg"
+	}
+} )

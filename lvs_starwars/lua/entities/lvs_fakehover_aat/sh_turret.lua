@@ -49,13 +49,13 @@ end
 
 function ENT:InitTurret()
 	local weapon = {}
-	weapon.Icon = Material("lvs/weapons/laserbeam.png")
+	weapon.Icon = Material("lvs/weapons/hmg.png")
 	weapon.Ammo = -1
-	weapon.Delay = 0
-	weapon.HeatRateUp = 0.25
-	weapon.HeatRateDown = 0.3
+	weapon.Delay = 0.3
+	weapon.HeatRateUp = 1.25
+	weapon.HeatRateDown = 0.2
 	weapon.OnOverheat = function( ent )
-		ent:EmitSound("lvs/overheat.wav")
+		ent:EmitSound("lvs/vehicles/aat/overheat.mp3")
 	end
 	weapon.Attack = function( ent )
 		local base = ent:GetVehicle()
@@ -63,6 +63,50 @@ function ENT:InitTurret()
 		if not IsValid( base ) then return end
 
 		if base:GetIsCarried() then return true end
+
+		local ID = base:LookupAttachment( "muzzle" )
+		local Muzzle = base:GetAttachment( ID )
+
+		if not Muzzle then return end
+
+		local bullet = {}
+		bullet.Src 	= Muzzle.Pos
+		bullet.Dir 	= Muzzle.Ang:Up()
+		bullet.Spread 	= Vector(0,0,0)
+		bullet.TracerName = "lvs_laser_red_aat"
+		bullet.Force	= 10
+		bullet.HullSize 	= 30
+		bullet.Damage	= 500
+		bullet.SplashDamage = 250
+		bullet.SplashDamageRadius = 250
+		bullet.Velocity = 6000
+		bullet.Attacker 	= ent:GetDriver()
+		bullet.Callback = function(att, tr, dmginfo)
+			local effectdata = EffectData()
+				effectdata:SetOrigin( tr.HitPos )
+			util.Effect( "lvs_laser_explosion_aat", effectdata )
+		end
+		ent:LVSFireBullet( bullet )
+
+		local effectdata = EffectData()
+		effectdata:SetStart( Vector(255,50,50) )
+		effectdata:SetOrigin( bullet.Src )
+		effectdata:SetNormal( Muzzle.Ang:Up() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_muzzle_colorable", effectdata )
+
+		ent:TakeAmmo()
+
+		base:PlayAnimation( "fire" )
+
+		local PhysObj = base:GetPhysicsObject()
+		if IsValid( PhysObj ) then
+			PhysObj:ApplyForceOffset( -Muzzle.Ang:Up() * 25000, Muzzle.Pos )
+		end
+
+		if not IsValid( base.SNDTurret ) then return end
+
+		base.SNDTurret:PlayOnce( 100 + math.cos( CurTime() + ent:EntIndex() * 1337 ) * 5 + math.Rand(-1,1), 1 )
 	end
 	weapon.OnThink = function( ent, active )
 		local base = ent:GetVehicle()
