@@ -33,6 +33,8 @@ ENT.HoverHeight = 140
 ENT.HoverTraceLength = 225
 ENT.HoverHullRadius = 20
 
+ENT.TurretTurnRate = 100
+
 ENT.LAATC_PICKUPABLE = true
 ENT.LAATC_DROP_IN_AIR = true
 ENT.LAATC_PICKUP_POS = Vector(-220,0,-115)
@@ -54,6 +56,9 @@ function ENT:OnSetupDataTables()
 	self:AddDT( "Bool", "IsCarried" )
 	self:AddDT( "Bool", "IsRagdoll" )
 	self:AddDT( "Vector", "AIAimVector" )
+
+	self:AddDT( "Float", "TurretPitch" )
+	self:AddDT( "Float", "TurretYaw" )
 
 	if SERVER then
 		self:NetworkVarNotify( "IsCarried", self.OnIsCarried )

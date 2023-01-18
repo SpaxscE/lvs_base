@@ -17,18 +17,31 @@ function ENT:SetPoseParameterTurret( weapon )
 	if self:GetIsCarried() then
 		self:SetPoseParameter("cannon_pitch", 0 )
 		self:SetPoseParameter("cannon_yaw", 180 )
+
+		if self.TurretWasSet then
+			self.TurretWasSet = nil
+
+			self:SetTurretPitch( 0 )
+			self:SetTurretYaw( 180 )
+		end
+
 		return
 	end
 
-	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then return end
+	self.TurretWasSet = true
 
-	local trace = weapon:GetEyeTrace()
+	if not IsValid( weapon:GetDriver() ) and not weapon:GetAI() then return end
 
 	local AimAng = weapon:WorldToLocal( weapon:GetPos() + weapon:GetAimVector() ):Angle()
 	AimAng:Normalize()
 
-	self:SetPoseParameter("cannon_pitch", AimAng.p )
-	self:SetPoseParameter("cannon_yaw", AimAng.y )
+	local AimRate = self.TurretTurnRate * FrameTime() 
+
+	self:SetTurretPitch( math.ApproachAngle( self:GetTurretPitch(), AimAng.p, AimRate ) )
+	self:SetTurretYaw( math.ApproachAngle( self:GetTurretYaw(), AimAng.y, AimRate ) )
+
+	self:SetPoseParameter("cannon_pitch", self:GetTurretPitch() )
+	self:SetPoseParameter("cannon_yaw", self:GetTurretYaw() )
 end
 
 function ENT:InitTurret()
