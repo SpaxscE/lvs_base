@@ -50,7 +50,7 @@ function ENT:HitGround()
 
 	local traceWater = util.TraceHull( data )
 
-	return (trace.Hit or (traceWater.Hit and self.GroundTraceHitWater))
+	return ((trace.Hit or (traceWater.Hit and self.GroundTraceHitWater)) and not trace.HitSky)
 end
 
 function ENT:GetThrottle()
