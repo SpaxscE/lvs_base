@@ -35,8 +35,49 @@ if SERVER then
 		end
 	end
 
+	function ENT:SetPhysics( enable )
+		if enable then
+			if self.PhysicsEnabled then return end
+
+			self:GetPhysicsObject():SetMaterial("jeeptire")
+			self.PhysicsEnabled = true
+		else
+			if self.PhysicsEnabled == false then return end
+
+			self:GetPhysicsObject():SetMaterial("friction_00")
+			self.PhysicsEnabled = false
+		end
+	end
+
+	function ENT:CheckPhysics()
+		local base = self:GetBase()
+
+		if not IsValid( base ) then return end
+
+		if not base:GetEngineActive() then
+			self:SetPhysics( true )
+
+			self:NextThink( CurTime() + 0.25 )
+
+			return
+		end
+
+		self:NextThink( CurTime() + 0.1 )
+
+		local Ang = base:GetAngles()
+		local steer = math.abs( base:WorldToLocalAngles( Angle(Ang.p,base:GetSteerTo(),Ang.r) ).y )
+		local move = base:GetMove()
+		local speed = base:GetVelocity():LengthSqr()
+
+		local enable = (math.abs( move.x ) + math.abs( move.y )) < 0.001 and steer < 3 and speed < 600
+
+		self:SetPhysics( enable )
+	end
+
 	function ENT:Think()
-		return false
+		self:CheckPhysics()
+
+		return true
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
