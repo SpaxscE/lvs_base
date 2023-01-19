@@ -233,19 +233,14 @@ function ENT:InitWeapons()
 					projectile:Enable()
 					projectile:EmitSound( "LVS.AAT.FIRE_MISSILE" )
 
-					ent:SetHeat( ent:GetHeat() + 0.2 )
-
 					ent:TakeAmmo( 1 )
-
-					if i == 6 then
-						ent:SetHeat( 1 )
-					end
 
 					swap = true
 				end
 			end)
 		end
 
+		ent:SetHeat( 1 )
 		ent:SetOverheated( true )
 	end
 	weapon.OnSelect = function( ent )

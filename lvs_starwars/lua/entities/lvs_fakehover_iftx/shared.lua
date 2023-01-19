@@ -216,12 +216,6 @@ function ENT:InitWeapons()
 				projectile:Enable()
 				projectile:EmitSound( "LVS.IFTX.FIRE_MISSILE" )
 
-				ent:SetHeat( ent:GetHeat() + 0.2 )
-
-				if i == 6 then
-					ent:SetHeat( 1 )
-				end
-
 				if ent.MirrorPrimary then
 					ent:PlayAnimation( "fire_left" )
 				else
@@ -230,6 +224,7 @@ function ENT:InitWeapons()
 			end)
 		end
 
+		ent:SetHeat( 1 )
 		ent:SetOverheated( true )
 	end
 	weapon.OnSelect = function( ent )
