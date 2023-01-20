@@ -28,6 +28,8 @@ function ENT:StartCommand( ply, cmd )
 	if not IsValid( pod ) then return end
 
 	if ply:lvsKeyDown( "FREELOOK" ) then
+		self:SetSteerTo( self:GetAngles().y)
+
 		return
 	end
 
