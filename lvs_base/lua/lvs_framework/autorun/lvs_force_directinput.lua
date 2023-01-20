@@ -1,5 +1,5 @@
 
-LVS.cVar_forcedirect = CreateConVar( "lvs_force_directinput", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"Force a Input Method?" )
+LVS.cVar_forcedirect = CreateConVar( "lvs_force_directinput", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"Force Direct Input Steering Method?" )
 
 if SERVER then
 	util.AddNetworkString( "lvs_forced_input_getter" )
