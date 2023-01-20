@@ -11,7 +11,7 @@ cvars.AddChangeCallback( "lvs_ai_ignoreplayers", function( convar, oldValue, new
 end)
 
 LVS.cVar_playerignore = CreateConVar( "lvs_ai_ignoreplayers", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"should LVS-AI ignore Players?" )
-LVS.IgnorePlayers = cVar_playerignore and cVar_playerignore:GetBool() or false
+LVS.IgnorePlayers = LVS.cVar_playerignore and LVS.cVar_playerignore:GetBool() or false
 cvars.AddChangeCallback( "lvs_ai_ignorenpcs", function( convar, oldValue, newValue ) 
 	LVS.IgnoreNPCs = tonumber( newValue ) ~=0
 end)
