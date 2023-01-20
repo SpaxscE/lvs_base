@@ -266,6 +266,20 @@ local function ServerSettings( Canvas )
 			net.WriteString( tostring( val and 1 or 0 ) )
 		net.SendToServer()
 	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Disable Mouse Aim" )
+	CheckBox:SetValue( GetConVar( "lvs_force_directinput" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_force_directinput")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
 end
 
 function LVS:OpenClientSettings()

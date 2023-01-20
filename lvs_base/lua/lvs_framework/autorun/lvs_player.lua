@@ -62,6 +62,10 @@ function meta:lvsGetControls()
 end
 
 function meta:lvsMouseAim()
+	if LVS:IsDirectInputForced() then
+		return false
+	end
+
 	return self._lvsMouseAim
 end
 
