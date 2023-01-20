@@ -7,8 +7,6 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 
 	if ply ~= self:GetDriver() then return end
 
-	local Throttle = self:GetThrottle()
-	local Col = Throttle <= 1 and color_white or Color(0,0,0,255)
 	local hX = X + W - H * 0.5
 	local hY = Y + H * 0.25 + H * 0.25
 
@@ -22,11 +20,7 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 		draw.SimpleText( "X" , "LVS_FONT",  hX, hY, Color(0,0,0,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	end
 
-	self:LVSDrawCircle( hX, hY, H * 0.35, math.min( Throttle, 1 ) )
-
-	if Throttle > 1 then
-		draw.SimpleText( "+"..math.Round((Throttle - 1) * 100,0).."%" , "LVS_FONT",  hX, hY, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-	end
+	self:LVSDrawCircle( hX, hY, H * 0.35, self:GetThrustPercent() )
 end
 
 function ENT:LVSPreHudPaint( X, Y, ply )

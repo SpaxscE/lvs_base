@@ -64,47 +64,26 @@ end
 
 function ENT:CalcAero( phys, deltatime )
 	local WorldGravity = self:GetWorldGravity()
-	local WorldUp = Vector(0,0,1)
+	local WorldUp = self:GetWorldUp()
 	local Steer = self:GetSteer()
 
-	local Forward = self:GetForward()
-	local Left = -self:GetRight()
+	local Pos = self:GetPos()
+
 	local Up = self:GetUp()
 
 	local Vel = self:GetVelocity()
+	local VelL = self:WorldToLocal( Pos + Vel )
 	local VelForward = Vel:GetNormalized()
 
-	--[[
-	-- crash bebehavior
-	if self:IsDestroyed() then
-		Steer = phys:GetAngleVelocity() / 200
-
-		PitchPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Up ) ,-1,1) ) ) - 90) /  90
-
-		GravMul = WorldGravity / 600
-	end
-	]]
-
-	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
-	local SpeedTurn = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * math.min( self:GetVelocity():Length() / 1000, 1 )
-
 	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch * 3
-	local Yaw = math.Clamp(Steer.z + SpeedTurn,-1,1) * self.TurnRateYaw * 3
+	local Yaw = math.Clamp(Steer.z,-1,1) * self.TurnRateYaw * 3
 	local Roll = math.Clamp(Steer.x,-1,1) * self.TurnRateRoll * 12
 
-	local ThrustRatio = math.Clamp( self.ThrustRatio, 0, 1 )
-	local InvThrustRatio = 1 - ThrustRatio
+	local Force = WorldUp * WorldGravity * (1 - self.ThrustEfficiency) + Up * (WorldGravity *self.ThrustEfficiency - VelL.z + self.Thrust * 1000 * self:GetThrust())
 
-	-- * 10000 * self.ForceLinearMultiplier
+	local Mul = self:GetThrottle()
 
-	local LocalGravity = self:WorldToLocal( self:GetPos() + WorldUp * WorldGravity )
-
-	local Lift = LocalGravity * ThrustRatio
-	local Move = LocalGravity * InvThrustRatio
-
-	local Force = (Lift + Move) * self:GetThrottle()
-
-	return Force, Vector( Roll, Pitch, Yaw )
+	return Force * Mul, Vector( Roll, Pitch, Yaw ) * Mul
 end
 
 function ENT:OnSkyCollide( data, PhysObj )
@@ -118,12 +97,31 @@ function ENT:OnSkyCollide( data, PhysObj )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
-	local Aero, Torque = self:CalcAero( phys, deltatime )
-
 	phys:Wake()
 
-	local ForceLinear = Aero
-	local ForceAngle = (Torque * 25 * self.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250
+	local WorldGravity = self:GetWorldGravity()
+	local WorldUp = self:GetWorldUp()
 
-	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
+	local Mul = self:GetThrottle()
+
+	local Steer = self:GetSteer()
+
+	local Pitch = math.Clamp(Steer.y,-1,1) * 2
+	local Yaw = math.Clamp(Steer.z,-1,1) * self.TurnRateYaw * 60
+	local Roll = math.Clamp(Steer.x,-1,1) * 2
+
+	local Ang = self:GetAngles()
+
+	local InputThrust = math.Remap( self:GetThrust(), -1, 1, -self.ThrustDown, self.ThrustUp )
+
+	local Thrust = self:LocalToWorldAngles( Angle(Pitch,0,Roll) ):Up() * (WorldGravity + InputThrust * 500)
+
+	local Force, ForceAng = phys:CalculateForceOffset( Thrust, phys:LocalToWorld( phys:GetMassCenter() ) + self:GetUp() * 500 )
+
+	local Vel = phys:GetVelocity()
+
+	local ForceLinear = (Force - Vel * 0.1) * Mul
+	local ForceAngle = (ForceAng + (Vector(0,0,Yaw) - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250) * Mul
+
+	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 end

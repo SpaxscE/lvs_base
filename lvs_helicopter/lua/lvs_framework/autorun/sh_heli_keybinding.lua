@@ -2,14 +2,14 @@
 hook.Add( "LVS:Initialize", "[LVS] - Helicopter - Keys", function()
 	local KEYS = {
 		{
-			name = "+THROTTLE_HELI",
+			name = "+THRUST_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Throttle Increase",
 			default = "+forward",
 			cmd = "lvs_heli_throttle_up"
 		},
 		{
-			name = "-THROTTLE_HELI",
+			name = "-THRUST_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Throttle Decrease",
 			default = "+back",

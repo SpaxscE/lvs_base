@@ -9,6 +9,10 @@ ENT.Category = "[LVS]"
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
+ENT.ThrustUp = 1
+ENT.ThrustDown = 0.25
+ENT.ThrustRate = 1
+
 ENT.ThrottleRateUp = 0.2
 ENT.ThrottleRateDown = 0.4
 
@@ -16,10 +20,6 @@ ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
-ENT.Thrust = 1
-ENT.ThrustRatio = 0.7
-
-ENT.ForceLinearMultiplier = 1
 ENT.ForceLinearDampingMultiplier = 1
 
 ENT.ForceAngleMultiplier = 1
@@ -31,6 +31,7 @@ function ENT:SetupDataTables()
 	self:AddDT( "Vector", "Steer" )
 	self:AddDT( "Vector", "AIAimVector" )
 	self:AddDT( "Float", "Throttle" )
+	self:AddDT( "Float", "NWThrust" )
 end
 
 function ENT:PlayerDirectInput( ply, cmd )
@@ -134,4 +135,36 @@ function ENT:StartCommand( ply, cmd )
 	else
 		self:PlayerDirectInput( ply, cmd )
 	end
+
+	self:CalcThrust( ply, cmd )
+end
+
+function ENT:SetThrust( New )
+	if self:GetEngineActive() then
+		self:SetNWThrust( math.Clamp(New,-1,1) )
+	else
+		self:SetNWThrust( 0 )
+	end
+end
+
+function ENT:GetThrust()
+	return self:GetNWThrust() * self:GetThrottle()
+end
+
+function ENT:CalcThrust( ply, cmd )
+	if CLIENT then return end
+
+	local Delta = FrameTime()
+
+	local Up =  ply:lvsKeyDown( "+THRUST_HELI" ) and 1 or 0
+	local Down = ply:lvsKeyDown( "-THRUST_HELI" ) and -1 or 0
+
+	local Cur = self:GetThrust()
+	local New = Up + Down
+
+	self:SetThrust( Cur + (New - Cur) * Delta * self.ThrustRate * 2.5 )
+end
+
+function ENT:GetThrustPercent()
+	return (0.5 * self:GetThrottle() + self:GetThrust() * 0.5)
 end
