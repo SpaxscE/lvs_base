@@ -89,11 +89,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 300) * math.Clamp( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,-1,1)
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 300) * (math.min( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,1) ^ 2)
 
 	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch
 	local Yaw = math.Clamp(Steer.z + GravityYaw,-1,1) * self.TurnRateYaw * 60
-	local Roll = math.Clamp(Steer.x,-1,1) * self.TurnRateRoll
+	local Roll = math.Clamp(Steer.x,-1,1) * 1.5 * self.TurnRateRoll
 
 	local Ang = self:GetAngles()
 
@@ -101,7 +101,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	local ThrustMul = math.max( 1 - (Vel:Length() / self.MaxVelocity), 0 )
 
-	local Thrust = self:LocalToWorldAngles( Angle(Pitch,0,Roll) ):Up() * (WorldGravity + InputThrust * 500 * ThrustMul)
+	local Thrust = self:LocalToWorldAngles( Angle(Pitch,0,Roll) ):Up() * (WorldGravity + InputThrust * 1000 * ThrustMul)
 
 	local Force, ForceAng = phys:CalculateForceOffset( Thrust, phys:LocalToWorld( phys:GetMassCenter() ) + self:GetUp() * 1000 )
 
