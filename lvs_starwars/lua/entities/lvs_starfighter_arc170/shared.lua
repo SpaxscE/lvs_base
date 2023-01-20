@@ -21,8 +21,8 @@ ENT.GibModels = {
 
 ENT.AITEAM = 2
 
-ENT.MaxVelocity = 2500
-ENT.MaxThrust = 2500
+ENT.MaxVelocity = 2150
+ENT.MaxThrust = 2150
 
 ENT.ThrustVtol = 55
 ENT.ThrustRateVtol = 3
