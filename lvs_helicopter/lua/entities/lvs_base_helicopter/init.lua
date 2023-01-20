@@ -62,30 +62,6 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	self:SetSteer( Vector( math.Clamp(Roll * 1.25,-1,1), math.Clamp(-Pitch * 1.25,-1,1), -Yaw) )
 end
 
-function ENT:CalcAero( phys, deltatime )
-	local WorldGravity = self:GetWorldGravity()
-	local WorldUp = self:GetWorldUp()
-	local Steer = self:GetSteer()
-
-	local Pos = self:GetPos()
-
-	local Up = self:GetUp()
-
-	local Vel = self:GetVelocity()
-	local VelL = self:WorldToLocal( Pos + Vel )
-	local VelForward = Vel:GetNormalized()
-
-	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch * 3
-	local Yaw = math.Clamp(Steer.z,-1,1) * self.TurnRateYaw * 3
-	local Roll = math.Clamp(Steer.x,-1,1) * self.TurnRateRoll * 12
-
-	local Force = WorldUp * WorldGravity * (1 - self.ThrustEfficiency) + Up * (WorldGravity *self.ThrustEfficiency - VelL.z + self.Thrust * 1000 * self:GetThrust())
-
-	local Mul = self:GetThrottle()
-
-	return Force * Mul, Vector( Roll, Pitch, Yaw ) * Mul
-end
-
 function ENT:OnSkyCollide( data, PhysObj )
 
 	local NewVelocity = self:VectorSubtractNormal( data.HitNormal, data.OurOldVelocity ) - data.HitNormal * 400
@@ -113,7 +89,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 600) * math.Clamp( math.abs( VelL.x ) / self.MaxVelocity,-1,1)
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 300) * math.Clamp( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,-1,1)
 
 	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch
 	local Yaw = math.Clamp(Steer.z + GravityYaw,-1,1) * self.TurnRateYaw * 60
