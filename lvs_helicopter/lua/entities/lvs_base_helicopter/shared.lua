@@ -9,8 +9,10 @@ ENT.Category = "[LVS]"
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
+ENT.MaxVelocity = 2500
+
 ENT.ThrustUp = 1
-ENT.ThrustDown = 0.25
+ENT.ThrustDown = 0.8
 ENT.ThrustRate = 1
 
 ENT.ThrottleRateUp = 0.2

@@ -1,5 +1,4 @@
 
-ENT.MaxVelocity = 2000
 ENT.FlyByAdvance = 0
 
 function ENT:FlyByThink()
