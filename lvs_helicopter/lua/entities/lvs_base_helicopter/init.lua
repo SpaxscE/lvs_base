@@ -39,9 +39,13 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	local AngVel = self:GetPhysicsObject():GetAngleVelocity()
 
-	local Pitch = math.Clamp( -LocalAngPitch / 20 , -1, 1 )
-	local Yaw = math.Clamp( -LocalAngYaw / 4,-1,1) * RudderFadeOut
-	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 8,-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
+	local SmoothPitch = math.Clamp( math.Clamp(AngVel.y / 50,-0.25,0.25) / math.abs( LocalAngPitch ), -1, 1 )
+	local SmoothYaw = math.Clamp( math.Clamp(AngVel.z / 50,-0.25,0.25) / math.abs( LocalAngYaw ), -1, 1 )
+
+	local VelL = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
+	local Pitch = math.Clamp(-LocalAngPitch / 10 + SmoothPitch,-1,1)
+	local Yaw = math.Clamp(-LocalAngYaw + SmoothYaw,-1,1)
+	local Roll = math.Clamp( (math.Clamp(VelL.y / self.MaxVelocity,-1,1) * 90 - self:GetAngles().r) / 90 ,-1 , 1 )
 
 	if FreeMovement then
 		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
@@ -78,6 +82,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local WorldGravity = self:GetWorldGravity()
 	local WorldUp = self:GetWorldUp()
 
+	local Up = self:GetUp()
 	local Left = -self:GetRight()
 
 	local Mul = self:GetThrottle()
@@ -89,7 +94,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	local YawPull = (math.deg( math.acos( math.Clamp( WorldUp:Dot( Left ) ,-1,1) ) ) - 90) /  90
 
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 300) * (math.min( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,1) ^ 2)
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 100) * (math.min( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,1) ^ 2)
 
 	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch
 	local Yaw = math.Clamp(Steer.z + GravityYaw,-1,1) * self.TurnRateYaw * 60
@@ -97,15 +102,16 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 	local Ang = self:GetAngles()
 
-	local InputThrust = math.Remap( self:GetThrust(), -1, 1, -self.ThrustDown, self.ThrustUp )
+	local InputThrust = math.min( self:GetThrust() , 0 ) * self.ThrustDown + math.max( self:GetThrust(), 0 ) * self.ThrustUp
 
-	local ThrustMul = math.max( 1 - (Vel:Length() / self.MaxVelocity), 0 )
+	local FadeMul = (1 - math.max( (45 - self:AngleBetweenNormal( WorldUp, Up )) / 45,0)) ^ 2
+	local ThrustMul = math.Clamp( 1 - (Vel:Length() / self.MaxVelocity) * FadeMul, 0, 1 )
 
-	local Thrust = self:LocalToWorldAngles( Angle(Pitch,0,Roll) ):Up() * (WorldGravity + InputThrust * 1000 * ThrustMul)
+	local Thrust = self:LocalToWorldAngles( Angle(Pitch,0,Roll) ):Up() * (WorldGravity + InputThrust * 500 * ThrustMul)
 
 	local Force, ForceAng = phys:CalculateForceOffset( Thrust, phys:LocalToWorld( phys:GetMassCenter() ) + self:GetUp() * 1000 )
 
-	local ForceLinear = (Force - Vel * 0.1 * self.ForceLinearDampingMultiplier) * Mul
+	local ForceLinear = (Force - Vel * 0.15 * self.ForceLinearDampingMultiplier) * Mul
 	local ForceAngle = (ForceAng + (Vector(0,0,Yaw) - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250) * Mul
 
 	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
