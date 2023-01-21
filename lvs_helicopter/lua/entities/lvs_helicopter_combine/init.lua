@@ -5,6 +5,8 @@ include("shared.lua")
 function ENT:OnSpawn( PObj )
 	self:AddDriverSeat( Vector(120,0,-40), Angle(0,-90,0) )
 
+	self:AddEngineSound( Vector(0,0,0) )
+
 	self.Rotor = self:AddRotor( Vector(0,0,65), Angle(15,0,0), 310, -4000 )
 	self.Rotor:SetHP( 50 )
 	function self.Rotor:OnDestroyed( base )
@@ -83,4 +85,10 @@ end
 
 function ENT:GetMissileOffset()
 	return Vector(-60,0,0)
+end
+
+function ENT:OnEngineActiveChanged( Active )
+	if Active then
+		self:EmitSound( "lvs/vehicles/helicopter/start.wav" )
+	end
 end

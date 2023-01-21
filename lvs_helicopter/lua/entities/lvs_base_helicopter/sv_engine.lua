@@ -60,14 +60,16 @@ function ENT:StartEngine()
 end
 
 function ENT:StopEngine()
+	if self._StopEngine then return end
+
 	self._StopEngine = true
+	self:OnEngineActiveChanged( false )
 end
 
 function ENT:TurnOffEngine()
 	if not self:GetEngineActive() then return end
 
 	self:SetEngineActive( false )
-	self:OnEngineActiveChanged( false )
 
 	self._StopEngine = nil
 end

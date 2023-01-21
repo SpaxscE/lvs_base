@@ -16,7 +16,7 @@ ENT.ThrustDown = 0.8
 ENT.ThrustRate = 1
 
 ENT.ThrottleRateUp = 0.2
-ENT.ThrottleRateDown = 0.4
+ENT.ThrottleRateDown = 0.2
 
 ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
@@ -174,9 +174,13 @@ function ENT:SetThrust( New )
 end
 
 function ENT:GetThrust()
-	return self:GetNWThrust() * self:GetThrottle()
+	return self:GetNWThrust()
 end
 
 function ENT:GetThrustPercent()
-	return (0.5 * self:GetThrottle() + self:GetThrust() * 0.5)
+	return math.Clamp(0.5 * self:GetThrottle() + self:GetThrust() * 0.5,0,1)
+end
+
+function ENT:GetThrustStrenght()
+	return (1 - (self:GetVelocity():Length() / self.MaxVelocity)) * self:GetThrustPercent()
 end
