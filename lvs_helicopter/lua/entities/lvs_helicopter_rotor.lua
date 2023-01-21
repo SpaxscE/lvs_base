@@ -22,13 +22,21 @@ function ENT:SetupDataTables()
 end
 
 function ENT:CheckRotorClearance()
-	if self:GetDisabled() then return end
+	if self:GetDisabled() then self:DeleteRotorWash() return end
 
 	local base = self:GetBase()
 
-	if not IsValid( base ) then return end
+	if not IsValid( base ) then self:DeleteRotorWash() return end
 
-	if not base:GetEngineActive() then return end
+	if not base:GetEngineActive() then self:DeleteRotorWash() return end
+
+	local Radius = self:GetRadius()
+
+	if base:GetThrottle() > 0.5 and Radius > 250 then
+		self:CreateRotorWash()
+	else
+		self:DeleteRotorWash()
+	end
 
 	local pos = self:GetPos()
 
@@ -47,7 +55,7 @@ function ENT:CheckRotorClearance()
 
 	local tr = util.TraceLine( {
 		start = pos,
-		endpos = (pos + dir * self:GetRadius()),
+		endpos = (pos + dir * Radius),
 		filter = base:GetCrosshairFilterEnts(),
 		mask = MASK_SOLID_BRUSHONLY,
 	} )
@@ -114,6 +122,8 @@ if SERVER then
 			effectdata:SetNormal( self:GetForward() )
 			effectdata:SetMagnitude( self:GetRadius() )
 		util.Effect( "lvs_rotor_destruction", effectdata, true, true )
+
+		self:DeleteRotorWash()
 	end
 
 	function ENT:OnDestroyed( base )
@@ -144,11 +154,52 @@ if SERVER then
 		return true
 	end
 
+	function ENT:OnRemove()
+		self:DeleteRotorWash()
+	end
+
 	function ENT:UpdateTransmitState() 
 		return TRANSMIT_ALWAYS
 	end
 
+	function ENT:CreateRotorWash()
+		if IsValid( self.RotorWashEnt ) then return end
+
+		local RotorWash = ents.Create( "env_rotorwash_emitter" )
+
+		if not IsValid( RotorWash ) then return end
+
+		RotorWash:SetPos( self:GetPos() )
+		RotorWash:SetAngles( self:GetAngles() )
+		RotorWash:Spawn()
+		RotorWash:Activate()
+		RotorWash:SetParent( self )
+		RotorWash.DoNotDuplicate = true
+	
+		self:DeleteOnRemove( RotorWash )
+
+		self.RotorWashEnt = RotorWash
+
+		local Base = self:GetBase()
+
+		if IsValid( Base ) then
+			Base:TransferCPPI( RotorWash )
+		end
+	end
+
+	function ENT:DeleteRotorWash()
+		if not IsValid( self.RotorWashEnt ) then return end
+
+		self.RotorWashEnt:Remove()
+	end
+
 	return
+end
+
+function ENT:CreateRotorWash()
+end
+
+function ENT:DeleteRotorWash()
 end
 
 function ENT:OnStartCollide( base, Pos, Dir )
