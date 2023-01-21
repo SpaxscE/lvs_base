@@ -41,7 +41,12 @@ local function ClientSettings( Canvas )
 		timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
 	end
 
-	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 then
+	if LVS:IsDirectInputForced() then
+		CheckBox:SetText( "[DISABLED] Use Mouse-Aim Steering" )
+		CheckBox:SetDisabled( true )
+	end
+
+	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 or LVS:IsDirectInputForced() then
 		local slider = vgui.Create( "DNumSlider", TopPanel )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
