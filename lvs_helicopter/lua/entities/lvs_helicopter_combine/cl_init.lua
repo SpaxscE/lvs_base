@@ -31,7 +31,7 @@ function ENT:AnimTail()
 
 	local TargetValue = -(Steer.x + Steer.z * 2) * 10
 
-	self.sm_pp_rudder = self.sm_pp_rudder and (self.sm_pp_rudder + (TargetValue - self.sm_pp_rudder) * RealFrameTime() * 10) or 0
+	self.sm_pp_rudder = self.sm_pp_rudder and (self.sm_pp_rudder + (TargetValue - self.sm_pp_rudder) * RealFrameTime() * 5) or 0
 
 	self:SetPoseParameter("rudder", self.sm_pp_rudder)
 	self:InvalidateBoneCache() 

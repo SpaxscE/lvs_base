@@ -44,10 +44,12 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local SmoothYaw = math.Clamp( math.Clamp(AngVel.z / 50,-0.25,0.25) / math.abs( LocalAngYaw ), -1, 1 )
 
 	local VelL = self:WorldToLocal( self:GetPos() + self:GetVelocity() )
+
 	local Pitch = math.Clamp(-LocalAngPitch / 10 + SmoothPitch,-1,1) * WingFinFadeOut
 	local Yaw = math.Clamp(-LocalAngYaw + SmoothYaw,-1,1)
 
-	local Roll = 0
+	self.Roll = self.Roll and self.Roll + ((OverrideRoll or 0) * self.TurnRateRoll * 70 * FrameTime()) or 0
+	local Roll = math.Clamp( self:WorldToLocalAngles( Angle(Ang.p,Ang.y,self.Roll) ).r / 45, -1 , 1)
 
 	if OverridePitch and OverridePitch ~= 0 then
 		Pitch = OverridePitch
@@ -55,10 +57,6 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	if OverrideYaw and OverrideYaw ~= 0 then
 		Yaw = OverrideYaw
-	end
-	
-	if OverrideRoll and OverrideRoll ~= 0 then
-		Roll = OverrideRoll
 	end
 
 	self:SetSteer( Vector( Roll, -Pitch, -Yaw) )
@@ -169,6 +167,8 @@ function ENT:CalcHover( InputLeft, InputRight, InputUp, InputDown, ThrustUp, Thr
 	Steer.y = math.Clamp( Pitch - Ang.p - AngVel.y,-1,1)
 
 	self:SetSteer( Steer )
+
+	self.Roll = Ang.r
 
 	if ThrustUp or ThrustDown then
 		self:CalcThrust( ThrustUp, ThrustDown )
