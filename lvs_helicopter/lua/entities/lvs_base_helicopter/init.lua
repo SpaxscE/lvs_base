@@ -64,7 +64,7 @@ end
 
 function ENT:OnSkyCollide( data, PhysObj )
 
-	local NewVelocity = self:VectorSubtractNormal( data.HitNormal, data.OurOldVelocity ) - data.HitNormal * 400
+	local NewVelocity = self:VectorSubtractNormal( data.HitNormal, data.OurOldVelocity ) - data.HitNormal * 50
 
 	PhysObj:SetVelocityInstantaneous( NewVelocity )
 	PhysObj:SetAngleVelocityInstantaneous( data.OurOldAngularVelocity )
