@@ -4,7 +4,7 @@ ENT.Base = "lvs_base_helicopter"
 ENT.PrintName = "Combine Helicopter"
 ENT.Author = "Luna"
 ENT.Information = "Combine Attack Helicopter from Half Life 2 + Episodes"
-ENT.Category = "[LVS]"
+ENT.Category = "[LVS] - Helicopters"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= false

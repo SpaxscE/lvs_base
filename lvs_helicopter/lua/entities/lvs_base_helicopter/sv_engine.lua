@@ -45,6 +45,7 @@ end
 
 function ENT:StartEngine()
 	if not self:IsEngineStartAllowed() then return end
+	if self._EngineDestroyed then return end
 
 	if self:GetEngineActive() then
 		self._StopEngine = nil

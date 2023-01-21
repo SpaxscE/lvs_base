@@ -6,8 +6,10 @@ AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_flyby.lua" )
 include("shared.lua")
 include("sv_ai.lua")
+include("sv_components.lua")
 include("sv_engine.lua")
 include("sv_vehiclespecific.lua")
+include("sv_damage_extension.lua")
 include("sh_camera_eyetrace.lua")
 
 function ENT:OnCreateAI()
@@ -113,6 +115,10 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local ForceLinear = (Force - Vel * 0.15 * self.ForceLinearDampingMultiplier) * Mul
 	local ForceAngle = (ForceAng + (Vector(0,0,Yaw) - phys:GetAngleVelocity() * 1.5 * self.ForceAngleDampingMultiplier) * deltatime * 250) * Mul
 
+	if self._SteerOverride then
+		ForceAngle.z = (self._SteerOverrideMove * math.max( self:GetThrust() * 2, 1 ) * 100 - phys:GetAngleVelocity().z) * Mul
+	end
+
 	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 end
 
@@ -172,4 +178,3 @@ function ENT:CalcHover( InputLeft, InputRight, InputUp, InputDown, ThrustUp, Thr
 
 	self:ApproachThrust( math.Clamp(-VelL.z / 100,-1,1) )
 end
-
