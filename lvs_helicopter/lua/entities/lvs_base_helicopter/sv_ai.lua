@@ -9,9 +9,13 @@ end
 
 function ENT:RunAI()
 	local RangerLength = 15000
-	local mySpeed = self:GetVelocity():Length()
-	local MinDist = 600 + mySpeed
 
+	local mySpeed = self:GetVelocity():Length()
+	local myRadius = self:BoundingRadius() 
+	local myPos = self:GetPos()
+	local myDir = self:GetForward()
+
+	local MinDist = 600 + mySpeed
 	local StartPos = self:LocalToWorld( self:OBBCenter() )
 
 	local TraceFilter = self:GetCrosshairFilterEnts()
@@ -34,9 +38,6 @@ function ENT:RunAI()
 
 	local cAvoid = Vector(0,0,0)
 
-	local myRadius = self:BoundingRadius() 
-	local myPos = self:GetPos()
-	local myDir = self:GetForward()
 	for _, v in pairs( LVS:GetVehicles() ) do
 		if v == self then continue end
 
@@ -78,97 +79,48 @@ function ENT:RunAI()
 
 	self._AIFireInput = false
 
-	if alt < 600 or ceiling < 600 or WallDist < (MinDist * 3 * (math.deg( math.acos( math.Clamp( Vector(0,0,1):Dot( myDir ) ,-1,1) ) ) / 180) ^ 2) then
-		if ceiling < 600 then
-			Throttle = 0
-		else
-			Throttle = 1
+	local Target = self:AIGetTarget()
 
-			if self:HitGround() then
-				TargetPos.z = StartPos.z + 750
-			else
-				if self:GetStability() < 0.5 then
-					TargetPos.z = StartPos.z + 1500
-				end
-			end
+	if alt < 600 or ceiling < 600 then
+		if ceiling < 600 then
+			TargetPos.z = StartPos.z - 2000
+		else
+			TargetPos.z = StartPos.z + 2000
 		end
 	else
-		if self:GetStability() < 0.5 then
-			TargetPos.z = StartPos.z + 600
+		if IsValid( self:GetHardLockTarget() ) then
+			TargetPos = self:GetHardLockTarget():GetPos() + cAvoid * 8
 		else
-			if IsValid( self:GetHardLockTarget() ) then
-				TargetPos = self:GetHardLockTarget():GetPos() + cAvoid * 8
-			else
-				if alt > mySpeed then
-					local Target = self._LastAITarget
+			if IsValid( Target ) then
+				local HisRadius = Target:BoundingRadius() 
+				local HisPos = Target:GetPos() + Vector(0,0,600)
 
-					if not IsValid( self._LastAITarget ) or not self:AITargetInFront( self._LastAITarget, 135 ) or not self:AICanSee( self._LastAITarget ) then
-						Target = self:AIGetTarget()
-					end
-
-					if IsValid( Target ) then
-						if self:AITargetInFront( Target, 65 ) then
-							local T = CurTime() + self:EntIndex() * 1337
-							TargetPos = Target:GetPos() + cAvoid * 8 + Vector(0,0, math.sin( T * 5 ) * 500 ) + Target:GetVelocity() * math.abs( math.cos( T * 13.37 ) ) * 5
-
-							Throttle = math.min( (StartPos - TargetPos):Length() / mySpeed, 1 )
-
-							local tr = util.TraceHull( {
-								start =  StartPos,
-								endpos = (StartPos + self:GetForward() * 50000),
-								mins = Vector( -50, -50, -50 ),
-								maxs = Vector( 50, 50, 50 ),
-								filter = TraceFilter
-							} )
-
-							local CanShoot = (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true
-
-							if CanShoot and self:AITargetInFront( Target, 22 ) then
-								local CurHeat = self:GetNWHeat()
-								local CurWeapon = self:GetSelectedWeapon()
-
-								if CurWeapon > 2 then
-									self:AISelectWeapon( 1 )
-								else
-									if CurHeat > 0.9 then
-										if CurWeapon == 1 and self:AIHasWeapon( 2 ) then
-											self:AISelectWeapon( 2 )
-
-										elseif CurWeapon == 2 then
-											self:AISelectWeapon( 1 )
-										end
-									else
-										if CurHeat == 0 and math.cos( T ) > 0 then
-											self:AISelectWeapon( 1 )
-										end
-									end
-								end
-
-								self._AIFireInput = true
-							end
-						else
-							self:AISelectWeapon( 1 )
-
-							if alt > 6000 and self:AITargetInFront( Target, 90 ) then
-								TargetPos = Target:GetPos()
-							end
-						end
-					end
-				else
-					TargetPos.z = StartPos.z + 2000
-				end
+				TargetPos = HisPos + (myPos - HisPos):GetNormalized() * (myRadius + HisRadius + 500) + cAvoid * 8
 			end
 		end
-		self:RaiseLandingGear()
 	end
 
-	self:SetThrottle( Throttle )
+	local PhysObj = self:GetPhysicsObject()
 
-	self.smTargetPos = self.smTargetPos and self.smTargetPos + (TargetPos - self.smTargetPos) * FrameTime() or self:GetPos()
+	local VelL = PhysObj:WorldToLocal( PhysObj:GetPos() + PhysObj:GetVelocity() )
+	local AngVel = PhysObj:GetAngleVelocity()
 
-	local TargetAng = (self.smTargetPos - self:GetPos()):GetNormalized():Angle()
+	local LPos = self:WorldToLocal( TargetPos )
 
-	self:ApproachTargetAngle( TargetAng )
+	local Pitch = math.Clamp(LPos.x * 0.01 - VelL.x * 0.01,-1,1) * 40
+	local Yaw = ((IsValid( Target ) and Target:GetPos() or TargetPos) - StartPos):Angle().y
+	local Roll = math.Clamp(VelL.y * 0.01,-1,1) * 40
+
+	local Ang = self:GetAngles()
+
+	local Steer = self:GetSteer()
+	Steer.x = math.Clamp( Roll - Ang.r - AngVel.x,-1,1)
+	Steer.y = math.Clamp( Pitch - Ang.p - AngVel.y,-1,1)
+	Steer.z = math.Clamp( self:WorldToLocalAngles( Angle(0,Yaw,0) ).y / 10,-1,1)
+
+	self:SetSteer( Steer )
+	self:SetThrust( math.Clamp( LPos.z - VelL.z,-1,1) )
+	self:SetAIAimVector( self:WorldToLocalAngles(  (TargetPos - myPos):GetNormalized():Angle() ):Forward() )
 end
 
 function ENT:AISelectWeapon( ID )

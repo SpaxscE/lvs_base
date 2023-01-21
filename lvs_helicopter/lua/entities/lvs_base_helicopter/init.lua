@@ -24,8 +24,6 @@ end
 function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll, FreeMovement )
 	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
 
-	if self:GetAI() then self:SetAIAimVector( LocalAngles:Forward() ) end
-
 	local LocalAngPitch = LocalAngles.p
 	local LocalAngYaw = LocalAngles.y
 	local LocalAngRoll = LocalAngles.r
