@@ -1,8 +1,29 @@
 include("shared.lua")
 
+function ENT:DamageFX()
+	self.nextDFX = self.nextDFX or 0
+
+	if self.nextDFX < CurTime() then
+		self.nextDFX = CurTime() + 0.05
+
+		local HP = self:GetHP()
+		local MaxHP = self:GetMaxHP()
+
+		if HP > MaxHP * 0.25 then return end
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:LocalToWorld( Vector(-10,25,-10) ) )
+			effectdata:SetNormal( self:GetUp() )
+			effectdata:SetMagnitude( math.Rand(0.5,1.5) )
+			effectdata:SetEntity( self )
+		util.Effect( "lvs_exhaust_fire", effectdata )
+	end
+end
+
 function ENT:OnFrame()
 	self:AnimRotor()
 	self:AnimTail()
+	self:DamageFX()
 end
 
 function ENT:AnimTail()
