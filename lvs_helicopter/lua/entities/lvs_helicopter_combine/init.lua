@@ -17,7 +17,7 @@ function ENT:OnSpawn( PObj )
 	end
 
 	self.TailRotor = self:AddRotor( Vector(-218,4,-1.8), Angle(0,0,90), 25, -6000 )
-	self.TailRotor:SetHP( 250 )
+	self.TailRotor:SetHP( 25 )
 	function self.TailRotor:OnDestroyed( base )
 		base:DestroySteering( -2.5 )
 		base:SnapTailRotor()
@@ -79,4 +79,8 @@ function ENT:SnapTailRotor()
 		local ID = self:LookupBone( name )
 		self:ManipulateBoneScale( ID, Vector(0,0,0) )
 	end
+end
+
+function ENT:GetMissileOffset()
+	return Vector(-60,0,0)
 end
