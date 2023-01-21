@@ -93,7 +93,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * (WorldGravity / 100) * (math.min( Vector(VelL.x,VelL.y,0):Length() / self.MaxVelocity,1) ^ 2)
 
 	local Pitch = math.Clamp(Steer.y,-1,1) * self.TurnRatePitch
-	local Yaw = math.Clamp(Steer.z + GravityYaw,-1,1) * self.TurnRateYaw * 60
+	local Yaw = math.Clamp(Steer.z + GravityYaw * 0.25,-1,1) * self.TurnRateYaw * 60
 	local Roll = math.Clamp(Steer.x,-1,1) * 1.5 * self.TurnRateRoll
 
 	local Ang = self:GetAngles()
