@@ -64,6 +64,10 @@ function ENT:StopEngine()
 
 	self._StopEngine = true
 	self:OnEngineActiveChanged( false )
+
+	if self:WaterLevel() >= self.WaterLevelAutoStop then
+		self:TurnOffEngine()
+	end
 end
 
 function ENT:TurnOffEngine()
