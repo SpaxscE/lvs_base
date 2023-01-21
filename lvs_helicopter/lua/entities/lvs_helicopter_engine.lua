@@ -59,7 +59,7 @@ function ENT:HandleEngineSounds( vehicle )
 	local ply = LocalPlayer()
 	local pod = ply:GetVehicle()
 	local Throttle = vehicle:GetThrottle()
-	local Volume = (0.4 + vehicle:GetThrustStrenght() * 0.6) * Throttle
+	local Volume = (0.6 + vehicle:GetThrustStrenght() * 0.4) * Throttle
 	local Doppler = vehicle:CalcDoppler( ply )
 
 	local DrivingMe = ply:lvsGetVehicle() == vehicle

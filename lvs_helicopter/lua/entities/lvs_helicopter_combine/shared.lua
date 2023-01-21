@@ -41,8 +41,8 @@ ENT.ForceLinearDampingMultiplier = 1
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
---ENT.FlyByAdvance = 0
---ENT.FlyBySound = "LVS.VULTURE.FLYBY" 
+ENT.FlyByAdvance = 1.5
+ENT.FlyBySound = "ambient/machines/heli_pass_quick2.wav" 
 
 ENT.EngineSounds = {
 	{
@@ -55,7 +55,7 @@ ENT.EngineSounds = {
 		Volume = 1,
 		VolumeMin = 0,
 		VolumeMax = 1,
-		SoundLevel = 100,
+		SoundLevel = 125,
 		UseDoppler = true,
 	},
 }
