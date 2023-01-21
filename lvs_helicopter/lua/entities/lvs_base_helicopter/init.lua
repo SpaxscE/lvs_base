@@ -82,6 +82,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local Left = -self:GetRight()
 
 	local Mul = self:GetThrottle()
+	local InputThrust = math.min( self:GetThrust() , 0 ) * self.ThrustDown + math.max( self:GetThrust(), 0 ) * self.ThrustUp
+
+	if self:HitGround() and InputThrust <= 0 then
+		Mul = 0
+	end
 
 	local Steer = self:GetSteer()
 
@@ -97,8 +102,6 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local Roll = math.Clamp(Steer.x,-1,1) * 1.5 * self.TurnRateRoll
 
 	local Ang = self:GetAngles()
-
-	local InputThrust = math.min( self:GetThrust() , 0 ) * self.ThrustDown + math.max( self:GetThrust(), 0 ) * self.ThrustUp
 
 	local FadeMul = (1 - math.max( (45 - self:AngleBetweenNormal( WorldUp, Up )) / 45,0)) ^ 2
 	local ThrustMul = math.Clamp( 1 - (Vel:Length() / self.MaxVelocity) * FadeMul, 0, 1 )
@@ -122,6 +125,12 @@ function ENT:ApproachThrust( New )
 end
 
 function ENT:CalcThrust( KeyUp, KeyDown )
+	if self:HitGround() and not KeyUp then
+		self:ApproachThrust( -1 )
+
+		return
+	end
+
 	local Up = KeyUp and 1 or 0
 	local Down = KeyDown and -1 or 0
 
@@ -157,6 +166,7 @@ function ENT:CalcHover( InputLeft, InputRight, InputUp, InputDown, ThrustUp, Thr
 
 	if ThrustUp or ThrustDown then
 		self:CalcThrust( ThrustUp, ThrustDown )
+
 		return
 	end
 
