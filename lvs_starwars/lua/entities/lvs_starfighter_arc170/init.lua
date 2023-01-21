@@ -50,6 +50,8 @@ end
 function ENT:OnVehicleSpecificToggled( new )
 	local cur = self:GetFoils()
 
+	if not cur and self:ForceDisableFoils() then return end
+
 	if cur ~= new then
 		self:SetFoils( new )
 	end
