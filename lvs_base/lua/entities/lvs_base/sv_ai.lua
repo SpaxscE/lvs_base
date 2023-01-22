@@ -81,6 +81,8 @@ function ENT:AIGetTarget()
 		for _, ply in pairs( player.GetAll() ) do
 			if not ply:Alive() then continue end
 
+			if ply:IsFlagSet( FL_NOTARGET ) then continue end
+
 			local Dist = (ply:GetPos() - MyPos):Length()
 
 			if Dist > TargetDistance then continue end
@@ -149,4 +151,35 @@ function ENT:AIGetTarget()
 	self._LastAITarget = ClosestTarget
 	
 	return ClosestTarget
+end
+
+function ENT:IsEnemy( ent )
+	if not IsValid( ent ) then return false end
+
+	local HisTeam = 0
+
+	if ent:IsNPC() then
+		HisTeam = LVS:GetNPCRelationship( ent:GetClass() )
+	end
+
+	if ent:IsPlayer() then
+		if ent:IsFlagSet( FL_NOTARGET ) then return false end
+
+		local veh = ent:lvsGetVehicle()
+		if IsValid( veh ) then
+			HisTeam = veh:GetAITEAM()
+		else
+			HisTeam = ent:lvsGetAITeam()
+		end
+	end
+
+	if ent.LVS and ent.GetAITEAM then
+		HisTeam = ent:GetAITEAM()
+	end
+
+	if HisTeam == 0 then return false end
+
+	if HisTeam == 3 then return true end
+
+	return HisTeam ~= self:GetAITEAM()
 end
