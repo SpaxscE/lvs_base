@@ -31,8 +31,8 @@ function ENT:OnSpawn( PObj )
 	self:AddDS( {
 		pos = Vector(-218,4,-1.8),
 		ang = Angle(0,0,0),
-		mins = Vector(-35,-5,-30),
-		maxs =  Vector(75,5,40),
+		mins = Vector(-45,-15,-40),
+		maxs =  Vector(75,15,60),
 		Callback = function( tbl, ent, dmginfo )
 			if dmginfo:GetDamage() <= 0 then return end
 
@@ -69,8 +69,8 @@ function ENT:SnapTailRotor()
 		effectdata:SetOrigin( ent:GetPos() )
 		effectdata:SetStart( PhysObj:GetMassCenter() )
 		effectdata:SetEntity( ent )
-		effectdata:SetScale( 0.1 )
-		effectdata:SetMagnitude( math.Rand(0.5,2.5) )
+		effectdata:SetScale( 0.25 )
+		effectdata:SetMagnitude( 5 )
 	util.Effect( "lvs_firetrail", effectdata )
 
 	local BonesToScale = {
@@ -92,4 +92,25 @@ function ENT:OnEngineActiveChanged( Active )
 	if Active then
 		self:EmitSound( "lvs/vehicles/helicopter/start.wav" )
 	end
+end
+
+function ENT:OnCollision( data, physobj )
+	if self:IsPlayerHolding() then return false end
+
+	if data.Speed > 60 and data.DeltaTime > 0.2 then
+		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
+
+		if VelDif > 200 then
+			local part = self:FindDS( data.HitPos - data.OurOldVelocity:GetNormalized() * 25 )
+
+			if part then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( 100 )
+				dmginfo:SetDamageType( DMG_CRUSH )
+				part:Callback( self, dmginfo )
+			end
+		end
+	end
+
+	return false
 end
