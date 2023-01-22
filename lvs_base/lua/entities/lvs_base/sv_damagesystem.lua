@@ -202,6 +202,46 @@ function ENT:CalcDamage( dmginfo )
 	end
 end
 
+function ENT:FindDS( PosToCheck )
+	local Len = self:BoundingRadius()
+	local closestPart
+	local closestDist = Len * 2
+
+	local ToCenter = (self:LocalToWorld( self:OBBCenter() ) - PosToCheck):GetNormalized()
+
+	debugoverlay.Cross( PosToCheck, 50, 4, Color( 255, 255, 0 ) )
+
+	for _, tbl in ipairs( { self._armorParts, self._dmgParts } ) do
+		for index, part in ipairs( tbl ) do
+			local mins = part.mins
+			local maxs = part.maxs
+			local pos = self:LocalToWorld( part.pos )
+			local ang = self:LocalToWorldAngles( part.ang )
+
+			local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( PosToCheck, ToCenter, pos, ang, mins, maxs )
+
+			if HitPos then
+				local dist = (HitPos - PosToCheck):Length()
+
+				if closestDist > dist then
+					closestPart = part
+					closestDist = dist
+				end
+			end
+		end
+	end
+
+	if closestPart then
+		local mins = closestPart.mins
+		local maxs = closestPart.maxs
+		local pos = self:LocalToWorld( closestPart.pos )
+		local ang = self:LocalToWorldAngles( closestPart.ang )
+		debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 255, 0, 150 ) )
+	end
+
+	return closestPart
+end
+
 function ENT:DamageThink()
 	if self.MarkForDestruction then
 		self:Explode()
