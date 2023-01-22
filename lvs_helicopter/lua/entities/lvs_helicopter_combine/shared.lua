@@ -254,6 +254,27 @@ function ENT:InitWeapons()
 
 
 	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/bomb.png")
+	weapon.UseableByAI = false
+	weapon.Ammo = 12
+	weapon.Delay = 0.25
+	weapon.HeatRateUp = 0.1
+	weapon.HeatRateDown = 1
+	weapon.Attack = function( ent )
+		local projectile = ents.Create( "grenade_helicopter" )
+		projectile:SetPos( ent:LocalToWorld( Vector(-50,0,-50) ) )
+		projectile:SetAngles( ent:GetAngles() )
+		projectile:SetOwner( ent )
+		projectile:Spawn()
+		projectile:Activate()
+		projectile:EmitSound("npc/attack_helicopter/aheli_mine_drop1.wav")
+
+		ent:TakeAmmo()
+	end
+	self:AddWeapon( weapon )
+
+
+	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/light.png")
 	weapon.UseableByAI = false
 	weapon.Ammo = -1
