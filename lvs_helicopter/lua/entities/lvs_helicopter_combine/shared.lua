@@ -130,7 +130,7 @@ function ENT:HandleShoot( FireInput, active )
 	if Fire then
 		self:SetHeat( 1 - self.charge / 100 )
 	else
-		self:SetHeat( 0 )
+		self:SetHeat( math.Clamp(self.charge / 100,0,0.89) ) -- clamp to 0.89 so the ai doesnt detect it as overheating
 	end
 end
 
