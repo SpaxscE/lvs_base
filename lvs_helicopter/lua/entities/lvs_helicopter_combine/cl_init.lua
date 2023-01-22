@@ -97,7 +97,7 @@ function ENT:PreDrawTranslucent()
 	render.DrawSprite( SpotLight.Pos + Dir * 5, 32, 32, Color( 255, 255, 255, 255) )
 
 	render.SetMaterial( self.LightMaterial )
-	render.DrawBeam( SpotLight.Pos, SpotLight.Pos + Dir * 400, 250, 0, 0.99, Color( 100, 100, 100, 5) ) 
+	render.DrawBeam( SpotLight.Pos, SpotLight.Pos + Dir * 100, 32, 0, 0.99, Color( 100, 100, 100, 255) ) 
 
 	if IsValid( self.projector ) then
 		self.projector:SetPos( SpotLight.Pos )
