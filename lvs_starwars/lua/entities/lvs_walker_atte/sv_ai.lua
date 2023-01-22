@@ -74,6 +74,8 @@ function ENT:OnAITakeDamage( dmginfo )
 end
 
 function ENT:SetHardLockTarget( target )
+	if not self:IsEnemy( target ) then return end
+
 	self._HardLockTarget =  target
 	self._HardLockTime = CurTime() + 4
 end
