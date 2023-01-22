@@ -21,9 +21,10 @@ EFFECT.SmokeMaterials = {
 
 function EFFECT:Init( data )
 	self.Pos = data:GetOrigin()
-	self.Ang = data:GetNormal():Angle()
 	self.Radius = data:GetMagnitude()
 	self.SpawnTime = CurTime()
+
+	self:SetAngles( data:GetNormal():Angle() )
 
 	self:Debris()
 	self:Explosion()
@@ -38,8 +39,7 @@ function EFFECT:Debris()
 	for i = 0,30 do
 		local particle = emitter:Add( "effects/fleck_tile"..math.random(1,2), self.Pos )
 
-		local vel = VectorRand() * self.Radius * 5
-		vel.z = vel.z * 0.25
+		local vel = (self:GetRight() * math.Rand(-1,1) + self:GetForward() * math.Rand(-1,1) + self:GetUp() * math.Rand(-0.25,0.25)):GetNormalized() * self.Radius * 5
 
 		if particle then
 			particle:SetVelocity( vel )
@@ -105,9 +105,6 @@ function EFFECT:Render()
 	local overlap = 10
 	local Mul = math.Clamp(self.SpawnTime + 0.15 - CurTime(),0,0.15) / 0.15
 
-	local X = self.Ang:Forward()
-	local Y = self.Ang:Right()
-
 	do
 		local Width = self.Radius / 2
 		local Alpha = Mul * 255
@@ -117,8 +114,8 @@ function EFFECT:Render()
 		if Alpha > 0 then
 			for a = segmentdist, 360, segmentdist do
 				local Ang = a + AngOffset
-				local StartPos = pos + X * math.cos( math.rad( -Ang - overlap ) ) * radius + Y * -math.sin( math.rad( -Ang - overlap ) ) * radius
-				local EndPos = pos + X * math.cos( math.rad( -Ang + overlap + segmentdist ) ) * radius + Y * -math.sin( math.rad( -Ang + overlap + segmentdist ) ) * radius
+				local StartPos = self:LocalToWorld( Vector( math.cos( math.rad( -Ang - overlap ) ) * radius,  -math.sin( math.rad( -Ang - overlap ) ) * radius, 0 ) )
+				local EndPos = self:LocalToWorld( Vector( math.cos( math.rad( -Ang + overlap + segmentdist ) ) * radius, -math.sin( math.rad( -Ang + overlap + segmentdist ) ) * radius, 0 ) )
 
 				render.DrawBeam( StartPos, EndPos, Width, 0, 1, Color( 255, 255, 255, Alpha ) )
 			end
@@ -134,8 +131,8 @@ function EFFECT:Render()
 		if Alpha > 0 then
 			for a = segmentdist, 360, segmentdist do
 				local Ang = a + AngOffset
-				local StartPos = pos + X * math.cos( math.rad( Ang - overlap ) ) * radius + Y * -math.sin( math.rad( Ang - overlap ) ) * radius
-				local EndPos = pos + X * math.cos( math.rad( Ang + overlap + segmentdist ) ) * radius + Y * -math.sin( math.rad( Ang + overlap + segmentdist ) ) * radius
+				local StartPos = self:LocalToWorld( Vector( math.cos( math.rad( -Ang - overlap ) ) * radius,  -math.sin( math.rad( -Ang - overlap ) ) * radius, 0 ) )
+				local EndPos = self:LocalToWorld( Vector( math.cos( math.rad( -Ang + overlap + segmentdist ) ) * radius, -math.sin( math.rad( -Ang + overlap + segmentdist ) ) * radius, 0 ) )
 
 				render.DrawBeam( StartPos, EndPos, Width, 0, 1, Color( 255, 255, 255, Alpha ) )
 			end

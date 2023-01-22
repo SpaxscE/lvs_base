@@ -22,7 +22,7 @@ ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
-ENT.ForceLinearDampingMultiplier = 1
+ENT.ForceLinearDampingMultiplier = 1.5
 
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1

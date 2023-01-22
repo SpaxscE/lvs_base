@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models/blu/helicopter"
+	"$bumpmap" "models/blu/helicopter_normal"                 
+	"$halflambert" "1"
+}

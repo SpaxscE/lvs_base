@@ -36,18 +36,18 @@ ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
-ENT.ForceLinearDampingMultiplier = 1
+ENT.ForceLinearDampingMultiplier = 1.5
 
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
-ENT.FlyByAdvance = 1.5
-ENT.FlyBySound = "ambient/machines/heli_pass_quick2.wav" 
+ENT.FlyByAdvance = 0.7
+ENT.FlyBySound = "lvs/vehicles/helicopter/flyby.wav" 
 
 ENT.EngineSounds = {
 	{
 		sound = "^npc/attack_helicopter/aheli_rotor_loop1.wav",
-		--sound_int = "lvs/vehicles/helicopter/loop.wav",
+		--sound_int = "lvs/vehicles/helicopter/loop_interior.wav",
 		Pitch = 0,
 		PitchMin = 0,
 		PitchMax = 255,

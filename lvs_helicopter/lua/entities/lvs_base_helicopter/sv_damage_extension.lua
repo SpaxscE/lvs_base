@@ -31,3 +31,11 @@ function ENT:DestroyEngine()
 
 	self:StartDestroyTimer()
 end
+
+function ENT:IsSteeringDestroyed()
+	return self._SteerOverride == true
+end
+
+function ENT:IsEngineDestroyed()
+	return self._EngineDestroyed == true
+end
