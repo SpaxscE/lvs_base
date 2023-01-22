@@ -35,6 +35,7 @@ local Teams = {
 	["npc_sniper"] = 1,
 	["npc_stalker"] = 1,
 	["npc_strider"] = 1,
+	["npc_hunter"] = 1,
 	["monster_human_grunt"] = 1,
 	["monster_human_assassin"] = 1,
 	["monster_sentry"] = 1,
