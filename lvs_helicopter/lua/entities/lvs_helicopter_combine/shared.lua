@@ -127,7 +127,11 @@ function ENT:HandleShoot( FireInput, active )
 
 	if not active then return end
 
-	self:SetHeat( self.charge / 101 )
+	if Fire then
+		self:SetHeat( 1 - self.charge / 100 )
+	else
+		self:SetHeat( 0 )
+	end
 end
 
 function ENT:ChargeGun()
