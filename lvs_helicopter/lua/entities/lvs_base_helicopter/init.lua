@@ -48,6 +48,8 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local Pitch = math.Clamp(-LocalAngPitch / 10 + SmoothPitch,-1,1) * WingFinFadeOut
 	local Yaw = math.Clamp(-LocalAngYaw + SmoothYaw,-1,1)
 
+	if self:GetThrottle() <= 0.9 then self.Roll = Ang.r end
+
 	self.Roll = self.Roll and self.Roll + ((OverrideRoll or 0) * self.TurnRateRoll * 70 * FrameTime()) or 0
 	local Roll = math.Clamp( self:WorldToLocalAngles( Angle(Ang.p,Ang.y,self.Roll) ).r / 45, -1 , 1)
 
