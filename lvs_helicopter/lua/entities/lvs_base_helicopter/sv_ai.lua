@@ -120,7 +120,42 @@ function ENT:RunAI()
 
 	self:SetSteer( Steer )
 	self:SetThrust( math.Clamp( LPos.z - VelL.z,-1,1) )
-	self:SetAIAimVector( self:WorldToLocalAngles(  (TargetPos - myPos):GetNormalized():Angle() ):Forward() )
+
+	if IsValid( Target ) then
+		TargetPos = Target:LocalToWorld( Target:OBBCenter() )
+
+		if self:AITargetInFront( Target, 65 ) then
+			local tr = self:GetEyeTrace()
+
+			if (IsValid( tr.Entity ) and tr.Entity.LVS and tr.Entity.GetAITEAM) and (tr.Entity:GetAITEAM() ~= self:GetAITEAM() or tr.Entity:GetAITEAM() == 0) or true then
+				local CurHeat = self:GetNWHeat()
+				local CurWeapon = self:GetSelectedWeapon()
+
+				if CurWeapon > 2 then
+					self:AISelectWeapon( 1 )
+				else
+					if CurHeat > 0.9 then
+						if CurWeapon == 1 and self:AIHasWeapon( 2 ) then
+							self:AISelectWeapon( 2 )
+
+						elseif CurWeapon == 2 then
+							self:AISelectWeapon( 1 )
+						end
+					else
+						if CurHeat == 0 and math.cos( CurTime() ) > 0 then
+							self:AISelectWeapon( 1 )
+						end
+					end
+				end
+
+				self._AIFireInput = true
+			end
+		else
+			self:AISelectWeapon( 1 )
+		end
+	end
+
+	self:SetAIAimVector( (TargetPos - myPos):GetNormalized() )
 end
 
 function ENT:AISelectWeapon( ID )
