@@ -3,7 +3,8 @@ AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
 
 function ENT:OnSpawn( PObj )
-	self:AddDriverSeat( Vector(120,0,-40), Angle(0,-90,0) )
+	local DriverSeat = self:AddDriverSeat( Vector(120,0,-40), Angle(0,-90,0) )
+	DriverSeat:SetCameraDistance( 0.2 )
 
 	self:AddEngineSound( Vector(0,0,0) )
 

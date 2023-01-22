@@ -41,9 +41,6 @@ ENT.ForceLinearDampingMultiplier = 1.5
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
-ENT.FlyByAdvance = 0.7
-ENT.FlyBySound = "lvs/vehicles/helicopter/flyby.wav" 
-
 ENT.EngineSounds = {
 	{
 		sound = "^npc/attack_helicopter/aheli_rotor_loop1.wav",
