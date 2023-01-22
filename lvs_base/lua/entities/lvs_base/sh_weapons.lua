@@ -436,6 +436,10 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 
 	if not IsValid( Base ) then return end
 
+	local Pod = ply:GetVehicle()
+
+	if not IsValid( Pod ) then return end
+
 	local PodID = Base:GetPodIndex()
 
 	local num = #self.WEAPONS[ PodID ]
@@ -456,10 +460,10 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 	local Selected = Base:GetSelectedWeapon()
 	if Selected ~= self._OldSelected then
 		self._OldSelected = Selected
-		self._SelectActiveTime = T + 2
+		Pod._SelectActiveTime = T + 2
 	end
 
-	local tAlpha = (self._SelectActiveTime or 0) > T and 1 or 0
+	local tAlpha = (Pod._SelectActiveTime or 0) > T and 1 or 0
 	local tAlphaRate = FT * 15
 
 	self.smAlphaSW = self.smAlphaSW and (self.smAlphaSW + math.Clamp(tAlpha - self.smAlphaSW,-tAlphaRate,tAlphaRate)) or 0
