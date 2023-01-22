@@ -1,17 +1,21 @@
 include("shared.lua")
 
 function ENT:CalcViewPassenger( ply, pos, angles, fov, pod )
+	if pod == self:GetGunnerSeat() then return LVS:CalcView( self, ply, pos, angles, fov, pod ) end
+
 	local view = {}
 	view.origin = pos
 	view.angles = angles
 	view.fov = fov
 	view.drawviewer = false
 
-	if ply == self:GetDriver() or pod == self:GetGunnerSeat() then return view end -- dont change view if the player is pilot or copilot
-
 	local Pod = ply:GetVehicle()
 
 	if not IsValid( Pod ) then return view end
+
+	if not Pod:GetThirdPersonMode() then
+		Pod:SetThirdPersonMode( true )
+	end
 
 	local radius = 800
 
