@@ -56,3 +56,174 @@ ENT.EngineSounds = {
 		UseDoppler = true,
 	},
 }
+
+function ENT:OnSetupDataTables()
+	self:AddDT( "Bool", "LightsEnabled" )
+end
+
+function ENT:GetAimAngles()
+	local Gun = self:GetAttachment( self:LookupAttachment( "gun" ) )
+
+	if not Gun then return end
+
+	local trace = self:GetEyeTrace()
+
+	local AimAngles = self:WorldToLocalAngles( (trace.HitPos - Gun.Pos):GetNormalized():Angle() )
+
+	return AimAngles
+end
+
+function ENT:WeaponsInRange()
+	local AimAngles = self:GetAimAngles()
+
+	return math.abs( AimAngles.y ) < 40 and AimAngles.p < 90 and AimAngles.p > -20
+end
+
+function ENT:SetPoseParameterTurret()
+	local AimAngles = self:GetAimAngles()
+
+	self:SetPoseParameter("weapon_yaw", AimAngles.y )
+	self:SetPoseParameter("weapon_pitch", -AimAngles.p )
+end
+
+function ENT:HandleShoot( FireInput, active )
+	self.charge = self.charge or 0
+
+	if self.charging then
+		self.charge = math.min( self.charge + FrameTime() * 60, 100 )
+
+		if self.charge >= 100 then
+			self.charging = nil
+		end
+	else
+		if FireInput and self.charge > 0 then
+			self:ShootGun()
+		else
+			if FireInput then
+				self:ChargeGun()
+			else
+				self.charge = math.max(self.charge - FrameTime() * 120,0)
+			end
+		end
+	end
+
+	local Fire = FireInput and active and self.charge > 0 and not self.charging
+
+	if not IsValid( self.weaponSND ) then return end
+
+	if self._oldFire ~= Fire then
+		self._oldFire = Fire
+
+		if Fire then
+			if self.weaponSND.snd_chrg then
+				self.weaponSND.snd_chrg:Stop()
+				self.weaponSND.snd_chrg = nil
+			end
+			self.weaponSND:Play()
+		else
+			self.weaponSND:Stop()
+		end
+	end
+
+	if not active then return end
+
+	self:SetHeat( self.charge / 101 )
+end
+
+function ENT:ChargeGun()
+	self._doAttack = true
+	self.charging = true
+
+	if not IsValid( self.weaponSND ) then return end
+
+	self.weaponSND.snd_chrg = CreateSound( self, "NPC_AttackHelicopter.ChargeGun" )
+	self.weaponSND.snd_chrg:Play()
+end
+
+function ENT:FinishShoot()
+	self._doAttack = nil
+	self.charging = nil
+
+	if not IsValid( self.weaponSND ) then return end
+
+	self.weaponSND:Stop()
+
+	if self.weaponSND.snd_chrg then
+		self.weaponSND.snd_chrg:Stop()
+		self.weaponSND.snd_chrg = nil
+	end
+end
+
+function ENT:ShootGun()
+	local T = CurTime()
+
+	if (self.NextFire or 0) > T then return end
+
+	self.NextFire = T + 0.03
+
+	self.charge = self.charge - 0.9
+
+	local Muzzle = self:GetAttachment( self:LookupAttachment( "muzzle" ) )
+
+	if not Muzzle then return end
+
+	local trace = self:GetEyeTrace()
+
+	local bullet = {}
+	bullet.Src 	= Muzzle.Pos
+	bullet.Dir 	= (trace.HitPos - Muzzle.Pos):GetNormalized()
+	bullet.Spread 	= Vector(0.06,0.06,0.06)
+	bullet.TracerName = "lvs_pulserifle_tracer"
+	bullet.Force	= 10
+	bullet.HullSize 	= 6
+	bullet.Damage	= 6
+	bullet.Velocity = 15000
+	bullet.Attacker 	= self:GetDriver()
+	bullet.Callback = function(att, tr, dmginfo)
+		local effectdata = EffectData()
+		effectdata:SetOrigin( tr.HitPos )
+		effectdata:SetNormal( tr.HitNormal )
+		util.Effect( "AR2Impact", effectdata, true, true )
+	end
+	self:LVSFireBullet( bullet )
+end
+
+function ENT:InitWeapons()
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/mg.png")
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 0
+	weapon.StartAttack = function( ent )
+		ent:ChargeGun()
+	end
+	weapon.FinishAttack = function( ent )
+		ent:FinishShoot()
+	end
+	weapon.Attack = function( ent )
+	end
+	weapon.OnThink = function( ent, active )
+		ent:SetPoseParameterTurret()
+		ent:HandleShoot( ent._doAttack and active and ent:WeaponsInRange(), active )
+	end
+	self:AddWeapon( weapon )
+
+
+	local weapon = {}
+	weapon.Icon = Material("lvs/weapons/light.png")
+	weapon.UseableByAI = false
+	weapon.Ammo = -1
+	weapon.Delay = 0
+	weapon.HeatRateUp = 0
+	weapon.HeatRateDown = 1
+	weapon.StartAttack = function( ent )
+		if not ent.SetLightsEnabled then return end
+
+		if ent:GetAI() then return end
+
+		ent:SetLightsEnabled( not ent:GetLightsEnabled() )
+		ent:EmitSound( "items/flashlight1.wav", 75, 105 )
+	end
+	self:AddWeapon( weapon )
+end

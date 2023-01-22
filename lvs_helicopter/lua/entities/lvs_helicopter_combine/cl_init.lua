@@ -26,6 +26,17 @@ function ENT:OnFrame()
 	self:DamageFX()
 end
 
+function ENT:RemoveLight()
+	if IsValid( self.projector ) then
+		self.projector:Remove()
+		self.projector = nil
+	end
+end
+
+function ENT:OnRemoved()
+	self:RemoveLight()
+end
+
 function ENT:AnimTail()
 	local Steer = self:GetSteer()
 
@@ -51,4 +62,48 @@ function ENT:AnimRotor()
 	self:ManipulateBoneAngles( 2, Rot1 )
 	self:ManipulateBoneAngles( 5, Rot2 )
 	self:ManipulateBoneAngles( 3, Rot2 )
+end
+
+
+ENT.LightMaterial = Material( "effects/lvs/heli_spotlight" )
+ENT.GlowMaterial = Material( "sprites/light_glow02_add" )
+
+function ENT:PreDrawTranslucent()
+	if not self:GetLightsEnabled() then 
+		self:RemoveLight()
+
+		return false
+	end
+
+	local SpotLight = self:GetAttachment( self:LookupAttachment( "SpotLight" ) )
+
+	if not SpotLight then return end
+
+	if not IsValid( self.projector ) then
+		local thelamp = ProjectedTexture()
+		thelamp:SetBrightness( 5 ) 
+		thelamp:SetTexture( "effects/flashlight/soft" )
+		thelamp:SetColor( Color(255,255,255) ) 
+		thelamp:SetEnableShadows( true ) 
+		thelamp:SetFarZ( 2500 ) 
+		thelamp:SetNearZ( 75 ) 
+		thelamp:SetFOV( 60 )
+		self.projector = thelamp
+	end
+
+	local Dir = SpotLight.Ang:Forward()
+
+	render.SetMaterial( self.GlowMaterial )
+	render.DrawSprite( SpotLight.Pos + Dir * 5, 32, 32, Color( 255, 255, 255, 255) )
+
+	render.SetMaterial( self.LightMaterial )
+	render.DrawBeam( SpotLight.Pos, SpotLight.Pos + Dir * 400, 250, 0, 0.99, Color( 100, 100, 100, 5) ) 
+
+	if IsValid( self.projector ) then
+		self.projector:SetPos( SpotLight.Pos )
+		self.projector:SetAngles( SpotLight.Ang )
+		self.projector:Update()
+	end
+
+	return false
 end

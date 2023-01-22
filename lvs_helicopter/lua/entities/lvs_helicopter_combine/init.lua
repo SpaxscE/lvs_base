@@ -21,7 +21,7 @@ function ENT:OnSpawn( PObj )
 	end
 
 	self.TailRotor = self:AddRotor( Vector(-218,4,-1.8), Angle(0,0,90), 25, -6000 )
-	self.TailRotor:SetHP( 25 )
+	self.TailRotor:SetHP( 800 )
 	function self.TailRotor:OnDestroyed( base )
 		base:DestroySteering( -2.5 )
 		base:SnapTailRotor()
@@ -40,6 +40,12 @@ function ENT:OnSpawn( PObj )
 			ent.TailRotor:TakeDamageInfo( dmginfo )
 		end
 	} )
+
+	local ID = self:LookupAttachment( "muzzle" )
+	local Muzzle = self:GetAttachment( ID )
+	self.weaponSND = self:AddSoundEmitter( self:WorldToLocal( Muzzle.Pos ), "npc/attack_helicopter/aheli_weapon_fire_loop3.wav", "npc/attack_helicopter/aheli_weapon_fire_loop3.wav" )
+	self.weaponSND:SetSoundLevel( 110 )
+	self.weaponSND:SetParent( self, ID )
 end
 
 function ENT:SnapTailRotor()
@@ -106,7 +112,7 @@ function ENT:OnCollision( data, physobj )
 
 			if part then
 				local dmginfo = DamageInfo()
-				dmginfo:SetDamage( 100 )
+				dmginfo:SetDamage( 1000 )
 				dmginfo:SetDamageType( DMG_CRUSH )
 				part:Callback( self, dmginfo )
 			end
