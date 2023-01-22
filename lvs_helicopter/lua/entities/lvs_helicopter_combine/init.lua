@@ -31,8 +31,8 @@ function ENT:OnSpawn( PObj )
 	self:AddDS( {
 		pos = Vector(-218,4,-1.8),
 		ang = Angle(0,0,0),
-		mins = Vector(-25,-5,-25),
-		maxs =  Vector(25,5,25),
+		mins = Vector(-35,-5,-30),
+		maxs =  Vector(75,5,40),
 		Callback = function( tbl, ent, dmginfo )
 			if dmginfo:GetDamage() <= 0 then return end
 
