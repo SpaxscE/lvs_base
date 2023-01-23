@@ -225,6 +225,7 @@ function ENT:InitWeapons()
 
 		ent.FireLeft = not ent.FireLeft
 
+		local Driver = ent:GetDriver()
 		local Target = ent:GetEyeTrace().HitPos
 
 		local projectile = ents.Create( "lvs_missile" )
@@ -256,15 +257,18 @@ function ENT:InitWeapons()
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/bomb.png")
 	weapon.UseableByAI = false
-	weapon.Ammo = 12
+	weapon.Ammo = 128
 	weapon.Delay = 0.25
-	weapon.HeatRateUp = 0.1
-	weapon.HeatRateDown = 1
+	weapon.HeatRateUp = 0.75
+	weapon.HeatRateDown = 0.4
 	weapon.Attack = function( ent )
-		local projectile = ents.Create( "grenade_helicopter" )
-		projectile:SetPos( ent:LocalToWorld( Vector(-50,0,-50) ) )
+		local Driver = ent:GetDriver()
+
+		local projectile = ents.Create( "lvs_helicopter_combine_bomb" )
+		projectile:SetPos( ent:LocalToWorld( Vector(-50,0,-25) ) )
 		projectile:SetAngles( ent:GetAngles() )
 		projectile:SetOwner( ent )
+		projectile:SetAttacker( IsValid( Driver ) and Driver or ent )
 		projectile:Spawn()
 		projectile:Activate()
 		projectile:EmitSound("npc/attack_helicopter/aheli_mine_drop1.wav")
