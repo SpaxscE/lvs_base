@@ -88,7 +88,7 @@ function ENT:PaintHeliFlightInfo( X, Y, ply, Pos2D )
 	draw.DrawText( math.Round( Pitch, 2 ), "LVS_FONT_PANEL", Pos2D.x + 175, Pos2D.y - 7, Color( self.HudColor.r, self.HudColor.g, self.HudColor.b, 255 ), TEXT_ALIGN_RIGHT )
 
 	for i = -90, 90 do
-		local Y = -i * 10 + Pitch
+		local Y = -i * 10 + Pitch * 10
 
 		local absN = math.abs( i ) 
 
