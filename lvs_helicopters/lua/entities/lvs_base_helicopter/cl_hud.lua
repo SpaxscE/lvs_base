@@ -42,7 +42,7 @@ function ENT:LVSHudPaint( X, Y, ply )
 		self:LVSHudPaintMouseAim( HitPlane, HitPilot )
 	end
 
-	self:LVSPaintHitMarker( HitPlane )
+	self:LVSPaintHitMarker( HitPilot )
 end
 
 function ENT:LVSHudPaintDirectInput( Pos2D )

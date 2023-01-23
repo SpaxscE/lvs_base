@@ -12,6 +12,8 @@ function ENT:CalcThrottle()
 	local Cur = self:GetThrottle()
 	local New = self._StopEngine and 0 or 1
 
+	if self:IsDestroyed() then New = 0 end
+
 	if Cur == New and New == 0 then self:TurnOffEngine() return end
 
 	self:SetThrottle( Cur + math.Clamp( (New - Cur), -self.ThrottleRateDown * Delta, self.ThrottleRateUp * Delta ) )
