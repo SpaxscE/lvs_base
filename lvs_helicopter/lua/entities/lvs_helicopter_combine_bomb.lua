@@ -91,7 +91,11 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide( data, physobj )
-		self:Enable()
+		if self.IsEnabled and IsValid( data.HitEntity ) then
+			self:Detonate()
+		else
+			self:Enable()
+		end
 	end
 
 	function ENT:Detonate()
@@ -109,7 +113,7 @@ if SERVER then
 
 		util.BlastDamage( self, IsValid( attacker ) and attacker or game.GetWorld(), Pos, 250, 150 )
 
-		self:Remove()
+		SafeRemoveEntityDelayed( self, FrameTime() )
 	end
 
 	function ENT:Destroy()
