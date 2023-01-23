@@ -236,6 +236,13 @@ function ENT:InitWeapons()
 		projectile:Activate()
 		projectile.GetTarget = function( missile ) return missile end
 		projectile.GetTargetPos = function( missile )
+			if missile.HasReachedTarget then
+				return missile:LocalToWorld( Vector(100,0,0) )
+			end
+
+			if (missile:GetPos() - Target):Length() < 100 then
+				missile.HasReachedTarget = true
+			end
 			return Target
 		end
 		projectile:SetAttacker( IsValid( Driver ) and Driver or self )
