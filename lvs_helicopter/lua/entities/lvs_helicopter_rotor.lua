@@ -137,6 +137,8 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
+		if dmginfo:IsDamageType( DMG_BLAST ) then return end
+
 		local damage = dmginfo:GetDamage()
 
 		self.RotorHitCount = (self.RotorHitCount or 0) + damage
