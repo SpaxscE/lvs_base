@@ -151,6 +151,12 @@ function ENT:InitWeapons()
 		end
 		self:LVSFireBullet( bullet )
 
+		local effectdata = EffectData()
+		effectdata:SetOrigin( Muzzle.Pos )
+		effectdata:SetNormal( Muzzle.Ang:Forward() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_pulserifle_muzzle", effectdata )
+
 		ent:TakeAmmo()
 	end
 	weapon.OnThink = function( ent, active )

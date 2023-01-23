@@ -190,6 +190,12 @@ function ENT:ShootGun()
 		util.Effect( "AR2Impact", effectdata, true, true )
 	end
 	self:LVSFireBullet( bullet )
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( Muzzle.Pos )
+	effectdata:SetNormal( Muzzle.Ang:Forward() )
+	effectdata:SetEntity( ent )
+	util.Effect( "lvs_pulserifle_muzzle", effectdata )
 end
 
 function ENT:InitWeapons()
