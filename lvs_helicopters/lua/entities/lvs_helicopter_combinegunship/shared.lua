@@ -94,22 +94,34 @@ end
 function ENT:InitWeapons()
 	local weapon = {}
 	weapon.Icon = Material("lvs/weapons/mg.png")
-	weapon.Ammo = -1
+	weapon.Ammo = 2000
 	weapon.Delay = 0.1
-	weapon.HeatRateUp = 0.25
+	weapon.HeatRateUp = 0.2
 	weapon.HeatRateDown = 0.25
 	weapon.StartAttack = function( ent )
 		if not IsValid( ent.weaponSND ) then return end
-		ent.weaponSND:Play()
+
 		ent.weaponSND:EmitSound("NPC_CombineGunship.CannonStartSound")
+
+		self.ShouldPlaySND = true
 	end
 	weapon.FinishAttack = function( ent )
 		if not IsValid( ent.weaponSND ) then return end
+
+		self.ShouldPlaySND = false
+
 		ent.weaponSND:Stop()
 		ent.weaponSND:EmitSound("NPC_CombineGunship.CannonStopSound")
 	end
 	weapon.Attack = function( ent )
-		if not ent:WeaponsInRange() then return end
+		if not ent:WeaponsInRange() then
+
+			ent.ShouldPlaySND = false
+
+			return true
+		end
+
+		ent.ShouldPlaySND = true
 
 		local Body = ent:GetBody()
 
@@ -138,6 +150,22 @@ function ENT:InitWeapons()
 			util.Effect( "AR2Impact", effectdata, true, true )
 		end
 		self:LVSFireBullet( bullet )
+
+		ent:TakeAmmo()
+	end
+	weapon.OnThink = function( ent, active )
+		if not IsValid( ent.weaponSND ) then return end
+
+		local ShouldPlay = ent.ShouldPlaySND and active
+
+		if ent._oldShouldPlaySND ~= ShouldPlay then
+			ent._oldShouldPlaySND = ShouldPlay
+			if ShouldPlay then
+				ent.weaponSND:Play()
+			else
+				ent.weaponSND:Stop()
+			end
+		end
 	end
 	weapon.OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end
 	self:AddWeapon( weapon )

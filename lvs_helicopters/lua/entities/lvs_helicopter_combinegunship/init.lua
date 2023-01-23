@@ -91,14 +91,15 @@ function ENT:AnimBody()
 	local AngVel = PhysObj:GetAngleVelocity()
 	local Steer = self:GetSteer()
 
+	self._smLocalAngles = self._smLocalAngles and self._smLocalAngles + (LocalAngles - self._smLocalAngles) * FT * 4 or LocalAngles
 	self._smVelL = self._smVelL and self._smVelL + (VelL - self._smVelL) * FT * 10 or VelL
 	self._smAngVel = self._smAngVel and self._smAngVel + (AngVel - self._smAngVel) * FT * 10 or AngVel
 	self._smSteer = self._smSteer and self._smSteer + (Steer - self._smSteer) *  FT * 5 or Steer
 
-	Body:SetPoseParameter("flex_vert", self._smSteer.y * 10 + LocalAngles.p * 0.5 )
-	Body:SetPoseParameter("flex_horz", self._smAngVel.z * 0.25 - self._smSteer.x * 10 + LocalAngles.y * 0.5 )
-	Body:SetPoseParameter("fin_accel",  self._smVelL.x * 0.001 + self._smSteer.y * 2 + self._smVelL.z * 0.01)
-	Body:SetPoseParameter("fin_sway",  -self._smVelL.y * 0.001 - self._smSteer.x * 2  )
-	Body:SetPoseParameter("antenna_accel",  self._smVelL.x * 0.001 )
+	Body:SetPoseParameter("flex_vert", self._smSteer.y * 10 + self._smLocalAngles.p * 0.5 )
+	Body:SetPoseParameter("flex_horz", self._smAngVel.z * 0.25 - self._smSteer.x * 10 + self._smLocalAngles.y * 0.5 )
+	Body:SetPoseParameter("fin_accel", self._smVelL.x * 0.001 + self._smSteer.y * 2 + self._smVelL.z * 0.01 )
+	Body:SetPoseParameter("fin_sway", -self._smVelL.y * 0.001 - self._smSteer.x * 2 )
+	Body:SetPoseParameter("antenna_accel", self._smVelL.x * 0.001 )
 	Body:SetPoseParameter("antenna_sway", -self._smVelL.y * 0.001 )
 end
