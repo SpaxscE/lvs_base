@@ -21,7 +21,7 @@ function ENT:OnSpawn( PObj )
 	end
 
 	self.TailRotor = self:AddRotor( Vector(-218,4,-1.8), Angle(0,0,90), 25, -6000 )
-	self.TailRotor:SetHP( 800 )
+	self.TailRotor:SetHP( 400 )
 	function self.TailRotor:OnDestroyed( base )
 		base:DestroySteering( -2.5 )
 		base:SnapTailRotor()
