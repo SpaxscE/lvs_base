@@ -46,6 +46,7 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Bool", "EngineActive" )
 	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
 	self:AddDT( "Bool", "lvsLockedStatus" )
+	self:AddDT( "Bool", "lvsReady" )
 
 	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
 	self:AddDT( "Int", "SelectedWeapon" )
@@ -138,8 +139,14 @@ function ENT:GetMaxHP()
 	return self.MaxHealth
 end
 
+function ENT:IsInitialized()
+	if not self.GetlvsReady then return false end -- in case this is called BEFORE setupdatatables
+
+	return self:GetlvsReady()
+end
+
 function ENT:GetPassengerSeats()
-	if not istable( self.pSeats ) then
+	if not istable( self.pSeats ) or not self:IsInitialized() then
 		self.pSeats = {}
 
 		local DriverSeat = self:GetDriverSeat()

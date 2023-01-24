@@ -69,6 +69,16 @@ function ENT:Initialize()
 	PObj:EnableMotion( false )
 	PObj:EnableDrag( false )
 
+	timer.Simple(0, function()
+		if not IsValid( self ) or not IsValid( PObj ) then print("LVS: ERROR couldn't initialize vehicle.") return end
+
+		self:PostInitialize( PObj )
+
+		self:SetlvsReady( true )
+	end)
+end
+
+function ENT:PostInitialize( PObj )
 	self:OnSpawn( PObj )
 
 	self:StartMotionController()
@@ -100,12 +110,18 @@ function ENT:Initialize()
 
 		ent:WeaponsOnRemove()
 	end)
+
+	self._lvsIsInitialized = true
 end
 
 function ENT:OnSpawn( PObj )
 end
 
 function ENT:Think()
+	self:NextThink( CurTime() )
+
+	if not self:IsInitialized() then return true end
+
 	self:HandleActive()
 	self:HandleStart()
 	self:PhysicsThink()
@@ -117,8 +133,6 @@ function ENT:Think()
 
 	self:OnTick()
 
-	self:NextThink( CurTime() )
-	
 	return true
 end
 
@@ -181,7 +195,7 @@ function ENT:GetMissileOffset()
 end
 
 function ENT:GetCrosshairFilterEnts()
-	if not istable( self.CrosshairFilterEnts ) then
+	if not istable( self.CrosshairFilterEnts ) or not self:IsInitialized() then
 		self.CrosshairFilterEnts = {}
 
 		for _, Entity in pairs( constraint.GetAllConstrainedEntities( self ) ) do

@@ -100,6 +100,8 @@ function ENT:HandleActive()
 end
 
 function ENT:Think()
+	if not self:IsInitialized() then return end
+ 
 	if self:HandleActive() then
 		self:OnFrameActive()
 	end
@@ -152,6 +154,8 @@ function ENT:CalcDoppler( Ent )
 end
 
 function ENT:GetCrosshairFilterEnts()
+	if not self:IsInitialized() then return { self } end -- wait for the server to be ready
+
 	if not istable( self.CrosshairFilterEnts ) then
 		self.CrosshairFilterEnts = {self}
 
