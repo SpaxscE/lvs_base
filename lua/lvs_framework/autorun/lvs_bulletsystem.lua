@@ -32,7 +32,7 @@ function NewBullet:GetSpawnTime()
 	if SERVER then
 		return self.StartTime
 	else
-		return self.StartTimeCL -- time when the bullet is received on client
+		return math.min( self.StartTimeCL, CurTime() ) -- time when the bullet is received on client
 	end
 end
 
@@ -237,7 +237,7 @@ else
 		bullet.Entity = net.ReadEntity()
 		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Velocity = net.ReadFloat()
-		bullet.StartTimeCL = CurTime()
+		bullet.StartTimeCL = CurTime() + RealFrameTime()
 
 		Index = Index + 1
 		if Index > 4094 then
