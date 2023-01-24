@@ -1,8 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "sprites/glow_test02"
-	
-	"$additive" 1
-	"$vertexcolor" 1
-	"$vertexalpha" 1
-}

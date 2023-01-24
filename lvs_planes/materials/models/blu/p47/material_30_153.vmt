@@ -1,6 +1,0 @@
-"VertexlitGeneric"
-{
-	"$basetexture" "models\blu\p47\seat"
-	"$bumpmap" "models\blu\p47\seat_n"
-	$nocull "1"
-}
