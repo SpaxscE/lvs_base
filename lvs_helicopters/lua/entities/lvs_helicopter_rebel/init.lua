@@ -55,7 +55,7 @@ function ENT:OnSpawn( PObj )
 	self:AddEngineSound( Vector(40,0,10) )
 
 	--self:AddRotor( pos, angle, radius, turn_speed_and_direction )
-	self.Rotor = self:AddRotor( Vector(0,0,100), Angle(2,0,0), 380, -4000 )
+	self.Rotor = self:AddRotor( Vector(-65,0,100), Angle(2,0,0), 390, -4000 )
 	self.Rotor:SetHP( 50 )
 	function self.Rotor:OnDestroyed( base )
 		base:SetBodygroup( 1, 2 )

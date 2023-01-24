@@ -10,7 +10,7 @@ ENT._LVS = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
-	self:NetworkVar( "Float",0, "Radius" )
+	self:NetworkVar( "Float",0, "NWRadius" )
 	self:NetworkVar( "Int",0, "Speed" )
 	self:NetworkVar( "Int",1, "HP" )
 	self:NetworkVar( "Bool",0, "Disabled" )
@@ -18,6 +18,26 @@ function ENT:SetupDataTables()
 	if SERVER then
 		self:SetSpeed( 4000 )
 		self:SetHP( 10 )
+	end
+end
+
+function ENT:GetRadius()
+	return self:GetNWRadius()
+end
+
+function ENT:SetRadius( radius )
+	self:SetNWRadius( radius )
+
+	local AngleStep = 15
+
+	for ang = 15, 360, AngleStep do
+		local X1 = math.cos( math.rad( ang ) ) * radius
+		local Y1 = math.sin( math.rad( ang ) ) * radius
+
+		local X2 = math.cos( math.rad( ang + AngleStep ) ) * radius
+		local Y2 = math.sin( math.rad( ang + AngleStep ) ) * radius
+
+		debugoverlay.Line( self:LocalToWorld( Vector(X1,Y1,0) ), self:LocalToWorld( Vector(X2,Y2,0) ), 5, Color( 255, 0, 255 ) )
 	end
 end
 
