@@ -18,8 +18,18 @@ end
 function ENT:OnRemoveAI()
 end
 
-function ENT:OnToggleAI( name, old, new)
+function ENT:OnToggleAI( name, old, new )
 	if new == old then return end
+
+	if not self:IsInitialized() then
+		timer.Simple( FrameTime(), function()
+			if not IsValid( self ) then return end
+
+			self:OnToggleAI( name, old, new )
+		end )
+
+		return
+	end
 
 	if new == true then
 		local Driver = self:GetDriver()
