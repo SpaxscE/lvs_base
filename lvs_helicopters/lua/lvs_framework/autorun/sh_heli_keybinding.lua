@@ -6,46 +6,45 @@ hook.Add( "LVS:Initialize", "[LVS] - Helicopter - Keys", function()
 			category = "LVS-Helicopter",
 			name_menu = "Throttle Increase",
 			default = "+forward",
-			cmd = "lvs_heli_throttle_up"
+			cmd = "lvs_helicopter_throttle_up"
 		},
 		{
 			name = "-THRUST_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Throttle Decrease",
 			default = "+back",
-			cmd = "lvs_heli_throttle_down"
+			cmd = "lvs_helicopter_throttle_down"
 		},
 		{
 			name = "+PITCH_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Pitch Up",
-			default = "+speed",
-			cmd = "lvs_heli_pitch_up"
+			cmd = "lvs_helicopter_pitch_up"
 		},
 		{
 			name = "-PITCH_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Pitch Down",
-			cmd = "lvs_heli_pitch_down"
+			cmd = "lvs_helicopter_pitch_down"
 		},
 		{
 			name = "-YAW_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Yaw Left [Roll in Direct Input]",
-			cmd = "lvs_heli_yaw_left"
+			cmd = "lvs_helicopter_yaw_left"
 		},
 		{
 			name = "+YAW_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Yaw Right [Roll in Direct Input]",
-			cmd = "lvs_heli_yaw_right"
+			cmd = "lvs_helicopter_yaw_right"
 		},
 		{
 			name = "-ROLL_HELI",
 			category = "LVS-Helicopter",
 			name_menu = "Roll Left [Yaw in Direct Input]",
 			default = "+moveleft",
-			cmd = "lvs_heli_roll_left"
+			cmd = "lvs_helicopter_roll_left"
 		},
 		{
 			name = "+ROLL_HELI",
@@ -58,7 +57,7 @@ hook.Add( "LVS:Initialize", "[LVS] - Helicopter - Keys", function()
 			name = "HELI_HOVER",
 			category = "LVS-Helicopter",
 			name_menu = "Hover",
-			default = "+jump",
+			default = "+speed",
 			cmd = "lvs_heli_hover"
 		},
 	}
