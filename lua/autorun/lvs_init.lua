@@ -17,6 +17,24 @@ LVS.WHEEL_STEER_NONE = 2
 LVS.WHEEL_STEER_FRONT = 3
 LVS.WHEEL_STEER_REAR = 4
 
+LVS.WEAPONS = {
+	["DEFAULT"] = {
+		Icon = Material("lvs/weapons/bullet.png"),
+		Ammo = 9999,
+		Delay = 0,
+		HeatRateUp = 0.2,
+		HeatRateDown = 0.25,
+		Attack = function( ent ) end,
+		StartAttack = function( ent ) end,
+		FinishAttack = function( ent ) end,
+		OnSelect = function( ent ) end,
+		OnDeselect = function( ent ) end,
+		OnThink = function( ent, active ) end,
+		OnOverheat = function( ent ) end,
+		OnRemove = function( ent ) end,
+	},
+}
+
 function LVS:GetVersion()
 	return LVS.VERSION
 end
@@ -88,6 +106,18 @@ end
 hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
 	timer.Simple(20, function() LVS.CheckUpdates() end)
 end )
+
+function LVS:GetWeaponPreset( name )
+	if not LVS.WEAPONS[ name ] then return table.Copy( LVS.WEAPONS["DEFAULT"] ) end
+
+	return table.Copy( LVS.WEAPONS[ name ] )
+end
+
+function LVS:AddWeaponPreset( name, data )
+	if not isstring( name ) or not istable( data ) then return end
+
+	LVS.WEAPONS[ name ] = data
+end
 
 AddCSLuaFile("lvs_framework/init.lua")
 include("lvs_framework/init.lua")

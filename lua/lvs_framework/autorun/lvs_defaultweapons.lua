@@ -1,22 +1,5 @@
-local WEAPON = {}
 
-WEAPON["DEFAULT"] = {
-	Icon = Material("lvs/weapons/bullet.png"),
-	Ammo = 9999,
-	Delay = 0,
-	HeatRateUp = 0.2,
-	HeatRateDown = 0.25,
-	Attack = function( ent ) end,
-	StartAttack = function( ent ) end,
-	FinishAttack = function( ent ) end,
-	OnSelect = function( ent ) end,
-	OnDeselect = function( ent ) end,
-	OnThink = function( ent, active ) end,
-	OnOverheat = function( ent ) end,
-	OnRemove = function( ent ) end,
-}
-
-WEAPON["LMG"] = {
+LVS:AddWeaponPreset( "LMG", {
 	Icon = Material("lvs/weapons/mg.png"),
 	Ammo = 1000,
 	Delay = 0.1,
@@ -64,9 +47,9 @@ WEAPON["LMG"] = {
 	end,
 	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
-}
+} )
 
-WEAPON["TABLE_POINT_MG"] = {
+LVS:AddWeaponPreset( "TABLE_POINT_MG", {
 	Icon = Material("lvs/weapons/bullet.png"),
 	Ammo = 2000,
 	Delay = 0.1,
@@ -118,9 +101,9 @@ WEAPON["TABLE_POINT_MG"] = {
 	end,
 	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft3.wav") end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
-}
+} )
 
-WEAPON["HMG"] = {
+LVS:AddWeaponPreset( "HMG", {
 	Icon = Material("lvs/weapons/hmg.png"),
 	Ammo = 300,
 	Delay = 0.14,
@@ -172,9 +155,9 @@ WEAPON["HMG"] = {
 	end,
 	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft2.wav") end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
-}
+} )
 
-WEAPON["TURBO"] = {
+LVS:AddWeaponPreset( "TURBO", {
 	Icon = Material("lvs/weapons/nos.png"),
 	HeatRateUp = 0.1,
 	HeatRateDown = 0.1,
@@ -216,10 +199,4 @@ WEAPON["TURBO"] = {
 		end
 	end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat_boost.wav") end,
-}
-
-function LVS:GetWeaponPreset( name )
-	if not WEAPON[ name ] then return table.Copy( WEAPON["DEFAULT"] ) end
-
-	return table.Copy( WEAPON[ name ] )
-end
+} )
