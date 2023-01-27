@@ -30,7 +30,7 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 		end
 	end
 
-	if Vel:Length() > 100 then
+	if Vel:Length() > (Pod.PlaceBehindVelocity or 100) then
 		local tr = util.TraceHull( {
 			start = Center,
 			endpos = Center - Vel:GetNormalized() *  (radius + 50),
@@ -46,11 +46,15 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 			ply:SetEyeAngles( (Center - exitpoint):Angle() )
 		end
 	else
-		if isvector( Pod.ExitPos ) and util.IsInWorld( Pod.ExitPos ) then
+		if isvector( Pod.ExitPos ) then 
 			local exitpoint = Vehicle:LocalToWorld( Pod.ExitPos )
 
-			ply:SetPos( exitpoint )
-			ply:SetEyeAngles( (Pod:GetPos() - exitpoint):Angle() )
+			if util.IsInWorld( exitpoint ) then
+				ply:SetPos( exitpoint )
+				ply:SetEyeAngles( (Pod:GetPos() - exitpoint):Angle() )
+
+				return
+			end
 		end
 
 		local PodPos = Pod:LocalToWorld( Vector(0,0,10) )
