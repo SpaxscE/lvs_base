@@ -1,12 +1,26 @@
 
+ENT.ShieldRechargeDelay = 5
+ENT.ShieldRechargeRate = 1
+ENT.ShieldBlockableTypes = {
+	[1] = DMG_BULLET,
+	[2] = DMG_AIRBOAT,
+	[3] = DMG_BUCKSHOT,
+	[4] = DMG_SNIPER,
+}
+
 function ENT:CalcShieldDamage( dmginfo )
 	local MaxShield = self:GetMaxShield()
 
 	if MaxShield <= 0 then return end
 
-	if not dmginfo:IsDamageType( DMG_BULLET + DMG_AIRBOAT ) then return end
+	local DMG_ENUM = DMG_GENERIC
+	for _, ENUM in ipairs( self.ShieldBlockableTypes ) do
+		DMG_ENUM = DMG_ENUM + ENUM
+	end
 
-	self:DelayNextShieldRecharge( 3 )
+	if not dmginfo:IsDamageType( DMG_ENUM ) then return end
+
+	self:DelayNextShieldRecharge( self.ShieldRechargeDelay )
 
 	local DamageRemaining = self:TakeShieldDamage( dmginfo:GetDamage() )
 
@@ -31,7 +45,7 @@ function ENT:ShieldThink()
 	if not self:CanShieldRecharge() then return end
 
 	local Cur = self:GetShield()
-	local Rate = FrameTime() * 30
+	local Rate = FrameTime() * 20 * self.ShieldRechargeRate
 
 	self:SetShield( Cur + math.Clamp(MaxShield - Cur,-Rate,Rate) )
 end
