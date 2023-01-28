@@ -73,8 +73,6 @@ function ENT:Initialize()
 		if not IsValid( self ) or not IsValid( PObj ) then print("LVS: ERROR couldn't initialize vehicle.") return end
 
 		self:PostInitialize( PObj )
-
-		self:SetlvsReady( true )
 	end)
 end
 
@@ -82,12 +80,6 @@ function ENT:PostInitialize( PObj )
 	self:OnSpawn( PObj )
 
 	self:StartMotionController()
-
-	if GetConVar( "developer" ):GetInt() ~= 1 then
-		PObj:EnableMotion( true )
-	end
-
-	self:PhysWake()
 
 	self:AutoAI()
 
@@ -111,7 +103,17 @@ function ENT:PostInitialize( PObj )
 		ent:WeaponsOnRemove()
 	end)
 
-	self._lvsIsInitialized = true
+	self:SetlvsReady( true )
+
+	self:OnSpawnFinish( PObj )
+end
+
+function ENT:OnSpawnFinish( PObj )
+	if GetConVar( "developer" ):GetInt() ~= 1 then
+		PObj:EnableMotion( true )
+	end
+
+	self:PhysWake()
 end
 
 function ENT:OnSpawn( PObj )
