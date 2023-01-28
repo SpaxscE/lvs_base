@@ -16,8 +16,6 @@ include("sv_physics.lua")
 include("sv_damagesystem.lua")
 include("sv_shieldsystem.lua")
 
-ENT.PostInitDelay = 0
-
 ENT.WaterLevelPreventStart = 1
 ENT.WaterLevelAutoStop = 2
 ENT.WaterLevelDestroyAI = 2
@@ -71,7 +69,7 @@ function ENT:Initialize()
 	PObj:EnableMotion( false )
 	PObj:EnableDrag( false )
 
-	timer.Simple(self.PostInitDelay, function()
+	timer.Simple(0, function()
 		if not IsValid( self ) or not IsValid( PObj ) then print("LVS: ERROR couldn't initialize vehicle.") return end
 
 		self:PostInitialize( PObj )
