@@ -1,4 +1,7 @@
 
+ENT.DriverActiveSound = "vehicles/atv_ammo_close.wav" 
+ENT.DriverInActiveSound = "vehicles/atv_ammo_open.wav"
+
 function ENT:AlignView( ply, SetZero )
 	if not IsValid( ply ) then return end
 
@@ -45,11 +48,11 @@ function ENT:HandleActive()
 			Driver:lvsBuildControls()
 			self:AlignView( Driver )
 
-			self:EmitSound( "vehicles/atv_ammo_close.wav" )
+			if self.DriverActiveSound then self:EmitSound( self.DriverActiveSound ) end
 		else
 			self:WeaponsFinish()
 
-			self:EmitSound( "vehicles/atv_ammo_open.wav" )
+			if self.DriverInActiveSound then self:EmitSound( self.DriverInActiveSound ) end
 		end
 	end
 end
