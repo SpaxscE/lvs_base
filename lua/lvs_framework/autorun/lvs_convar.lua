@@ -59,6 +59,6 @@ end)
 
 local cvarAntiAlias = GetConVar( "mat_antialias" )
 LVS.AntiAliasingEnabled = cvarAntiAlias and (cvarAntiAlias:GetInt() > 3) or false
-cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 
+cvars.AddChangeCallback( "mat_antialias", function( convar, oldValue, newValue ) 
 	LVS.AntiAliasingEnabled = tonumber( newValue ) > 3
 end)
