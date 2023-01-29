@@ -163,8 +163,13 @@ function ENT:PaintCrosshairOuter( Pos2D, Col )
 
 	surface.DrawCircle( Pos2D.x,Pos2D.y, 17, Shadow )
 	surface.DrawCircle( Pos2D.x, Pos2D.y, 18, Col )
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Color( Col.r, Col.g, Col.b, 150 * Alpha ) )
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 20, Shadow )
+
+	if LVS.AntiAliasingEnabled then
+		surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Color( Col.r, Col.g, Col.b, 150 * Alpha ) )
+		surface.DrawCircle( Pos2D.x, Pos2D.y, 20, Shadow )
+	else
+		surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Shadow )
+	end
 end
 
 local Circles = {

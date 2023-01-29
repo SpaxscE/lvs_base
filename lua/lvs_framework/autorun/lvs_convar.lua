@@ -56,3 +56,9 @@ LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false
 cvars.AddChangeCallback( "lvs_hitmarker", function( convar, oldValue, newValue ) 
 	LVS.ShowHitMarker = tonumber( newValue ) ~=0
 end)
+
+local cvarAntiAlias = GetConVar( "mat_antialias" )
+LVS.AntiAliasingEnabled = cvarAntiAlias and (cvarAntiAlias:GetInt() > 3) or false
+cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 
+	LVS.AntiAliasingEnabled = tonumber( newValue ) > 3
+end)
