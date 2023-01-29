@@ -3,38 +3,50 @@ local icon_load_version = Material("gui/html/refresh")
 local bgMat = Material( "lvs/controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
 local gradient_mat = Material( "gui/gradient" )
+local gradient_down = Material( "gui/gradient_down" )
 
 local FrameSizeX = 600
 local FrameSizeY = 400
 
 local function ClientSettings( Canvas )
-
 	local TopPanel = vgui.Create( "DPanel", Canvas )
-	TopPanel:SetSize( FrameSizeX, FrameSizeY * 0.5 )
+	TopPanel:SetSize( FrameSizeX, FrameSizeY * 0.35 )
 	TopPanel.Paint = function( self, w, h )
 		surface.SetDrawColor( 80, 80, 80, 255 )
 		surface.SetMaterial( gradient_mat )
 		surface.DrawTexturedRect( 1, 0, w, 1 )
 
-		draw.DrawText( "Mouse Settings", "LVS_FONT", 4, 4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		draw.DrawText( "Mouse", "LVS_FONT", 4, 4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 	end
 	TopPanel:Dock( BOTTOM )
 
 	local RightPanel = vgui.Create( "DPanel", Canvas )
 	RightPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
-	RightPanel.Paint = function() end
+	RightPanel.Paint = function( self, w, h )
+		surface.SetDrawColor( 80, 80, 80, 255 )
+		surface.SetMaterial( gradient_down )
+		surface.DrawTexturedRect( 0, 0, 1, h )
+		draw.DrawText( "Misc/Performance", "LVS_FONT", 4, 4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	end
 	RightPanel:Dock( RIGHT )
+
+	local RightPanelRight = vgui.Create( "DPanel", RightPanel )
+	RightPanelRight:SetSize( FrameSizeX * 0.25, FrameSizeY )
+	RightPanelRight.Paint = function() end
+	RightPanelRight:Dock( RIGHT )
 
 	local LeftPanel = vgui.Create( "DPanel", Canvas )
 	LeftPanel:SetSize( FrameSizeX * 0.5, FrameSizeY )
-	LeftPanel.Paint = function() end
+	LeftPanel.Paint = function( self, w, h )
+		draw.DrawText( "Preferences", "LVS_FONT", 4, 4, Color( 255, 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+	end
 	LeftPanel:Dock( LEFT )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", TopPanel )
 	CheckBox:DockMargin( 16, 36, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Use Mouse-Aim Steering" )
+	CheckBox:SetText( "Mouse-Aim Steering" )
 	CheckBox:SetConVar("lvs_mouseaim") 
 	CheckBox.OnChange = function( self, bVal )
 		if not isbool( self.first ) then self.first = true return end
@@ -47,16 +59,18 @@ local function ClientSettings( Canvas )
 	end
 
 	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 or LVS:IsDirectInputForced() then
-		local slider = vgui.Create( "DNumSlider", TopPanel )
-		slider:DockMargin( 16, 4, 16, 4 )
-		slider:Dock( TOP )
-		slider:SetText( "X Sensitivity" )
-		slider:SetMin( 0 )
-		slider:SetMax( 10 )
-		slider:SetDecimals( 3 )
-		slider:SetConVar( "lvs_sensitivity_x" )
+		local L = vgui.Create( "DPanel", TopPanel )
+		L:SetSize( FrameSizeX * 0.5, FrameSizeY )
+		L.Paint = function() end
+		L:Dock( LEFT )
 
-		local slider = vgui.Create( "DNumSlider", TopPanel )
+		local R = vgui.Create( "DPanel", TopPanel )
+		R:SetSize( FrameSizeX * 0.5, FrameSizeY )
+		R.Paint = function() end
+		R:Dock( RIGHT )
+
+		
+		local slider = vgui.Create( "DNumSlider", R )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
 		slider:SetText( "Y Sensitivity" )
@@ -65,7 +79,16 @@ local function ClientSettings( Canvas )
 		slider:SetDecimals( 3 )
 		slider:SetConVar( "lvs_sensitivity_y" )
 
-		local slider = vgui.Create( "DNumSlider", TopPanel )
+		local slider = vgui.Create( "DNumSlider", L )
+		slider:DockMargin( 16, 4, 16, 4 )
+		slider:Dock( TOP )
+		slider:SetText( "X Sensitivity" )
+		slider:SetMin( 0 )
+		slider:SetMax( 10 )
+		slider:SetDecimals( 3 )
+		slider:SetConVar( "lvs_sensitivity_x" )
+
+		local slider = vgui.Create( "DNumSlider", L )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
 		slider:SetText( "Return Delta" )
@@ -84,15 +107,8 @@ local function ClientSettings( Canvas )
 		slider:SetConVar( "lvs_camerafocus" )
 	end
 
-	local CheckBox = vgui.Create( "DCheckBoxLabel", LeftPanel )
-	CheckBox:DockMargin( 16, 34, 4, 4 )
-	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Enable Context Menu HUD Editor" )
-	CheckBox:SetConVar("lvs_edit_hud") 
-
 	local slider = vgui.Create( "DNumSlider", LeftPanel )
-	slider:DockMargin( 16, 8, 16, 4 )
+	slider:DockMargin( 16, 36, 16, 4 )
 	slider:Dock( TOP )
 	slider:SetText( "Engine Volume" )
 	slider:SetMin( 0 )
@@ -101,10 +117,10 @@ local function ClientSettings( Canvas )
 	slider:SetConVar( "lvs_volume" )
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
-	CheckBox:DockMargin( 16, 34, 4, 4 )
+	CheckBox:DockMargin( 16, 43, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )
 	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Show Vehicle Team Identifier" )
+	CheckBox:SetText( "Show Team Identifier" )
 	CheckBox:SetConVar("lvs_show_identifier") 
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
@@ -113,6 +129,41 @@ local function ClientSettings( Canvas )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Hit/Kill Marker" )
 	CheckBox:SetConVar("lvs_hitmarker") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Enable HUD Editor" )
+	CheckBox:SetConVar("lvs_edit_hud") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanelRight )
+	CheckBox:DockMargin( 16, 43, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Trail Effects" )
+	CheckBox:SetConVar("lvs_show_traileffects") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanelRight )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Wind/Dust FX/SFX" )
+	CheckBox:SetConVar("lvs_show_effects") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanelRight )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Scrape/Impact FX" )
+	CheckBox:SetConVar("lvs_show_physicseffects") 
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanelRight )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Bullet near miss SFX" )
+	CheckBox:SetConVar("lvs_bullet_nearmiss")
 end
 
 local function ClientControls( Canvas )

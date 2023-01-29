@@ -19,6 +19,8 @@ local Materials = {
 }
 
 function EFFECT:Init( data )
+	if not LVS.ShowPhysicsEffects then return end
+
 	local pos  = data:GetOrigin()
 
 	local emitter = ParticleEmitter( pos, false )

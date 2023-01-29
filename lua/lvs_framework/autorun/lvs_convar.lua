@@ -45,6 +45,24 @@ cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue )
 	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
 end)
 
+local cvarTrail = CreateClientConVar( "lvs_show_traileffects", 1, true, false)
+LVS.ShowTraileffects = cvarTrail and cvarTrail:GetBool() or true
+cvars.AddChangeCallback( "lvs_show_traileffects", function( convar, oldValue, newValue ) 
+	LVS.ShowTraileffects = tonumber( newValue ) ~=0
+end)
+
+local cvarEffects = CreateClientConVar( "lvs_show_effects", 1, true, false)
+LVS.ShowEffects = cvarEffects and cvarEffects:GetBool() or true
+cvars.AddChangeCallback( "lvs_show_effects", function( convar, oldValue, newValue ) 
+	LVS.ShowEffects = tonumber( newValue ) ~=0
+end)
+
+local cvarPhysEffects = CreateClientConVar( "lvs_show_physicseffects", 1, true, false)
+LVS.ShowPhysicsEffects = cvarPhysEffects and cvarPhysEffects:GetBool() or true
+cvars.AddChangeCallback( "lvs_show_physicseffects", function( convar, oldValue, newValue ) 
+	LVS.ShowPhysicsEffects = tonumber( newValue ) ~=0
+end)
+
 local cvarShowIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
 LVS.ShowIdent = cvarShowIdent and cvarShowIdent:GetBool() or true
 cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
@@ -61,4 +79,10 @@ local cvarAntiAlias = GetConVar( "mat_antialias" )
 LVS.AntiAliasingEnabled = cvarAntiAlias and (cvarAntiAlias:GetInt() > 3) or false
 cvars.AddChangeCallback( "mat_antialias", function( convar, oldValue, newValue ) 
 	LVS.AntiAliasingEnabled = tonumber( newValue ) > 3
+end)
+
+local cvarBulletSFX = CreateClientConVar( "lvs_bullet_nearmiss", 1, true, false)
+LVS.EnableBulletNearmiss = cvarBulletSFX and cvarBulletSFX:GetBool() or true
+cvars.AddChangeCallback( "lvs_bullet_nearmiss", function( convar, oldValue, newValue ) 
+	LVS.EnableBulletNearmiss = tonumber( newValue ) ~=0
 end)

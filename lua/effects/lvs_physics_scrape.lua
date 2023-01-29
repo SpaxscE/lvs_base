@@ -19,6 +19,13 @@ local Materials = {
 }
 
 function EFFECT:Init( data )
+	if not LVS.ShowPhysicsEffects then
+		self.LifeTime = 0
+		self.DieTime = 0
+
+		return
+	end
+
 	self.Pos = data:GetOrigin()
 
 	self.mat = Material( "sprites/light_glow02_add" )
@@ -79,7 +86,7 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Think()
-	if self.DieTime < CurTime() then 
+	if self.DieTime < CurTime() then
 		return false
 	end
 
@@ -88,6 +95,8 @@ end
 
 local mat = Material( "sprites/light_glow02_add" )
 function EFFECT:Render()
+	if not LVS.ShowPhysicsEffects then return end
+
 	local Scale = (self.DieTime - CurTime()) / self.LifeTime
 	render.SetMaterial( mat )
 	render.DrawSprite( self.Pos, 32, 32, Color( 255 * Scale, 175 * Scale, 80 * Scale, 255) ) 

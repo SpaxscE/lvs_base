@@ -59,6 +59,8 @@ function ENT:RegisterTrail( Pos, StartSize, EndSize, LifeTime, min_flight_speed,
 end
 
 function ENT:StartTrail( Pos, StartSize, EndSize, LifeTime )
+	if not LVS.ShowTraileffects then return end
+
 	if not istable( self.TrailActive ) then
 		self.TrailActive = {}
 	end

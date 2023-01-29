@@ -1,5 +1,7 @@
 
 function ENT:StartWindSounds()
+	if not LVS.ShowEffects then return end
+
 	self:StopWindSounds()
 
 	if LocalPlayer():lvsGetVehicle() ~= self then return end
@@ -23,7 +25,15 @@ function ENT:StopWindSounds()
 	end
 end
 
+ENT.DustEffectSurfaces = {
+	["sand"] = true,
+	["dirt"] = true,
+	["grass"] = true,
+}
+
 function ENT:DoVehicleFX()
+	if not LVS.ShowEffects then self:StopWindSounds() return end
+
 	local Vel = self:GetVelocity():Length()
 
 	if self._WindSFX then self._WindSFX:ChangeVolume( math.Clamp( (Vel - 1200) / 2800,0,1 ), 0.25 ) end
@@ -68,7 +78,7 @@ function ENT:DoVehicleFX()
 			if self._WaterSFX then self._WaterSFX:ChangeVolume( 0, 0.25 ) end
 		end
 
-		if trace.Hit then
+		if trace.Hit and self.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] then
 			local effectdata = EffectData()
 				effectdata:SetOrigin( trace.HitPos )
 				effectdata:SetEntity( self )
