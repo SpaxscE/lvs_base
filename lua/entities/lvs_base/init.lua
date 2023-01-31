@@ -77,7 +77,11 @@ function ENT:Initialize()
 end
 
 function ENT:PostInitialize( PObj )
-	self:OnSpawn( PObj )
+	local SpawnSuccess, ErrorMsg = pcall( function() self:OnSpawn( PObj ) end )
+
+	if not SpawnSuccess then
+		ErrorNoHalt( ErrorMsg.."\n" )
+	end
 
 	self:StartMotionController()
 

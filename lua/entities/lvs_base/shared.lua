@@ -37,7 +37,11 @@ function ENT:AddDT( type, name, data )
 end
 
 function ENT:CreateBaseDT()
-	self:InitWeapons()
+	local InitWeaponsSuccess, ErrorMsg = pcall( function() self:InitWeapons() end )
+
+	if not InitWeaponsSuccess then
+		ErrorNoHalt( ErrorMsg.."\n" )
+	end
 
 	self:AddDT( "Entity", "Driver" )
 	self:AddDT( "Entity", "DriverSeat" )
