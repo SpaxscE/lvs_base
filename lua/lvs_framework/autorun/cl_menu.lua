@@ -69,12 +69,11 @@ local function ClientSettings( Canvas )
 		R.Paint = function() end
 		R:Dock( RIGHT )
 
-		
 		local slider = vgui.Create( "DNumSlider", R )
 		slider:DockMargin( 16, 4, 16, 4 )
 		slider:Dock( TOP )
 		slider:SetText( "Y Sensitivity" )
-		slider:SetMin( 0 )
+		slider:SetMin( -10 )
 		slider:SetMax( 10 )
 		slider:SetDecimals( 3 )
 		slider:SetConVar( "lvs_sensitivity_y" )
