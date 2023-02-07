@@ -39,7 +39,7 @@ function ENT:RunAI()
 		return
 	end
 
-	local TargetPos = Target:GetPos()
+	local TargetPos = Target:LocalToWorld( Target:OBBCenter() )
 
 	if self._AIFireInput then
 		local T = CurTime() * 0.5 + self:EntIndex()
