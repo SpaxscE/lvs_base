@@ -13,7 +13,7 @@ function LVS:CalcView( vehicle, ply, pos, angles, fov, pod )
 	local radius = ( mn - mx ):Length()
 	local radius = radius + radius * pod:GetCameraDistance()
 
-	local TargetOrigin = view.origin + ( view.angles:Forward() * -radius )
+	local TargetOrigin = view.origin + ( view.angles:Forward() * -radius ) + view.angles:Up() * radius * pod:GetCameraHeight()
 	local WallOffset = 4
 
 	local tr = util.TraceHull( {

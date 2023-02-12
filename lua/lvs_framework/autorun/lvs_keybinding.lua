@@ -62,6 +62,13 @@ hook.Add( "LVS:Initialize", "!!11lvs_default_keys", function()
 			cmd = "lvs_viewzoom"
 		},
 		{
+			name = "VIEWHEIGHT",
+			category = "Misc",
+			name_menu = "Set-Camera-Distance => Set-Camera-Height",
+			default = "phys_swap",
+			cmd = "lvs_viewheight"
+		},
+		{
 			name = "THIRDPERSON",
 			category = "Misc",
 			name_menu = "Toggle Thirdperson",
