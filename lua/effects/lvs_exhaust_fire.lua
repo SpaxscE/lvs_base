@@ -11,7 +11,7 @@ function EFFECT:Init( data )
 
 	if not IsValid( emitter ) then return end
 
-	local particle = emitter:Add( "particles/fire1", Pos )
+	local particle = emitter:Add( "effects/lvs_base/fire", Pos )
 
 	if particle then
 		particle:SetVelocity( Dir * 70 )
@@ -27,7 +27,7 @@ function EFFECT:Init( data )
 	end
 	
 	for i = 1, 3 do
-		local particle = emitter:Add( "particles/flamelet"..math.random(1,5), Pos )
+		local particle = emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), Pos )
 		
 		if particle then
 			particle:SetVelocity( Dir * 40 * i )

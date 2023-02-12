@@ -45,7 +45,7 @@ function EFFECT:Init( data )
 	end
 
 	for i = 0, 15 do
-		local particle = emitter:Add( "sprites/flamelet"..math.random(1,5), self.Pos )
+		local particle = emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), self.Pos )
 		
 		if particle then
 			particle:SetVelocity( VectorRand(-1,1) * 500 )

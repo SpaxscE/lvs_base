@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "effects/lvs_base/fire"
+	"$nocull"	1
+	"$additive" 1
+}

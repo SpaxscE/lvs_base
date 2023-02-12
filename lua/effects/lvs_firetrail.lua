@@ -55,7 +55,7 @@ function EFFECT:Think()
 					particle:SetCollide( false )
 				end
 
-				local particle = self.Emitter:Add( "particles/fire1", Pos )
+				local particle = self.Emitter:Add( "effects/lvs_base/fire", Pos )
 
 				if particle then
 					particle:SetVelocity( VectorRand() * 100 * self.Scale )
@@ -71,7 +71,7 @@ function EFFECT:Think()
 				end
 
 				for i = 0,3 do
-					local particle = self.Emitter:Add( "particles/flamelet"..math.random(1,5), Pos + VectorRand() * 100 * self.Scale )
+					local particle = self.Emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), Pos + VectorRand() * 100 * self.Scale )
 
 					if particle then
 						particle:SetVelocity( VectorRand() * 100 * self.Scale )
