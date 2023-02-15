@@ -213,7 +213,7 @@ if CLIENT then
 
 	hook.Add( "OnContextMenuOpen", "!!!lvs_keyblocker", function()
 		local ply = LocalPlayer()
-		if not IsValid( ply ) then return end
+		if not IsValid( ply ) or ply._lvsDisableContextMenu then return end
 		ply:lvsSetInputDisabled( true )
 	end )
 
@@ -225,7 +225,7 @@ if CLIENT then
 
 	hook.Add( "OnContextMenuClose", "!!!lvs_keyblocker", function()
 		local ply = LocalPlayer()
-		if not IsValid( ply ) then return end
+		if not IsValid( ply ) or ply._lvsDisableContextMenu then return end
 		ply:lvsSetInputDisabled( false )
 	end )
 
