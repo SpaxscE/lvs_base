@@ -63,6 +63,51 @@ sound.Add( {
 } )
 
 sound.Add( {
+	name = "LVS.BOMB_EXPLOSION_DYNAMIC",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 160,
+	pitch = {90, 110},
+	sound = {
+		"^lvs/explosions/dyn1.wav",
+		"^lvs/explosions/dyn2.wav",
+		"^lvs/explosions/dyn3.wav",
+		"^lvs/explosions/dyn4.wav",
+		"^lvs/explosions/dyn5.wav",
+		"^lvs/explosions/dyn6.wav",
+		"^lvs/explosions/dyn7.wav",
+		"^lvs/explosions/dyn8.wav",
+		"^lvs/explosions/dyn9.wav",
+		"^lvs/explosions/dyn10.wav",
+		"^lvs/explosions/dyn11.wav",
+		"^lvs/explosions/dyn12.wav",
+	}
+} )
+
+sound.Add( {
+	name = "LVS.BOMB_EXPLOSION",
+	channel = CHAN_STATIC,
+	volume = 1,
+	level = 75,
+	pitch = {90, 110},
+	sound = {
+		"lvs/explosions/close1.wav",
+		"lvs/explosions/close2.wav",
+		"lvs/explosions/close3.wav",
+		"lvs/explosions/close4.wav",
+		"lvs/explosions/close5.wav",
+		"lvs/explosions/close6.wav",
+		"lvs/explosions/close7.wav",
+		"lvs/explosions/close8.wav",
+		"lvs/explosions/close9.wav",
+		"lvs/explosions/close10.wav",
+		"lvs/explosions/close11.wav",
+		"lvs/explosions/close12.wav",
+		"lvs/explosions/close13.wav",
+	}
+} )
+
+sound.Add( {
 	name = "LVS.EXPLOSION",
 	channel = CHAN_STATIC,
 	volume = 1.0,
