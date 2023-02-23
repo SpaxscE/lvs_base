@@ -2,14 +2,6 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 
-ENT.PrintName = "Bomb"
-ENT.Author = "Luna"
-ENT.Information = "LVS Bomb"
-ENT.Category = "[LVS]"
-
-ENT.Spawnable		= true
-ENT.AdminOnly		= true
-
 ENT.ExplosionEffect = "lvs_explosion_bomb"
 
 ENT.lvsProjectile = true
