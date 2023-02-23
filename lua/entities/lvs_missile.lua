@@ -12,6 +12,8 @@ ENT.AdminOnly		= true
 
 ENT.ExplosionEffect = "lvs_explosion_small"
 
+ENT.lvsProjectile = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
 	self:NetworkVar( "Entity", 0, "NWTarget" )
@@ -243,6 +245,8 @@ if SERVER then
 		if istable( self._FilterEnts ) and self._FilterEnts[ entity ] then return end
 
 		if entity.GetCollisionGroup and self.IgnoreCollisionGroup[ entity:GetCollisionGroup() ] then return end
+
+		if entity.lvsProjectile then return end
 
 		self:Detonate( entity )
 	end
