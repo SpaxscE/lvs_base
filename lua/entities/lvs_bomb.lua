@@ -198,6 +198,60 @@ if SERVER then
 
 		SafeRemoveEntityDelayed( self, FrameTime() )
 	end
+
+	return
+end
+
+function ENT:Enable()
+	if self.IsEnabled then return end
+
+	self.IsEnabled = true
+
+	self.snd = CreateSound(self, "lvs/weapons/bomb_whistle_loop.wav")
+	self.snd:SetSoundLevel( 120 )
+	self.snd:PlayEx(0,150)
+end
+
+function ENT:CalcDoppler()
+	local Ent = LocalPlayer()
+
+	local ViewEnt = Ent:GetViewEntity()
+
+	if Ent:lvsGetVehicle() == self then
+		if ViewEnt == Ent then
+			Ent = self
+		else
+			Ent = ViewEnt
+		end
+	else
+		Ent = ViewEnt
+	end
+
+	local sVel = self:GetVelocity()
+	local oVel = Ent:GetVelocity()
+
+	local SubVel = oVel - sVel
+	local SubPos = self:GetPos() - Ent:GetPos()
+
+	local DirPos = SubPos:GetNormalized()
+	local DirVel = SubVel:GetNormalized()
+
+	local A = math.acos( math.Clamp( DirVel:Dot( DirPos ) ,-1,1) )
+
+	return (1 + math.cos( A ) * SubVel:Length() / 13503.9)
+end
+
+function ENT:Think()
+	if self.snd then
+		self.snd:ChangePitch( 100 * self:CalcDoppler(), 1 )
+		self.snd:ChangeVolume(math.Clamp(-(self:GetVelocity().z + 1000) / 3000,0,1), 2)
+	end
+
+	if self.IsEnabled then return end
+
+	if self:GetActive() then
+		self:Enable()
+	end
 end
 
 function ENT:Draw()
@@ -211,6 +265,16 @@ function ENT:Draw()
 	if (self._PreventDrawTime or 0) > T then return end
 
 	self:DrawModel()
+end
+
+function ENT:SoundStop()
+	if self.snd then
+		self.snd:Stop()
+	end
+end
+
+function ENT:OnRemove()
+	self:SoundStop()
 end
 
 local color_red = Color(255,0,0,255)
