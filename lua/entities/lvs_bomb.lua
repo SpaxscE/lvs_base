@@ -90,7 +90,7 @@ if SERVER then
 			return
 		end
 
-		pObj:SetMass( 1 ) 
+		pObj:SetMass( 500 ) 
 		pObj:EnableGravity( false ) 
 		pObj:EnableMotion( true )
 		pObj:EnableDrag( false )
