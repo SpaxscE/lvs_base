@@ -200,7 +200,7 @@ function ENT:Enable()
 	self.IsEnabled = true
 
 	self.snd = CreateSound(self, "lvs/weapons/bomb_whistle_loop.wav")
-	self.snd:SetSoundLevel( 120 )
+	self.snd:SetSoundLevel( 110 )
 	self.snd:PlayEx(0,150)
 end
 
