@@ -112,7 +112,9 @@ if SERVER then
 	function ENT:Think()	
 		local T = CurTime()
 
-		self:NextThink( T + 1 )
+		self:NextThink( T )
+
+		self:UpdateTrajectory()
 
 		if not self.SpawnTime then return true end
 
@@ -121,6 +123,14 @@ if SERVER then
 		end
 
 		return true
+	end
+
+	function ENT:UpdateTrajectory()
+		local base = self:GetParent()
+
+		if not IsValid( base ) then return end
+
+		self:SetSpeed( base:GetVelocity() )
 	end
 
 	ENT.IgnoreCollisionGroup = {
