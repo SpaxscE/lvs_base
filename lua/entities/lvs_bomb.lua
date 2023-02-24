@@ -123,20 +123,6 @@ if SERVER then
 		return true
 	end
 
-	function ENT:Think()	
-		local T = CurTime()
-
-		self:NextThink( T + 1 )
-
-		if not self.SpawnTime then return true end
-
-		if (self.SpawnTime + 12) < T then
-			self:Detonate()
-		end
-
-		return true
-	end
-
 	ENT.IgnoreCollisionGroup = {
 		[COLLISION_GROUP_NONE] = true,
 		[COLLISION_GROUP_WORLD] =  true,
