@@ -10,11 +10,6 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= false
 
-ENT.FoundVehicles = {}
-
-function ENT:SetupDataTables()
-end
-
 if SERVER then
 	function ENT:SpawnFunction( ply, tr, ClassName )
 		if not tr.Hit then return end
