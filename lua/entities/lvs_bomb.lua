@@ -278,7 +278,7 @@ hook.Add( "HUDPaint", "!!!!lvs_bomb_hud", function()
 		end
 
 		local Grav = physenv.GetGravity()
-		local FT = RealFrameTime()
+		local FT = 0.05 -- RealFrameTime()
 		local Pos = Missile:GetPos()
 		local Vel = Missile:GetSpeed()
 
