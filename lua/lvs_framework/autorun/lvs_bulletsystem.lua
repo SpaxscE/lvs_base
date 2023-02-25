@@ -89,7 +89,7 @@ local function HandleBullets()
 		--debugoverlay.Line( Is2ndTickAlive and start + pos - dir or start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
 
 		if CLIENT then
-			if mul == 1 and LVS.EnableBulletNearmiss then
+			if not bullet.Muted and mul == 1 and LVS.EnableBulletNearmiss then
 				-- whats more expensive, spamming this effect or doing distance checks to localplayer for each bullet think? Alternative method?
 				local effectdata = EffectData()
 				effectdata:SetOrigin( bullet:GetPos() )
@@ -238,6 +238,9 @@ else
 		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Velocity = net.ReadFloat()
 		bullet.StartTimeCL = CurTime() + RealFrameTime()
+
+		local ply = LocalPlayer()
+		bullet.Muted = IsValid( ply ) and bullet.Entity == ply:lvsGetVehicle()
 
 		Index = Index + 1
 		if Index > 4094 then
