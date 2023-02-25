@@ -152,7 +152,7 @@ function ENT:StartSounds()
 		return
 	end
 
-	if snd_int ~= "" then
+	if snd_int ~= "" and LocalPlayer():lvsGetVehicle() == self:GetBase() then
 		self.snd_int = CreateSound( self, snd_int )
 		self.snd_int:SetSoundLevel( self:GetSoundLevel() )
 		self.snd_int:PlayEx(0,100)
