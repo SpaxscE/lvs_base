@@ -146,17 +146,15 @@ function ENT:StartSounds()
 		self.snd:PlayEx(0,100)
 	end
 
-	if snd == snd_int then
-		self.snd:ChangeVolume( 1, 0 )
+	if snd == snd_int or snd_int == "" or LocalPlayer():lvsGetVehicle() ~= self:GetBase() then
+		if self.snd then self.snd:ChangeVolume( 1, 0 ) end
 
 		return
 	end
 
-	if snd_int ~= "" and LocalPlayer():lvsGetVehicle() == self:GetBase() then
-		self.snd_int = CreateSound( self, snd_int )
-		self.snd_int:SetSoundLevel( self:GetSoundLevel() )
-		self.snd_int:PlayEx(0,100)
-	end
+	self.snd_int = CreateSound( self, snd_int )
+	self.snd_int:SetSoundLevel( self:GetSoundLevel() )
+	self.snd_int:PlayEx(0,100)
 end
 
 function ENT:StopSounds()
