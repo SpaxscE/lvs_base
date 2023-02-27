@@ -1,7 +1,7 @@
 
 LVS = istable( LVS ) and LVS or {}
 
-LVS.VERSION = 100
+LVS.VERSION = 101
 LVS.VERSION_GITHUB = 0
 LVS.VERSION_TYPE = ".GIT"
 
@@ -91,7 +91,7 @@ function LVS:CheckUpdates()
 				print("[LVS] is up to date, Version: "..LVS:GetVersion())
 			else
 				print("[LVS] a newer version is available! Version: "..LVS.VERSION_GITHUB..", You have Version: "..LVS:GetVersion())
-				print("[LVS] get the latest version at https://github.com/Blu-x92/LunasFlightSchool")
+				print("[LVS] get the latest version at https://github.com/Blu-x92/lvs_base")
 
 				if CLIENT then 
 					timer.Simple(18, function() 
