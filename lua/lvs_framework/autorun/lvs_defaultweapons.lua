@@ -128,10 +128,10 @@ LVS:AddWeaponPreset( "HMG", {
 		bullet.TracerName = "lvs_tracer_orange"
 		bullet.Force	= 50
 		bullet.HullSize 	= 15
-		bullet.Damage	= 25
+		bullet.Damage	= 75
 		bullet.SplashDamage = 75
 		bullet.SplashDamageRadius = 200
-		bullet.Velocity = 12000
+		bullet.Velocity = 15000
 		bullet.Attacker 	= ent:GetDriver()
 		bullet.Callback = function(att, tr, dmginfo)
 		end
@@ -141,7 +141,7 @@ LVS:AddWeaponPreset( "HMG", {
 	end,
 	StartAttack = function( ent )
 		if not IsValid( ent.SoundEmitter2 ) then
-			ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mg_heavy_loop.wav", "lvs/weapons/mg_heavy_loop.wav" )
+			ent.SoundEmitter2 = ent:AddSoundEmitter( Vector(109.29,0,92.85), "lvs/weapons/mc_loop.wav", "lvs/weapons/mc_loop_interior.wav" )
 			ent.SoundEmitter2:SetSoundLevel( 95 )
 		end
 
@@ -151,7 +151,6 @@ LVS:AddWeaponPreset( "HMG", {
 		if IsValid( ent.SoundEmitter2 ) then
 			ent.SoundEmitter2:Stop()
 		end
-		ent:EmitSound("lvs/weapons/mg_heavy_lastshot.wav", 95 )
 	end,
 	OnSelect = function( ent ) ent:EmitSound("physics/metal/weapon_impact_soft2.wav") end,
 	OnOverheat = function( ent ) ent:EmitSound("lvs/overheat.wav") end,
