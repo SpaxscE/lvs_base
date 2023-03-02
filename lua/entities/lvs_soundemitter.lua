@@ -12,6 +12,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
 
 	self:NetworkVar( "Bool",0, "Active" )
+	self:NetworkVar( "Bool",1, "ActiveVisible" )
 
 	self:NetworkVar( "String",1, "Sound")
 	self:NetworkVar( "String",2, "SoundInterior")
@@ -20,6 +21,7 @@ function ENT:SetupDataTables()
 
 	if SERVER then
 		self:SetSoundLevel( 110 )
+		self:SetActiveVisible( true )
 	end
 end
 

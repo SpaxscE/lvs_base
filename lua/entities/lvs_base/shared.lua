@@ -150,7 +150,9 @@ function ENT:IsInitialized()
 end
 
 function ENT:GetPassengerSeats()
-	if not istable( self.pSeats ) or not self:IsInitialized() then
+	if not self:IsInitialized() then return {} end
+
+	if not istable( self.pSeats ) then
 		self.pSeats = {}
 
 		local DriverSeat = self:GetDriverSeat()
@@ -163,6 +165,24 @@ function ENT:GetPassengerSeats()
 	end
 
 	return self.pSeats
+end
+
+function ENT:HasActiveSoundEmitters()
+	local active = false
+
+	for _, emitter in ipairs( self:GetChildren() ) do
+		if emitter:GetClass() ~= "lvs_soundemitter" then continue end
+
+		if not IsValid( emitter ) or not emitter.GetActive or not emitter.GetActiveVisible then continue end
+
+		if emitter:GetActive() and emitter:GetActiveVisible() then
+			active = true
+
+			break
+		end
+	end
+
+	return active
 end
 
 function ENT:GetPassenger( num )
