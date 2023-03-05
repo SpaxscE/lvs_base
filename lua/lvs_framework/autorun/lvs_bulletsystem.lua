@@ -201,22 +201,41 @@ if SERVER then
 		bullet.SplashDamageRadius = data.SplashDamageRadius
 		bullet.StartTime = CurTime()
 
-		-- net.WriteVector isnt accurate enough. Instead we split into 3 floats per vector
-		-- i dont know how this can be optimized while achieving the same?
-		net.Start( "lvs_fire_bullet", true )
-			net.WriteString( bullet.TracerName )
-			net.WriteFloat( bullet.Src.x )
-			net.WriteFloat( bullet.Src.y )
-			net.WriteFloat( bullet.Src.z )
-			net.WriteAngle( bullet.Dir:Angle() )
-			net.WriteFloat( bullet.StartTime )
-			net.WriteFloat( bullet.HullSize )
-			net.WriteEntity( bullet.Entity )
-			net.WriteFloat( bullet.SrcEntity.x )
-			net.WriteFloat( bullet.SrcEntity.y )
-			net.WriteFloat( bullet.SrcEntity.z )
-			net.WriteFloat( bullet.Velocity )
-		net.SendPVS( bullet.Src )
+		if InfMap then
+			for _, ply in ipairs( player.GetAll() ) do
+				local NewPos = Vector( bullet.Src.x, bullet.Src.y, bullet.Src.z ) - InfMap.unlocalize_vector( Vector(), ply.CHUNK_OFFSET )
+
+				net.Start( "lvs_fire_bullet", true )
+					net.WriteString( bullet.TracerName )
+					net.WriteFloat( NewPos.x )
+					net.WriteFloat( NewPos.y )
+					net.WriteFloat( NewPos.z )
+					net.WriteAngle( bullet.Dir:Angle() )
+					net.WriteFloat( bullet.StartTime )
+					net.WriteFloat( bullet.HullSize )
+					net.WriteEntity( bullet.Entity )
+					net.WriteFloat( bullet.SrcEntity.x )
+					net.WriteFloat( bullet.SrcEntity.y )
+					net.WriteFloat( bullet.SrcEntity.z )
+					net.WriteFloat( bullet.Velocity )
+				net.Send( ply )
+			end
+		else
+			net.Start( "lvs_fire_bullet", true )
+				net.WriteString( bullet.TracerName )
+				net.WriteFloat( bullet.Src.x )
+				net.WriteFloat( bullet.Src.y )
+				net.WriteFloat( bullet.Src.z )
+				net.WriteAngle( bullet.Dir:Angle() )
+				net.WriteFloat( bullet.StartTime )
+				net.WriteFloat( bullet.HullSize )
+				net.WriteEntity( bullet.Entity )
+				net.WriteFloat( bullet.SrcEntity.x )
+				net.WriteFloat( bullet.SrcEntity.y )
+				net.WriteFloat( bullet.SrcEntity.z )
+				net.WriteFloat( bullet.Velocity )
+			net.SendPVS( bullet.Src )
+		end
 
 		table.insert(LVS._ActiveBullets, bullet )
 	end
