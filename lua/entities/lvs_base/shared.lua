@@ -23,6 +23,7 @@ ENT.MaxHealth = 100
 ENT.MaxShield = 0
 
 ENT.SpawnNormalOffset = 15
+ENT.HitGroundLength = 10
 
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
@@ -100,7 +101,7 @@ end
 function ENT:HitGround()
 	local trace = util.TraceLine( {
 		start = self:LocalToWorld( self:OBBCenter() ),
-		endpos = self:LocalToWorld( Vector(0,0,self:OBBMins().z - 10) ),
+		endpos = self:LocalToWorld( Vector(0,0,self:OBBMins().z - self.HitGroundLength) ),
 		filter = self:GetCrosshairFilterEnts()
 	} )
 	
