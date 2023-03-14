@@ -127,12 +127,7 @@ function ENT:AddDriverSeat( Pos, Ang )
 		Pod:DrawShadow( false )
 		Pod.DoNotDuplicate = true
 		Pod:SetNWInt( "pPodIndex", 1 )
-
-		if IsValid( DSPhys ) then
-			DSPhys:EnableDrag( false ) 
-			DSPhys:EnableMotion( false )
-			DSPhys:SetMass( 1 )
-		end
+		Pod:PhysicsDestroy()
 
 		debugoverlay.BoxAngles( Pod:GetPos(), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 255, 93, 0, 200 ) )
 
@@ -182,16 +177,10 @@ function ENT:AddPassengerSeat( Pos, Ang )
 	end
 
 	Pod:SetNWInt( "pPodIndex", self.pPodKeyIndex )
+	Pod:PhysicsDestroy()
 
 	self:DeleteOnRemove( Pod )
 	self:TransferCPPI( Pod )
-
-	local DSPhys = Pod:GetPhysicsObject()
-	if IsValid( DSPhys ) then
-		DSPhys:EnableDrag( false ) 
-		DSPhys:EnableMotion( false )
-		DSPhys:SetMass( 1 )
-	end
 
 	if not istable( self.pSeats ) then self.pSeats = {} end
 
