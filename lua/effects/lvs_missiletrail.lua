@@ -117,11 +117,11 @@ end
 
 function EFFECT:Render()
 	local ent = self.Entity
-	if IsValid(ent) then
-		local pos = ent:LocalToWorld( self.Offset )
 
-		render.SetMaterial( GlowMat )
+	if not IsValid( ent ) then return end
 
-		render.DrawSprite( pos, 100, 100, Color( 255, 200, 150, 255 ) )
-	end
+	local pos = ent:LocalToWorld( self.Offset )
+
+	render.SetMaterial( GlowMat )
+	render.DrawSprite( pos, 100, 100, Color( 255, 200, 150, 255 ) )
 end
