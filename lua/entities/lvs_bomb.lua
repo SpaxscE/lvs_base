@@ -67,7 +67,7 @@ if SERVER then
 		timer.Simple(1, function()
 			if not IsValid( self ) then return end
 
-			self:SetCollisionGroup( COLLISION_GROUP_WORLD )
+			self:SetCollisionGroup( COLLISION_GROUP_NONE )
 		end )
 
 		self.IsEnabled = true
