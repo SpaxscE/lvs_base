@@ -56,6 +56,9 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 	if CarsSubCategories then
 		local carNode = lvsNode:AddNode( "Cars", "icon16/car.png" )
+		carNode.DoClick = function( self )
+			pnlContent:SwitchPanel( self.PropPanel )
+		end
 
 		for CategoryName, v in SortedPairs( CarsSubCategories ) do
 
