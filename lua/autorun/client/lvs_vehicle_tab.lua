@@ -1,6 +1,7 @@
 
 hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tree, node )
 	local Categorised = {}
+	local CarsSubCategories
 
 	local SpawnableEntities = list.Get( "SpawnableEntities" )
 	local Variants = {
@@ -22,6 +23,21 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 			v.SpawnName = k
 
+			if Category:StartWith( "[LVS] - Cars" ) then
+
+				local List = list.Get( "simfphys_vehicles" )[ v.ClassName ]
+
+				if List then
+					CarsSubCategories = CarsSubCategories or {}
+
+					CarsSubCategories[ List.Category ] = CarsSubCategories[ List.Category ] or {}
+
+					table.insert( CarsSubCategories[ List.Category ], v )
+				end
+
+				continue
+			end
+
 			for _, start in pairs( Variants ) do
 				if Category:StartWith( start ) then
 					Category = string.Replace(Category, start, "")
@@ -38,7 +54,40 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 	local lvsNode = tree:AddNode( "[LVS]", "icon16/cog.png" )
 
-	hook.Run( "lvsOnPopulateVehicles", pnlContent, lvsNode )
+	if CarsSubCategories then
+		local carNode = lvsNode:AddNode( "Cars", "icon16/car.png" )
+		carNode.DoClick = function( self )
+			pnlContent:SwitchPanel( self.PropPanel )
+		end
+
+		for CategoryName, v in SortedPairs( CarsSubCategories ) do
+
+			local node = carNode:AddNode( CategoryName, "icon16/bricks.png" )
+
+			node.DoPopulate = function( self )
+				if self.PropPanel then return end
+
+				self.PropPanel = vgui.Create( "ContentContainer", pnlContent )
+				self.PropPanel:SetVisible( false )
+				self.PropPanel:SetTriggerSpawnlistChange( false )
+
+				for k, ent in SortedPairsByMemberValue( v, "PrintName" ) do
+					spawnmenu.CreateContentIcon( ent.ScriptedEntityType or "entity", self.PropPanel, {
+						nicename	= ent.PrintName or ent.ClassName,
+						spawnname	= ent.SpawnName,
+						material	= ent.IconOverride or "entities/" .. ent.SpawnName .. ".png",
+						admin		= ent.AdminOnly
+					} )
+				end
+			end
+			node.DoClick = function( self )
+				self:DoPopulate()
+				pnlContent:SwitchPanel( self.PropPanel )
+			end
+		end
+
+		hook.Run( "lvsInitializeCarTab", pnlContent, carNode )
+	end
 
 	if Categorised["[LVS]"] then
 		local v = Categorised["[LVS]"]
