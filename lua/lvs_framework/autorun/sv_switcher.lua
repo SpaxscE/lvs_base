@@ -14,6 +14,11 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 			end
 		else
 			if IsValid( vehicle:GetDriver() ) or vehicle:GetAI() then return end
+	
+			if hook.Run( "LVS.CanPlayerDrive", ply, vehicle ) == false then
+				hook.Run( "LVS.OnPlayerCannotDrive", ply, vehicle )
+				return
+			end
 
 			ply:ExitVehicle()
 
