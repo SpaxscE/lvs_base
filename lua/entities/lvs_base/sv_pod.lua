@@ -62,8 +62,9 @@ function ENT:SetPassenger( ply )
 
 	local AI = self:GetAI()
 	local DriverSeat = self:GetDriverSeat()
+	local AllowedToBeDriver = hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false
 
-	if IsValid( DriverSeat ) and not IsValid( DriverSeat:GetDriver() ) and not ply:KeyDown( IN_WALK ) and not AI then
+	if IsValid( DriverSeat ) and not IsValid( DriverSeat:GetDriver() ) and not ply:KeyDown( IN_WALK ) and not AI and AllowedToBeDriver then
 		ply:EnterVehicle( DriverSeat )
 	else
 		local Seat = NULL
@@ -86,7 +87,11 @@ function ENT:SetPassenger( ply )
 		else
 			if IsValid( DriverSeat ) then
 				if not IsValid( self:GetDriver() ) and not AI then
-					ply:EnterVehicle( DriverSeat )
+					if AllowedToBeDriver then
+						ply:EnterVehicle( DriverSeat )
+					else
+						hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
+					end
 				end
 			else
 				self:EmitSound( "doors/default_locked.wav" )
