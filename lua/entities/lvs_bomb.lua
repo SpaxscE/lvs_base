@@ -23,6 +23,9 @@ if SERVER then
 			self._FilterEnts[ ent ] = true
 		end
 	end
+	function ENT:GetEntityFilter()
+		return self._FilterEnts or {}
+	end
 	function ENT:SetDamage( num ) self._dmg = num end
 	function ENT:SetThrust( num ) self._thrust = num end
 	function ENT:SetRadius( num ) self._radius = num end
