@@ -39,8 +39,8 @@ CreateClientConVar( "lvs_return_delta", 1, true, true)
 
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
-local cvarVolume = CreateClientConVar( "lvs_volume", 0.25, true, false)
-LVS.EngineVolume = cvarVolume and cvarVolume:GetFloat() or 0.25
+local cvarVolume = CreateClientConVar( "lvs_volume", 0.5, true, false)
+LVS.EngineVolume = cvarVolume and cvarVolume:GetFloat() or 0.5
 cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 
 	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
 end)
