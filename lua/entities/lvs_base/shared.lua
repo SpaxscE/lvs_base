@@ -128,6 +128,10 @@ function ENT:VectorSubtractNormal( Normal, Velocity )
 	return NewVelocity
 end
 
+function ENT:VectorSplitNormal( Normal, Velocity )
+	return math.cos( math.acos( math.Clamp( Normal:Dot( Velocity:GetNormalized() ) ,-1,1) ) ) * Velocity:Length()
+end
+
 function ENT:AngleBetweenNormal( Dir1, Dir2 )
 	return math.deg( math.acos( math.Clamp( Dir1:Dot( Dir2 ) ,-1,1) ) )
 end
