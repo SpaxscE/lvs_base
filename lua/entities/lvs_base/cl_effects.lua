@@ -31,10 +31,12 @@ ENT.DustEffectSurfaces = {
 	["grass"] = true,
 }
 
-function ENT:DoVehicleFX()
-	if not LVS.ShowEffects then self:StopWindSounds() return end
+ENT.GroundEffectsMultiplier = 1
 
-	local Vel = self:GetVelocity():Length()
+function ENT:DoVehicleFX()
+	if self.GroundEffectsMultiplier <= 0 or not LVS.ShowEffects then self:StopWindSounds() return end
+
+	local Vel = self:GetVelocity():Length() * self.GroundEffectsMultiplier
 
 	if self._WindSFX then self._WindSFX:ChangeVolume( math.Clamp( (Vel - 1200) / 2800,0,1 ), 0.25 ) end
 
