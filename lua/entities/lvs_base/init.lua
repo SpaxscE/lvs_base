@@ -75,6 +75,12 @@ function ENT:Initialize()
 
 		self:PostInitialize( PObj )
 	end)
+
+	if not istable( self.GibModels ) then return end
+
+	for _, modelName in ipairs( self.GibModels ) do
+		util.PrecacheModel( modelName )
+	end
 end
 
 function ENT:PostInitialize( PObj )

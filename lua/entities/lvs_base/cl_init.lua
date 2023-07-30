@@ -45,6 +45,12 @@ end
 
 function ENT:Initialize()
 	self:OnSpawn()
+
+	if not istable( self.GibModels ) then return end
+
+	for _, modelName in ipairs( self.GibModels ) do
+		util.PrecacheModel( modelName )
+	end
 end
 
 function ENT:OnSpawn()
