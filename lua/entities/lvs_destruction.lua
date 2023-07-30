@@ -2,6 +2,24 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
+local gibs = {
+	"models/gibs/manhack_gib01.mdl",
+	"models/gibs/manhack_gib02.mdl",
+	"models/gibs/manhack_gib03.mdl",
+	"models/gibs/manhack_gib04.mdl",
+	"models/props_c17/canisterchunk01a.mdl",
+	"models/props_c17/canisterchunk01d.mdl",
+	"models/props_c17/oildrumchunk01a.mdl",
+	"models/props_c17/oildrumchunk01b.mdl",
+	"models/props_c17/oildrumchunk01c.mdl",
+	"models/props_c17/oildrumchunk01d.mdl",
+	"models/props_c17/oildrumchunk01e.mdl",
+}
+
+for _, modelName in ipairs( gibs ) do
+	util.PrecacheModel( modelName )
+end
+
 if SERVER then
 	function ENT:Initialize()
 		self:PhysicsInit( SOLID_VPHYSICS )
@@ -16,19 +34,6 @@ if SERVER then
 		local effectdata = EffectData()
 			effectdata:SetOrigin( fxPos )
 		util.Effect( "lvs_explosion", effectdata )
-
-		local gibs = {
-			"models/XQM/wingpiece2.mdl",
-			"models/XQM/wingpiece2.mdl",
-			"models/XQM/jetwing2medium.mdl",
-			"models/XQM/jetwing2medium.mdl",
-			"models/props_phx/misc/propeller3x_small.mdl",
-			"models/props_c17/TrapPropeller_Engine.mdl",
-			"models/props_junk/Shoe001a.mdl",
-			"models/XQM/jetbody2fuselage.mdl",
-			"models/XQM/jettailpiece1medium.mdl",
-			"models/XQM/pistontype1huge.mdl",
-		}
 
 		self.GibModels = istable( self.GibModels ) and self.GibModels or gibs
 
