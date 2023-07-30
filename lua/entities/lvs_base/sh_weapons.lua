@@ -6,8 +6,10 @@ ENT.WEAPONS = {
 function ENT:InitWeapons()
 end
 
-function ENT:AddWeapon( data, PodID )
-	if not istable( data ) then print("[LVS] couldn't register weapon") return end
+function ENT:AddWeapon( weaponData, PodID )
+	if not istable( weaponData ) then print("[LVS] couldn't register weapon") return end
+
+	local data = table.Copy( weaponData )
 
 	if not PodID or PodID <= 1 then
 		PodID = 1
