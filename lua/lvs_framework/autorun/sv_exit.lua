@@ -59,28 +59,29 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 
 		local PodPos = Pod:LocalToWorld( Vector(0,0,10) )
 
-		local PodDistance = 125
+		local PodDistance = 130
 		local AngleStep = 45
+
+		local StartAngle = 135
 
 		local W = ply:KeyDown( IN_FORWARD )
 		local A = ply:KeyDown( IN_MOVELEFT )
 		local S = ply:KeyDown( IN_BACK )
 		local D = ply:KeyDown( IN_MOVERIGHT )
 
-		local StartAngle = 135
-
 		if W or A or S or D then
 			if A then StartAngle = 180 end
 			if D then StartAngle = 0 end
 			if W then if D then StartAngle = -45 else StartAngle = 225 end end
-			if S then StartAngle = 45 end
+			if S then if A then StartAngle = -225 else StartAngle = 45 end end
 		end
 
 		for ang = StartAngle, (StartAngle + 360 - AngleStep), AngleStep do
 			local X = math.Round( math.cos( math.rad( -ang ) ) * PodDistance )
 			local Y = math.Round( math.sin( math.rad( -ang ) ) * PodDistance )
+			local Z = Pod:WorldToLocal( Center ).z
 
-			local EndPos = Pod:LocalToWorld( Vector(X,Y,10) )
+			local EndPos = Pod:LocalToWorld( Vector(X,Y,Z) )
 
 			local HitWall = util.TraceLine( {start = PodPos,endpos = EndPos,filter = FilterAll} ).Hit
 
