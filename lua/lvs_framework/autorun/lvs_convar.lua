@@ -86,3 +86,9 @@ LVS.EnableBulletNearmiss = cvarBulletSFX and cvarBulletSFX:GetBool() or true
 cvars.AddChangeCallback( "lvs_bullet_nearmiss", function( convar, oldValue, newValue ) 
 	LVS.EnableBulletNearmiss = tonumber( newValue ) ~=0
 end)
+
+local cvarDev = GetConVar( "developer" )
+LVS.DeveloperEnabled = cvarDev and (cvarDev:GetInt() >= 1) or false
+cvars.AddChangeCallback( "developer", function( convar, oldValue, newValue )
+	LVS.DeveloperEnabled = tonumber( newValue ) >= 1
+end)

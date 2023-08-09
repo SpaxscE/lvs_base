@@ -258,7 +258,7 @@ function ENT:DrawTranslucent()
 		end
 	end
 
-	if not LVS.CarsDeveloperEnabled then return end
+	if not LVS.DeveloperEnabled then return end
 
 	local Col = InRange and self.ColorSelect or self.ColorNormal
 
