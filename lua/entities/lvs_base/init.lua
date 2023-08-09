@@ -226,12 +226,16 @@ function ENT:Use( ply )
 						local DriverSeat = self:GetDriverSeat()
 
 						if Pod == self:GetDriverSeat() then
-							if not IsValid( Pod:GetDriver() ) then
-								if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
-									ply:EnterVehicle( Pod )
-									self:AlignView( ply )
-								else
-									hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
+							if self:GetAI() then
+								self:SetPassenger( ply )
+							else
+								if not IsValid( Pod:GetDriver() ) then
+									if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
+										ply:EnterVehicle( Pod )
+										self:AlignView( ply )
+									else
+										hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
+									end
 								end
 							end
 						else
