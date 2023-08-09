@@ -6,6 +6,7 @@ AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_trailsystem.lua" )
 AddCSLuaFile( "cl_seatswitcher.lua" )
 AddCSLuaFile( "cl_planescript_module.lua" )
+AddCSLuaFile( "cl_boneposeparemeter.lua" )
 include("shared.lua")
 include( "sh_weapons.lua" )
 include("sv_ai.lua")
@@ -16,6 +17,7 @@ include("sv_engine.lua")
 include("sv_physics.lua")
 include("sv_damagesystem.lua")
 include("sv_shieldsystem.lua")
+include("sv_doorsystem.lua")
 
 ENT.WaterLevelPreventStart = 1
 ENT.WaterLevelAutoStop = 2
@@ -163,6 +165,10 @@ function ENT:OnRemove()
 end
 
 function ENT:Lock()
+	for _, Handler in pairs( self._DoorHandlers ) do
+		Handler:Close( ply )
+	end
+
 	if self:GetlvsLockedStatus() then return end
 
 	self:SetlvsLockedStatus( true )
@@ -176,14 +182,74 @@ function ENT:UnLock()
 	self:EmitSound( "doors/latchunlocked1.wav" )
 end
 
-function ENT:Use( ply )
-	if not IsValid( ply ) then return end
+function ENT:IsUseAllowed( ply )
+	if not IsValid( ply ) then return false end
 
 	if self:GetlvsLockedStatus() or (LVS.TeamPassenger:GetBool() and ((self:GetAITEAM() ~= ply:lvsGetAITeam()) and ply:lvsGetAITeam() ~= 0 and self:GetAITEAM() ~= 0)) then 
-
 		self:EmitSound( "doors/default_locked.wav" )
 
-		return
+		return false
+	end
+
+	return true
+end
+
+function ENT:Use( ply )
+	if not self:IsUseAllowed( ply ) then return end
+
+	if istable( self._DoorHandlers ) then
+		if ply:KeyDown( IN_SPEED ) then
+			return
+		else
+			if not self:IsUseAllowed( ply ) then return end
+
+			local Handler = self:GetDoorHandler( ply )
+
+			if IsValid( Handler ) then
+				local Pod = Handler:GetLinkedSeat()
+
+				if IsValid( Pod ) then
+					if not Handler:IsOpen() then Handler:Open( ply ) return end
+
+					if Handler:IsOpen() then
+						Handler:Close( ply )
+					else
+						Handler:OpenAndClose( ply )
+					end
+
+					if ply:KeyDown( IN_WALK ) then
+
+						self:SetPassenger( ply )
+
+						return
+					else
+						local DriverSeat = self:GetDriverSeat()
+
+						if Pod == self:GetDriverSeat() then
+							if not IsValid( Pod:GetDriver() ) then
+								if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
+									ply:EnterVehicle( Pod )
+									self:AlignView( ply )
+								else
+									hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
+								end
+							end
+						else
+							if not IsValid( Pod:GetDriver() ) then
+								ply:EnterVehicle( Pod )
+								self:AlignView( ply )
+							end
+						end
+					end
+				else
+					Handler:Use( ply )
+				end
+
+				return
+			else
+				if ply:GetMoveType() == MOVETYPE_WALK then return end
+			end
+		end
 	end
 
 	self:SetPassenger( ply )

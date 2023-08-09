@@ -1,0 +1,18 @@
+client code 
+
+function ENT:OnSpawn()
+    self:CreateBonePoseParameter( "left_door", 25, Angle(0,0,0), Angle(-90,0,0), Vector(0,0,0), Vector(0,0,0) )
+end
+
+
+
+server code 
+
+local DriverSeat = self:AddDriverSeat( Vector(-26.6,14.5,0), Angle(0,-90,8) )
+
+local DoorHandler = self:AddDoorHandler( "!left_door", Vector(-10,32,24), Angle(0,0,0), Vector(-23,-6,-12), Vector(20,6,12), Vector(-23,-20,-12), Vector(20,40,12) )
+DoorHandler:SetSoundOpen( "lvs/vehicles/generic/car_door_open.wav" )
+DoorHandler:SetSoundClose( "lvs/vehicles/generic/car_door_close.wav" )
+DoorHandler:LinkToSeat( DriverSeat )
+
+
