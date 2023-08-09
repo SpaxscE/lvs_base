@@ -17,7 +17,7 @@ function ENT:AddDoorHandler( poseparameter, pos, ang, mins, maxs, openmins, open
 		openmaxs = maxs
 	end
 
-	local Handler = ents.Create( "lvs_wheeldrive_doorhandler" )
+	local Handler = ents.Create( "lvs_base_doorhandler" )
 
 	if not IsValid( Handler ) then
 		return
