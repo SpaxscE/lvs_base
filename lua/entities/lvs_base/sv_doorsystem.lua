@@ -1,6 +1,13 @@
 
 function ENT:AddDoorHandler( poseparameter, pos, ang, mins, maxs, openmins, openmaxs )
-	if not isvector( pos ) or not isangle( ang ) or not isvector( mins ) or not isvector( maxs ) or not isstring( poseparameter ) then return end
+	if not isstring( poseparameter ) then return end
+
+	if not isvector( pos ) or not isangle( ang ) or not isvector( mins ) or not isvector( maxs ) then
+		pos = vector_origin
+		ang = angle_zero
+		mins = self:OBBMins()
+		maxs = self:OBBMaxs()
+	end
 
 	if not isvector( openmins ) then
 		openmins = mins
