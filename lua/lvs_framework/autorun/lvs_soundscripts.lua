@@ -7,26 +7,6 @@ sound.Add( {
 } )
 
 sound.Add( {
-	name = "LVS.Physics.Impact",
-	channel = CHAN_STATIC,
-	level = 75,
-	sound = {
-		"lvs/physics/impact_soft1.wav",
-		"lvs/physics/impact_soft2.wav",
-		"lvs/physics/impact_soft3.wav",
-		"lvs/physics/impact_soft4.wav",
-		"lvs/physics/impact_soft5.wav",
-	}
-} )
-
-sound.Add( {
-	name = "LVS.Physics.Crash",
-	channel = CHAN_STATIC,
-	level = 75,
-	sound = "lvs/physics/impact_hard.wav",
-} )
-
-sound.Add( {
 	name = "LVS.Physics.Wind",
 	channel = CHAN_STATIC,
 	level = 140,

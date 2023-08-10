@@ -160,13 +160,13 @@ function ENT:PhysicsCollide( data, physobj )
 		util.Effect( "lvs_physics_impact", effectdata, true, true )
 
 		if VelDif > 700 then
-			self:EmitSound( "LVS.Physics.Crash", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
+			self:EmitSound( "lvs/physics/impact_hard.wav", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 
 			if not self:IsPlayerHolding() then
 				self:TakeCollisionDamage( VelDif, HitEnt )
 			end
 		else
-			self:EmitSound( "LVS.Physics.Impact", 75, 100, math.min(0.1 + VelDif / 700,1) )
+			self:EmitSound( "lvs/physics/impact_soft"..math.random(1,5)..".wav", 75, 100, math.min(0.1 + VelDif / 700,1) )
 		end
 	end
 end
