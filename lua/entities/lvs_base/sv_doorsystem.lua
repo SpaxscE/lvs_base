@@ -85,3 +85,9 @@ function ENT:GetDoorHandler( ply )
 
 	return target
 end
+
+function ENT:GetDoorHandlers()
+	if istable( self._DoorHandlers ) then return self._DoorHandlers end
+
+	return {}
+end

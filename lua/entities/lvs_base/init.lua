@@ -165,7 +165,7 @@ function ENT:OnRemove()
 end
 
 function ENT:Lock()
-	for _, Handler in pairs( self._DoorHandlers ) do
+	for _, Handler in pairs( self:GetDoorHandlers() ) do
 		Handler:Close( ply )
 	end
 
