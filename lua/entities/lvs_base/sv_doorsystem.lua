@@ -91,3 +91,18 @@ function ENT:GetDoorHandlers()
 
 	return {}
 end
+
+function ENT:HasDoorSystem()
+	local HasDoorSystem = false
+
+	for _, Handler in pairs( self:GetDoorHandlers() ) do
+		if not IsValid( Handler ) then continue end
+	
+		if IsValid( Handler:GetLinkedSeat() ) then
+			HasDoorSystem = true
+			break
+		end
+	end
+
+	return HasDoorSystem
+end

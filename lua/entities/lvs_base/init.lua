@@ -251,7 +251,7 @@ function ENT:Use( ply )
 
 				return
 			else
-				if ply:GetMoveType() == MOVETYPE_WALK then return end
+				if self:HasDoorSystem() and ply:GetMoveType() == MOVETYPE_WALK then return end
 			end
 		end
 	end
