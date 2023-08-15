@@ -87,6 +87,15 @@ hook.Add( "CanProperty", "!!!!lvsEditPropertiesDisabler", function( ply, propert
 	if ent.LVS and not ply:IsAdmin() and property == "editentity" then return false end
 end )
 
+LVS.ToolsDisable = {
+	["rb655_easy_animation"] = true,
+	["rb655_easy_bonemerge"] = true,
+	["rb655_easy_inspector"] = true,
+}
+hook.Add( "CanTool", "!!!!lvsCanToolDisabler", function( ply, tr, toolname, tool, button )
+	if LVS.ToolsDisable[ toolname ] and IsValid( tr.Entity ) and tr.Entity.LVS then return false end
+end )
+
 if CLIENT then return end
 
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
