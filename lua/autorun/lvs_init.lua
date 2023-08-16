@@ -1,7 +1,7 @@
 
 LVS = istable( LVS ) and LVS or {}
 
-LVS.VERSION = 127
+LVS.VERSION = 128
 LVS.VERSION_GITHUB = 0
 LVS.VERSION_TYPE = ".GIT"
 

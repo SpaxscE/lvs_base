@@ -201,7 +201,7 @@ function ENT:CalcDamage( dmginfo )
 			effectdata:SetOrigin( self:GetPos() )
 			effectdata:SetStart( self:GetPhysicsObject():GetMassCenter() )
 			effectdata:SetEntity( self )
-			effectdata:SetScale( 1 )
+			effectdata:SetScale( (self.FireTrailScale or 1) )
 			effectdata:SetMagnitude( ExplodeTime )
 		util.Effect( "lvs_firetrail", effectdata )
 
