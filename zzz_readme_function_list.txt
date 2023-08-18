@@ -3,7 +3,7 @@
 ============= PLAYER SHARED =============
 =========================================
 
-entity = ply:lvsGetVehicle() -- returns the lvs entity the player is currently driving or sitting in
+lvsEntity = ply:lvsGetVehicle() -- returns the lvs entity the player is currently driving or sitting in
 entity = ply:lvsGetWeaponHandler() -- returns the current weapon handler. As driver this is always equal to ply:lvsGetVehicle()
 
 number = ply:lvsGetAITeam() -- returns the player's AI-Team
@@ -53,8 +53,6 @@ bool = LVS:IsDirectInputForced() -- returns if mouse aim is force-disabled or no
 
 
 
-( lvsEntity = vehicle returned from ply:lvsGetVehicle() )
-
 table = lvsEntity:GetActiveWeapon() -- returns current active weapon data
 
 number = lvsEntity:GetSelectedWeapon() -- returns current selected weapon ID
@@ -69,8 +67,6 @@ number = lvsEntity:GetMaxAmmo()-- returns max ammo of current weapon
 ========================================
 =============== LVS SERVER =============
 ========================================
-
-( lvsEntity = vehicle returned from ply:lvsGetVehicle() )
 
 lvsEntity:TakeAmmo( num ) -- take <num> amount of ammo from current weapon
 
