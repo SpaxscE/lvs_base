@@ -4,7 +4,7 @@
 =========================================
 
 entity = ply:lvsGetVehicle() -- returns the lvs entity the player is currently driving or sitting in
-entity = ly:lvsGetWeaponHandler() -- returns the current weapon handler. As driver this is always equal to ply:lvsGetVehicle()
+entity = ply:lvsGetWeaponHandler() -- returns the current weapon handler. As driver this is always equal to ply:lvsGetVehicle()
 
 number = ply:lvsGetAITeam() -- returns the player's AI-Team
 
@@ -30,6 +30,9 @@ bool = ply:lvsGetInputEnabled() -- returns if inputs are disabled or not
 ply:lvsSetInputDisabled( bool ) -- set inputs enabled/disabled (this has a auto-enable build in after 4 seconds and has to be called every 4 seconds to stay disabled)
 
 
+
+
+
 ========================================
 =============== LVS SHARED =============
 ========================================
@@ -47,3 +50,49 @@ nTeam:
 table = LVS:GetVehicles() -- returns all spawned LVS vehicles
 
 bool = LVS:IsDirectInputForced() -- returns if mouse aim is force-disabled or not
+
+
+table = lvsEntity:GetActiveWeapon() -- returns current active weapon data
+
+number = lvsEntity:GetSelectedWeapon() -- returns current selected weapon ID
+
+number = lvsEntity:GetMaxAmmo()-- returns max ammo of current weapon
+
+========================================
+=============== LVS SERVER =============
+========================================
+
+
+lvsEntity:TakeAmmo( num ) -- take <num> amount of ammo from current weapon
+
+lvsEntity:SetHeat( num ) -- set heat to <num>, num should be 0 to 1
+
+lvsEntity:SetOverheated( overheat ) -- set the current weapon to be overheated
+
+lvsEntity:SetNextAttack( num ) -- set next allowed attack
+
+lvsEntity:WeaponRestoreAmmo() -- refill all ammo
+
+
+
+number = lvsEntity:GetAmmo() -- returns amount of ammo in current weapon
+
+number = lvsEntity:GetHeat() -- returns the heat from current weapon
+
+bool = lvsEntity:GetOverheated() -- returns if the current weapon is overheated
+
+bool = lvsEntity:CanAttack() -- return if the weapon can fire
+
+bool = lvsEntity:WeaponsShouldFire() -- returns if player is pressing attack key, or if AI is attempting to shoot
+
+
+
+
+========================================
+=============== LVS CLIENT =============
+========================================
+
+number = lvsEntity:GetNWAmmo() -- returns amount of ammo in current weapon
+number = lvsEntity:GetNWHeat() -- returns the heat from current weapon
+
+number = lvsEntity:GetAmmoID( ID ) -- returns amount of ammo in given ID's weapon
