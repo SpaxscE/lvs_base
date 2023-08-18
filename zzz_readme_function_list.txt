@@ -52,16 +52,25 @@ table = LVS:GetVehicles() -- returns all spawned LVS vehicles
 bool = LVS:IsDirectInputForced() -- returns if mouse aim is force-disabled or not
 
 
+
+( lvsEntity = vehicle returned from ply:lvsGetVehicle() )
+
 table = lvsEntity:GetActiveWeapon() -- returns current active weapon data
 
 number = lvsEntity:GetSelectedWeapon() -- returns current selected weapon ID
 
 number = lvsEntity:GetMaxAmmo()-- returns max ammo of current weapon
 
+
+
+
+
+
 ========================================
 =============== LVS SERVER =============
 ========================================
 
+( lvsEntity = vehicle returned from ply:lvsGetVehicle() )
 
 lvsEntity:TakeAmmo( num ) -- take <num> amount of ammo from current weapon
 
