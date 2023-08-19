@@ -146,6 +146,7 @@ function ENT:CalcDamage( dmginfo )
 		end
 	end
 
+	local IsFireDamage = dmginfo:IsDamageType( DMG_BURN )
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
 	local CriticalHit = false
 
@@ -167,13 +168,13 @@ function ENT:CalcDamage( dmginfo )
 
 	local Attacker = dmginfo:GetAttacker() 
 
-	if IsValid( Attacker ) and Attacker:IsPlayer() then
+	if IsValid( Attacker ) and Attacker:IsPlayer() and not IsFireDamage then
 		net.Start( "lvs_hitmarker" )
 			net.WriteBool( CriticalHit )
 		net.Send( Attacker )
 	end
 
-	if Damage > 1 and not IsCollisionDamage then
+	if Damage > 1 and not IsCollisionDamage and not IsFireDamage then
 		net.Start( "lvs_hurtmarker" )
 			net.WriteFloat( math.min( Damage / 50, 1 ) )
 		net.Send( self:GetEveryone() )
