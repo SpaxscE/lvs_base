@@ -55,7 +55,7 @@ function ENT:Initialize()
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
-	self:SetRenderMode( RENDERMODE_TRANSALPHA )
+	self:SetRenderMode( RENDERMODE_NORMAL )
 	self:AddFlags( FL_OBJECT )
 
 	local PObj = self:GetPhysicsObject()
