@@ -260,7 +260,7 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 		end
 	else
 		local weapon = Parent:GetActiveWeapon()
-		if weapon and weapon.HudPaint then
+		if ply == Parent:GetDriver() and weapon and weapon.HudPaint then
 			weapon.HudPaint( Parent, X, Y, ply )
 		end
 	end
