@@ -192,25 +192,34 @@ function ENT:CalcDamage( dmginfo )
 			net.Send( Attacker )
 		end
 
-		local ExplodeTime = math.Clamp((self:GetVelocity():Length() - 200) / 200,1.5,16)
-
-		local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
-		util.Effect( "lvs_explosion_nodebris", effectdata )
-
-		local effectdata = EffectData()
-			effectdata:SetOrigin( self:GetPos() )
-			effectdata:SetStart( self:GetPhysicsObject():GetMassCenter() )
-			effectdata:SetEntity( self )
-			effectdata:SetScale( (self.FireTrailScale or 1) )
-			effectdata:SetMagnitude( ExplodeTime )
-		util.Effect( "lvs_firetrail", effectdata )
+		local ExplodeTime = self:PreExplode( math.Clamp((self:GetVelocity():Length() - 200) / 200,1.5,16) )
 
 		timer.Simple( ExplodeTime, function()
 			if not IsValid( self ) then return end
 			self:Explode()
 		end)
 	end
+end
+
+function ENT:PreExplode( ExplodeTime )
+	local Pos = self:GetPos()
+	local PhysObj = self:GetPhysicsObject()
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( Pos )
+	util.Effect( "lvs_explosion_nodebris", effectdata )
+
+	if not IsValid( PhysObj ) then return 0 end
+
+	local effectdata = EffectData()
+		effectdata:SetOrigin( Pos )
+		effectdata:SetStart( PhysObj:GetMassCenter() )
+		effectdata:SetEntity( self )
+		effectdata:SetScale( (self.FireTrailScale or 1) )
+		effectdata:SetMagnitude( ExplodeTime )
+	util.Effect( "lvs_firetrail", effectdata )
+
+	return ExplodeTime
 end
 
 function ENT:FindDS( PosToCheck )
