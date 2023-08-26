@@ -5,8 +5,6 @@ function meta:lvsGetAITeam()
 end
 
 function meta:lvsGetVehicle()
-	if not self:InVehicle() then return NULL end
-
 	local Pod = self:GetVehicle()
 
 	if not IsValid( Pod ) then return NULL end
@@ -20,7 +18,12 @@ function meta:lvsGetVehicle()
 		
 		if not IsValid( Parent ) then return NULL end
 
-		if not Parent.LVS then return NULL end
+		if not Parent.LVS then
+			Pod.LVSchecked = true
+			Pod.LVSBaseEnt = NULL
+
+			return NULL
+		end
 
 		Pod.LVSchecked = true
 		Pod.LVSBaseEnt = Parent
@@ -30,8 +33,6 @@ function meta:lvsGetVehicle()
 end
 
 function meta:lvsGetWeaponHandler()
-	if not self:InVehicle() then return NULL end
-
 	local Pod = self:GetVehicle()
 
 	if not IsValid( Pod ) then return NULL end
