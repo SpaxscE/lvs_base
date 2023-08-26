@@ -65,6 +65,7 @@ function ENT:CalcComponentDamage( dmginfo )
 		end
 	end
 
+	local lastPartDS
 	local closestPartDS
 	local closestDistDS = Len * 2
 	for index, part in ipairs( self._dmgParts ) do
@@ -76,6 +77,8 @@ function ENT:CalcComponentDamage( dmginfo )
 		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
 		if HitPos and HitDistance then
+			lastPartDS = part
+
 			if HitDistance < (HitPos - dmgPos):Length() then continue end
 
 			closestPart = nil
@@ -105,8 +108,6 @@ function ENT:CalcComponentDamage( dmginfo )
 			Hit = true
 			part:Callback( self, dmginfo )
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
-		else
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 50, 0, 50, 150 ) )
 		end
 	end
 
@@ -117,11 +118,25 @@ function ENT:CalcComponentDamage( dmginfo )
 		local ang = self:LocalToWorldAngles( part.ang )
 
 		if part == closestPart then
-			part:Callback( self, dmginfo )
+			if not part:Callback( self, dmginfo ) then
+				lastPartDS = nil
+			end
+
 			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 0, 150, 0, 150 ) )
-		else
-			debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 0, 50, 50, 150 ) )
 		end
+	end
+
+	if lastPartDS then
+		lastPartDS:Callback( self, dmginfo )
+
+		local mins = lastPartDS.mins
+		local maxs = lastPartDS.maxs
+		local pos = self:LocalToWorld( lastPartDS.pos )
+		local ang = self:LocalToWorldAngles( lastPartDS.ang )
+
+		debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
+
+		Hit = false
 	end
 
 	return Hit
