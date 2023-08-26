@@ -2,6 +2,8 @@
 ENT._armorParts = {}
 ENT._dmgParts = {}
 
+ENT.DSArmorBulletPenetrationAdd = 250
+
 function ENT:AddDS( data )
 	if not data then return end
 
@@ -34,9 +36,9 @@ function ENT:CalcComponentDamage( dmginfo )
 	local Len = self:BoundingRadius()
 	local dmgPos = dmginfo:GetDamagePosition()
 	local dmgDir = dmginfo:GetDamageForce():GetNormalized()
-	local dmgPenetration = dmgDir * 250
+	local dmgPenetration = dmgDir * self.DSArmorBulletPenetrationAdd
 
-	debugoverlay.Line( dmgPos - dmgDir * 250, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
+	debugoverlay.Line( dmgPos - dmgDir * self.DSArmorBulletPenetrationAdd, dmgPos + dmgPenetration, 4, Color( 0, 0, 255 ) )
 
 	local closestPart
 	local closestDist = Len * 2
