@@ -138,6 +138,8 @@ function ENT:AIGetTarget()
 	end
 
 	for _, veh in pairs( LVS:GetVehicles() ) do
+		if veh:IsDestroyed() then continue end
+
 		if veh == self then continue end
 
 		local Dist = (veh:GetPos() - MyPos):Length()
