@@ -2,6 +2,7 @@
 ENT._armorParts = {}
 ENT._dmgParts = {}
 
+ENT.DSArmorIgnoreForce = 0
 ENT.DSArmorBulletPenetrationAdd = 250
 
 function ENT:AddDS( data )
@@ -166,6 +167,8 @@ function ENT:CalcDamage( dmginfo )
 	local IsFireDamage = dmginfo:IsDamageType( DMG_BURN )
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
 	local CriticalHit = false
+
+	if dmginfo:GetDamageForce():Length() < self.DSArmorIgnoreForce then return end
 
 	if not IsCollisionDamage then
 		CriticalHit = self:CalcComponentDamage( dmginfo )

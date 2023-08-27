@@ -275,7 +275,11 @@ if SERVER then
 				self:SetHeat( CurHeat - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 				self:SetNextAttack( T )
 			end
+
+			self._lvsNextActiveWeaponCoolDown = T + 0.25
 		else
+			if (self._lvsNextActiveWeaponCoolDown or 0) > T then return end
+
 			self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
 	end
