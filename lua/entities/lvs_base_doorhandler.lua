@@ -26,6 +26,10 @@ function ENT:SetupDataTables()
 	end
 end
 
+function ENT:IsOpen()
+	return self:GetActive()
+end
+
 if SERVER then
 	AccessorFunc(ENT, "soundopen", "SoundOpen", FORCE_STRING)
 	AccessorFunc(ENT, "soundclose", "SoundClose", FORCE_STRING)
@@ -146,10 +150,6 @@ if SERVER then
 		if not snd then return end
 
 		self:EmitSound( snd )
-	end
-
-	function ENT:IsOpen()
-		return self:GetActive()
 	end
 
 	function ENT:OnDriverChanged( oldDriver, newDriver, pod )
