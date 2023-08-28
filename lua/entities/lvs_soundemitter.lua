@@ -13,6 +13,7 @@ function ENT:SetupDataTables()
 
 	self:NetworkVar( "Bool",0, "Active" )
 	self:NetworkVar( "Bool",1, "ActiveVisible" )
+	self:NetworkVar( "Bool",2, "Doppler" )
 
 	self:NetworkVar( "String",1, "Sound")
 	self:NetworkVar( "String",2, "SoundInterior")
@@ -112,12 +113,20 @@ function ENT:RemoveSounds()
 end
 
 function ENT:HandleSounds()
-	if not self.snd_int then return end
-
 	local ply = LocalPlayer()
 	local veh = ply:lvsGetVehicle()
+	local base = self:GetBase()
 
-	if IsValid( veh ) and veh == self:GetBase() and ply:GetViewEntity() == ply then
+	if self:GetDoppler() and IsValid( base ) then
+		local Doppler = base:CalcDoppler( ply )
+
+		if self.snd then self.snd:ChangePitch( 100 * Doppler, 0.5 ) end
+		if self.snd_int then self.snd_int:ChangePitch( 100 * Doppler, 0.5 ) end
+	end
+
+	if not self.snd_int then return end
+
+	if IsValid( veh ) and veh == base and ply:GetViewEntity() == ply then
 		local pod = ply:GetVehicle()
 
 		if IsValid( pod ) then
