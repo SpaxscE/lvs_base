@@ -134,15 +134,16 @@ function ENT:CalcDoppler( Ent )
 
 	if Ent:IsPlayer() then
 		local ViewEnt = Ent:GetViewEntity()
+		local Vehicle = Ent:lvsGetVehicle()
 
-		if Ent:lvsGetVehicle() == self then
-			if ViewEnt == Ent then
-				Ent = self
-			else
-				Ent = ViewEnt
+		if IsValid( Vehicle ) then
+			if Ent == ViewEnt then
+				Ent = Vehicle
 			end
 		else
-			Ent = ViewEnt
+			if IsValid( ViewEnt ) then
+				Ent = ViewEnt
+			end
 		end
 	end
 
