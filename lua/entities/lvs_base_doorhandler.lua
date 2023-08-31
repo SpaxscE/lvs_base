@@ -225,6 +225,7 @@ end
 function ENT:Draw()
 end
 
+local LVS = LVS
 ENT.ColorSelect = Color(127,255,127,150)
 ENT.ColorNormal = Color(255,0,0,150)
 ENT.ColorTransBlack = Color(0,0,0,150)

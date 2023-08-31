@@ -2,6 +2,10 @@
 ENT._armorParts = {}
 ENT._dmgParts = {}
 
+ENT.DSArmorDamageReduction = 0.1
+ENT.DSArmorDamageReductionType = DMG_BULLET + DMG_CLUB
+
+ENT.DSArmorIgnoreDamageType = DMG_SONIC
 ENT.DSArmorIgnoreForce = 0
 ENT.DSArmorBulletPenetrationAdd = 250
 
@@ -144,11 +148,11 @@ function ENT:CalcComponentDamage( dmginfo )
 end
 
 function ENT:CalcDamage( dmginfo )
-	if dmginfo:IsDamageType( DMG_SONIC ) then return end
+	if dmginfo:IsDamageType( self.DSArmorIgnoreDamageType ) then return end
 
-	if dmginfo:IsDamageType( DMG_BULLET + DMG_CLUB ) then
+	if dmginfo:IsDamageType( self.DSArmorDamageReductionType ) then
 		if dmginfo:GetDamage() ~= 0 then
-			dmginfo:ScaleDamage( 0.1 )
+			dmginfo:ScaleDamage( self.DSArmorDamageReduction )
 
 			dmginfo:SetDamage( math.max(dmginfo:GetDamage(),1) )
 		end
@@ -168,7 +172,7 @@ function ENT:CalcDamage( dmginfo )
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
 	local CriticalHit = false
 
-	if dmginfo:GetDamageForce():Length() < self.DSArmorIgnoreForce then return end
+	if dmginfo:GetDamageForce():Length() < self.DSArmorIgnoreForce and not IsFireDamage then return end
 
 	if not IsCollisionDamage then
 		CriticalHit = self:CalcComponentDamage( dmginfo )
