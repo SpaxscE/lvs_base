@@ -19,7 +19,7 @@ function ENT:SetupDataTables()
 	for _, v in pairs( AllSents ) do
 		if not v or not istable( v.t ) or not v.t.Spawnable then continue end
 
-		if v.t.Base and v.t.Base:lower() == "lvs_base_wheeldrive" and not v.lvsShowInSpawner then continue end
+		if v.t.Base and v.t.Base:lower() == "lvs_base_wheeldrive" and not v.t.lvsShowInSpawner then continue end
 
 		if v.t.lvsShowInSpawner or (v.t.Base and (string.StartWith( v.t.Base:lower(), "lvs_base" ) or string.StartWith( v.t.Base:lower(), "lunasflightschool" ))) then
 			if v.t.Category and v.t.PrintName then
