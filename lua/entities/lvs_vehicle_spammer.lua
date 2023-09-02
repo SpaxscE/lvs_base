@@ -154,6 +154,7 @@ if SERVER then
 						spawnedvehicle:Activate()
 						spawnedvehicle:SetAI( true )
 						spawnedvehicle:SetSkin( self:GetSpawnWithSkin() )
+						spawnedvehicle.SpawnedByAISpawner = true
 
 						if self:GetTeamOverride() >= 0 then
 							spawnedvehicle:SetAITEAM( self:GetTeamOverride() )
