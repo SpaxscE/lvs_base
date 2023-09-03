@@ -33,7 +33,9 @@ function EFFECT:Init( data )
 	self.LifeTime = 0.35
 	self.DieTime = CurTime() + self.LifeTime
 
-	local scale = 1 * data:GetMagnitude()
+	local scale = data:GetMagnitude() * 0.5
+
+	self.Scale = 3 * scale
 
 	local emitter = ParticleEmitter( self.Pos, false )
 
@@ -80,8 +82,8 @@ function EFFECT:Init( data )
 		if Dist > 300 then return end
 	else
 		timer.Simple( delay, function()
-			sound.Play( "LVS.BOMB_EXPLOSION", Pos )
-			sound.Play( "LVS.BOMB_EXPLOSION_DYNAMIC", Pos )
+			sound.Play( "LVS.BULLET_EXPLOSION", Pos )
+			sound.Play( "LVS.BULLET_EXPLOSION_DYNAMIC", Pos )
 		end )
 	end
 
@@ -91,15 +93,15 @@ function EFFECT:Init( data )
 
 			if not particle then continue end
 
-			particle:SetVelocity( (self.Dir * 50 * i + VectorRand() * 25) * scale )
+			particle:SetVelocity( (self.Dir * 50 * i + VectorRand() * 25) * self.Scale )
 			particle:SetDieTime( (i / 8) * DieTime )
 			particle:SetAirResistance( 10 ) 
 			particle:SetStartAlpha( 255 )
-			particle:SetStartSize( 10 * scale )
-			particle:SetEndSize( 20 * i * scale )
+			particle:SetStartSize( 10 * self.Scale )
+			particle:SetEndSize( 20 * i * self.Scale )
 			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
-			particle:SetGravity( Vector(0,0,-600) * scale )
+			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+			particle:SetGravity( Vector(0,0,-600) * self.Scale )
 			particle:SetCollide( false )
 		end
 	end
@@ -109,15 +111,15 @@ function EFFECT:Init( data )
 
 		if not particle then continue end
 
-		particle:SetVelocity( (self.Dir * 50 * i + VectorRand() * 40) * scale )
+		particle:SetVelocity( (self.Dir * 50 * i + VectorRand() * 40) * self.Scale )
 		particle:SetDieTime( (i / 8) * DieTime )
 		particle:SetAirResistance( 10 ) 
 		particle:SetStartAlpha( 255 )
-		particle:SetStartSize( 10 * scale )
-		particle:SetEndSize( 20 * i * scale )
+		particle:SetStartSize( 10 * self.Scale )
+		particle:SetEndSize( 20 * i * self.Scale )
 		particle:SetRollDelta( math.Rand(-1,1) )
-		particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
-		particle:SetGravity( Vector(0,0,-600) * scale )
+		particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+		particle:SetGravity( Vector(0,0,-600) * self.Scale )
 		particle:SetCollide( false )
 	end
 
@@ -131,15 +133,15 @@ function EFFECT:Init( data )
 
 			local Vel = Vector(X,Y,0) * math.Rand(1500,2000)
 
-			particle:SetVelocity( Vel * scale )
+			particle:SetVelocity( Vel * self.Scale )
 			particle:SetDieTime( math.Rand(1,3) )
 			particle:SetAirResistance( 600 ) 
 			particle:SetStartAlpha( 100 )
-			particle:SetStartSize( 40 * scale )
-			particle:SetEndSize( 200 * scale )
+			particle:SetStartSize( 40 * self.Scale )
+			particle:SetEndSize( 200 * self.Scale )
 			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
-			particle:SetGravity( Vector(0,0,60) * scale )
+			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+			particle:SetGravity( Vector(0,0,60) * self.Scale )
 			particle:SetCollide( true )
 		end
 	end
@@ -148,16 +150,16 @@ function EFFECT:Init( data )
 		local particle = emitter:Add( self.SmokeMat[ math.random(1, #self.SmokeMat ) ], self.Pos )
 		
 		if particle then
-			particle:SetVelocity( VectorRand(-1,1) * 1000 )
+			particle:SetVelocity( VectorRand(-1,1) * 1000 * scale )
 			particle:SetDieTime( math.Rand(2,3) )
 			particle:SetAirResistance( 200 ) 
 			particle:SetStartAlpha( 100 )
-			particle:SetStartSize( 200 )
-			particle:SetEndSize( 600 )
+			particle:SetStartSize( 200 * scale )
+			particle:SetEndSize( 600 * scale )
 			particle:SetRoll( math.Rand(-1,1) )
 			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
-			particle:SetGravity( Vector( 0, 0, -600 ) )
+			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+			particle:SetGravity( Vector( 0, 0, -600 ) * scale )
 			particle:SetCollide( false )
 		end
 	end
@@ -166,11 +168,11 @@ function EFFECT:Init( data )
 		local particle = emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), self.Pos )
 		
 		if particle then
-			particle:SetVelocity( VectorRand(-1,1) * 500 )
+			particle:SetVelocity( VectorRand(-1,1) * 500 * scale )
 			particle:SetDieTime( math.Rand(0.15,0.3) )
 			particle:SetStartAlpha( 255 )
-			particle:SetStartSize( 25 )
-			particle:SetEndSize( math.Rand(70,100) )
+			particle:SetStartSize( 25 * scale )
+			particle:SetEndSize( math.Rand(70,100) * scale )
 			particle:SetEndAlpha( 100 )
 			particle:SetRoll( math.Rand( -1, 1 ) )
 			particle:SetColor( 200,150,150 )
@@ -184,12 +186,12 @@ function EFFECT:Init( data )
 		local vel = VectorRand() * 800
 		
 		if particle then
-			particle:SetVelocity( vel )
+			particle:SetVelocity( vel * scale )
 			particle:SetAngles( vel:Angle() + Angle(0,90,0) )
 			particle:SetDieTime( math.Rand(0.2,0.4) )
 			particle:SetStartAlpha( 255 )
 			particle:SetEndAlpha( 0 )
-			particle:SetStartSize( math.Rand(20,40) )
+			particle:SetStartSize( math.Rand(20,40) * scale )
 			particle:SetEndSize( 0 )
 			particle:SetRoll( math.Rand(-100,100) )
 			particle:SetRollDelta( 0 )
@@ -224,18 +226,6 @@ function EFFECT:Explosion( pos , scale )
 	end
 
 	emitter:Finish()
-
-	local dlight = DynamicLight( math.random(0,9999) )
-	if dlight then
-		dlight.pos = pos
-		dlight.r = 255
-		dlight.g = 180
-		dlight.b = 100
-		dlight.brightness = 8
-		dlight.Decay = 2000
-		dlight.Size = 300
-		dlight.DieTime = CurTime() + 1
-	end
 end
 
 function EFFECT:Think()
@@ -245,17 +235,10 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
-	local Scale = (self.DieTime - CurTime()) / self.LifeTime
-	render.SetMaterial( self.GlowMat )
-	render.DrawSprite( self.Pos, 2000 * Scale, 2000 * Scale, Color( 255, 200, 150, 255) )
+	if not self.Scale then return end
 
-	local Scale = (self.DieTime - self.LifeTime + 0.25 - CurTime()) / 0.25
-	local InvScale = 1 - Scale
-	if Scale > 0 then
-		render.SetColorMaterial()
-		render.DrawSphere( self.Pos, -450 * InvScale, 30,30, Color( 255, 200, 150, 150 * (Scale ^ 2) ) )
-		render.DrawSphere( self.Pos, -500 * InvScale, 30,30, Color( 255, 200, 150, 100 * (Scale ^ 2) ) )
-		render.DrawSphere( self.Pos, -550 * InvScale, 30,30, Color( 255, 200, 150, 25 * (Scale ^ 2) ) )
-		render.DrawSphere( self.Pos, 600 * InvScale, 30,30, Color( 255, 200, 150, 25 * (Scale ^ 2) ) )
-	end
+	local Scale = (self.DieTime - CurTime()) / self.LifeTime
+	local R1 = 600 * self.Scale
+	render.SetMaterial( self.GlowMat )
+	render.DrawSprite( self.Pos, R1 * Scale, R1 * Scale, Color( 255, 200, 150, 255) )
 end
