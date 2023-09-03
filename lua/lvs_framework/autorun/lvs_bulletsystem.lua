@@ -149,7 +149,7 @@ local function HandleBullets()
 					effectdata:SetOrigin( EndPos )
 					effectdata:SetNormal( trace.HitWorld and trace.HitNormal or dir )
 					effectdata:SetMagnitude( bullet.SplashDamageRadius / 250 )
-					util.Effect( "lvs_bullet_impact", effectdata )
+					util.Effect( bullet.SplashDamageEffect, effectdata )
 
 					dmginfo:SetDamageType( DMG_SONIC )
 					dmginfo:SetDamage( bullet.SplashDamage )
@@ -199,7 +199,10 @@ if SERVER then
 		bullet.Callback = data.Callback
 		bullet.SplashDamage = data.SplashDamage
 		bullet.SplashDamageRadius = data.SplashDamageRadius
+		bullet.SplashDamageEffect = data.SplashDamageEffect or "lvs_bullet_impact"
 		bullet.StartTime = CurTime()
+
+		local ReplaceEffect = isstring( bullet.SplashDamageEffect )
 
 		if InfMap then
 			for _, ply in ipairs( player.GetAll() ) do
@@ -256,6 +259,13 @@ else
 		bullet.Entity = net.ReadEntity()
 		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Velocity = net.ReadFloat()
+
+		if net.ReadBool() then
+			bullet.SplashDamageEffect = net.ReadString()
+		else
+			bullet.SplashDamageEffect = "lvs_bullet_impact"
+		end
+
 		bullet.StartTimeCL = CurTime() + RealFrameTime()
 
 		local ply = LocalPlayer()
