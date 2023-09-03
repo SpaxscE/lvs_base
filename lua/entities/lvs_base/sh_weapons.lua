@@ -306,17 +306,21 @@ if SERVER then
 
 		local PrevWeapon = self.WEAPONS[1][ old ]
 		if PrevWeapon and PrevWeapon.OnDeselect then
-			PrevWeapon.OnDeselect( self )
+			PrevWeapon.OnDeselect( self, new )
 		end
 
 		local NextWeapon = self.WEAPONS[1][ new ]
 		if NextWeapon and NextWeapon.OnSelect then
-			NextWeapon.OnSelect( self )
+			NextWeapon.OnSelect( self, old )
 			self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
 		end
 	end
 
 	return
+end
+
+function ENT:GetWeaponIcon( PodID, ID )
+	return Material("lvs/weapons/bullet.png")
 end
 
 function ENT:SelectWeapon( ID )
@@ -505,7 +509,13 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		else
 			surface.SetDrawColor( 255, 255, 255, A255 )
 		end
-		surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
+
+		if isbool( self.WEAPONS[PodID][ID].Icon ) then
+			surface.SetMaterial( self:GetWeaponIcon( PodID, ID ) )
+		else
+			surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
+		end
+
 		surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
 
 		local ammo = self:GetAmmoID( ID )
