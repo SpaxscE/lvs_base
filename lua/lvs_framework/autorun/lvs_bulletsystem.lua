@@ -151,7 +151,7 @@ local function HandleBullets()
 					effectdata:SetMagnitude( bullet.SplashDamageRadius / 250 )
 					util.Effect( bullet.SplashDamageEffect, effectdata )
 
-					dmginfo:SetDamageType( DMG_SONIC )
+					dmginfo:SetDamageType( bullet.SplashDamageType )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
 					util.BlastDamageInfo( dmginfo, EndPos, bullet.SplashDamageRadius )
@@ -200,6 +200,7 @@ if SERVER then
 		bullet.SplashDamage = data.SplashDamage
 		bullet.SplashDamageRadius = data.SplashDamageRadius
 		bullet.SplashDamageEffect = data.SplashDamageEffect or "lvs_bullet_impact"
+		bullet.SplashDamageType = data.SplashDamageType or DMG_SONIC
 		bullet.StartTime = CurTime()
 
 		local ReplaceEffect = isstring( bullet.SplashDamageEffect )
