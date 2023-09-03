@@ -319,8 +319,7 @@ if SERVER then
 	return
 end
 
-function ENT:GetWeaponIcon( PodID, ID )
-	return Material("lvs/weapons/bullet.png")
+function ENT:DrawWeaponIcon( PodID, ID, x, y, width, height, IsSelected, IconColor )
 end
 
 function ENT:SelectWeapon( ID )
@@ -511,12 +510,12 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		end
 
 		if isbool( self.WEAPONS[PodID][ID].Icon ) then
-			surface.SetMaterial( self:GetWeaponIcon( PodID, ID ) )
+			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255) 
+			self:DrawWeaponIcon( PodID, ID, xPos, yPos, SizeY * 2, SizeY, IsSelected, col )
 		else
 			surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
+			surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
 		end
-
-		surface.DrawTexturedRect( xPos, yPos, SizeY * 2, SizeY )
 
 		local ammo = self:GetAmmoID( ID )
 
