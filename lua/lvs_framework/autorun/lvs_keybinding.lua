@@ -108,7 +108,14 @@ if SERVER then return end
 concommand.Add( "lvs_mouseaim_toggle", function( ply, cmd, args )
 	local OldVar = GetConVar( "lvs_mouseaim" ):GetInt()
 
-	RunConsoleCommand( "lvs_mouseaim", OldVar == 0 and 1 or 0 )
+	if OldVar == 0 then
+		ply:PrintMessage( HUD_PRINTTALK, "[LVS] Mouse-Aim: Enabled" )
+		RunConsoleCommand( "lvs_mouseaim", "1" )
+
+	else
+		ply:PrintMessage( HUD_PRINTTALK, "[LVS] Mouse-Aim: Disabled" )
+		RunConsoleCommand( "lvs_mouseaim", "0" )
+	end
 end )
 
 hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pressed )
