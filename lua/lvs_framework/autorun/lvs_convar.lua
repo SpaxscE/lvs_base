@@ -92,3 +92,10 @@ LVS.DeveloperEnabled = cvarDev and (cvarDev:GetInt() >= 1) or false
 cvars.AddChangeCallback( "developer", function( convar, oldValue, newValue )
 	LVS.DeveloperEnabled = tonumber( newValue ) >= 1
 end)
+
+cvars.AddChangeCallback( "lvs_mouseaim", function( convar, oldValue, newValue )
+	LocalPlayer():lvsBuildControls()
+
+	net.Start("lvs_toggle_mouseaim")
+	net.SendToServer()
+end)

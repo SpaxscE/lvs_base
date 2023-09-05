@@ -1,6 +1,17 @@
 
 if SERVER then
 	util.AddNetworkString( "lvs_player_request_filter" )
+	util.AddNetworkString( "lvs_toggle_mouseaim" )
+
+	net.Receive( "lvs_toggle_mouseaim", function( length, ply )
+		ply:lvsBuildControls()
+
+		local veh = ply:lvsGetVehicle()
+
+		if not IsValid( veh ) then return end
+
+		veh:AlignView( ply )
+	end)
 
 	net.Receive( "lvs_player_request_filter", function( length, ply )
 		if not IsValid( ply ) then return end
