@@ -105,6 +105,12 @@ end )
 
 if SERVER then return end
 
+concommand.Add( "lvs_mouseaim_toggle", function( ply, cmd, args )
+	local OldVar = GetConVar( "lvs_mouseaim" ):GetInt()
+
+	RunConsoleCommand( "lvs_mouseaim", OldVar == 0 and 1 or 0 )
+end )
+
 hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pressed )
 	if not ply.lvsGetVehicle then return end
 
