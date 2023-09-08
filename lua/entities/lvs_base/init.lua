@@ -327,10 +327,10 @@ function ENT:AddSoundEmitter( pos, snd, snd_interior )
 
 	if snd and not snd_interior then
 		Emitter:SetSound( snd )
-		Emitter:SetSoundInterior( "" )
+		Emitter:SetSoundInterior( snd )
 	else
 		Emitter:SetSound( snd or "" )
-		Emitter:SetSoundInterior( snd_interior or "" )
+		Emitter:SetSoundInterior( snd_interior )
 	end
 
 	self:DeleteOnRemove( Emitter )
