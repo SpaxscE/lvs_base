@@ -1,3 +1,4 @@
+local LVS = LVS
 
 LVS._ActiveBullets = {}
 
@@ -21,7 +22,7 @@ function NewBullet:GetPos()
 end
 
 function NewBullet:GetDir()
-	return self.Dir or Vector(0,0,0)
+	return self.Dir or vector_origin
 end
 
 function NewBullet:GetTimeAlive()
@@ -72,17 +73,14 @@ local function HandleBullets()
 			end
 		end
 
-		local Filter
-		if IsValid( bullet.Entity ) then
-			Filter = bullet.Entity:GetCrosshairFilterEnts() -- auto filter all entities that are attached to the vehicle
-		end
+		local Filter = bullet.Filter
 
 		local trace = util.TraceHull( {
 			start = Is2ndTickAlive and start + pos - dir or start,
 			endpos = start + pos + dir * bullet.Velocity * FT,
 			filter = Filter,
-			mins = Vector(-1,-1,-1) * bullet.HullSize,
-			maxs = Vector(1,1,1) * bullet.HullSize,
+			mins = bullet.Mins,
+			maxs = bullet.Maxs,
 			mask = MASK_SHOT_HULL
 		} )
 
@@ -122,7 +120,7 @@ local function HandleBullets()
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
 				start = Is2ndTickAlive and start + pos - dir or start,
-				endpos = start + pos + dir * 50000,
+				endpos = start + pos + dir * 250,
 				filter = Filter,
 				mask = MASK_SHOT_HULL
 			} )
@@ -173,6 +171,8 @@ local function HandleBullets()
 	end
 end
 
+local vector_one = Vector(1,1,1)
+
 if SERVER then
 	util.AddNetworkString( "lvs_fire_bullet" )
 
@@ -186,16 +186,22 @@ if SERVER then
 		setmetatable( bullet, NewBullet )
 
 		bullet.TracerName = data.TracerName or "lvs_tracer_orange"
-		bullet.Src = data.Src or Vector(0,0,0)
-		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or Vector(0,0,0)) * 0.5):GetNormalized()
+		bullet.Src = data.Src or vector_origin
+		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
 		bullet.Force = data.Force or 10
 		bullet.HullSize = data.HullSize or 5
+		bullet.Mins = -vector_one * bullet.HullSize
+		bullet.Maxs = vector_one * bullet.HullSize
 		bullet.Velocity = data.Velocity or 2500
 		bullet.Attacker = IsValid( data.Attacker ) and data.Attacker or (IsValid( data.Entity ) and data.Entity or game.GetWorld())
 		bullet.Damage = data.Damage or 10
 		bullet.Entity = data.Entity
-		bullet.Filter = data.Filter or bullet.Entity
-		bullet.SrcEntity = data.SrcEntity or Vector(0,0,0)
+		if IsValid( bullet.Entity ) and bullet.Entity.GetCrosshairFilterEnts then
+			bullet.Filter = bullet.Entity:GetCrosshairFilterEnts()
+		else
+			bullet.Filter = bullet.Entity
+		end
+		bullet.SrcEntity = data.SrcEntity or vector_origin
 		bullet.Callback = data.Callback
 		bullet.SplashDamage = data.SplashDamage
 		bullet.SplashDamageRadius = data.SplashDamageRadius
@@ -257,7 +263,14 @@ else
 		bullet.Dir = net.ReadAngle():Forward()
 		bullet.StartTime = net.ReadFloat()
 		bullet.HullSize = net.ReadFloat()
+		bullet.Mins = -vector_one * bullet.HullSize
+		bullet.Maxs = vector_one * bullet.HullSize
 		bullet.Entity = net.ReadEntity()
+		if IsValid( bullet.Entity ) and bullet.Entity.GetCrosshairFilterEnts then
+			bullet.Filter = bullet.Entity:GetCrosshairFilterEnts()
+		else
+			bullet.Filter = bullet.Entity
+		end
 		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Velocity = net.ReadFloat()
 
