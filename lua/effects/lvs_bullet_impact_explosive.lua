@@ -24,8 +24,6 @@ EFFECT.DustMat = {
 	"particle/particle_debris_02",
 }
 
-EFFECT.DecalMat = Material( util.DecalMaterial( "Scorch" ) )
-
 function EFFECT:Init( data )
 	self.Dir = Vector(0,0,1)
 	self.Pos = data:GetOrigin()
