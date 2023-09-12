@@ -326,7 +326,7 @@ function ENT:Explode()
 	local Driver = self:GetDriver()
 
 	if IsValid( Driver ) then
-		self:HurtPlayer( Driver, 1000, self.FinalAttacker, self.FinalInflictor )
+		self:HurtPlayer( Driver, Driver:Health() + Driver:Armor(), self.FinalAttacker, self.FinalInflictor )
 	end
 
 	if istable( self.pSeats ) then
@@ -336,7 +336,7 @@ function ENT:Explode()
 			local psgr = pSeat:GetDriver()
 			if not IsValid( psgr ) then continue end
 
-			self:HurtPlayer( psgr, 1000, self.FinalAttacker, self.FinalInflictor )
+			self:HurtPlayer( psgr, psgr:Health() + psgr:Armor(), self.FinalAttacker, self.FinalInflictor )
 		end
 	end
 
