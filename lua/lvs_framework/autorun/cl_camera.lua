@@ -52,7 +52,7 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 
 	Zoom = Zoom + (TargetZoom - Zoom) * RealFrameTime() * 10
 
-	local newfov = fov * Zoom + 40 * (1 - Zoom)
+	local newfov = fov * Zoom + (vehicle.ZoomFov or 40) * (1 - Zoom)
 
 	local base = pod:lvsGetWeapon()
 
