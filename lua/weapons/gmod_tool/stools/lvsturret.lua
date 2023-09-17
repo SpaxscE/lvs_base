@@ -76,7 +76,7 @@ if SERVER then
 
 	function TOOL:MakeTurret( ply, Pos, Ang )
 
-		if not ply:CheckLimit( "lvsturrets" ) then return NULL end
+		if not ply:CheckLimit( "lvsturret" ) then return NULL end
 
 		local turret = ents.Create( "lvs_turret" )
 		
@@ -90,8 +90,8 @@ if SERVER then
 
 		self:UpdateTurret( turret )
 
-		ply:AddCount( "lvsturrets", turret )
-		ply:AddCleanup( "lvsturrets", turret )
+		ply:AddCount( "lvsturret", turret )
+		ply:AddCleanup( "lvsturret", turret )
 
 		return turret
 	end
