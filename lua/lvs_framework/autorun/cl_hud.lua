@@ -1,5 +1,6 @@
 
 LVS.HudEditors = LVS.HudEditors or {}
+--LVS.HudForceDefault = true
 
 local function ResetFrame( id )
 	if not LVS.HudEditors[ id ] then return end
@@ -50,6 +51,8 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 end
 
 local function SaveEditors()
+	if LVS.HudForceDefault then return end
+
 	local SaveString = ""
 	for id, data in pairs( LVS.HudEditors ) do
 		local w = data.w
@@ -65,6 +68,8 @@ local function SaveEditors()
 end
 
 local function LoadEditors()
+	if LVS.HudForceDefault then return end
+
 	local LoadString = file.Read( "lvs_preferences.txt" )
 
 	if not LoadString then return end
