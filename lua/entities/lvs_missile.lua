@@ -22,12 +22,18 @@ end
 if SERVER then
 	util.AddNetworkString( "lvs_missile_hud" )
 
-	function ENT:FindTarget( pos, forward, cone_ang, cone_len )
+	function ENT:GetAvailableTargets()
 		local targets = {
 			[1] = player.GetAll(),
 			[2] = LVS:GetVehicles(),
 			[3] = LVS:GetNPCs(),
 		}
+
+		return targets
+	end
+
+	function ENT:FindTarget( pos, forward, cone_ang, cone_len )
+		local targets = self:GetAvailableTargets()
 
 		local Attacker = self:GetAttacker()
 		local Parent = self:GetParent()
