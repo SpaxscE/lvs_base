@@ -59,9 +59,35 @@ number = lvsEntity:GetSelectedWeapon() -- returns current selected weapon ID
 
 number = lvsEntity:GetMaxAmmo()-- returns max ammo of current weapon
 
+bool = lvsEntity:HitGround() -- is the vehicle near ground?
+
+number = lvsEntity:GetShield()
+number = lvsEntity:GetMaxShield()
+number = lvsEntity:GetShieldPercent()
+
+number = lvsEntity:GetHP()
+number = lvsEntity:GetMaxHP()
+
+bool = lvsEntity:IsInitialized()
+
+table = lvsEntity:GetPassengerSeats()
+
+bool = lvsEntity:HasActiveSoundEmitters()
+
+entity = ply:GetPassenger( num )
+
+table = lvsEntity:GetEveryone()
+
+number = lvsEntity:GetPodIndex() -- this works on the WeaponHandler aswell
+
+entity = ply:GetVehicle() -- this works on the WeaponHandler aswell
 
 
-
+-- math stuff -- can be called on both lvsEntity or the WeaponHandler Entity
+number = lvsEntity:Sign( number )
+vector = lvsEntity:VectorSubtractNormal( Normal, Vector )
+vector = lvsEntity:VectorSplitNormal( Normal, Vector )
+number = lvsEntity:AngleBetweenNormal( Normal1, Normal2 )
 
 
 ========================================
