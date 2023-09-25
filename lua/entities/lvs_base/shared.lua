@@ -245,3 +245,7 @@ end
 function ENT:GetVehicle()
 	return self
 end
+
+function ENT:GetVehicleType()
+	return "LBaseEntity"
+end

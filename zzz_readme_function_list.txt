@@ -52,6 +52,7 @@ table = LVS:GetVehicles() -- returns all spawned LVS vehicles
 bool = LVS:IsDirectInputForced() -- returns if mouse aim is force-disabled or not
 
 
+string = lvsEntity:GetVehicleType() -- returns the vehicle type
 
 table = lvsEntity:GetActiveWeapon() -- returns current active weapon data
 
