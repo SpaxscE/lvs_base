@@ -29,7 +29,15 @@ hook.Run( "LVS:Initialize" )
 
 if CLIENT then
 	hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
-		timer.Simple(20, function() LVS.CheckUpdates() end)
+		timer.Simple(20, function()
+			LVS.CheckUpdates()
+
+			local convar = GetConVar( "no_error_hitboxes" )
+
+			if not convar then return end
+
+			convar:SetBool( false )
+		end)
 	end )
 
 	return
