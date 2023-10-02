@@ -193,7 +193,7 @@ function meta:lvsSetInputDisabled( disable )
 	end
 
 	if disable then
-		self._lvsKeyDisabler = CurTime() + 4
+		self._lvsKeyDisabler = CurTime() + 120
 	else
 		self._lvsKeyDisabler = CurTime() + 0.25
 	end
@@ -206,45 +206,9 @@ if CLIENT then
 		ply:lvsBuildControls()
 	end )
 
-	hook.Add( "OnSpawnMenuOpen", "!!!lvs_keyblocker", function()
-		local ply = LocalPlayer()
-		if not IsValid( ply ) or ply._lvsDisableSpawnMenu then return end
-		ply:lvsSetInputDisabled( true )
-	end )
-
-	hook.Add( "OnContextMenuOpen", "!!!lvs_keyblocker", function()
-		local ply = LocalPlayer()
-		if not IsValid( ply ) or ply._lvsDisableContextMenu then return end
-		ply:lvsSetInputDisabled( true )
-	end )
-
-	hook.Add( "OnSpawnMenuClose", "!!!lvs_keyblocker", function()
-		local ply = LocalPlayer()
-		if not IsValid( ply ) or ply._lvsDisableSpawnMenu then return end
-		ply:lvsSetInputDisabled( false )
-	end )
-
-	hook.Add( "OnContextMenuClose", "!!!lvs_keyblocker", function()
-		local ply = LocalPlayer()
-		if not IsValid( ply ) or ply._lvsDisableContextMenu then return end
-		ply:lvsSetInputDisabled( false )
-	end )
-
-	hook.Add( "StartChat", "!!!lvs_keyblocker", function( isTeamChat )
-		local ply = LocalPlayer()
-		if not IsValid( ply ) then return end
-		ply:lvsSetInputDisabled( true )
-	end )
-
-	hook.Add( "FinishChat", "!!!lvs_keyblocker", function()
-		local ply = LocalPlayer()
-		if not IsValid( ply ) then return end
-		ply:lvsSetInputDisabled( false )
-	end )
-
 	local OldVisible = false
 	hook.Add("PostDrawHUD", "!!!lvs_keyblocker", function()
-		local Visible = gui.IsGameUIVisible()
+		local Visible = gui.IsGameUIVisible() or vgui.CursorVisible()
 
 		if Visible ~= OldVisible then
 			OldVisible = Visible
