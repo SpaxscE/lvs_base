@@ -17,7 +17,7 @@ LVS:AddHudEditor( "VehicleInfo", ScrW() - 460, ScrH() - 85,  220, 75, 220, 75, "
 
 function ENT:LVSHudPaintVehicleHealth( X, Y, W, H, ScrX, ScrY, ply )
 	draw.DrawText( "HEALTH ", "LVS_FONT", X + 102, Y + 35, color_white, TEXT_ALIGN_RIGHT )
-	draw.DrawText( self:GetHP(), "LVS_FONT_HUD_LARGE", X + 102, Y + 20, color_white, TEXT_ALIGN_LEFT )
+	draw.DrawText( math.Round( self:GetHP(), 0 ), "LVS_FONT_HUD_LARGE", X + 102, Y + 20, color_white, TEXT_ALIGN_LEFT )
 end
 
 function ENT:LVSHudPaintVehicleIdentifier( X, Y, In_Col, target_ent )
