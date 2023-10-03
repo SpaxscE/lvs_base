@@ -1,6 +1,8 @@
 
-LVS.HudEditors = LVS.HudEditors or {}
 --LVS.HudForceDefault = true
+
+LVS.HudEditors = LVS.HudEditors or {}
+LVS.HudEditorsHide = {}
 
 local function ResetFrame( id )
 	if not LVS.HudEditors[ id ] then return end
@@ -9,12 +11,13 @@ local function ResetFrame( id )
 	LVS.HudEditors[ id ].h = LVS.HudEditors[ id ].DefaultHeight
 	LVS.HudEditors[ id ].X = LVS.HudEditors[ id ].DefaultX
 	LVS.HudEditors[ id ].Y = LVS.HudEditors[ id ].DefaultY
+	LVS.HudEditorsHide[ id ] = nil
 end
 
 local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 	local Frame = vgui.Create("DFrame")
 	Frame:SetSize( w, h )
-	Frame:SetPos( X, Y)
+	Frame:SetPos( X, Y )
 	Frame:SetTitle( text )
 	Frame:SetScreenLock( true )
 	Frame:MakePopup()
@@ -24,7 +27,6 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 	Frame.id = id
 	Frame.OnClose = function( self )
 		ResetFrame( self.id )
-		LocalPlayer():lvsSetInputDisabled( false )
 	end
 	Frame.Paint = function(self, w, h )
 		surface.SetDrawColor(0,0,0,150)
@@ -43,6 +45,21 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 
 		LVS.HudEditors[ self.id ].X = self:GetX()
 		LVS.HudEditors[ self.id ].Y = self:GetY()
+	end
+
+	local DCheckbox = vgui.Create( "DCheckBoxLabel", Frame )
+	DCheckbox:Dock( RIGHT )
+	DCheckbox:DockMargin( 0, 0, 0, 0 )
+	DCheckbox:SetText("Hide")	
+	DCheckbox:SizeToContents()
+	DCheckbox.id = id
+	DCheckbox:SetChecked( LVS.HudEditorsHide[ id ] == true )
+	DCheckbox.OnChange = function( self, bVal )
+		if not self.id then return end
+
+		if bVal then LVS.HudEditorsHide[ self.id ] = true return end
+
+		LVS.HudEditorsHide[ self.id ] = nil
 	end
 
 	LVS.HudEditors[ id ].Frame = Frame
@@ -138,7 +155,6 @@ function LVS:OpenEditors()
 	local pod = ply:GetVehicle()
 
 	ply.SwitcherTime = T + 9999
-	ply:lvsSetInputDisabled( true )
 
 	if not IsValid( pod ) then return end
 
@@ -158,7 +174,6 @@ function LVS:CloseEditors()
 	local pod = ply:GetVehicle()
 
 	ply.SwitcherTime = T
-	ply:lvsSetInputDisabled( false )
 
 	if not IsValid( pod ) then return end
 
@@ -271,6 +286,8 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 	end
 
 	for id, editor in pairs( LVS.HudEditors ) do
+		if LVS.HudEditorsHide[ id ] then continue end
+
 		local ScaleX = editor.w / editor.DefaultWidth
 		local ScaleY = editor.h / editor.DefaultHeight
 
