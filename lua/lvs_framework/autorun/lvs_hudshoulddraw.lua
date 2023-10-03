@@ -17,6 +17,8 @@ if SERVER then
 		net.Start( "lvs_hudshoulddraw" )
 			net.WriteBool( false )
 		net.Send( ply )
+
+		ply._lvsShouldDrawDisabled = nil
 	end )
 
 	return
