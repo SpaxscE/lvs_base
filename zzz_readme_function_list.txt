@@ -20,7 +20,7 @@ nTeam:
 
 table = ply:lvsGetControls() -- returns ALL player controls in a table
 bool = ply:lvsKeyDown( string_name ) -- returns current given key, default binding string_name's can be found in lvs_keybinding.lua
-					Example usage: print( ply:lvsKeyDow("ATTACK") )
+					Example usage: print( ply:lvsKeyDown("ATTACK") )
 bool = ply:lvsMouseAim() -- returns if the player has mouse aim enabled
 ply:lvsMouseSensitivity()
 
