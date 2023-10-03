@@ -67,8 +67,13 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 	return Frame
 end
 
+local ScreenWidth = ScrW()
+local ScreenHeight = ScrH()
+
 local function SaveEditors()
 	if LVS.HudForceDefault then return end
+
+	if ScreenWidth ~= ScrW() or ScreenHeight ~= ScrH() then return end -- player changed resolution while ingame... don't save because everything is fucked up now...
 
 	local SaveString = ""
 	for id, data in pairs( LVS.HudEditors ) do
