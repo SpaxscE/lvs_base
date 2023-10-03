@@ -43,8 +43,8 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 		LVS.HudEditors[ self.id ].w = self:GetWide()
 		LVS.HudEditors[ self.id ].h = self:GetTall()
 
-		LVS.HudEditors[ self.id ].X = self:GetX()
-		LVS.HudEditors[ self.id ].Y = self:GetY()
+		LVS.HudEditors[ self.id ].X = math.min( self:GetX(), ScrW() - self:GetWide() )
+		LVS.HudEditors[ self.id ].Y = math.min( self:GetY(), ScrH() - self:GetTall() )
 	end
 
 	local DCheckbox = vgui.Create( "DCheckBoxLabel", Frame )
@@ -80,28 +80,30 @@ local function SaveEditors()
 		local w = data.w
 		local h = data.h
 
-		local X = data.X
-		local Y = data.Y
+		local X = math.min( data.X / ScrW(), 1 )
+		local Y = math.min( data.Y / ScrH(), 1 )
 
-		SaveString = SaveString..id.."~"..w.."#"..h.."/"..X.."#"..Y.."\n"
+		local hide = LVS.HudEditorsHide[ id ] and "?" or " "
+
+		SaveString = SaveString..id.."~"..hide.."~"..w.."#"..h.."/"..X.."#"..Y.."\n"
 	end
 
-	file.Write( "lvs_preferences.txt", SaveString )
+	file.Write( "lvs_hud_settings.txt", SaveString )
 end
 
 local function LoadEditors()
 	if LVS.HudForceDefault then return end
 
-	local LoadString = file.Read( "lvs_preferences.txt" )
+	local LoadString = file.Read( "lvs_hud_settings.txt" )
 
 	if not LoadString then return end
 
 	for _, garbage in pairs( string.Explode( "\n", LoadString ) ) do
 		local data1 = string.Explode( "~", garbage )
 
-		if not data1[2] then continue end
+		if not data1[3] then continue end
 
-		local data2 =  string.Explode( "/", data1[2] )
+		local data2 =  string.Explode( "/", data1[3] )
 
 		local size = string.Explode( "#", data2[1] )
 		local pos = string.Explode( "#", data2[2] )
@@ -112,8 +114,12 @@ local function LoadEditors()
 
 		LVS.HudEditors[ ID ].w = size[1]
 		LVS.HudEditors[ ID ].h = size[2]
-		LVS.HudEditors[ ID ].X = math.min( pos[1], ScrW() - size[1] )
-		LVS.HudEditors[ ID ].Y = math.min( pos[2], ScrH() - size[2] )
+		LVS.HudEditors[ ID ].X = math.min( pos[1] * ScrW(), ScrW() - size[1] )
+		LVS.HudEditors[ ID ].Y = math.min( pos[2] * ScrH(), ScrH() - size[2] )
+
+		if data1[2] == "?" then
+			LVS.HudEditorsHide[ ID ] = true
+		end
 	end
 end
 
