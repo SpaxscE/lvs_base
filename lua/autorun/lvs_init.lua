@@ -103,10 +103,6 @@ function LVS:CheckUpdates()
 	end)
 end
 
-hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
-	timer.Simple(20, function() LVS.CheckUpdates() end)
-end )
-
 function LVS:GetWeaponPreset( name )
 	if not LVS.WEAPONS[ name ] then return table.Copy( LVS.WEAPONS["DEFAULT"] ) end
 
