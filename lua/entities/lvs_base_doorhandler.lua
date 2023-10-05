@@ -20,9 +20,14 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Float",0, "Rate" )
 	self:NetworkVar( "Float",1, "RateExponent" )
 
+	self:NetworkVar( "Float",2, "PoseMin" )
+	self:NetworkVar( "Float",3, "PoseMax" )
+
 	if SERVER then
 		self:SetRate( 10 )
 		self:SetRateExponent( 2 )
+
+		self:SetPoseMax( 1 )
 	end
 end
 
@@ -203,7 +208,7 @@ function ENT:Think()
 
 	if not IsValid( Base ) then return end
 
-	local Target = self:GetActive() and 1 or 0
+	local Target = self:GetActive() and self:GetPoseMax() or self:GetPoseMin()
 	local poseName = self:GetPoseName()
 
 	if poseName == "" then return end
