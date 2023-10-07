@@ -90,7 +90,7 @@ end)
 local cvarDev = GetConVar( "developer" )
 LVS.DeveloperEnabled = cvarDev and (cvarDev:GetInt() >= 1) or false
 cvars.AddChangeCallback( "developer", function( convar, oldValue, newValue )
-	LVS.DeveloperEnabled = tonumber( newValue ) >= 1
+	LVS.DeveloperEnabled = (tonumber( newValue ) or 0) >= 1
 end)
 
 cvars.AddChangeCallback( "lvs_mouseaim", function( convar, oldValue, newValue )
