@@ -8,6 +8,8 @@ ENT.lvsProjectile = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
+	self:NetworkVar( "Bool", 1, "MaskSolid" )
+
 	self:NetworkVar( "Vector", 0, "Speed" )
 end
 
@@ -285,6 +287,8 @@ hook.Add( "HUDPaint", "!!!!lvs_bomb_hud", function()
 		local Pos = Missile:GetPos()
 		local Vel = Missile:GetSpeed()
 
+		local Mask = Missile.GetMaskSolid and (Missile:GetMaskSolid() and MASK_SOLID or MASK_SOLID_BRUSHONLY) or MASK_SOLID_BRUSHONLY
+
 		cam.Start3D()
 		local Iteration = 0
 		while Iteration < 1000 do
@@ -298,7 +302,7 @@ hook.Add( "HUDPaint", "!!!!lvs_bomb_hud", function()
 			local trace = util.TraceLine( {
 				start = StartPos,
 				endpos = EndPos,
-				mask = MASK_SOLID_BRUSHONLY,
+				mask = Mask,
 			} )
 
 			render.DrawLine( StartPos, EndPos, color_red )
