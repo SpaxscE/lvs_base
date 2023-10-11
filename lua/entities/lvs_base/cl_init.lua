@@ -25,20 +25,20 @@ end
 function ENT:PostDrawTranslucent()
 end
 
-function ENT:Draw()
+function ENT:Draw( flags )
 
 	if self:PreDraw() then
-		self:DrawModel()
+		self:DrawModel( flags )
 	end
 
 	self:PostDraw()
 end
 
-function ENT:DrawTranslucent()
+function ENT:DrawTranslucent( flags )
 	self:DrawTrail()
 
 	if self:PreDrawTranslucent() then
-		self:DrawModel()
+		self:DrawModel( flags )
 	end
 
 	self:PostDrawTranslucent()
