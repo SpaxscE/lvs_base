@@ -16,7 +16,7 @@ function ENT:PreDraw()
 end
 
 function ENT:PreDrawTranslucent()
-	return false
+	return true
 end
 
 function ENT:PostDraw()
