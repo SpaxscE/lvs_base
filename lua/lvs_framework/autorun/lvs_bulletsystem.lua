@@ -145,7 +145,7 @@ local function HandleBullets()
 				if IsValid( trace.Entity ) and trace.Entity.GetBloodColor then
 					local BloodColor = trace.Entity:GetBloodColor()
 
-					if BloodColor ~= DONT_BLEED then
+					if BloodColor and BloodColor ~= DONT_BLEED then
 						local effectdata = EffectData()
 						effectdata:SetOrigin( EndPos )
 						effectdata:SetColor( BloodColor )
