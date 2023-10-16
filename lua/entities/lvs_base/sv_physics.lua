@@ -113,7 +113,7 @@ end
 function ENT:PhysicsCollide( data, physobj )
 	local HitEnt = data.HitEntity
 
-	if not IsValid( data.HitEntity ) and util.GetSurfacePropName( data.TheirSurfaceProps ) == "default_silent" then
+	if not IsValid( HitEnt ) and util.GetSurfacePropName( data.TheirSurfaceProps ) == "default_silent" then
 		if self:OnSkyCollide( data, physobj ) then return end
 	end
 
