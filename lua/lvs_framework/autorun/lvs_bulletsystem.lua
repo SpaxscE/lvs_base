@@ -142,6 +142,17 @@ local function HandleBullets()
 
 				trace.Entity:TakeDamageInfo( dmginfo )
 
+				if IsValid( trace.Entity ) and trace.Entity.GetBloodColor then
+					local BloodColor = trace.Entity:GetBloodColor()
+
+					if BloodColor ~= DONT_BLEED then
+						local effectdata = EffectData()
+						effectdata:SetOrigin( EndPos )
+						effectdata:SetColor( BloodColor )
+						util.Effect( "BloodImpact", effectdata, true, true )
+					end
+				end
+
 				if bullet.SplashDamage and bullet.SplashDamageRadius then
 					local effectdata = EffectData()
 					effectdata:SetOrigin( EndPos )
