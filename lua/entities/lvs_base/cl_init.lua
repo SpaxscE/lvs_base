@@ -26,9 +26,12 @@ function ENT:PostDrawTranslucent()
 end
 
 function ENT:Draw( flags )
-
 	if self:PreDraw() then
-		self:DrawModel( flags )
+		if self.lvsLegacyDraw then
+			self:DrawModel() -- ugly, but required in order to fix old addons. Refract wont work on these.
+		else
+			self:DrawModel( flags )
+		end
 	end
 
 	self:PostDraw()
@@ -39,6 +42,8 @@ function ENT:DrawTranslucent( flags )
 
 	if self:PreDrawTranslucent() then
 		self:DrawModel( flags )
+	else
+		self.lvsLegacyDraw = true -- insert puke simley
 	end
 
 	self:PostDrawTranslucent()
