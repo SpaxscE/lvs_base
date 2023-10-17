@@ -166,6 +166,8 @@ end
 
 function ENT:Lock()
 	for _, Handler in pairs( self:GetDoorHandlers() ) do
+		if not IsValid( Handler ) then continue end
+
 		Handler:Close( ply )
 	end
 

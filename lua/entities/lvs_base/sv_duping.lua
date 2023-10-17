@@ -7,6 +7,9 @@ function ENT:PostEntityPaste(Player,Ent,CreatedEntities)
 	if Ent.GetEngineActive then Ent:SetEngineActive( false ) end
 	if Ent.GetAI then Ent:SetAI( false ) end
 
+	-- fix issue with door handlers
+	Ent._DoorHandlers = nil
+
 	-- allow rebuild of passenger seats
 	Ent.pPodKeyIndex = nil
 	Ent.pSeats = nil
