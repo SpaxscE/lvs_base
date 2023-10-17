@@ -128,3 +128,34 @@ number = lvsEntity:GetNWAmmo() -- returns amount of ammo in current weapon
 number = lvsEntity:GetNWHeat() -- returns the heat from current weapon
 
 number = lvsEntity:GetAmmoID( ID ) -- returns amount of ammo in given ID's weapon
+
+
+
+
+========================================
+=========== LVS HOOKS SHARED ===========
+========================================
+
+hook.Add( "LVS:Initialize", "any_name_you_want", function()
+	print("lvs has been initialized")
+end )
+
+hook.Add( "LVS.OnPlayerRequestSeatSwitch", "any_name_you_want", function( ply, vehicle, CurPod, NewPod )
+	return false -- prevent player from changing seat
+end )
+
+========================================
+=========== LVS HOOKS SERVER ===========
+========================================
+
+hook.Add( "LVS.PlayerKeyDown", "any_name_you_want", function( ply, keyname, pressed )
+	print("test")
+end )
+
+hook.Add( "LVS.CanPlayerDrive", "any_name_you_want", function( ply, vehicle )
+	return false -- prevent players from driving vehicles
+end )
+
+hook.Add( "LVS.OnPlayerCannotDrive", "any_name_you_want", function( ply, vehicle )
+	print(ply:GetName().." can not drive :(")
+end )
