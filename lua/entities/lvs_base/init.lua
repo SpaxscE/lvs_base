@@ -89,7 +89,7 @@ function ENT:PostInitialize( PObj )
 	local SpawnSuccess, ErrorMsg = pcall( function() self:OnSpawn( PObj ) end )
 
 	if not SpawnSuccess then
-		ErrorNoHalt( ErrorMsg.."\n" )
+		ErrorNoHalt( "\n[ERROR] "..ErrorMsg.."\n\n" )
 	end
 
 	self:StartMotionController()
