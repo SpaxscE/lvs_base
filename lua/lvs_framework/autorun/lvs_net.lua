@@ -18,7 +18,7 @@ if SERVER then
 
 		local ent = net.ReadEntity()
 
-		if not IsValid( ent ) then return end
+		if not IsValid( ent ) or not ent.GetCrosshairFilterEnts then return end -- TODO: Make this loop around and wait for ent.IsInitialized to exist and ent:IsInitialized() to return true
 
 		local CrosshairFilterEnts = table.Copy( ent:GetCrosshairFilterEnts() )
 
