@@ -6,8 +6,8 @@ function ENT:CreateBonePoseParameter( name, bone, ang_min, ang_max, pos_min, pos
 		bone = (bone or -1),
 		ang_min = ang_min or angle_zero,
 		ang_max = ang_max or angle_zero,
-		pos_min = pos_min or angle_zero,
-		pos_max = pos_max or angle_zero,
+		pos_min = pos_min or vector_origin,
+		pos_max = pos_max or vector_origin,
 	}
 end
 
