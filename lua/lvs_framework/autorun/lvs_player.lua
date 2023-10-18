@@ -4,6 +4,13 @@ function meta:lvsGetAITeam()
 	return self:GetNWInt( "lvsAITeam", LVS.PlayerDefaultTeam:GetInt() )
 end
 
+local MapDoneLoading = false
+hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
+	timer.Simple(1, function()
+		MapDoneLoading = true
+	end)
+end )
+
 function meta:lvsGetVehicle()
 	local Pod = self:GetVehicle()
 
@@ -19,13 +26,13 @@ function meta:lvsGetVehicle()
 		if not IsValid( Parent ) then return NULL end
 
 		if not Parent.LVS then
-			Pod.LVSchecked = true
+			Pod.LVSchecked = MapDoneLoading
 			Pod.LVSBaseEnt = NULL
 
 			return NULL
 		end
 
-		Pod.LVSchecked = true
+		Pod.LVSchecked = MapDoneLoading
 		Pod.LVSBaseEnt = Parent
 
 		return Parent
