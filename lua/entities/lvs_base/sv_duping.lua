@@ -2,9 +2,11 @@
 -- attempt at fixing dupe support
 
 function ENT:PostEntityPaste(Player,Ent,CreatedEntities)
-	if self.SetAI then self:SetAI( false ) end
-	if self.SetActive then self:SetActive( false ) end
-	if self.SetEngineActive then self:SetEngineActive( false ) end
+	if not self.SetAI then return end
+	
+	if IsValid( Player ) and Player:IsAdmin() then return end
+
+	self:SetAI( false )
 end
 
 local Active
@@ -18,12 +20,9 @@ function ENT:PreEntityCopy()
 	Active = self:GetActive()
 	EngineActive = self:GetEngineActive()
 
+	self:SetlvsReady( false )
 	self:SetActive( false )
 	self:SetEngineActive( false )
-
-
-	self:SetlvsReady( false )
-
 
 	CrosshairFilterEnts = self.CrosshairFilterEnts
 	DoorHandlers = self._DoorHandlers
@@ -37,15 +36,16 @@ function ENT:PreEntityCopy()
 end
 
 function ENT:PostEntityCopy()
-	self:SetActive( Active )
-	self:SetEngineActive( EngineActive )
+	timer.Simple(0, function()
+		if not IsValid( self ) then return end
 
-	Active = nil
-	EngineActive = nil
+		self:SetlvsReady( true )
+		self:SetActive( Active )
+		self:SetEngineActive( EngineActive )
 
-
-	self:SetlvsReady( true )
-
+		Active = nil
+		EngineActive = nil
+	end)
 
 	self.CrosshairFilterEnts = CrosshairFilterEnts
 	self._DoorHandlers = DoorHandlers
