@@ -41,7 +41,7 @@ function ENT:CreateBaseDT()
 	local InitWeaponsSuccess, ErrorMsg = pcall( function() self:InitWeapons() end )
 
 	if not InitWeaponsSuccess then
-		ErrorNoHalt( ErrorMsg.."\n" )
+		ErrorNoHalt( "\n[ERROR] "..ErrorMsg.."\n\n" )
 	end
 
 	self:AddDT( "Entity", "Driver" )
