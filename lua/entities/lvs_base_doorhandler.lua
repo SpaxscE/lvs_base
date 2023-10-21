@@ -119,6 +119,21 @@ if SERVER then
 		end )
 	end
 
+	function ENT:DisableOnBodyGroup( group, subgroup )
+		self._BodyGroupDisable = group
+		self._BodySubGroupDisable = subgroup
+	end
+
+	function ENT:IsBodyGroupDisabled()
+		if not self._BodyGroupDisable or not self._BodySubGroupDisable then return false end
+
+		local base = self:GetBase()
+
+		if not IsValid( base ) then return false end
+
+		return base:GetBodygroup( self._BodyGroupDisable ) == self._BodySubGroupDisable
+	end
+
 	function ENT:Open( ply )
 		if self:IsOpen() then return end
 
@@ -132,6 +147,8 @@ if SERVER then
 		self:SetMins( self:GetMinsOpen() )
 		self:SetMaxs( self:GetMaxsOpen() )
 
+		if self:IsBodyGroupDisabled() then return end
+
 		self:OnOpen( ply )
 
 		local snd = self:GetSoundOpen()
@@ -142,7 +159,15 @@ if SERVER then
 	end
 
 	function ENT:Close( ply )
-		if not self:IsOpen() then return end
+		if not self:IsOpen() then
+			if self:IsBodyGroupDisabled() then
+				self:Open( ply )
+			end
+
+			return
+		end
+
+		if self:IsBodyGroupDisabled() then return end
 
 		self:SetActive( false )
 		self:SetMins( self:GetMinsClosed() )
