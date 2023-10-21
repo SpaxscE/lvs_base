@@ -33,3 +33,4 @@ DoorHandler:SetSoundOpen( "lvs/vehicles/generic/car_door_open.wav" ) -- sound pl
 DoorHandler:SetSoundClose( "lvs/vehicles/generic/car_door_close.wav" ) -- sound played when the door is closed
 DoorHandler:SetRate( 5 ) -- how fast the doors should open
 DoorHandler:SetRateExponent( 2 ) -- exponent multiplier to make the movement less linear
+DoorHandler:DisableOnBodyGroup( 6, 3 ) -- if bodygroup 6 is set to subgroup 3, this doorhandler will be inactive
