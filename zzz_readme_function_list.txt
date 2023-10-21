@@ -69,6 +69,8 @@ number = lvsEntity:GetShieldPercent()
 number = lvsEntity:GetHP()
 number = lvsEntity:GetMaxHP()
 
+vector_pos, angle_ang, vector_mins, vector_maxs = lvsEntity:GetBoneInfo( string_bone_name ) -- returns bone position, angle, mins and max for use with the DS system
+
 bool = lvsEntity:IsInitialized()
 
 table = lvsEntity:GetPassengerSeats()
