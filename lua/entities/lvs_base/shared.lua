@@ -63,6 +63,7 @@ function ENT:CreateBaseDT()
 
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
+		self:NetworkVarNotify( "HP", self.PDSHealthValueChanged )
 		self:NetworkVarNotify( "SelectedWeapon", self.OnWeaponChanged )
 
 		self:SetAITEAM( self.AITEAM )

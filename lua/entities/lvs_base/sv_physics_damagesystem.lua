@@ -4,6 +4,20 @@ ENT._pdsParts = {}
 ENT.PDSDamageVelocity = 100
 ENT.PDSDamageMultiplier = 0.05
 
+function ENT:PDSHealthValueChanged( name, old, new)
+	if new == old then return end
+	
+	if not self:IsInitialized() or not istable( self._pdsParts ) or new ~= self:GetMaxHP() then return end
+
+	for _, part in pairs( self._pdsParts ) do
+		part:SetStage( 0 )
+
+		if not part._group then continue end
+
+		self:SetBodygroup( part._group, 0 )
+	end
+end
+
 local function DamagePart( ent, part, speed )
 	if not speed then
 		speed = 0
@@ -17,6 +31,9 @@ local function DamagePart( ent, part, speed )
 
 	if istable( data.bodygroup ) then
 		for group, subgroup in pairs( data.bodygroup ) do
+			if not part._group then
+				part._group = group
+			end
 			ent:SetBodygroup( group, subgroup )
 		end
 	end
@@ -58,6 +75,7 @@ local function DamagePart( ent, part, speed )
 		gib:Spawn()
 		gib:Activate()
 		gib:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
+		gib:SetSkin( ent:GetSkin() )
 
 		if InvAttach then
 			local att = gib:GetAttachment( gib:LookupAttachment( data.gib.target ) )
@@ -193,6 +211,13 @@ function ENT:CalcPDS( physdata )
 	local parts = self:FindPDS( physdata.HitPos, (VelDif - self.PDSDamageVelocity) * self.PDSDamageMultiplier )
 
 	if #parts == 0 then return end
+
+	local HP = self:GetHP()
+	local MaxHP = self:GetMaxHP()
+
+	if HP == MaxHP then
+		self:SetHP( math.max( MaxHP - 0.1, 1 ) )
+	end
 
 	for _, part in pairs( parts ) do
 		DamagePart( self, part, VelDif )
