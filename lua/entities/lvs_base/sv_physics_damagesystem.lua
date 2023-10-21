@@ -91,7 +91,7 @@ local function DamagePart( ent, part, speed )
 
 		if not IsValid( PhysObj ) then return end
 
-		PhysObj:SetVelocityInstantaneous( ent:GetVelocity() + Vector(0,0,100) )
+		PhysObj:SetVelocityInstantaneous( ent:GetVelocity() + Vector(0,0,500) )
 		PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
 	end)
 end
@@ -185,7 +185,7 @@ function ENT:FindPDS( PosToCheck, RadiusAdd )
 end
 
 function ENT:CalcPDS( physdata )
-	local VelDif = physdata.OurOldVelocity:Length() - physdata.OurNewVelocity:Length()
+	local VelDif = math.abs( physdata.OurOldVelocity:Length() - physdata.OurNewVelocity:Length() )
 
 	if VelDif < self.PDSDamageVelocity then return end
 
