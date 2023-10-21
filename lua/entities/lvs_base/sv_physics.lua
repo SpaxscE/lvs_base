@@ -155,6 +155,8 @@ function ENT:PhysicsCollide( data, physobj )
 	if data.Speed > 60 and data.DeltaTime > 0.2 then
 		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
 
+		self:CalcPDS( data )
+
 		local effectdata = EffectData()
 		effectdata:SetOrigin( data.HitPos )
 		util.Effect( "lvs_physics_impact", effectdata, true, true )

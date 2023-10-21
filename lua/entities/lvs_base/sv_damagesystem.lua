@@ -246,10 +246,14 @@ function ENT:PreExplode( ExplodeTime )
 	return ExplodeTime
 end
 
-function ENT:FindDS( PosToCheck )
-	local Len = self:BoundingRadius()
+function ENT:FindDS( PosToCheck, RadiusAdd )
+
+	if not isnumber( RadiusAdd ) then
+		RadiusAdd = 1
+	end
+
 	local closestPart
-	local closestDist = Len * 2
+	local closestDist = 50000
 
 	local ToCenter = (self:LocalToWorld( self:OBBCenter() ) - PosToCheck):GetNormalized()
 
@@ -262,7 +266,7 @@ function ENT:FindDS( PosToCheck )
 			local pos = self:LocalToWorld( part.pos )
 			local ang = self:LocalToWorldAngles( part.ang )
 
-			local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( PosToCheck, ToCenter, pos, ang, mins, maxs )
+			local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( PosToCheck, ToCenter * RadiusAdd, pos, ang, mins, maxs )
 
 			if HitPos then
 				local dist = (HitPos - PosToCheck):Length()

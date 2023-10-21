@@ -249,3 +249,32 @@ end
 function ENT:GetVehicleType()
 	return "LBaseEntity"
 end
+
+function ENT:GetBoneInfo( BoneName )
+	local BoneID = self:LookupBone( BoneName )
+	local numHitBoxSets = self:GetHitboxSetCount()
+
+	if not BoneID then
+		goto SkipLoop
+	end
+
+	for hboxset = 0, numHitBoxSets - 1 do
+		local numHitBoxes = self:GetHitBoxCount( hboxset )
+
+		for hitbox=0, numHitBoxes - 1 do
+			local bone = self:GetHitBoxBone( hitbox, hboxset )
+			local name = self:GetBoneName( bone )
+
+			if BoneName ~= name then continue end
+
+			local mins, maxs = self:GetHitBoxBounds( hitbox, hboxset )
+			local pos, ang = self:GetBonePosition( BoneID )
+
+			return self:WorldToLocal( pos ), self:WorldToLocalAngles( ang ), mins, maxs
+		end
+	end
+
+	:: SkipLoop ::
+
+	return vector_origin, angle_zero, vector_origin, vector_origin
+end
