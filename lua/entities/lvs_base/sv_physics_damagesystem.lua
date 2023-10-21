@@ -57,6 +57,7 @@ local function DamagePart( ent, part, speed )
 		gib:SetAngles( ang )
 		gib:Spawn()
 		gib:Activate()
+		gib:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
 
 		if InvAttach then
 			local att = gib:GetAttachment( gib:LookupAttachment( data.gib.target ) )
