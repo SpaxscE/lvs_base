@@ -29,6 +29,10 @@ local function DamagePart( ent, part, speed )
 
 	local data = part:GetStageData()
 
+	if isfunction( data.Callback ) then
+		data:Callback( ent, part, speed )
+	end
+
 	if istable( data.bodygroup ) then
 		for group, subgroup in pairs( data.bodygroup ) do
 			if not part._group then

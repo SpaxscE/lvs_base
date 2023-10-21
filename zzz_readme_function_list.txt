@@ -107,7 +107,11 @@ lvsEntity:SetNextAttack( num ) -- set next allowed attack
 
 lvsEntity:WeaponRestoreAmmo() -- refill all ammo
 
+lvsEntity:AddDS( data ) -- adds a DamageSystem handler. See discord wiki-slash-info for usage
 
+lvsEntity:AddDSArmor( data ) -- adds a DamageSystemArmor handler. See discord wiki-slash-info for usage
+
+lvsEntity:AddPDS( data ) -- adds a PhysicsVisualDamageSystem handler. See discord wiki-slash-info for usage
 
 number = lvsEntity:GetAmmo() -- returns amount of ammo in current weapon
 
