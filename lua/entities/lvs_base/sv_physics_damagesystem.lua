@@ -110,7 +110,7 @@ local function DamagePart( ent, part, speed )
 
 		if not IsValid( PhysObj ) then return end
 
-		PhysObj:SetVelocityInstantaneous( ent:GetVelocity() + Vector(0,0,500) )
+		PhysObj:SetVelocityInstantaneous( ent:GetVelocity() + Vector(0,0,250) )
 		PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
 	end)
 end
