@@ -4,6 +4,12 @@ ENT._pdsParts = {}
 ENT.PDSDamageVelocity = 100
 ENT.PDSDamageMultiplier = 0.05
 
+function ENT:ClearPDS()
+	if not istable( self._pdsParts ) then return end
+
+	table.Empty( self._pdsParts )
+end
+
 function ENT:PDSHealthValueChanged( name, old, new)
 	if new == old then return end
 	

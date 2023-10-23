@@ -207,6 +207,8 @@ function ENT:CalcDamage( dmginfo )
 	if NewHealth <= 0 then
 		self:SetDestroyed( IsCollisionDamage )
 
+		self:ClearPDS()
+
 		self.FinalAttacker = dmginfo:GetAttacker() 
 		self.FinalInflictor = dmginfo:GetInflictor()
 
