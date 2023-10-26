@@ -69,7 +69,7 @@ cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newV
 	LVS.ShowIdent = tonumber( newValue ) ~=0
 end)
 
-local cvarHitMarker = CreateConVar( "lvs_hitmarker", 1, true, false)
+local cvarHitMarker = CreateClientConVar( "lvs_hitmarker", 1, true, false)
 LVS.ShowHitMarker = cvarHitMarker and cvarHitMarker:GetBool() or false
 cvars.AddChangeCallback( "lvs_hitmarker", function( convar, oldValue, newValue ) 
 	LVS.ShowHitMarker = tonumber( newValue ) ~=0
