@@ -78,7 +78,7 @@ function LVS:GetNPCRelationship( npc_class )
 end
 
 hook.Add( "OnEntityCreated", "!!!!lvsEntitySorter", function( ent )
-	timer.Simple( FrameTime(), function() 
+	timer.Simple( 2, function() 
 		if not IsValid( ent ) then return end
 
 		if isfunction( ent.IsNPC ) and ent:IsNPC() then
