@@ -280,7 +280,9 @@ function ENT:GetMissileOffset()
 	return self:OBBCenter()
 end
 
-function ENT:SetVehicleRelationship()
+function ENT:SetVehicleRelationship( name, old, new)
+	if new == old then return end
+
 	timer.Simple(0, function()
 		LVS:SetVehicleRelationship( self )
 	end)
