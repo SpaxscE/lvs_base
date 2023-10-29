@@ -95,14 +95,14 @@ function LVS:SetNPCRelationship( npc )
 	if not IsValid( npc ) then return end
 
 	for _, veh in pairs( LVS:GetVehicles() ) do
-		if not veh:IsEnemy( npc ) then continue end
+		if not veh:IsInitialized() or veh:IsDestroyed() or not veh:IsEnemy( npc ) then continue end
 
 		npc:AddEntityRelationship( veh, (veh:GetActive() and D_HT or D_LI), 98 )
 	end
 end
 
 function LVS:SetVehicleRelationship( veh )
-	if not IsValid( veh ) then return end
+	if not IsValid( veh ) or not veh:IsInitialized() or veh:IsDestroyed() then return end
 
 	local D_ = veh:GetActive() and D_HT or D_LI
 
