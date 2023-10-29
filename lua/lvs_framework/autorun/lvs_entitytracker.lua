@@ -121,8 +121,7 @@ function LVS:ClearVehicleRelationship( veh )
 	for _, npc in ipairs( ents.GetAll() ) do
 		if not isfunction( npc.IsNPC ) or not npc:IsNPC() or not isfunction( npc.GetEnemy ) or npc:GetEnemy() ~= veh then continue end
 
-		npc:AddEntityRelationship( veh, D_LI, 99 )
-		npc:SetEnemy( NULL )
+		npc:ClearEnemyMemory()
 	end
 end
 
