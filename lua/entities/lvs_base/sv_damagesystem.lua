@@ -147,24 +147,7 @@ function ENT:CalcComponentDamage( dmginfo )
 	return Hit
 end
 
-local FixDamageClass = {
-	["npc_strider"] = true,
-	["npc_combinegunship"] = true,
-	["npc_helicopter"] = true,
-}
-function ENT:FixNPCDamage( dmginfo )
-	if not dmginfo:IsDamageType( DMG_BULLET ) then return end
-
-	local attacker = dmginfo:GetAttacker()
-
-	if not IsValid( attacker ) or not FixDamageClass[ attacker:GetClass() ] then return end
-
-	dmginfo:SetDamageType( DMG_AIRBOAT )
-end
-
 function ENT:CalcDamage( dmginfo )
-	self:FixNPCDamage( dmginfo )
-
 	if dmginfo:IsDamageType( self.DSArmorIgnoreDamageType ) then return end
 
 	if dmginfo:IsDamageType( self.DSArmorDamageReductionType ) then
@@ -241,8 +224,6 @@ function ENT:CalcDamage( dmginfo )
 			if not IsValid( self ) then return end
 			self:Explode()
 		end)
-
-		LVS:ClearVehicleRelationship( self )
 	end
 end
 
