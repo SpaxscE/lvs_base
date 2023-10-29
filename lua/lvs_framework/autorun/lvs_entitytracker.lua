@@ -92,8 +92,6 @@ function LVS:GetNPCRelationship( npc_class )
 end
 
 function LVS:SetNPCRelationship( npc )
-	local Team = LVS:GetNPCRelationship( npc:GetClass() )
-
 	for _, veh in pairs( LVS:GetVehicles() ) do
 		if not veh:IsEnemy( npc ) then continue end
 
