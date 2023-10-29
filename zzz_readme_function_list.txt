@@ -69,7 +69,7 @@ number = lvsEntity:GetShieldPercent()
 number = lvsEntity:GetHP()
 number = lvsEntity:GetMaxHP()
 
-vector_pos, angle_ang, vector_mins, vector_maxs = lvsEntity:GetBoneInfo( string_bone_name ) -- returns bone position, angle, mins and max for use with the DS system
+vector_pos, angle_ang, vector_mins, vector_maxs = lvsEntity:GetBoneInfo( string_bone_name ) -- returns bone position, angle, mins and max for use with the PDS / DS system
 
 bool = lvsEntity:IsInitialized()
 
@@ -164,4 +164,17 @@ end )
 
 hook.Add( "LVS.OnPlayerCannotDrive", "any_name_you_want", function( ply, vehicle )
 	print(ply:GetName().." can not drive :(")
+end )
+
+
+========================================
+=========== LVS HOOKS CLIENT ===========
+========================================
+
+hook.Add( "LVS.PlayerEnteredVehicle", "any_name_you_want", function( ply, veh )
+	print(ply:GetName().." entered a lvs vehicle")
+end )
+
+hook.Add( "LVS.PlayerLeaveVehicle", "any_name_you_want", function( ply, veh )
+	print(ply:GetName().." exit a lvs vehicle")
 end )
