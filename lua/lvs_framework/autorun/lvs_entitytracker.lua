@@ -97,7 +97,7 @@ function LVS:SetNPCRelationship( npc )
 	for _, veh in pairs( LVS:GetVehicles() ) do
 		if not veh:IsEnemy( npc ) then continue end
 
-		npc:AddEntityRelationship( veh, (veh:GetActive() and D_HT or D_LI), 50 )
+		npc:AddEntityRelationship( veh, (veh:GetActive() and D_HT or D_LI), 99 )
 	end
 end
 
@@ -109,7 +109,7 @@ function LVS:SetVehicleRelationship( veh )
 	for _, npc in ipairs( ents.GetAll() ) do
 		if not isfunction( npc.IsNPC ) or not npc:IsNPC() or not veh:IsEnemy( npc ) then continue end
 
-		npc:AddEntityRelationship( veh, D_, 50 )
+		npc:AddEntityRelationship( veh, D_, 99 )
 	end
 end
 
