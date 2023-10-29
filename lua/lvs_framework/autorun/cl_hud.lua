@@ -248,6 +248,8 @@ local function PaintIdentifier( ent )
 		local IndicatorColor = Color( 255, 0, 0, Alpha )
 
 		if Team == 0 then
+			if MyTeam == 0 then continue end
+
 			IndicatorColor = Color( 0, 255, 0, Alpha )
 		else
 			if Team == 1 or Team == 2 then

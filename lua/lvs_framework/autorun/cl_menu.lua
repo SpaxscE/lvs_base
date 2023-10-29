@@ -42,20 +42,64 @@ local function ClientSettings( Canvas )
 	end
 	LeftPanel:Dock( LEFT )
 
-	local CheckBox = vgui.Create( "DCheckBoxLabel", TopPanel )
-	CheckBox:DockMargin( 16, 36, 4, 4 )
-	CheckBox:SetSize( FrameSizeX, 30 )
-	CheckBox:Dock( TOP )
-	CheckBox:SetText( "Mouse-Aim Steering" )
-	CheckBox:SetConVar("lvs_mouseaim") 
-	CheckBox.OnChange = function( self, bVal )
-		if not isbool( self.first ) then self.first = true return end
-		timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
-	end
+	local CheckBoxPanel = vgui.Create( "DPanel", TopPanel )
+	CheckBoxPanel:DockMargin( 0, 0, 0, 0 )
+	CheckBoxPanel:SetSize( FrameSizeX, 55 )
+	CheckBoxPanel.Paint = function() end
+	CheckBoxPanel:Dock( TOP )
 
-	if LVS:IsDirectInputForced() then
-		CheckBox:SetText( "[DISABLED] Use Mouse-Aim Steering" )
-		CheckBox:SetDisabled( true )
+	if GetConVar( "lvs_mouseaim_type" ):GetInt() == 1 and not LVS:IsDirectInputForced() then
+		local CheckBoxType = vgui.Create( "DCheckBoxLabel", CheckBoxPanel )
+		CheckBoxType:SetSize( FrameSizeX * 0.5, 55 )
+		CheckBoxType:DockMargin( 16, 36, 0, 0 )
+		CheckBoxType:Dock( LEFT )
+		CheckBoxType:SetText( "Mouse-Aim for:" )
+		CheckBoxType:SetConVar("lvs_mouseaim_type") 
+		CheckBoxType.OnChange = function( self, bVal )
+			if not isbool( self.first ) then self.first = true return end
+			timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
+		end
+
+		local DScrollPanel = vgui.Create("DScrollPanel", CheckBoxPanel )
+		DScrollPanel:SetSize( FrameSizeX * 0.25, 55 )
+		DScrollPanel:DockMargin( 8, 0, 8, 0 )
+		DScrollPanel:Dock( LEFT )
+
+		for _, vehicletype in pairs( LVS:GetVehicleTypes() ) do
+			local ScrollOption = vgui.Create( "DCheckBoxLabel", DScrollPanel )
+			ScrollOption:SetText( vehicletype )
+			ScrollOption:Dock( TOP )
+			ScrollOption:DockMargin( 0, 0, 0, 5 )
+			ScrollOption:SetConVar("lvs_mouseaim_type_"..vehicletype) 
+		end
+	else
+		local CheckBox = vgui.Create( "DCheckBoxLabel", CheckBoxPanel )
+		CheckBox:SetSize( FrameSizeX * 0.5, 55 )
+		CheckBox:DockMargin( 16, 36, 0, 0 )
+		CheckBox:Dock( LEFT )
+		CheckBox:SetText( "Mouse-Aim Steering" )
+		CheckBox:SetConVar("lvs_mouseaim") 
+		CheckBox.OnChange = function( self, bVal )
+			if not isbool( self.first ) then self.first = true return end
+			timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
+		end
+		if LVS:IsDirectInputForced() then
+			CheckBox:SetText( "[DISABLED] Use Mouse-Aim Steering" )
+			CheckBox:SetDisabled( true )
+		end
+
+		if not LVS:IsDirectInputForced() then
+			local CheckBoxType = vgui.Create( "DCheckBoxLabel", CheckBoxPanel )
+			CheckBoxType:SetSize( FrameSizeX * 0.5, 55 )
+			CheckBoxType:DockMargin( 16, 36, 0, 0 )
+			CheckBoxType:Dock( LEFT )
+			CheckBoxType:SetText( "Edit Mouse-Aim per Type" )
+			CheckBoxType:SetConVar("lvs_mouseaim_type") 
+			CheckBoxType.OnChange = function( self, bVal )
+				if not isbool( self.first ) then self.first = true return end
+				timer.Simple(0.1, function() LVS:OpenMenu( true ) end )
+			end
+		end
 	end
 
 	if GetConVar( "lvs_mouseaim" ):GetInt() == 0 or LVS:IsDirectInputForced() then
@@ -600,6 +644,13 @@ function LVS:OpenServerMenu()
 	ServerSettings( Canvas )
 end
 
+function LVS:CloseMenu()
+	if not IsValid( LVS.Frame ) then return end
+
+	LVS.Frame:Close()
+	LVS.Frame = nil
+end
+
 function LVS:OpenMenu( keep_position )
 	local xPos
 	local yPos
@@ -610,8 +661,7 @@ function LVS:OpenMenu( keep_position )
 			yPos = LVS.Frame:GetY()
 		end
 
-		LVS.Frame:Close()
-		LVS.Frame = nil
+		LVS:CloseMenu()
 	end
 
 	LVS.Frame = vgui.Create( "DFrame" )

@@ -115,5 +115,21 @@ function LVS:AddWeaponPreset( name, data )
 	LVS.WEAPONS[ name ] = data
 end
 
+function LVS:GetVehicleTypes()
+	local VehicleTypes = {}
+
+	for s, v in pairs( scripted_ents.GetList() ) do
+		if not v.t or not isfunction( v.t.GetVehicleType ) then continue end
+
+		local vehicletype = v.t:GetVehicleType()
+
+		if not isstring( vehicletype ) or string.StartsWith( vehicletype, "LBase" ) or table.HasValue( VehicleTypes, vehicletype ) then continue end
+
+		table.insert( VehicleTypes, vehicletype )
+	end
+
+	return VehicleTypes
+end
+
 AddCSLuaFile("lvs_framework/init.lua")
 include("lvs_framework/init.lua")

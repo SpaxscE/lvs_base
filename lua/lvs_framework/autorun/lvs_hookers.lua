@@ -1,4 +1,17 @@
 
+hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
+	timer.Simple(1, function()
+		LVS.MapDoneLoading = true
+	end)
+
+	if SERVER then return end
+
+	-- this needs to be here to make sure all sents are registered
+	for _, vehicletype in ipairs( LVS:GetVehicleTypes() ) do
+		CreateClientConVar( "lvs_mouseaim_type_"..vehicletype, 0, true, false)
+	end
+end )
+
 local function SetDistance( vehicle, ply )
 	local iWheel = ply:GetCurrentCommand():GetMouseWheel()
 
@@ -96,7 +109,39 @@ hook.Add( "CanTool", "!!!!lvsCanToolDisabler", function( ply, tr, toolname, tool
 	if LVS.ToolsDisable[ toolname ] and IsValid( tr.Entity ) and tr.Entity.LVS then return false end
 end )
 
-if CLIENT then return end
+if CLIENT then
+	local hide = {
+		["CHudHealth"] = true,
+		["CHudBattery"] = true,
+		["CHudAmmo"] = true,
+	}
+	local function HUDShouldDrawLVS( name )
+		if hide[ name ] then return false end
+	end
+
+	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, veh )
+		hook.Add( "HUDShouldDraw", "!!!!lvs_hidehud", HUDShouldDrawLVS )
+
+		local cvar = GetConVar( "lvs_mouseaim_type" )
+
+		if not cvar or cvar:GetInt() ~= 1 or not veh.GetVehicleType then return end
+
+		local vehicletype = veh:GetVehicleType()
+
+		local cvar_type = GetConVar( "lvs_mouseaim_type_"..vehicletype )
+		local cvar_mouseaim = GetConVar( "lvs_mouseaim" )
+
+		if not cvar_type or not cvar_mouseaim then return end
+
+		cvar_mouseaim:SetInt( cvar_type:GetInt() )
+	end )
+
+	hook.Add( "LVS.PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, veh )
+		hook.Remove( "HUDShouldDraw", "!!!!lvs_hidehud" )
+	end )
+
+	return
+end
 
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
 	if not target:IsPlayer() then return end
