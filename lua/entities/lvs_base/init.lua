@@ -280,6 +280,12 @@ function ENT:GetMissileOffset()
 	return self:OBBCenter()
 end
 
+function ENT:SetVehicleRelationship()
+	timer.Simple(0, function()
+		LVS:SetVehicleRelationship( self )
+	end)
+end
+
 function ENT:GetCrosshairFilterEnts()
 	if not istable( self.CrosshairFilterEnts ) or not self:IsInitialized() then
 		self.CrosshairFilterEnts = {}

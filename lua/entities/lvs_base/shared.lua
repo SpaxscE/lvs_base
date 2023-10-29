@@ -65,6 +65,7 @@ function ENT:CreateBaseDT()
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
 		self:NetworkVarNotify( "HP", self.PDSHealthValueChanged )
 		self:NetworkVarNotify( "SelectedWeapon", self.OnWeaponChanged )
+		self:NetworkVarNotify( "Active", self.SetVehicleRelationship )
 
 		self:SetAITEAM( self.AITEAM )
 		self:SetHP( self.MaxHealth )
