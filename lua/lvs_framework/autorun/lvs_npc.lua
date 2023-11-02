@@ -101,6 +101,7 @@ function LVS:ClearVehicleRelationship( veh )
 	for _, npc in pairs( LVS:GetNPCs() ) do
 		if not isfunction( npc.GetEnemy ) or npc:GetEnemy() ~= veh then continue end
 
+		npc:SetEnemy( NULL )
 		npc:ClearEnemyMemory()
 	end
 end
