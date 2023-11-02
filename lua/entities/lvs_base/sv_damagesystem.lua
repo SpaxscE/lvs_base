@@ -224,8 +224,6 @@ function ENT:CalcDamage( dmginfo )
 			if not IsValid( self ) then return end
 			self:Explode()
 		end)
-
-		LVS:ClearVehicleRelationship( self )
 	end
 end
 

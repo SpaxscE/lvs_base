@@ -27,10 +27,6 @@ hook.Add( "OnEntityCreated", "!!!!lvsEntitySorter", function( ent )
 
 		if isfunction( ent.IsNPC ) and ent:IsNPC() then
 			table.insert( LVS.NPCsStored, ent )
-
-			if SERVER then
-				LVS:SetNPCRelationship( ent )
-			end
 		end
 
 		if ent.LVS then 
