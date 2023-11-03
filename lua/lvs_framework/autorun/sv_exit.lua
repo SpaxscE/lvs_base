@@ -65,15 +65,13 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 		local StartAngle = 135
 
 		local W = ply:KeyDown( IN_FORWARD )
-		local A = ply:KeyDown( IN_MOVELEFT )
-		local S = ply:KeyDown( IN_BACK )
+		local A = ply:KeyDown( IN_MOVELEFT ) or ply:KeyDown( IN_BACK )
 		local D = ply:KeyDown( IN_MOVERIGHT )
 
-		if W or A or S or D then
+		if W or A or D then
 			if A then StartAngle = 180 end
 			if D then StartAngle = 0 end
 			if W then if D then StartAngle = -45 else StartAngle = 225 end end
-			if S then if A then StartAngle = -225 else StartAngle = 45 end end
 		end
 
 		for ang = StartAngle, (StartAngle + 360 - AngleStep), AngleStep do
