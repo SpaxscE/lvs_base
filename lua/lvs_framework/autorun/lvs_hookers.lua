@@ -152,3 +152,39 @@ hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( 
 
 	dmginfo:SetDamage( 0 )
 end )
+
+hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
+	local veh = ply:lvsGetVehicle()
+
+	if IsValid( veh ) then
+		net.Start( "lvs_player_enterexit" )
+			net.WriteBool( true )
+			net.WriteEntity( veh )
+		net.Send( ply )
+
+		ply._lvsIsInVehicle = true
+	end
+
+	if not Pod.HidePlayer then return end
+
+	ply:SetNoDraw( true )
+
+	if pac then pac.TogglePartDrawing( ply, 0 ) end
+end )
+
+hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
+	if ply._lvsIsInVehicle then
+		net.Start( "lvs_player_enterexit" )
+			net.WriteBool( false )
+			net.WriteEntity( ply:lvsGetVehicle() )
+		net.Send( ply )
+
+		ply._lvsIsInVehicle = nil
+	end
+
+	if not Pod.HidePlayer then return end
+
+	ply:SetNoDraw( false )
+
+	if pac then pac.TogglePartDrawing( ply, 1 ) end
+end )

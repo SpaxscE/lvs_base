@@ -4,30 +4,6 @@ if SERVER then
 	util.AddNetworkString( "lvs_player_enterexit" )
 	util.AddNetworkString( "lvs_toggle_mouseaim" )
 
-	hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, _, _ )
-		local veh = ply:lvsGetVehicle()
-
-		if not IsValid( veh ) then return end
-
-		net.Start( "lvs_player_enterexit" )
-			net.WriteBool( true )
-			net.WriteEntity( veh )
-		net.Send( ply )
-
-		ply._lvsIsInVehicle = true
-	end )
- 
-	hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, _ )
-		if not ply._lvsIsInVehicle then return end
-
-		net.Start( "lvs_player_enterexit" )
-			net.WriteBool( false )
-			net.WriteEntity( ply:lvsGetVehicle() )
-		net.Send( ply )
-
-		ply._lvsIsInVehicle = nil
-	end )
-
 	net.Receive( "lvs_toggle_mouseaim", function( length, ply )
 		ply:lvsBuildControls()
 
