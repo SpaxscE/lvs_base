@@ -200,66 +200,76 @@ end
 function ENT:Use( ply )
 	if not self:IsUseAllowed( ply ) then return end
 
-	if istable( self._DoorHandlers ) then
-		if ply:KeyDown( IN_SPEED ) then
-			return
-		else
-			if not self:IsUseAllowed( ply ) then return end
+	if not istable( self._DoorHandlers ) then
+		self:SetPassenger( ply )
 
-			local Handler = self:GetDoorHandler( ply )
-
-			if IsValid( Handler ) then
-				local Pod = Handler:GetLinkedSeat()
-
-				if IsValid( Pod ) then
-					if not Handler:IsOpen() then Handler:Open( ply ) return end
-
-					if Handler:IsOpen() then
-						Handler:Close( ply )
-					else
-						Handler:OpenAndClose( ply )
-					end
-
-					if ply:KeyDown( IN_WALK ) then
-
-						self:SetPassenger( ply )
-
-						return
-					else
-						local DriverSeat = self:GetDriverSeat()
-
-						if Pod == self:GetDriverSeat() then
-							if self:GetAI() then
-								self:SetPassenger( ply )
-							else
-								if not IsValid( Pod:GetDriver() ) then
-									if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
-										ply:EnterVehicle( Pod )
-										self:AlignView( ply )
-									else
-										hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
-									end
-								end
-							end
-						else
-							if not IsValid( Pod:GetDriver() ) then
-								ply:EnterVehicle( Pod )
-								self:AlignView( ply )
-							end
-						end
-					end
-				else
-					Handler:Use( ply )
-				end
-
-				return
-			else
-				if self:HasDoorSystem() and ply:GetMoveType() == MOVETYPE_WALK then return end
-			end
-		end
+		return
 	end
 
-	self:SetPassenger( ply )
+	if ply:KeyDown( IN_SPEED ) then return end
+
+	if not self:IsUseAllowed( ply ) then return end
+
+	local Handler = self:GetDoorHandler( ply )
+
+	if not IsValid( Handler ) then
+		if self:HasDoorSystem() and ply:GetMoveType() == MOVETYPE_WALK then
+			return
+		end
+
+		self:SetPassenger( ply )
+
+		return
+	end
+
+	local Pod = Handler:GetLinkedSeat()
+
+	if not IsValid( Pod ) then Handler:Use( ply ) return end
+
+	if not Handler:IsOpen() then Handler:Open( ply ) return end
+
+	if Handler:IsOpen() then
+		Handler:Close( ply )
+	else
+		Handler:OpenAndClose( ply )
+	end
+
+	if ply:KeyDown( IN_WALK ) then
+
+		self:SetPassenger( ply )
+
+		return
+	end
+
+	local DriverSeat = self:GetDriverSeat()
+
+	if Pod ~= self:GetDriverSeat() then
+		if not IsValid( Pod:GetDriver() ) then
+			ply:EnterVehicle( Pod )
+			self:AlignView( ply )
+		end
+
+		return
+	end
+
+	if self:GetAI() then
+		self:SetPassenger( ply )
+
+		return
+	end
+
+	if IsValid( Pod:GetDriver() ) then
+		self:SetPassenger( ply )
+
+		return
+	end
+
+	if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
+		ply:EnterVehicle( Pod )
+		self:AlignView( ply )
+	else
+		hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
+	end
 end
 
 function ENT:OnTakeDamage( dmginfo )

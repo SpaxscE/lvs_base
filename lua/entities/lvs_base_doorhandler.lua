@@ -137,12 +137,6 @@ if SERVER then
 	function ENT:Open( ply )
 		if self:IsOpen() then return end
 
-		if IsValid( self._LinkedSeat ) then
-			local Driver = self._LinkedSeat:GetDriver()
-
-			if IsValid( Driver ) and ply ~= Driver then return end
-		end
-
 		self:SetActive( true )
 		self:SetMins( self:GetMinsOpen() )
 		self:SetMaxs( self:GetMaxsOpen() )
