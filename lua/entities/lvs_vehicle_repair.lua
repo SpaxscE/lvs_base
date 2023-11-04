@@ -122,10 +122,4 @@ if CLIENT then
 			cam.End3D2D()
 		end
 	end
-
-	function ENT:OnRemove()
-		if IsValid( self._RepairMDL ) then
-			self._RepairMDL:Remove()
-		end
-	end
 end
