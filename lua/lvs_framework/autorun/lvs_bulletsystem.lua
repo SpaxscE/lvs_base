@@ -297,7 +297,7 @@ else
 		bullet.Muted = IsValid( ply ) and bullet.Entity == ply:lvsGetVehicle()
 
 		Index = Index + 1
-		if Index > 4094 then
+		if Index > MaxIndex then
 			Index = 1
 		end
 
