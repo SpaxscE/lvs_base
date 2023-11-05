@@ -208,8 +208,6 @@ function ENT:Use( ply )
 
 	if ply:KeyDown( IN_SPEED ) then return end
 
-	if not self:IsUseAllowed( ply ) then return end
-
 	local Handler = self:GetDoorHandler( ply )
 
 	if not IsValid( Handler ) then
