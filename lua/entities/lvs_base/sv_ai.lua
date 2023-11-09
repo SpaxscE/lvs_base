@@ -53,6 +53,8 @@ function ENT:AITargetInFront( ent, range )
 	if not IsValid( ent ) then return false end
 	if not range then range = 45 end
 
+	if range >= 180 then return true end
+
 	local DirToTarget = (ent:GetPos() - self:GetPos()):GetNormalized()
 
 	local InFront = math.deg( math.acos( math.Clamp( self:GetForward():Dot( DirToTarget ) ,-1,1) ) ) < range
@@ -74,7 +76,7 @@ function ENT:AICanSee( otherEnt )
 	return util.TraceHull( trace ).Entity == otherEnt
 end
 
-function ENT:AIGetTarget()
+function ENT:AIGetTarget( viewcone )
 	if (self._lvsNextAICheck or 0) > CurTime() then return self._LastAITarget end
 
 	self._lvsNextAICheck = CurTime() + 2
@@ -144,7 +146,7 @@ function ENT:AIGetTarget()
 
 		local Dist = (veh:GetPos() - MyPos):Length()
 
-		if Dist > TargetDistance or not self:AITargetInFront( veh, 100 ) then continue end
+		if Dist > TargetDistance or not self:AITargetInFront( veh, (viewcone or 100) ) then continue end
 
 		local HisTeam = veh:GetAITEAM()
 
