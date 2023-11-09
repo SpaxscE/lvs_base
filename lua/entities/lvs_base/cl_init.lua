@@ -4,7 +4,6 @@ include( "cl_effects.lua" )
 include( "cl_hud.lua" )
 include( "cl_seatswitcher.lua" )
 include( "cl_trailsystem.lua" )
-include( "cl_planescript_module.lua" )
 include( "cl_boneposeparemeter.lua" )
 
 function ENT:LVSCalcView( ply, pos, angles, fov, pod )
@@ -179,6 +178,15 @@ function ENT:GetCrosshairFilterEnts()
 	end
 
 	return self.CrosshairFilterEnts
+end
+
+function ENT:FlyByThink()
+end
+
+function ENT:StopFlyBy()
+end
+
+function ENT:StopDeathSound()
 end
 
 function ENT:OnDestroyed()
