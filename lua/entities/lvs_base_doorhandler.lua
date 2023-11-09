@@ -46,16 +46,16 @@ if SERVER then
 	AccessorFunc(ENT, "minsclosed", "MinsClosed", FORCE_VECTOR)
 
 
-	util.AddNetworkString( "lvscar_player_interact" )
+	util.AddNetworkString( "lvs_doorhandler_interact" )
 
-	net.Receive( "lvscar_player_interact", function( length, ply )
+	net.Receive( "lvs_doorhandler_interact", function( length, ply )
 		if not IsValid( ply ) then return end
 
 		local ent = net.ReadEntity()
 
 		if not IsValid( ent ) then return end
 
-		if (ply:GetPos() - ent:GetPos()):Length() > (ent.UseRang or 75) * 2 then return end
+		if (ply:GetPos() - ent:GetPos()):Length() > (ent.UseRange or 75) * 2 then return end
 
 		ent:Use( ply, ply )
 	end)
@@ -276,7 +276,7 @@ function ENT:DrawTranslucent()
 			self.old_Use = Use
 
 			if Use then
-				net.Start( "lvscar_player_interact" )
+				net.Start( "lvs_doorhandler_interact" )
 					net.WriteEntity( self )
 				net.SendToServer()
 			end
