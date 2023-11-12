@@ -37,6 +37,8 @@ end
 function ENT:StartEngine()
 	if self:GetEngineActive() or not self:IsEngineStartAllowed() then return end
 
+	self:PhysWake()
+
 	self:SetEngineActive( true )
 	self:OnEngineActiveChanged( true )
 end
