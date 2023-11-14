@@ -68,12 +68,10 @@ function ENT:AICanSee( otherEnt )
 	local trace = {
 		start = self:LocalToWorld( self:OBBCenter() ),
 		endpos = otherEnt:LocalToWorld( otherEnt:OBBCenter() ),
-		mins = Vector( -10, -10, -10 ),
-		maxs = Vector( 10, 10, 10 ),
 		filter = self:GetCrosshairFilterEnts(),
 	}
 
-	return util.TraceHull( trace ).Entity == otherEnt
+	return util.TraceLine( trace ).Entity == otherEnt
 end
 
 function ENT:AIGetTarget( viewcone )
