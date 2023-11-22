@@ -105,6 +105,10 @@ function ENT:AIGetTarget( viewcone )
 
 					if HisTeam == 0 then continue end
 
+					if self.AISearchCone then
+						if not self:AITargetInFront( Veh, self.AISearchCone ) then continue end
+					end
+
 					if HisTeam ~= MyTeam or HisTeam == 3 then
 						ClosestTarget = Veh
 						TargetDistance = Dist
@@ -114,6 +118,10 @@ function ENT:AIGetTarget( viewcone )
 				local HisTeam = ply:lvsGetAITeam()
 				if not ply:IsLineOfSightClear( self ) or HisTeam == 0 then continue end
 
+				if self.AISearchCone then
+					if not self:AITargetInFront( ply, self.AISearchCone ) then continue end
+				end
+				
 				if HisTeam ~= MyTeam or HisTeam == 3 then
 					ClosestTarget = ply
 					TargetDistance = Dist
@@ -131,6 +139,10 @@ function ENT:AIGetTarget( viewcone )
 			local Dist = (npc:GetPos() - MyPos):Length()
 
 			if Dist > TargetDistance or not self:AICanSee( npc ) then continue end
+
+			if self.AISearchCone then
+				if not self:AITargetInFront( npc, self.AISearchCone ) then continue end
+			end
 
 			ClosestTarget = npc
 			TargetDistance = Dist
@@ -152,6 +164,10 @@ function ENT:AIGetTarget( viewcone )
 
 		if HisTeam == self:GetAITEAM() then
 			if HisTeam ~= 3 then continue end
+		end
+
+		if self.AISearchCone then
+			if not self:AITargetInFront( veh, self.AISearchCone ) then continue end
 		end
 
 		if self:AICanSee( veh ) then
