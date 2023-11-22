@@ -85,6 +85,7 @@ number = lvsEntity:GetPodIndex() -- this works on the WeaponHandler aswell
 
 entity = ply:GetVehicle() -- this works on the WeaponHandler aswell
 
+table = lvsEntity:GetCrosshairFilterEnts() -- returns all entities that are attached to this vehicle. This is used for the bullet + crosshair trace filter
 
 -- math stuff -- can be called on both lvsEntity or the WeaponHandler Entity
 number = lvsEntity:Sign( number )
@@ -96,6 +97,8 @@ number = lvsEntity:AngleBetweenNormal( Normal1, Normal2 )
 ========================================
 =============== LVS SERVER =============
 ========================================
+
+lvsEntity:RebuildCrosshairFilterEnts() -- rebuild the crosshair filter and broadcast it to all players
 
 lvsEntity:TakeAmmo( num ) -- take <num> amount of ammo from current weapon
 

@@ -287,6 +287,23 @@ function ENT:GetMissileOffset()
 	return self:OBBCenter()
 end
 
+function ENT:RebuildCrosshairFilterEnts()
+	self.CrosshairFilterEnts = nil
+
+	local CrosshairFilterEnts = table.Copy( self:GetCrosshairFilterEnts() )
+
+	for id, entity in pairs( CrosshairFilterEnts ) do
+		if not IsValid( entity ) or entity:GetNoDraw() then
+			CrosshairFilterEnts[ id ] = nil
+		end
+	end
+
+	net.Start( "lvs_player_request_filter" )
+		net.WriteEntity( self )
+		net.WriteTable( CrosshairFilterEnts )
+	net.Broadcast()
+end
+
 function ENT:GetCrosshairFilterEnts()
 	if not istable( self.CrosshairFilterEnts ) or not self:IsInitialized() then
 		self.CrosshairFilterEnts = {}
