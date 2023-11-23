@@ -228,22 +228,13 @@ function ENT:CalcDamage( dmginfo )
 end
 
 function ENT:PreExplode( ExplodeTime )
-	local Pos = self:GetPos()
-	local PhysObj = self:GetPhysicsObject()
+	self:OnStartExplosion()
 
-	local effectdata = EffectData()
-		effectdata:SetOrigin( Pos )
-	util.Effect( "lvs_explosion_nodebris", effectdata )
+	local PhysObj = self:GetPhysicsObject()
 
 	if not IsValid( PhysObj ) then return 0 end
 
-	local effectdata = EffectData()
-		effectdata:SetOrigin( Pos )
-		effectdata:SetStart( PhysObj:GetMassCenter() )
-		effectdata:SetEntity( self )
-		effectdata:SetScale( (self.FireTrailScale or 1) )
-		effectdata:SetMagnitude( ExplodeTime )
-	util.Effect( "lvs_firetrail", effectdata )
+	self:OnStartFireTrail( PhysObj, ExplodeTime )
 
 	return ExplodeTime
 end
@@ -346,18 +337,39 @@ function ENT:Explode()
 		end
 	end
 
-	local ent = ents.Create( "lvs_destruction" )
-	if IsValid( ent ) then
-		ent:SetModel( self:GetModel() )
-		ent:SetPos( self:GetPos() )
-		ent:SetAngles( self:GetAngles() )
-		ent.GibModels = self.GibModels
-		ent.Vel = self:GetVelocity()
-		ent:Spawn()
-		ent:Activate()
-	end
+	self:OnFinishExplosion()
 
 	self:Remove()
+end
+
+function ENT:OnStartExplosion()
+	local effectdata = EffectData()
+		effectdata:SetOrigin( self:GetPos() )
+	util.Effect( "lvs_explosion_nodebris", effectdata )
+end
+
+function ENT:OnFinishExplosion()
+	local ent = ents.Create( "lvs_destruction" )
+
+	if not IsValid( ent ) then return end
+
+	ent:SetModel( self:GetModel() )
+	ent:SetPos( self:GetPos() )
+	ent:SetAngles( self:GetAngles() )
+	ent.GibModels = self.GibModels
+	ent.Vel = self:GetVelocity()
+	ent:Spawn()
+	ent:Activate()
+end
+
+function ENT:OnStartFireTrail( PhysObj, ExplodeTime )
+	local effectdata = EffectData()
+		effectdata:SetOrigin( self:GetPos() )
+		effectdata:SetStart( PhysObj:GetMassCenter() )
+		effectdata:SetEntity( self )
+		effectdata:SetScale( (self.FireTrailScale or 1) )
+		effectdata:SetMagnitude( ExplodeTime )
+	util.Effect( "lvs_firetrail", effectdata )
 end
 
 function ENT:IsDestroyed()
