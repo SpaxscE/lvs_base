@@ -10,6 +10,7 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 		[4] = "[LVS]-",
 		[5] = "[LVS] ",
 	}
+	local originalName = {}
 
 	if SpawnableEntities then
 		for k, v in pairs( SpawnableEntities ) do
@@ -24,7 +25,9 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 			for _, start in pairs( Variants ) do
 				if Category:StartWith( start ) then
-					Category = string.Replace(Category, start, "")
+					local NewName = string.Replace(Category, start, "")
+					originalName[ NewName ] = Category
+					Category = NewName
 
 					break
 				end
@@ -36,7 +39,7 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 		end
 	end
 
-	local lvsNode = tree:AddNode( "[LVS]", "icon16/cog.png" )
+	local lvsNode = tree:AddNode( "[LVS]", "icon16/lvs.png" )
 
 	if Categorised["[LVS]"] then
 		local v = Categorised["[LVS]"]
@@ -63,11 +66,18 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 			pnlContent:SwitchPanel( self.PropPanel )
 		end
 	end
+	local IconList = list.Get( "ContentCategoryIcons" )
 
 	for CategoryName, v in SortedPairs( Categorised ) do
 		if CategoryName:StartWith( "[LVS]" ) then continue end
 
-		local node = lvsNode:AddNode( CategoryName, "icon16/bricks.png" )
+		local Icon = "icon16/lvs_noicon.png"
+
+		if IconList and IconList[ originalName[ CategoryName ] ] then
+			Icon = IconList[ originalName[ CategoryName ] ]
+		end
+
+		local node = lvsNode:AddNode( CategoryName, Icon )
 
 		node.DoPopulate = function( self )
 			if self.PropPanel then return end
@@ -116,3 +126,10 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 		end
 	end
 end )
+
+list.Set( "ContentCategoryIcons", "[LVS]", "icon16/lvs.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars", "icon16/lvs_cars.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars - Pack", "icon16/lvs_cars_pack.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Helicopters", "icon16/lvs_helicopters.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Planes", "icon16/lvs_planes.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Star Wars", "icon16/lvs_starwars.png" )
