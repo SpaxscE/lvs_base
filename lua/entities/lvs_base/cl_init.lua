@@ -195,7 +195,7 @@ end
 net.Receive( "lvs_vehicle_destroy", function( len )
 	local ent = net.ReadEntity()
 
-	if not IsValid( ent ) then return end
+	if not IsValid( ent ) or not isfunction( ent.OnDestroyed ) then return end
 
 	ent:OnDestroyed()
 end )
