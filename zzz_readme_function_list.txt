@@ -181,3 +181,12 @@ end )
 hook.Add( "LVS.PlayerLeaveVehicle", "any_name_you_want", function( ply, veh )
 	print(ply:GetName().." exit a lvs vehicle")
 end )
+
+hook.Add( "LVS.PopulateVehicles", "any_name_you_want", function( node, pnlContent, tree )
+
+	local node = lvsNode:AddNode( "PrintTest", "icon16/mouse.png" )
+
+	node.DoClick = function( self )
+		print("hi")
+	end
+end )

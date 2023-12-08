@@ -162,6 +162,9 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 		end
 	end
 
+	-- User Stuff
+	hook.Run( "LVS.PopulateVehicles", lvsNode, pnlContent, tree )
+
 	-- CONTROLS
 	local node = lvsNode:AddNode( "Controls", "icon16/keyboard.png" )
 	node.DoClick = function( self )
