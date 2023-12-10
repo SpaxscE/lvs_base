@@ -144,14 +144,6 @@ function ENT:PhysicsCollide( data, physobj )
 		return
 	end
 
-	if self:WaterLevel() >= self.WaterLevelAutoStop then
-		if self:GetAI() then
-			self:SetAI( false )
-		end
-
-		self:StopEngine()
-	end
-
 	if data.Speed > 60 and data.DeltaTime > 0.2 then
 		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
 
