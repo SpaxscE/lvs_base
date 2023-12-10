@@ -18,9 +18,12 @@ function ENT:PDSHealthValueChanged( name, old, new)
 	for _, part in pairs( self._pdsParts ) do
 		part:SetStage( 0 )
 
-		if not part._group then continue end
+		if not part._group or not part._subgroup then continue end
 
-		self:SetBodygroup( part._group, 0 )
+		self:SetBodygroup( part._group, part._subgroup )
+
+		part._group = nil
+		part._subgroup = nil
 	end
 end
 
@@ -41,9 +44,11 @@ local function DamagePart( ent, part, speed )
 
 	if istable( data.bodygroup ) then
 		for group, subgroup in pairs( data.bodygroup ) do
-			if not part._group then
+			if not part._group or not part._subgroup then
 				part._group = group
+				part._subgroup = ent:GetBodygroup( group )
 			end
+
 			ent:SetBodygroup( group, subgroup )
 		end
 	end
