@@ -133,8 +133,14 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 			local SubIcon = "icon16/lvs_noicon.png"
 
-			if IconList and IconList[ "[LVS] - "..SubName ] then
-				SubIcon = IconList[ "[LVS] - "..SubName ]
+			if IconList then
+				if IconList[ "[LVS] - "..CategoryName.." - "..SubName ] then
+					SubIcon = IconList[ "[LVS] - "..CategoryName.." - "..SubName ]
+				else
+					if IconList[ "[LVS] - "..SubName ] then
+						SubIcon = IconList[ "[LVS] - "..SubName ]
+					end
+				end
 			end
 
 			local subnode = node:AddNode( SubName, SubIcon )
@@ -192,31 +198,31 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 end )
 
 list.Set( "ContentCategoryIcons", "[LVS]", "icon16/lvs.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Cars", "icon16/lvs_cars.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Cars - Pack", "icon16/lvs_cars_pack.png" )
-
-list.Set( "ContentCategoryIcons", "[LVS] - Combine", "icon16/lvs_combine.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Resistance", "icon16/lvs_resistance.png" )
-
-list.Set( "ContentCategoryIcons", "[LVS] - Armored", "icon16/lvs_armor.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Civilian", "icon16/lvs_civilian.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Military", "icon16/lvs_military.png" )
-
-list.Set( "ContentCategoryIcons", "[LVS] - Bombers", "icon16/lvs_bomb.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Fighters", "icon16/lvs_fighter.png" )
-
-list.Set( "ContentCategoryIcons", "[LVS] - Helicopters", "icon16/lvs_helicopters.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Planes", "icon16/lvs_planes.png" )
-
-list.Set( "ContentCategoryIcons", "[LVS] - Tanks", "icon16/lvs_tanks.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Light", "icon16/lvs_light.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Medium", "icon16/lvs_medium.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Heavy", "icon16/lvs_heavy.png" )
 
 list.Set( "ContentCategoryIcons", "[LVS] - Artillery", "icon16/lvs_artillery.png" )
 
+list.Set( "ContentCategoryIcons", "[LVS] - Cars", "icon16/lvs_cars.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars - Armored", "icon16/lvs_armor.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars - Civilian", "icon16/lvs_civilian.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars - Military", "icon16/lvs_military.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Cars - Pack", "icon16/lvs_cars_pack.png" )
+
+list.Set( "ContentCategoryIcons", "[LVS] - Helicopters", "icon16/lvs_helicopters.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Helicopters - Combine", "icon16/lvs_combine.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Helicopters - Resistance", "icon16/lvs_resistance.png" )
+
+list.Set( "ContentCategoryIcons", "[LVS] - Planes", "icon16/lvs_planes.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Planes - Bombers", "icon16/lvs_bomb.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Planes - Fighters", "icon16/lvs_fighter.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Planes - Civilian", "icon16/lvs_civilian.png" )
+
+list.Set( "ContentCategoryIcons", "[LVS] - Tanks", "icon16/lvs_tanks.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Light", "icon16/lvs_light.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Medium", "icon16/lvs_medium.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Heavy", "icon16/lvs_heavy.png" )
+
 list.Set( "ContentCategoryIcons", "[LVS] - Star Wars", "icon16/lvs_starwars.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Gunships", "icon16/lvs_sw_gunship.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Hover Tanks", "icon16/lvs_sw_hover.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Walkers", "icon16/lvs_sw_walker.png" )
-list.Set( "ContentCategoryIcons", "[LVS] - Starfighters", "icon16/lvs_sw_starfighter.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Star Wars - Gunships", "icon16/lvs_sw_gunship.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Star Wars - Hover Tanks", "icon16/lvs_sw_hover.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Star Wars - Walkers", "icon16/lvs_sw_walker.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Star Wars - Starfighters", "icon16/lvs_sw_starfighter.png" )
