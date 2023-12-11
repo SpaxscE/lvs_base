@@ -36,11 +36,6 @@ if SERVER then
 	function ENT:Refil( entity )
 		if not IsValid( entity ) then return end
 
-		if entity.LFS and entity.StartMaintenance then
-			entity:StartMaintenance()
-			return
-		end
-
 		if not entity.LVS then return end
 
 		if entity:GetHP() ~= entity:GetMaxHP() then
