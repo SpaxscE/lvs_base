@@ -261,7 +261,7 @@ local function PaintIdentifier( ent )
 			end
 		end
 
-		ent:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor, v )
+		v:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor, v )
 	end
 end
 
