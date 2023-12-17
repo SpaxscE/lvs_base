@@ -129,7 +129,7 @@ hook.Add( "PopulateVehicles", "!!!add_lvs_to_vehicles", function( pnlContent, tr
 
 		if not SubCat then continue end
 
-		for SubName, data in pairs( SubCat ) do
+		for SubName, data in SortedPairs( SubCat ) do
 
 			local SubIcon = "icon16/lvs_noicon.png"
 
