@@ -270,10 +270,12 @@ function ENT:Use( ply )
 end
 
 function ENT:OnTakeDamage( dmginfo )
-	self:CalcShieldDamage( dmginfo )
-	self:CalcDamage( dmginfo )
-	self:TakePhysicsDamage( dmginfo )
-	self:OnAITakeDamage( dmginfo )
+	if hook.Run( "LVS.CanTakeDamage", dmginfo, self ) ~= false then
+		self:CalcShieldDamage( dmginfo )
+		self:CalcDamage( dmginfo )
+		self:TakePhysicsDamage( dmginfo )
+		self:OnAITakeDamage( dmginfo )
+	end
 end
 
 function ENT:OnMaintenance()
