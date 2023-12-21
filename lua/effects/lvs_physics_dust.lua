@@ -18,8 +18,8 @@ local Materials = {
 }
 
 local MatDebris = {
-	"particle/particle_debris_01",
-	"particle/particle_debris_02",
+	"effects/lvs_base/particle_debris_01",
+	"effects/lvs_base/particle_debris_02",
 }
 
 function EFFECT:Init( data )
