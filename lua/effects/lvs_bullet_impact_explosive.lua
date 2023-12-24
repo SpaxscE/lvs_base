@@ -24,6 +24,8 @@ EFFECT.DustMat = {
 	"effects/lvs_base/particle_debris_02",
 }
 
+EFFECT.DecalMat = Material( util.DecalMaterial( "Scorch" ) )
+
 function EFFECT:Init( data )
 	self.Dir = Vector(0,0,1)
 	self.Pos = data:GetOrigin()
@@ -83,6 +85,16 @@ function EFFECT:Init( data )
 			sound.Play( "LVS.BULLET_EXPLOSION", Pos )
 			sound.Play( "LVS.BULLET_EXPLOSION_DYNAMIC", Pos )
 		end )
+
+		local trace = util.TraceLine( {
+			start = self.Pos + Vector(0,0,100),
+			endpos = self.Pos - Vector(0,0,100),
+			mask = MASK_SOLID_BRUSHONLY,
+		} )
+
+		if trace.Hit and not trace.HitNonWorld then
+			util.DecalEx( self.DecalMat, trace.Entity, trace.HitPos + trace.HitNormal, trace.HitNormal, Color(255,255,255,255), self.Scale * 2.5, self.Scale * 2.5 )
+		end
 	end
 
 	for i = 1, 10 do
