@@ -17,6 +17,8 @@ local Materials = {
 	"particle/smokesprites_0016"
 }
 
+EFFECT.DecalMat = Material( util.DecalMaterial( "Scorch" ) )
+
 function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 
@@ -45,6 +47,45 @@ function EFFECT:Init( data )
 	end
 
 	self:Debris( Pos )
+
+	local traceSky = util.TraceLine( {
+		start = Pos,
+		endpos = Pos + Vector(0,0,50000),
+		mask = MASK_SOLID_BRUSHONLY,
+	} )
+
+	local traceWater = util.TraceLine( {
+		start = traceSky.HitPos,
+		endpos = Pos - Vector(0,0,100),
+		mask = MASK_WATER,
+	} )
+
+	if traceWater.Hit then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( traceWater.HitPos )
+		effectdata:SetScale( 100 )
+		effectdata:SetFlags( 2 )
+		util.Effect( "WaterSplash", effectdata, true, true )
+	else
+		local trace = util.TraceLine( {
+			start = Pos + Vector(0,0,100),
+			endpos = Pos - Vector(0,0,100),
+			mask = MASK_SOLID_BRUSHONLY,
+		} )
+
+		if trace.Hit and not trace.HitNonWorld then
+			for i = 1, 10 do
+				local StartPos = trace.HitPos + Vector(math.random(-25,25) * i,math.random(-25,25) * i,0)
+				local decalTrace = util.TraceLine( {
+					start = StartPos + Vector(0,0,100),
+					endpos = StartPos - Vector(0,0,100),
+					mask = MASK_SOLID_BRUSHONLY,
+				} )
+
+				util.DecalEx( self.DecalMat, trace.Entity, decalTrace.HitPos + decalTrace.HitNormal, decalTrace.HitNormal, Color(255,255,255,255), math.Rand(2,3), math.Rand(2,3) )
+			end
+		end
+	end
 end
 
 function EFFECT:Debris( pos )
