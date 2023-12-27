@@ -32,7 +32,16 @@ function ENT:HandleActive()
 	local Driver = Pod:GetDriver()
 
 	if Driver ~= self:GetDriver() then
+		local NewDriver = Driver
+		local OldDriver = self:GetDriver()
+
 		self:SetDriver( Driver )
+
+		local Base = self:GetVehicle()
+
+		if IsValid( Base ) then
+			Base:OnPassengerChanged( OldDriver, NewDriver, Pod:GetNWInt( "pPodIndex", -1 ) )
+		end
 
 		if IsValid( Driver ) then
 			Driver:lvsBuildControls()

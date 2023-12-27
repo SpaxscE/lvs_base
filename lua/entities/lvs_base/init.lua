@@ -152,6 +152,10 @@ function ENT:Think()
 end
 
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
+	self:OnPassengerChanged( Old, New, 1 )
+end
+
+function ENT:OnPassengerChanged( Old, New, PodIndex )
 end
 
 function ENT:OnTick()
