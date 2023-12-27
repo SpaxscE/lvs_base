@@ -155,6 +155,16 @@ function ENT:IsInitialized()
 	return self:GetlvsReady()
 end
 
+function ENT:GetWeaponHandler( num )
+	if num == 1 then return self end
+
+	local pod = self:GetPassengerSeat( num )
+
+	if not IsValid( pod ) then return NULL end
+
+	return pod:lvsGetWeapon()
+end
+
 function ENT:GetPassengerSeat( num )
 	if num == 1 then
 		return self:GetDriverSeat()
