@@ -155,6 +155,24 @@ function ENT:IsInitialized()
 	return self:GetlvsReady()
 end
 
+function ENT:GetPassengerSeat( num )
+	if num == 1 then
+		return self:GetDriverSeat()
+	else
+		for _, Pod in pairs( self:GetPassengerSeats() ) do
+			local id = Pod:GetNWInt( "pPodIndex", -1 )
+
+			if id == -1 then continue end
+
+			if id == num then
+				return Pod
+			end
+		end
+
+		return NULL
+	end
+end
+
 function ENT:GetPassengerSeats()
 	if not self:IsInitialized() then return {} end
 
