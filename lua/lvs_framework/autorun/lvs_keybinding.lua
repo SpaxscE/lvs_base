@@ -135,7 +135,9 @@ hook.Add( "PlayerBindPress", "!!!!_LVS_PlayerBindPress", function( ply, bind, pr
 	end
 
 	if string.find( bind, "+zoom" ) then
-		return true
+		if vehicle.lvsDisableZoom then
+			return true
+		end
 	end
 end )
 

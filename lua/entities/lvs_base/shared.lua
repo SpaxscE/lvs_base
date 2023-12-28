@@ -25,6 +25,8 @@ ENT.MaxShield = 0
 ENT.SpawnNormalOffset = 15
 ENT.HitGroundLength = 10
 
+ENT.lvsDisableZoom = true
+
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end
 
