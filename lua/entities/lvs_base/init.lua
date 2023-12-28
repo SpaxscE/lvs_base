@@ -191,6 +191,8 @@ end
 function ENT:IsUseAllowed( ply )
 	if not IsValid( ply ) then return false end
 
+	if (ply._lvsNextUse or 0) > CurTime() then return false end
+
 	if self:GetlvsLockedStatus() or (LVS.TeamPassenger:GetBool() and ((self:GetAITEAM() ~= ply:lvsGetAITeam()) and ply:lvsGetAITeam() ~= 0 and self:GetAITEAM() ~= 0)) then 
 		self:EmitSound( "doors/default_locked.wav" )
 
