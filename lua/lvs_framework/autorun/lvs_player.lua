@@ -89,6 +89,8 @@ function meta:lvsBuildControls()
 		self.LVS_BINDS = table.Copy( LVS.KEYS_CATEGORIES )
 
 		for _,v in pairs( LVS.KEYS_REGISTERED ) do
+			if v.id == "~SKIP~" then continue end
+
 			local ButtonID = self:GetInfoNum( v.cmd, 0 )
 
 			if not self.LVS_BINDS[v.category][ ButtonID ] then
@@ -126,6 +128,8 @@ function meta:lvsBuildControls()
 		self._lvsDisableContextMenu = nil
 
 		for _,v in pairs( LVS.KEYS_REGISTERED ) do
+			if v.id == "~SKIP~" then continue end
+
 			local KeyCode = GetConVar( v.cmd ):GetInt()
 
 			self.LVS_BINDS[ v.id ] = KeyCode
