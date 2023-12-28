@@ -66,6 +66,7 @@ function ENT:SetPassenger( ply )
 
 	if IsValid( DriverSeat ) and not IsValid( DriverSeat:GetDriver() ) and not ply:KeyDown( IN_WALK ) and not AI and AllowedToBeDriver then
 		ply:EnterVehicle( DriverSeat )
+		self:AlignView( ply )
 	else
 		local Seat = NULL
 		local Dist = 500000
@@ -84,11 +85,13 @@ function ENT:SetPassenger( ply )
 
 		if IsValid( Seat ) then
 			ply:EnterVehicle( Seat )
+			self:AlignView( ply, true )
 		else
 			if IsValid( DriverSeat ) then
 				if not IsValid( self:GetDriver() ) and not AI then
 					if AllowedToBeDriver then
 						ply:EnterVehicle( DriverSeat )
+						self:AlignView( ply )
 					else
 						hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
 					end
