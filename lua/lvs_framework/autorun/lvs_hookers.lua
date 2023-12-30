@@ -150,6 +150,8 @@ hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( 
 
 	if not IsValid( veh ) or dmginfo:IsDamageType( DMG_DIRECT ) then return end
 
+	if target:GetCollisionGroup() == COLLISION_GROUP_PLAYER then return end
+
 	dmginfo:SetDamage( 0 )
 end )
 
