@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/blu/welding_kit"
+
+	"$bumpmap"	   "models/blu/welding_kit_normal"
+
+	"$phong" "1"
+	"$phongexponent"  "20"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[.1 .5 1]"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.5 .5 .5]"
+}
