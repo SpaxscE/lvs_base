@@ -34,6 +34,7 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 
 				ply:EnterVehicle( DriverSeat )
 				vehicle:AlignView( ply )
+				vehicle:OnSwitchSeat( ply, CurPod, DriverSeat )
 			end)
 		end
 	else
@@ -50,6 +51,7 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 
 				ply:EnterVehicle( Pod )
 				vehicle:AlignView( ply, true )
+				vehicle:OnSwitchSeat( ply, CurPod, Pod )
 			end)
 		end
 	end
