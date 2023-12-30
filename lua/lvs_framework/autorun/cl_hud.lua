@@ -228,7 +228,7 @@ function LVS:DrawDiamond( X, Y, radius, perc )
 end
 
 local function PaintIdentifier( ent )
-	if not LVS.ShowIdent then return end
+	if not LVS.ShowIdent or LVS:IsIndicatorForced() then return end
 
 	local MyPos = ent:GetPos()
 	local MyTeam = ent:GetAITEAM()

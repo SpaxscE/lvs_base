@@ -165,6 +165,10 @@ local function ClientSettings( Canvas )
 	CheckBox:Dock( TOP )
 	CheckBox:SetText( "Show Team Identifier" )
 	CheckBox:SetConVar("lvs_show_identifier") 
+	if LVS:IsIndicatorForced() then
+		CheckBox:SetText( "[DISABLED] Team Identifier" )
+		CheckBox:SetDisabled( true )
+	end
 
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
 	CheckBox:DockMargin( 16, 16, 4, 4 )
@@ -376,6 +380,20 @@ local function ServerSettings( Canvas )
 	function CheckBox:OnChange( val )
 		net.Start("lvs_admin_setconvar")
 			net.WriteString("lvs_force_directinput")
+			net.WriteString( tostring( val and 1 or 0 ) )
+		net.SendToServer()
+	end
+
+	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Hide Team Identifier" )
+	CheckBox:SetValue( GetConVar( "lvs_force_forceindicator" ):GetInt() )
+	CheckBox:SizeToContents()
+	function CheckBox:OnChange( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_force_forceindicator")
 			net.WriteString( tostring( val and 1 or 0 ) )
 		net.SendToServer()
 	end
