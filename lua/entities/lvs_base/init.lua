@@ -151,14 +151,14 @@ function ENT:Think()
 	return true
 end
 
-function ENT:OnSwitchSeat( ply, oldpod, newpod )
-end
-
 function ENT:OnDriverChanged( Old, New, VehicleIsActive )
 	self:OnPassengerChanged( Old, New, 1 )
 end
 
 function ENT:OnPassengerChanged( Old, New, PodIndex )
+end
+
+function ENT:OnSwitchSeat( ply, oldpod, newpod )
 end
 
 function ENT:OnTick()
