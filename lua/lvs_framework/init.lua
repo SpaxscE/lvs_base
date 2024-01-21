@@ -1,4 +1,8 @@
 
+if SERVER then
+	AddCSLuaFile("includes/circles/circles.lua")
+end
+
 for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
 	if string.StartWith( filename, "sv_") then -- sv_ prefix only load serverside
 		if SERVER then
