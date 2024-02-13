@@ -172,6 +172,9 @@ function ENT:GetPassengerSeat( num )
 		return self:GetDriverSeat()
 	else
 		for _, Pod in pairs( self:GetPassengerSeats() ) do
+
+			if not IsValid( Pod ) then continue end
+
 			local id = Pod:GetNWInt( "pPodIndex", -1 )
 
 			if id == -1 then continue end
