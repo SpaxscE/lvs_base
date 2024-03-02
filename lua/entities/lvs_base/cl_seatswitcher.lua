@@ -91,6 +91,8 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 	end
 
 	for _, Pod in pairs( pSeats ) do
+		if not IsValid( Pod ) then continue end
+
 		local I = Pod:GetNWInt( "pPodIndex", -1 )
 
 		if I <= 0 then continue end
