@@ -96,7 +96,7 @@ if CLIENT then
 
 	SWEP.WepSelectIcon 			= surface.GetTextureID( "weapons/lvsrepair" )
 
-	local ColorSelect = Color(0,50,50,150)
+	local ColorSelect = Color(0,255,255,50)
 	local ColorText = Color(255,255,255,255)
 
 	local function DrawText( pos, text, col )
@@ -194,16 +194,12 @@ if CLIENT then
 			local boxMins = Target:GetMins()
 			local boxMaxs = Target:GetMaxs()
 
-			if ply:KeyDown( IN_ATTACK ) then
-				cam.Start3D()
-					render.SetColorMaterial()
-					render.DrawBox( boxOrigin, boxAngles, boxMins, boxMaxs, ColorSelect )
-				cam.End3D()
+			cam.Start3D()
+				render.SetColorMaterial()
+				render.DrawBox( boxOrigin, boxAngles, boxMins, boxMaxs, ColorSelect )
+			cam.End3D()
 
-				DrawText( Target:LocalToWorld( (boxMins + boxMaxs) * 0.5 ), (Target:GetIgnoreForce() / 100).."mm "..Target:GetLabel().."\nHealth: "..math.Round(Target:GetHP()).."/"..Target:GetMaxHP(), ColorText )
-			else
-				DrawText( ply:GetEyeTrace().HitPos, (Target:GetIgnoreForce() / 100).."mm "..Target:GetLabel().."\nHealth: "..math.Round(Target:GetHP()).."/"..Target:GetMaxHP(), ColorText )
-			end
+			DrawText( Target:LocalToWorld( (boxMins + boxMaxs) * 0.5 ), (Target:GetIgnoreForce() / 100).."mm "..Target:GetLabel().."\nHealth: "..math.Round(Target:GetHP()).."/"..Target:GetMaxHP(), ColorText )
 		else
 			local Pos = ply:GetEyeTrace().HitPos
 
