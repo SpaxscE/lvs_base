@@ -250,7 +250,9 @@ function ENT:Use( ply )
 	local DriverSeat = self:GetDriverSeat()
 
 	if Pod ~= self:GetDriverSeat() then
-		if not IsValid( Pod:GetDriver() ) then
+		if IsValid( Pod:GetDriver() ) then
+			self:SetPassenger( ply )
+		else
 			ply:EnterVehicle( Pod )
 			self:AlignView( ply )
 		end
