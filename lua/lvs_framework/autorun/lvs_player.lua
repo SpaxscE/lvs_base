@@ -303,6 +303,8 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 			end
 
 			if KeyName == "EXIT" then
+				if vehicle:GetlvsLockedStatus() and vehicle:GetDriver() ~= ply then continue end
+
 				ply:ExitVehicle()
 			end
 		end
