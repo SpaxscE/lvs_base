@@ -2,7 +2,7 @@
 ENT._pdsParts = {}
 
 ENT.PDSDamageVelocity = 100
-ENT.PDSDamageMultiplier = 0.05
+ENT.PDSDamageMultiplier = 0.07
 
 function ENT:ClearPDS()
 	if not istable( self._pdsParts ) then return end
