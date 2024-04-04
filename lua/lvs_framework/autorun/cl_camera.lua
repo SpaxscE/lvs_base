@@ -39,7 +39,6 @@ function LVS:CalcView( vehicle, ply, pos, angles, fov, pod )
 	return view
 end
 
-local Zoom = 0
 hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 	if ply:GetViewEntity() ~= ply then return end
 
@@ -48,11 +47,7 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 
 	if not IsValid( pod ) or not IsValid( vehicle ) then return end
 
-	local TargetZoom = ply:lvsKeyDown( "ZOOM" ) and 0 or 1
-
-	Zoom = Zoom + (TargetZoom - Zoom) * RealFrameTime() * 10
-
-	local newfov = fov * Zoom + (vehicle.ZoomFov or 40) * (1 - Zoom)
+	local newfov = vehicle:LVSCalcFov( fov, ply )
 
 	local base = pod:lvsGetWeapon()
 
