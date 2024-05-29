@@ -119,6 +119,8 @@ function LVS:CheckUpdates()
 
 			local data = string.Explode( "\n", addonInfo )
 
+			local wsid = string.Replace( addonFile, ".txt", "" )
+			local addon_name = wsid
 			local addon_url
 			local addon_version
 
@@ -130,13 +132,17 @@ function LVS:CheckUpdates()
 				if string.StartsWith( entry, "version=" ) then
 					addon_version = string.Replace( entry, "version=", "" )
 				end
+
+				if string.StartsWith( entry, "name=" ) then
+					addon_name = string.Replace( entry, "name=", "" )
+				end
 			end
 
 			if not addon_url or not addon_version then continue end
 
 			addon_version = tonumber( addon_version )
 
-			Delay = Delay + 1
+			Delay = Delay + 1.5
 
 			timer.Simple( Delay, function()
 				http.Fetch(addon_url, function(con,_) 
@@ -148,25 +154,24 @@ function LVS:CheckUpdates()
 						addon_version_git = tonumber( string.match( addon_entry, "%d+" ) ) or 0
 					end
 
-					local wsid = string.Replace( addonFile, ".txt", "" )
 					local wsurl = "https://steamcommunity.com/sharedfiles/filedetails/?id="..wsid
 
 					if addon_version_git == 0 then
-						print("[LVS] latest version of Workshop Addon "..wsurl.." could not be detected, You have Version: "..addon_version)
+						print("[LVS] latest version of "..addon_name.." ( "..wsurl.." ) could not be detected, You have Version: "..addon_version)
 					else
 						if addon_version_git > addon_version then
-							print("[LVS] Workshop Addon "..wsurl.." is out of date!")
+							print("[LVS] - "..addon_name.." ( "..wsurl.." ) is out of date!")
 
 							if CLIENT then 
 								timer.Simple(18, function() 
-									chat.AddText( Color( 255, 0, 0 ),"[LVS] Workshop Addon "..wsid.." is out of date!" )
+									chat.AddText( Color( 255, 0, 0 ),"[LVS] - "..addon_name.." is out of date!" )
 								end)
 							end
 
 							LVS.VERSION_ADDONS_OUTDATED = true
 
 						else
-							print("[LVS] Workshop Addon "..wsurl.." is up to date, Version: "..addon_version)
+							print("[LVS] - "..addon_name.." is up to date, Version: "..addon_version)
 						end
 					end
 				end)
