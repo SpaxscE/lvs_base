@@ -2,7 +2,7 @@
 function ENT:CreateBonePoseParameter( name, bone, ang_min, ang_max, pos_min, pos_max )
 	if not istable( self._BonePoseParameters ) then self._BonePoseParameters = {} end
 
-	self._BonePoseParameters[ "!"..name ] = {
+	self._BonePoseParameters[ name ] = {
 		bone = (bone or -1),
 		ang_min = ang_min or angle_zero,
 		ang_max = ang_max or angle_zero,
@@ -12,6 +12,10 @@ function ENT:CreateBonePoseParameter( name, bone, ang_min, ang_max, pos_min, pos
 end
 
 function ENT:SetBonePoseParameter( name, value )
+	if name and string.StartsWith( name, "!" ) then
+		name = string.Replace( name, "!", "" )
+	end
+
 	if not istable( self._BonePoseParameters ) or not self._BonePoseParameters[ name ] then return end
 
 	local data = self._BonePoseParameters[ name ]

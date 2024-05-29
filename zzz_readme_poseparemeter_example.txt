@@ -16,7 +16,7 @@ you can manually adjust the bone pose parameter by calling:
 self:SetBonePoseParameter( name, value ) -- where name is the name you give in CreateBonePoseParameter and value a number from 0-1
 
 -- example:
-self:SetBonePoseParameter( "!left_door", 0.5 )
+self:SetBonePoseParameter( "left_door", 0.5 )
 
 
 
