@@ -1,5 +1,6 @@
 
 local icon_load_version = Material("gui/html/refresh")
+
 local bgMat = Material( "lvs/controlpanel_bg.png" )
 local adminMat = Material( "icon16/shield.png" )
 local gradient_mat = Material( "gui/gradient" )
@@ -723,21 +724,23 @@ function LVS:OpenMenu( keep_position )
 				surface.DrawTexturedRectRotated( w - 14, h - 14, 16, 16, -CurTime() * 200 )
 
 				draw.SimpleText( "v"..LVS:GetVersion()..LVS.VERSION_TYPE, "LVS_VERSION", w - 23, h - 14, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
-			else
-				local Current = LVS:GetVersion()
-				local Latest = LVS.VERSION_GITHUB
 
-				local Pref = "v"
-
-				if Current >= Latest then
-					Col = Color(0,255,0,255)
-				else
-					Col = Color(255,0,0,255)
-					Pref = "OUTDATED v"
-				end
-
-				draw.SimpleText( Pref..LVS:GetVersion()..LVS.VERSION_TYPE, "LVS_VERSION", w - 7, h - 14, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
+				return
 			end
+
+			local Current = LVS:GetVersion()
+			local Latest = LVS.VERSION_GITHUB
+
+			local Pref = "v"
+
+			if Current >= Latest and not LVS.VERSION_ADDONS_OUTDATED then
+				Col = Color(0,255,0,255)
+			else
+				Col = Color(255,0,0,255)
+				Pref = "OUTDATED v"
+			end
+
+			draw.SimpleText( Pref..LVS:GetVersion()..LVS.VERSION_TYPE, "LVS_VERSION", w - 7, h - 14, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER )
 		end
 
 		self.OldPanel = DPanel

@@ -4,6 +4,7 @@ LVS = istable( LVS ) and LVS or {}
 LVS.VERSION = 226
 LVS.VERSION_GITHUB = 0
 LVS.VERSION_TYPE = ".GIT"
+LVS.VERSION_ADDONS_OUTDATED = false
 
 LVS.KEYS_CATEGORIES = {}
 LVS.KEYS_REGISTERED = {}
@@ -82,23 +83,94 @@ function LVS:CheckUpdates()
 
 		if Entry then
 			LVS.VERSION_GITHUB = tonumber( string.match( Entry , "%d+" ) ) or 0
+		else
+			LVS.VERSION_GITHUB = 0
 		end
 
 		if LVS.VERSION_GITHUB == 0 then
-			print("[LVS] latest version could not be detected, You have Version: "..LVS:GetVersion())
+			print("[LVS] - Framework: latest version could not be detected, You have Version: "..LVS:GetVersion())
 		else
 			if LVS:GetVersion() >= LVS.VERSION_GITHUB then
-				print("[LVS] is up to date, Version: "..LVS:GetVersion())
+				print("[LVS] - Framework is up to date, Version: "..LVS:GetVersion())
 			else
-				print("[LVS] a newer version is available! Version: "..LVS.VERSION_GITHUB..", You have Version: "..LVS:GetVersion())
-				print("[LVS] get the latest version at https://github.com/Blu-x92/lvs_base")
+				print("[LVS] - Framework: a newer version is available! Version: "..LVS.VERSION_GITHUB..", You have Version: "..LVS:GetVersion())
+
+				if LVS.VERSION_TYPE == ".GIT" then
+					print("[LVS] - Framework: get the latest version at https://github.com/SpaxscE/lvs_base")
+				else
+					print("[LVS] - Framework: restart your game/server to get the latest version!")
+				end
 
 				if CLIENT then 
 					timer.Simple(18, function() 
-						chat.AddText( Color( 255, 0, 0 ), "[LVS] a newer version is available!" )
+						chat.AddText( Color( 255, 0, 0 ), "[LVS] - Framework: a newer version is available!" )
 					end)
 				end
 			end
+		end
+
+		local Delay = 0
+		local addons = file.Find( "data_static/lvs/*", "GAME" )
+
+		for _, addonFile in pairs( addons ) do
+			local addonInfo = file.Read( "data_static/lvs/"..addonFile, "GAME" )
+
+			if not addonInfo then continue end
+
+			local data = string.Explode( "\n", addonInfo )
+
+			local addon_url
+			local addon_version
+
+			for _, entry in pairs( data ) do
+				if string.StartsWith( entry, "url=" ) then
+					addon_url = string.Replace( entry, "url=", "" )
+				end
+
+				if string.StartsWith( entry, "version=" ) then
+					addon_version = string.Replace( entry, "version=", "" )
+				end
+			end
+
+			if not addon_url or not addon_version then continue end
+
+			addon_version = tonumber( addon_version )
+
+			Delay = Delay + 1
+
+			timer.Simple( Delay, function()
+				http.Fetch(addon_url, function(con,_) 
+					local addon_entry = string.match( con, "version=%d+" )
+
+					local addon_version_git = 0
+
+					if addon_entry then
+						addon_version_git = tonumber( string.match( addon_entry, "%d+" ) ) or 0
+					end
+
+					local wsid = string.Replace( addonFile, ".txt", "" )
+					local wsurl = "https://steamcommunity.com/sharedfiles/filedetails/?id="..wsid
+
+					if addon_version_git == 0 then
+						print("[LVS] latest version of Workshop Addon "..wsurl.." could not be detected, You have Version: "..addon_version)
+					else
+						if addon_version_git > addon_version then
+							print("[LVS] Workshop Addon "..wsurl.." is out of date!")
+
+							if CLIENT then 
+								timer.Simple(18, function() 
+									chat.AddText( Color( 255, 0, 0 ),"[LVS] Workshop Addon "..wsid.." is out of date!" )
+								end)
+							end
+
+							LVS.VERSION_ADDONS_OUTDATED = true
+
+						else
+							print("[LVS] Workshop Addon "..wsurl.." is up to date, Version: "..addon_version)
+						end
+					end
+				end)
+			end )
 		end
 	end)
 end
