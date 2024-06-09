@@ -38,8 +38,29 @@ if SERVER then
 
 		if not entity.LVS then return end
 
+		local Repaired = false
+
 		if entity:GetHP() ~= entity:GetMaxHP() then
 			entity:SetHP( entity:GetMaxHP() )
+
+			Repaired = true
+		end
+
+		for _, part in pairs( entity:GetChildren() ) do
+			if part:GetClass() ~= "lvs_armor" then continue end
+
+			part:OnRepaired()
+
+			if part:GetHP() ~= part:GetMaxHP() then
+				part:SetHP( part:GetMaxHP() )
+
+				if part:GetDestroyed() then part:SetDestroyed( false ) end
+
+				Repaired = true
+			end
+		end
+
+		if Repaired then
 			entity:EmitSound("npc/dog/dog_servo2.wav")
 		end
 

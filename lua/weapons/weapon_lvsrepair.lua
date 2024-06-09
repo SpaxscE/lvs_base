@@ -262,6 +262,8 @@ function SWEP:PrimaryAttack()
 
 	if Target:GetDestroyed() then Target:SetDestroyed( false ) end
 
+	if HP < MaxHP then return end
+
 	Target:OnRepaired()
 end
 

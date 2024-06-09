@@ -147,11 +147,9 @@ if SERVER then
 			hit_decal:SetParent( trace.Entity )
 		end
 
-		if NewHealth <= 0 then
-			if not self:GetDestroyed() then
-				self:SetDestroyed( true )
-				self:OnDestroyed( dmginfo )
-			end
+		if not self:GetDestroyed() then
+			self:SetDestroyed( true )
+			self:OnDestroyed( dmginfo )
 		end
 
 		return true
