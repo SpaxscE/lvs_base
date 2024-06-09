@@ -1,14 +1,22 @@
 
+local LastImpact = 0
+
 function EFFECT:Init( data )
 	self.Ent = data:GetEntity()
 	self.Pos = data:GetOrigin()
 
 	self.mat = Material( "sprites/light_glow02_add" )
 
-	self.LifeTime = 0.2
-	self.DieTime = CurTime() + self.LifeTime
+	local T = CurTime()
 
-	sound.Play( "lvs/shield_deflect.ogg", self.Pos, 120, 100, 1 )
+	self.LifeTime = 0.2
+	self.DieTime = T + self.LifeTime
+
+	local DontHurtEars = math.Clamp( T - LastImpact, 0.4, 1 ) ^ 2
+
+	LastImpact = T
+
+	sound.Play( "lvs/shield_deflect.ogg", self.Pos, 120, 100, DontHurtEars )
 
 	self:Spark( self.Pos )
 

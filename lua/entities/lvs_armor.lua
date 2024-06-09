@@ -64,7 +64,6 @@ if SERVER then
 		local trace = util.TraceLine( {
 			start = pos - dir * 20,
 			endpos = pos + dir * 20,
-			filter = function( ent ) return ent == self:GetBase() end
 		} )
 
 		local DotHitNormal = math.Clamp( trace.HitNormal:Dot( dir ) ,-1,1) 
@@ -91,6 +90,7 @@ if SERVER then
 
 			if trace.Entity ~= self:GetBase() then
 				self._NextBounce = T + 1
+
 				return false
 			end
 
@@ -138,14 +138,12 @@ if SERVER then
 		self:OnHealthChanged( dmginfo, CurHealth, NewHealth )
 		self:SetHP( NewHealth )
 
-		if trace.Entity == self:GetBase() then
-			local hit_decal = ents.Create( "lvs_armor_penetrate" )
-			hit_decal:SetPos( trace.HitPos )
-			hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
-			hit_decal:Spawn()
-			hit_decal:Activate()
-			hit_decal:SetParent( trace.Entity )
-		end
+		local hit_decal = ents.Create( "lvs_armor_penetrate" )
+		hit_decal:SetPos( trace.HitPos )
+		hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
+		hit_decal:Spawn()
+		hit_decal:Activate()
+		hit_decal:SetParent( trace.Entity )
 
 		if not self:GetDestroyed() then
 			self:SetDestroyed( true )

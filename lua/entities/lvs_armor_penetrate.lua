@@ -51,7 +51,11 @@ ENT.MatSmoke = {
 	"particle/smokesprites_0016"
 }
 
+local CountTotal = {}
+
 function ENT:Initialize()
+	CountTotal[ self:EntIndex() ] = true
+
 	self.RandomAng = math.random(0,360)
 	self.DieTime = CurTime() + self.LifeTime
 
@@ -64,12 +68,14 @@ function ENT:Initialize()
 end
 
 function ENT:Smoke()
-	if (self.DieTime or 0) < CurTime() then return end
+	local T = CurTime()
+
+	if (self.DieTime or 0) < T then return end
 
 	if not self.emitter then return end
 
-	if (self.NextFX or 0) < CurTime() then
-		self.NextFX = CurTime() + 0.2
+	if (self.NextFX or 0) < T then
+		self.NextFX = T + 0.2 + table.Count( CountTotal ) / 50
 
 		local particle = self.emitter:Add( self.MatSmoke[math.random(1,#self.MatSmoke)], self:GetPos() )
 
@@ -94,6 +100,8 @@ function ENT:Think()
 end
 
 function ENT:OnRemove()
+	CountTotal[ self:EntIndex() ] = nil
+
 	if not self.emitter then return end
 
 	self.emitter:Finish()
