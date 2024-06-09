@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/misc/88mm_shell"
+
+	"$halflambert" "1"
+}
