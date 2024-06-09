@@ -61,7 +61,7 @@ function SWEP:FindClosest()
 	local ClosestPiece = NULL
 
 	for _, entity in pairs( lvsEnt:GetChildren() ) do
-		if entity:GetClass() ~= "lvs_wheeldrive_armor" then continue end
+		if entity:GetClass() ~= "lvs_armor" then continue end
 
 		local boxOrigin = entity:GetPos()
 		local boxAngles = entity:GetAngles()

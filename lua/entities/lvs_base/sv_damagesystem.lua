@@ -394,3 +394,5 @@ function ENT:SetDestroyed( SuppressOnDestroy )
 		net.WriteEntity( self )
 	net.SendPAS( self:GetPos() )
 end
+
+include("sv_damagesystem_armor.lua")
