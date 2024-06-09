@@ -98,6 +98,11 @@ if SERVER then
 			local HitAngle = 90 - (180 - math.deg( Ax ))
 
 			if HitAngle > 20 then
+				local effectdata = EffectData()
+					effectdata:SetOrigin( trace.HitPos )
+					effectdata:SetNormal( -dir )
+				util.Effect( "manhacksparks", effectdata, true, true )
+	
 				self._NextBounce = T + 1
 
 				return false

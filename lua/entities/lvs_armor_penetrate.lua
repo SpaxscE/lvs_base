@@ -7,11 +7,27 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 ENT.LifeTime = 15
 
 if SERVER then
+	local CountTotal = {}
+
 	function ENT:Initialize()
+		CountTotal[ self:EntIndex() ] = true
+
+		local Num = table.Count( CountTotal )
+
+		if (Num > 30 and math.random(1,2) == 1) or Num > 60 then
+			self:Remove()
+
+			return
+		end
+
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
 		self:DrawShadow( false )
 		self.DieTime = CurTime() + self.LifeTime
+	end
+
+	function ENT:OnRemove()
+		CountTotal[ self:EntIndex() ] = nil
 	end
 
 	function ENT:Think()
