@@ -165,6 +165,7 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = true
+		ply:AddFlags( FL_NOTARGET )
 	end
 
 	if not Pod.HidePlayer then return end
@@ -182,6 +183,7 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = nil
+		ply:RemoveFlags( FL_NOTARGET )
 	end
 
 	if not Pod.HidePlayer then return end
