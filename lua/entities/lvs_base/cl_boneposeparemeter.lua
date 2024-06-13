@@ -16,9 +16,11 @@ function ENT:SetBonePoseParameter( name, value )
 		name = string.Replace( name, "!", "" )
 	end
 
-	if not istable( self._BonePoseParameters ) or not self._BonePoseParameters[ name ] then return end
+	local EntTable = self:GetTable()
 
-	local data = self._BonePoseParameters[ name ]
+	if not istable( EntTable._BonePoseParameters ) or not EntTable._BonePoseParameters[ name ] then return end
+
+	local data = EntTable._BonePoseParameters[ name ]
 
 	local ang = LerpAngle( value, data.ang_min, data.ang_max )
 	local pos = LerpVector( value, data.pos_min, data.pos_max )

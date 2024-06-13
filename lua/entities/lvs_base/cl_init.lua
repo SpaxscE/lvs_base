@@ -90,18 +90,20 @@ ENT._oldActive = false
 ENT._oldEnActive = false
 
 function ENT:HandleActive()
+	local EntTable = self:GetTable()
+
 	local Active = self:GetActive()
 	local EngineActive = self:GetEngineActive()
 	local ActiveChanged = false
 
-	if self._oldActive ~= Active then
-		self._oldActive = Active
-		self:OnActiveChanged( Active )
+	if EntTable._oldActive ~= Active then
+		EntTable._oldActive = Active
+		EntTable:OnActiveChanged( Active )
 		ActiveChanged = true
 	end
 
-	if self._oldEnActive ~= EngineActive then
-		self._oldEnActive = EngineActive
+	if EntTable._oldEnActive ~= EngineActive then
+		EntTable._oldEnActive = EngineActive
 		self:OnEngineActiveChanged( EngineActive )
 		ActiveChanged = true
 	end

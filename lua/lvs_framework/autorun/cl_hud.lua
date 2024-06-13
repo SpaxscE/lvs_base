@@ -315,11 +315,15 @@ hook.Add( "HUDPaint", "!!!!!LVS_hud", function()
 		local ScrW = X / ScaleX
 		local ScrH = Y / ScaleY
 
-		local m = Matrix()
-		m:Scale( Vector( ScaleX, ScaleY, 1 ) )
-
-		cam.PushModelMatrix( m )
+		if ScaleX == 1 and ScaleY == 1 then
 			editor:func( Parent, PosX, PosY, Width, Height, ScrW, ScrH, ply )
-		cam.PopModelMatrix()
+		else
+			local m = Matrix()
+			m:Scale( Vector( ScaleX, ScaleY, 1 ) )
+
+			cam.PushModelMatrix( m )
+				editor:func( Parent, PosX, PosY, Width, Height, ScrW, ScrH, ply )
+			cam.PopModelMatrix()
+		end
 	end
 end )

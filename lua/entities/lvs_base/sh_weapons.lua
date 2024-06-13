@@ -210,6 +210,8 @@ if SERVER then
 	end
 
 	function ENT:WeaponsThink()
+		local EntTable = self:GetTable()
+
 		local T = CurTime()
 		local FT = FrameTime()
 		local CurWeapon, SelectedID = self:GetActiveWeapon()
@@ -248,14 +250,14 @@ if SERVER then
 			end
 		end
 
-		if ShouldFire ~= self.OldAttack then
-			self.OldAttack = ShouldFire
+		if ShouldFire ~= EntTable.OldAttack then
+			EntTable.OldAttack = ShouldFire
 
 			if ShouldFire then
 				if CurWeapon.StartAttack then
 					CurWeapon.StartAttack( self )
 				end
-				self._activeWeapon = SelectedID
+				EntTable._activeWeapon = SelectedID
 			else
 				self:WeaponsFinish()
 			end
@@ -276,9 +278,9 @@ if SERVER then
 				self:SetNextAttack( T )
 			end
 
-			self._lvsNextActiveWeaponCoolDown = T + 0.25
+			EntTable._lvsNextActiveWeaponCoolDown = T + 0.25
 		else
-			if (self._lvsNextActiveWeaponCoolDown or 0) > T then return end
+			if (EntTable._lvsNextActiveWeaponCoolDown or 0) > T then return end
 
 			self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
@@ -441,6 +443,8 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 end
 
 function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
+	local EntTable = self:GetTable()
+
 	local Base = ply:lvsGetWeaponHandler()
 
 	if not IsValid( Base ) then return end
@@ -467,24 +471,24 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 	local SizeY = h - gap
 
 	local Selected = Base:GetSelectedWeapon()
-	if Selected ~= self._OldSelected then
-		self._OldSelected = Selected
+	if Selected ~= EntTable._OldSelected then
+		EntTable._OldSelected = Selected
 		Pod._SelectActiveTime = T + 2
 	end
 
 	local tAlpha = (Pod._SelectActiveTime or 0) > T and 1 or 0
 	local tAlphaRate = FT * 15
 
-	self.smAlphaSW = self.smAlphaSW and (self.smAlphaSW + math.Clamp(tAlpha - self.smAlphaSW,-tAlphaRate,tAlphaRate)) or 0
+	EntTable.smAlphaSW = EntTable.smAlphaSW and (EntTable.smAlphaSW + math.Clamp(tAlpha - EntTable.smAlphaSW,-tAlphaRate,tAlphaRate)) or 0
 
-	if self.smAlphaSW > 0.95 then
-		self._DisplaySelected = Selected
+	if EntTable.smAlphaSW > 0.95 then
+		EntTable._DisplaySelected = Selected
 	else
-		self._DisplaySelected = self._DisplaySelected or Selected
+		EntTable._DisplaySelected = EntTable._DisplaySelected or Selected
 	end
 
-	local A255 = 255 * self.smAlphaSW
-	local A150 = 150 * self.smAlphaSW
+	local A255 = 255 * EntTable.smAlphaSW
+	local A150 = 150 * EntTable.smAlphaSW
 
 	local Col = Color(0,0,0,A150)
 	local ColSelect = Color(255,255,255,A150)
@@ -496,7 +500,7 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 	end
 
 	for ID = 1, num do
-		local IsSelected = self._DisplaySelected == ID
+		local IsSelected = EntTable._DisplaySelected == ID
 		local n = num - ID
 		local xPos = FlatSelector and X + (w + gap) * (ID - 1) - ((w + gap) * 0.5 * num - w * 0.5) or X
 		local yPos = FlatSelector and Y - h * math.min(SwapY,0) or Y - h * n + (num - 1) * h * SwapY
@@ -509,7 +513,7 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 			surface.SetDrawColor( 255, 255, 255, A255 )
 		end
 
-		if isbool( self.WEAPONS[PodID][ID].Icon ) then
+		if isbool( EntTable.WEAPONS[PodID][ID].Icon ) then
 			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255) 
 			self:DrawWeaponIcon( PodID, ID, xPos, yPos, SizeY * 2, SizeY, IsSelected, col )
 		else

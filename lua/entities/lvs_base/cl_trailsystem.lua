@@ -87,17 +87,19 @@ function ENT:FinishTrail( ID )
 end
 
 function ENT:DrawTrail()
-	if not self.TrailActive then return end
+	local EntTable = self:GetTable()
+
+	if not EntTable.TrailActive then return end
 
 	local Time = CurTime()
 
-	self._NextTrail = self._NextTrail or 0
+	EntTable._NextTrail = EntTable._NextTrail or 0
 
-	local Set = self._NextTrail < Time
+	local Set = EntTable._NextTrail < Time
 
-	render.SetMaterial( self.TrailMaterial )
+	render.SetMaterial( EntTable.TrailMaterial )
 
-	for ID, data in pairs( self.TrailActive ) do
+	for ID, data in pairs( EntTable.TrailActive ) do
 
 		for pos_id, pos_data in pairs( data.positions ) do
 			if Time - pos_data.time > data.lifetime then
@@ -121,7 +123,7 @@ function ENT:DrawTrail()
 
 		if num == 0 then 
 			if not data.active then
-				self.TrailActive[ ID ] = nil
+				EntTable.TrailActive[ ID ] = nil
 			end
 
 			continue
@@ -133,13 +135,13 @@ function ENT:DrawTrail()
 			local Scale = (pos_data.time + data.lifetime - Time) / data.lifetime
 			local InvScale = 1 - Scale
 
-			render.AddBeam( pos_data.pos, data.start_size * Scale + data.end_size * InvScale, pos_data.time * 50, Color( self.TrailRed, self.TrailGreen, self.TrailBlue, self.TrailAlpha * Scale ^ 2 ) )
+			render.AddBeam( pos_data.pos, data.start_size * Scale + data.end_size * InvScale, pos_data.time * 50, Color( EntTable.TrailRed, EntTable.TrailGreen, EntTable.TrailBlue, EntTable.TrailAlpha * Scale ^ 2 ) )
 		end
 
 		render.EndBeam()
 	end
 
 	if Set then
-		self._NextTrail = Time + 0.025
+		EntTable._NextTrail = Time + 0.025
 	end
 end

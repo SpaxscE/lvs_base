@@ -6,22 +6,26 @@ function ENT:StartWindSounds()
 
 	if LocalPlayer():lvsGetVehicle() ~= self then return end
 
-	self._WindSFX = CreateSound( self, "LVS.Physics.Wind" )
-	self._WindSFX:PlayEx(0,100)
+	local EntTable = self:GetTable()
 
-	self._WaterSFX = CreateSound( self, "LVS.Physics.Water" )
-	self._WaterSFX:PlayEx(0,100)
+	EntTable._WindSFX = CreateSound( self, "LVS.Physics.Wind" )
+	EntTable._WindSFX:PlayEx(0,100)
+
+	EntTable._WaterSFX = CreateSound( self, "LVS.Physics.Water" )
+	EntTable._WaterSFX:PlayEx(0,100)
 end
 
 function ENT:StopWindSounds()
-	if self._WindSFX then
-		self._WindSFX:Stop()
-		self._WindSFX = nil
+	local EntTable = self:GetTable()
+
+	if EntTable._WindSFX then
+		EntTable._WindSFX:Stop()
+		EntTable._WindSFX = nil
 	end
 
-	if self._WaterSFX then
-		self._WaterSFX:Stop()
-		self._WaterSFX = nil
+	if EntTable._WaterSFX then
+		EntTable._WaterSFX:Stop()
+		EntTable._WaterSFX = nil
 	end
 end
 
@@ -34,20 +38,22 @@ ENT.DustEffectSurfaces = {
 ENT.GroundEffectsMultiplier = 1
 
 function ENT:DoVehicleFX()
-	if self.GroundEffectsMultiplier <= 0 or not LVS.ShowEffects then self:StopWindSounds() return end
+	local EntTable = self:GetTable()
 
-	local Vel = self:GetVelocity():Length() * self.GroundEffectsMultiplier
+	if EntTable.GroundEffectsMultiplier <= 0 or not LVS.ShowEffects then self:StopWindSounds() return end
 
-	if self._WindSFX then self._WindSFX:ChangeVolume( math.Clamp( (Vel - 1200) / 2800,0,1 ), 0.25 ) end
+	local Vel = self:GetVelocity():Length() * EntTable.GroundEffectsMultiplier
+
+	if EntTable._WindSFX then EntTable._WindSFX:ChangeVolume( math.Clamp( (Vel - 1200) / 2800,0,1 ), 0.25 ) end
 
 	if Vel < 1500 then
-		if self._WaterSFX then self._WaterSFX:ChangeVolume( 0, 0.25 ) end
+		if EntTable._WaterSFX then EntTable._WaterSFX:ChangeVolume( 0, 0.25 ) end
 
 		return
 	end
 
-	if (self.nextFX or 0) < CurTime() then
-		self.nextFX = CurTime() + 0.05
+	if (EntTable.nextFX or 0) < CurTime() then
+		EntTable.nextFX = CurTime() + 0.05
 
 		local LCenter = self:OBBCenter()
 		LCenter.z = self:OBBMins().z
@@ -67,7 +73,7 @@ function ENT:DoVehicleFX()
 			mask = MASK_WATER,
 		} )
 
-		if self._WaterSFX then self._WaterSFX:ChangePitch( math.Clamp((Vel / 1000) * 50,80,150), 0.5 ) end
+		if EntTable._WaterSFX then EntTable._WaterSFX:ChangePitch( math.Clamp((Vel / 1000) * 50,80,150), 0.5 ) end
 
 		if traceWater.Hit and trace.HitPos.z < traceWater.HitPos.z then 
 			local effectdata = EffectData()
@@ -75,12 +81,12 @@ function ENT:DoVehicleFX()
 				effectdata:SetEntity( self )
 			util.Effect( "lvs_physics_water", effectdata )
 
-			if self._WaterSFX then self._WaterSFX:ChangeVolume( 1 - math.Clamp(traceWater.Fraction,0,1), 0.5 ) end
+			if EntTable._WaterSFX then EntTable._WaterSFX:ChangeVolume( 1 - math.Clamp(traceWater.Fraction,0,1), 0.5 ) end
 		else
-			if self._WaterSFX then self._WaterSFX:ChangeVolume( 0, 0.25 ) end
+			if EntTable._WaterSFX then EntTable._WaterSFX:ChangeVolume( 0, 0.25 ) end
 		end
 
-		if trace.Hit and self.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] then
+		if trace.Hit and EntTable.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] then
 			local effectdata = EffectData()
 				effectdata:SetOrigin( trace.HitPos )
 				effectdata:SetEntity( self )
@@ -90,18 +96,20 @@ function ENT:DoVehicleFX()
 end
 
 function ENT:GetParticleEmitter( Pos )
+	local EntTable = self:GetTable()
+
 	local T = CurTime()
 
-	if IsValid( self.Emitter ) and (self.EmitterTime or 0) > T then
-		return self.Emitter
+	if IsValid( EntTable.Emitter ) and (EntTable.EmitterTime or 0) > T then
+		return EntTable.Emitter
 	end
 
 	self:StopEmitter()
 
-	self.Emitter = ParticleEmitter( Pos, false )
-	self.EmitterTime = T + 2
+	EntTable.Emitter = ParticleEmitter( Pos, false )
+	EntTable.EmitterTime = T + 2
 
-	return self.Emitter
+	return EntTable.Emitter
 end
 
 function ENT:StopEmitter()
