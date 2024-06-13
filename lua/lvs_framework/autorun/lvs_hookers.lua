@@ -143,8 +143,27 @@ if CLIENT then
 	return
 end
 
+local DamageFix = {
+	["npc_hunter"] = true,
+	["npc_stalker"] = true,
+	["npc_strider"] = true,
+	["npc_combinegunship"] = true,
+	["npc_helicopter"] = true,
+}
+
 hook.Add( "EntityTakeDamage", "!!!_lvs_fix_vehicle_explosion_damage", function( target, dmginfo )
-	if not target:IsPlayer() then return end
+	if not target:IsPlayer() then
+		if target.LVS then
+			local attacker = dmginfo:GetAttacker()
+
+			if IsValid( attacker ) and DamageFix[ attacker:GetClass() ] then
+				dmginfo:SetDamageType( DMG_AIRBOAT )
+				dmginfo:SetDamageForce( dmginfo:GetDamageForce():GetNormalized() * 15000 )
+			end
+		end
+
+		return
+	end
 
 	local veh = target:lvsGetVehicle()
 
