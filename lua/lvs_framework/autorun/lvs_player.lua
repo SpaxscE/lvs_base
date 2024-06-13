@@ -248,18 +248,19 @@ function meta:lvsSetInput( name, value )
 	self._lvsKeyDown[ name ] = value
 end
 
+LVS.TEAMS = {
+	[0] = "FRIENDLY TO EVERYONE",
+	[1] = "Team 1",
+	[2] = "Team 2",
+	[3] = "HOSTILE TO EVERYONE",
+	[4] = "Team COMBINE",
+}
+
 function meta:lvsSetAITeam( nTeam )
 	nTeam = nTeam or LVS.PlayerDefaultTeam:GetInt()
 
-	local TeamText = {
-		[0] = "FRIENDLY TO EVERYONE",
-		[1] = "Team 1",
-		[2] = "Team 2",
-		[3] = "HOSTILE TO EVERYONE",
-	}
-
 	if self:lvsGetAITeam() ~= nTeam then
-		self:PrintMessage( HUD_PRINTTALK, "[LVS] Your AI-Team has been updated to: "..TeamText[ nTeam ] )
+		self:PrintMessage( HUD_PRINTTALK, "[LVS] Your AI-Team has been updated to: "..(LVS.TEAMS[ nTeam ] or "") )
 	end
 
 	self:SetNWInt( "lvsAITeam", nTeam )

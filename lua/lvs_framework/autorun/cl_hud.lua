@@ -258,8 +258,14 @@ local function PaintIdentifier( ent )
 				else
 					IndicatorColor = Color( 0, 127, 255, Alpha )
 				end
+			else
+				if MyTeam == 4 and Team == MyTeam then
+					IndicatorColor = Color( 0, 255, 255, Alpha )
+				end
 			end
 		end
+
+		if Team > 4 then continue end
 
 		v:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor, v )
 	end
