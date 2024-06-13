@@ -229,7 +229,13 @@ function ENT:GetPassenger( num )
 		return self:GetDriver()
 	else
 		for _, Pod in pairs( self:GetPassengerSeats() ) do
+
+			if not IsValid( Pod ) then
+				return NULL
+			end
+
 			local id = Pod:GetNWInt( "pPodIndex", -1 )
+
 			if id == -1 then continue end
 
 			if id == num then
