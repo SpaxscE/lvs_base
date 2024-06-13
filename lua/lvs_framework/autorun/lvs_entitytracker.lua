@@ -52,6 +52,7 @@ local Teams = {
 	["monster_scientist"] = 2,
 	["monster_barney"] = 2,
 
+	["npc_zombine"] = 3,
 	["npc_fastzombie"] = 3,
 	["npc_headcrab"] = 3,
 	["npc_headcrab_black"] = 3,
