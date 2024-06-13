@@ -48,9 +48,17 @@ function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
 				local Attacker = dmginfo:GetAttacker() 
 	
 				if IsValid( Attacker ) and Attacker:IsPlayer() then
-					net.Start( "lvs_armormarker" )
-						net.WriteBool( self:GetHP() > Damage * ScaleDamage )
-					net.Send( Attacker )
+					local NonLethal = self:GetHP() > Damage * ScaleDamage
+
+					if not ent._preventArmorMarker then
+						net.Start( "lvs_armormarker" )
+							net.WriteBool( NonLethal )
+						net.Send( Attacker )
+
+						if not NonLethal then
+							ent._preventArmorMarker = true
+						end
+					end
 				end
 
 				dmginfo:ScaleDamage( ScaleDamage )
