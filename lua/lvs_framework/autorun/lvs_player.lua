@@ -253,7 +253,6 @@ LVS.TEAMS = {
 	[1] = "Team 1",
 	[2] = "Team 2",
 	[3] = "HOSTILE TO EVERYONE",
-	[4] = "Team COMBINE",
 }
 
 function meta:lvsSetAITeam( nTeam )

@@ -22,6 +22,21 @@ function LVS:GetVehicles()
 end
 
 local Teams = {
+	["npc_breen"] = 1,
+	["npc_combine_s"] = 1,
+	["npc_combinedropship"] = 1,
+	["npc_combinegunship"] = 1,
+	["npc_crabsynth"] = 1,
+	["npc_cscanner"] = 1,
+	["npc_helicopter"] = 1,
+	["npc_manhack"] = 1,
+	["npc_metropolice"] = 1,
+	["npc_mortarsynth"] = 1,
+	["npc_sniper"] = 1,
+	["npc_stalker"] = 1,
+	["npc_strider"] = 1,
+	["npc_hunter"] = 1,
+
 	["monster_human_grunt"] = 1,
 	["monster_human_assassin"] = 1,
 	["monster_sentry"] = 1,
@@ -59,21 +74,6 @@ local Teams = {
 	["monster_nihilanth"] = 3,
 	["monster_bigmomma"] = 3,
 	["monster_babycrab"] = 3,
-
-	["npc_breen"] = 4,
-	["npc_combine_s"] = 4,
-	["npc_combinedropship"] = 4,
-	["npc_combinegunship"] = 4,
-	["npc_crabsynth"] = 4,
-	["npc_cscanner"] = 4,
-	["npc_helicopter"] = 4,
-	["npc_manhack"] = 4,
-	["npc_metropolice"] = 4,
-	["npc_mortarsynth"] = 4,
-	["npc_sniper"] = 4,
-	["npc_stalker"] = 4,
-	["npc_strider"] = 4,
-	["npc_hunter"] = 4,
 }
 function LVS:GetNPCRelationship( npc_class )
 	return Teams[ npc_class ] or 0
