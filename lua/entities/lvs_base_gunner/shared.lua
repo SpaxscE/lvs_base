@@ -29,6 +29,13 @@ function ENT:SetupDataTables()
 	end
 end
 
+function ENT:UnlockAimVector()
+	self._AimVectorUnlocked = true
+end
+
+function ENT:LockAimVector()
+	self._AimVectorUnlocked = nil
+end
 
 function ENT:GetEyeTrace()
 	local startpos = self:GetPos()
@@ -41,7 +48,6 @@ function ENT:GetEyeTrace()
 
 	return trace
 end
-
 
 function ENT:GetAI()
 	if IsValid( self:GetDriver() ) then return false end

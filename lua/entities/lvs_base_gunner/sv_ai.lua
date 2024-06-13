@@ -11,6 +11,14 @@ function ENT:GetAimVector()
 	local Driver = self:GetDriver()
 
 	if IsValid( Driver ) then
+		if self._AimVectorUnlocked then
+			local pod = self:GetDriverSeat()
+
+			if IsValid( pod ) then
+				return pod:WorldToLocalAngles( Driver:EyeAngles() ):Forward()
+			end
+		end
+
 		return Driver:GetAimVector()
 	else
 		return self:GetForward()
