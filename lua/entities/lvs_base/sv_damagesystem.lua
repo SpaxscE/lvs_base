@@ -386,6 +386,8 @@ function ENT:SetDestroyed( SuppressOnDestroy )
 
 	self.Destroyed = true
 
+	hook.Run( "LVS.UpdateRelationship", self )
+
 	if SuppressOnDestroy then return end
 
 	self:OnDestroyed()

@@ -30,6 +30,8 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 		end
 	end
 
+	hook.Run( "LVS.UpdateRelationship", Vehicle )
+
 	if Vel:Length() > (Pod.PlaceBehindVelocity or 100) then
 		local tr = util.TraceHull( {
 			start = Center,
