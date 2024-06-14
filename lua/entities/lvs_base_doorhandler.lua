@@ -31,6 +31,22 @@ function ENT:SetupDataTables()
 	end
 end
 
+function ENT:IsServerSide()
+	local EntTable = self:GetTable()
+
+	if isbool( EntTable._IsServerSide ) then return EntTable._IsServerSide end
+
+	local PoseName = self:GetPoseName()
+
+	if PoseName == "" then return false end
+
+	local IsServerSide = string.StartsWith( PoseName, "^" )
+
+	EntTable._IsServerSide = IsServerSide
+
+	return IsServerSide
+end
+
 function ENT:IsOpen()
 	return self:GetActive()
 end
@@ -196,6 +212,25 @@ if SERVER then
 		end
 	end
 
+	function ENT:SetPoseParameterSV()
+		local Base = self:GetBase()
+
+		if not IsValid( Base ) then return end
+
+		local Target = self:GetActive() and self:GetPoseMax() or self:GetPoseMin()
+		local poseName = self:GetPoseName()
+
+		if poseName == "" then return end
+
+		local EntTable = self:GetTable()
+
+		EntTable.sm_pp = EntTable.sm_pp and EntTable.sm_pp + (Target - EntTable.sm_pp) * FrameTime() * self:GetRate() or 0
+
+		local value = EntTable.sm_pp ^ self:GetRateExponent()
+
+		Base:SetPoseParameter( string.Replace(poseName, "^", ""), value )
+	end
+
 	function ENT:Think()
 		if IsValid( self._LinkedSeat ) then
 			local Driver = self._LinkedSeat:GetDriver()
@@ -208,7 +243,13 @@ if SERVER then
 			end
 		end
 
-		self:NextThink( CurTime() + 0.25 )
+		if self:IsServerSide() then
+			self:SetPoseParameterSV()
+
+			self:NextThink( CurTime() )
+		else
+			self:NextThink( CurTime() + 0.25 )
+		end
 
 		return true
 	end
@@ -223,6 +264,8 @@ function ENT:Initialize()
 end
 
 function ENT:Think()
+	if self:IsServerSide() then return end
+
 	local Base = self:GetBase()
 
 	if not IsValid( Base ) then return end
@@ -232,9 +275,11 @@ function ENT:Think()
 
 	if poseName == "" then return end
 
-	self.sm_pp = self.sm_pp and self.sm_pp + (Target - self.sm_pp) * RealFrameTime() * self:GetRate() or 0
+	local EntTable = self:GetTable()
 
-	local value = self.sm_pp ^ self:GetRateExponent()
+	EntTable.sm_pp = EntTable.sm_pp and EntTable.sm_pp + (Target - EntTable.sm_pp) * RealFrameTime() * self:GetRate() or 0
+
+	local value = EntTable.sm_pp ^ self:GetRateExponent()
 
 	if string.StartsWith( poseName, "!" ) then
 		Base:SetBonePoseParameter( poseName, value )
@@ -265,15 +310,17 @@ function ENT:DrawTranslucent()
 	local boxMins = self:GetMins()
 	local boxMaxs = self:GetMaxs()
 
-	local HitPos, _, _ = util.IntersectRayWithOBB( ply:GetShootPos(), ply:GetAimVector() * self.UseRange, boxOrigin, boxAngles, boxMins, boxMaxs )
+	local EntTable = self:GetTable()
+
+	local HitPos, _, _ = util.IntersectRayWithOBB( ply:GetShootPos(), ply:GetAimVector() * EntTable.UseRange, boxOrigin, boxAngles, boxMins, boxMaxs )
 
 	local InRange = isvector( HitPos )
 
 	if InRange then
 		local Use = ply:KeyDown( IN_USE )
 
-		if self.old_Use ~= Use then
-			self.old_Use = Use
+		if EntTable.old_Use ~= Use then
+			EntTable.old_Use = Use
 
 			if Use then
 				net.Start( "lvs_doorhandler_interact" )
@@ -285,9 +332,9 @@ function ENT:DrawTranslucent()
 
 	if not LVS.DeveloperEnabled then return end
 
-	local Col = InRange and self.ColorSelect or self.ColorNormal
+	local Col = InRange and EntTable.ColorSelect or EntTable.ColorNormal
 
 	render.SetColorMaterial()
 	render.DrawBox( boxOrigin, boxAngles, boxMins, boxMaxs, Col )
-	render.DrawBox( boxOrigin, boxAngles, boxMaxs + self.OutlineThickness, boxMins - self.OutlineThickness, self.ColorTransBlack )
+	render.DrawBox( boxOrigin, boxAngles, boxMaxs + EntTable.OutlineThickness, boxMins - EntTable.OutlineThickness, EntTable.ColorTransBlack )
 end
