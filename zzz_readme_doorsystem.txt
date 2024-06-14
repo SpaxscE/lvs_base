@@ -11,6 +11,8 @@ local DoorHandler = self:AddDoorHandler( "hood", Vector(50,0,25), Angle(7,0,0), 
 -- when only given a poseparametername it will just use the models bounding box as trigger-area
 -- the poseparameter should go from 0-1  where 0 should be closed
 
+-- door handlers are clientside by default, if you wish it to be serverside (move attachments too) add "^" prefix to your PoseParameterName
+
 
 
 
