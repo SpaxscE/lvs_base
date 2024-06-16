@@ -4,6 +4,8 @@ TOOL.Name			= "#AI Enabler"
 TOOL.Command		= nil
 TOOL.ConfigName		= ""
 
+TOOL.ClientConVar[ "team" ] = "-1"
+
 if CLIENT then
 	language.Add( "tool.lvsaienabler.name", "AI Enabler" )
 	language.Add( "tool.lvsaienabler.desc", "A tool used to enable/disable AI on LVS-Vehicles" )
@@ -20,6 +22,14 @@ function TOOL:LeftClick( trace )
 
 	if isfunction( ent.SetAI ) then
 		ent:SetAI( true )
+	end
+
+	if SERVER then
+		local Team = self:GetClientNumber( "team" )
+
+		if Team ~= -1 then
+			ent:SetAITEAM( math.Clamp( Team, 0, 3 ) )
+		end
 	end
 
 	return true
@@ -41,4 +51,10 @@ end
 
 function TOOL:Reload( trace )
 	return false
+end
+
+function TOOL.BuildCPanel( CPanel )
+	CPanel:AddControl( "Header", { Text = "#tool.lvsaienabler.name", Description	= "#tool.lvsaienabler.desc" }  )
+
+	CPanel:AddControl( "Slider", { Label = "TeamOverride", Type = "Int", Min = -1, Max = 3, Command = "lvsaienabler_team" } )
 end
