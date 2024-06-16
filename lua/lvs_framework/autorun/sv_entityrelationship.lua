@@ -1,7 +1,22 @@
 
+local function ApplyTeamRules( teamVeh, IsEnemy )
+	if teamVeh == 0 then
+		IsEnemy = false
+	end
+
+	if teamVeh == 3 then
+		IsEnemy = true
+	end
+
+	return IsEnemy
+end
+
 function LVS:SetNPCRelationship( NPC )
 	for _, lvsVeh in pairs( LVS:GetVehicles() ) do
-		local IsEnemy = lvsVeh:IsEnemy( NPC )
+		local teamVeh = lvsVeh:GetAITEAM()
+
+		local IsEnemy = ApplyTeamRules( teamVeh, lvsVeh:IsEnemy( NPC ) )
+
 		local IsActive = (lvsVeh:GetAI() or #lvsVeh:GetEveryone() > 0) and not lvsVeh:IsDestroyed()
 
 		if IsActive and IsEnemy then
@@ -19,11 +34,13 @@ function LVS:SetNPCRelationship( NPC )
 end
 
 function LVS:SetVehicleRelationship( lvsVeh )
+	local teamVeh = lvsVeh:GetAITEAM()
+
 	local Pos = lvsVeh:GetPos()
 	local IsActive = (lvsVeh:GetAI() or #lvsVeh:GetEveryone() > 0) and not lvsVeh:IsDestroyed()
 
 	for _, NPC in pairs( LVS:GetNPCs() ) do
-		local IsEnemy = lvsVeh:IsEnemy( NPC )
+		local IsEnemy = ApplyTeamRules( teamVeh, lvsVeh:IsEnemy( NPC ) )
 
 		if IsActive and IsEnemy then
 			NPC:AddEntityRelationship( lvsVeh, D_HT, 10 )

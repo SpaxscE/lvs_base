@@ -255,6 +255,8 @@ function ENT:Use( ply )
 		else
 			ply:EnterVehicle( Pod )
 			self:AlignView( ply )
+
+			hook.Run( "LVS.UpdateRelationship", self )
 		end
 
 		return
@@ -275,6 +277,8 @@ function ENT:Use( ply )
 	if hook.Run( "LVS.CanPlayerDrive", ply, self ) ~= false then
 		ply:EnterVehicle( Pod )
 		self:AlignView( ply )
+
+		hook.Run( "LVS.UpdateRelationship", self )
 	else
 		hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
 	end

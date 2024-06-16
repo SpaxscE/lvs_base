@@ -40,6 +40,8 @@ function ENT:OnToggleAI( name, old, new )
 
 		self:SetActive( true )
 		self:OnCreateAI()
+
+		hook.Run( "LVS.UpdateRelationship", self )
 	else
 		self:SetActive( false )
 		self:OnRemoveAI()
