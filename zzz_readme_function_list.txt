@@ -169,6 +169,11 @@ hook.Add( "LVS.OnPlayerCannotDrive", "any_name_you_want", function( ply, vehicle
 	print(ply:GetName().." can not drive :(")
 end )
 
+-- used by LVS cars. Called when the player wants to enable manual transmission
+hook.Add( "LVS.OnPlayerRequestManualTransmission", "any_name_you_want", function( ply, vehicle )
+	return false -- return false to prevent the player to activate manual transmission on their own
+end )
+
 
 ========================================
 =========== LVS HOOKS CLIENT ===========
