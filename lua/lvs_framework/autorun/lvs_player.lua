@@ -211,7 +211,7 @@ if CLIENT then
 	end )
 
 	local OldVisible = false
-	hook.Add("PostDrawHUD", "!!!lvs_keyblocker", function()
+	local function KeyBlocker()
 		local Visible = gui.IsGameUIVisible() or vgui.CursorVisible()
 
 		if Visible ~= OldVisible then
@@ -227,6 +227,14 @@ if CLIENT then
 				ply:lvsSetInputDisabled( false )
 			end
 		end
+	end
+
+	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!!lvs_keyblocker_enable", function( ply, veh )
+		hook.Add("PostDrawHUD", "!!!lvs_keyblocker", KeyBlocker )
+	end )
+
+	hook.Add( "LVS.PlayerLeaveVehicle", "!!!!!lvs_keyblocker_disable", function( ply, veh )
+		hook.Remove("PostDrawHUD", "!!!lvs_keyblocker" )
 	end )
 
 	return
