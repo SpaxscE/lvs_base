@@ -20,6 +20,8 @@ function ENT:LVSHudPaintVehicleHealth( X, Y, W, H, ScrX, ScrY, ply )
 	draw.DrawText( math.Round( self:GetHP(), 0 ), "LVS_FONT_HUD_LARGE", X + 102, Y + 20, color_white, TEXT_ALIGN_LEFT )
 end
 
+ENT.VehicleIdentifierRange = 10000
+
 function ENT:LVSHudPaintVehicleIdentifier( X, Y, In_Col, target_ent )
 	if not IsValid( target_ent ) then return end
 
