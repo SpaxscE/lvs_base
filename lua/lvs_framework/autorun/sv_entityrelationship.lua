@@ -20,7 +20,7 @@ function LVS:SetNPCRelationship( NPC )
 		local IsActive = (lvsVeh:GetAI() or #lvsVeh:GetEveryone() > 0) and not lvsVeh:IsDestroyed()
 
 		if IsActive and IsEnemy then
-			NPC:AddEntityRelationship( lvsVeh, D_HT, 10 )
+			NPC:AddEntityRelationship( lvsVeh, D_HT, 25 )
 			NPC:UpdateEnemyMemory( lvsVeh, lvsVeh:GetPos() )
 		else
 			local D_, _ = NPC:Disposition( lvsVeh )
@@ -43,7 +43,7 @@ function LVS:SetVehicleRelationship( lvsVeh )
 		local IsEnemy = ApplyTeamRules( teamVeh, lvsVeh:IsEnemy( NPC ) )
 
 		if IsActive and IsEnemy then
-			NPC:AddEntityRelationship( lvsVeh, D_HT, 10 )
+			NPC:AddEntityRelationship( lvsVeh, D_HT, 25 )
 			NPC:UpdateEnemyMemory( lvsVeh, Pos )
 		else
 			local D_, _ = NPC:Disposition( lvsVeh )
