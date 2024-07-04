@@ -67,6 +67,18 @@ end
 function ENT:AICanSee( otherEnt )
 	if not IsValid( otherEnt ) then return false end
 
+	local PhysObj = otherEnt:GetPhysicsObject()
+
+	if IsValid( PhysObj ) then
+		local trace = {
+			start = self:LocalToWorld( self:OBBCenter() ),
+			endpos = otherEnt:LocalToWorld( PhysObj:GetMassCenter() ),
+			filter = self:GetCrosshairFilterEnts(),
+		}
+
+		return util.TraceLine( trace ).Entity == otherEnt
+	end
+
 	local trace = {
 		start = self:LocalToWorld( self:OBBCenter() ),
 		endpos = otherEnt:LocalToWorld( otherEnt:OBBCenter() ),
