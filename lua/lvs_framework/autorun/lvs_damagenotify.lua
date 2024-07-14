@@ -39,7 +39,6 @@ if CLIENT then
 		vehicle:KillMarker()
 	end )
 
-	local LastMarker = 0
 	net.Receive( "lvs_armormarker", function( len )
 		if not LVS.ShowHitMarker then return end
 
@@ -49,18 +48,7 @@ if CLIENT then
 
 		if not IsValid( vehicle ) then return end
 
-		local T = CurTime()
-
-		local IsDamage = net.ReadBool()
-
-		local DontHurtEars = math.Clamp( T - LastMarker, 0, 1 ) ^ 2
-
-		LastMarker = T
-
-		local ArmorFailed = IsDamage and "takedamage" or "pen"
-		local Volume = IsDamage and (0.3 * DontHurtEars) or 1
-
-		ply:EmitSound( "lvs/armor_"..ArmorFailed.."_"..math.random(1,3)..".wav", 85, math.random(95,105), Volume, CHAN_ITEM2 )
+		vehicle:ArmorMarker( net.ReadBool() )
 	end )
 
 	return

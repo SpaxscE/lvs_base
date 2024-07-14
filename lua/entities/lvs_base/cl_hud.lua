@@ -50,6 +50,20 @@ function ENT:KillMarker()
 	LocalPlayer():EmitSound( "lvs/hit_kill.wav", 85, 100, 0.4, CHAN_VOICE )
 end
 
+local LastMarker = 0
+function ENT:ArmorMarker( IsDamage )
+	local T = CurTime()
+
+	local DontHurtEars = math.Clamp( T - LastMarker, 0, 1 ) ^ 2
+
+	LastMarker = T
+
+	local ArmorFailed = IsDamage and "takedamage" or "pen"
+	local Volume = IsDamage and (0.3 * DontHurtEars) or 1
+
+	LocalPlayer():EmitSound( "lvs/armor_"..ArmorFailed.."_"..math.random(1,3)..".wav", 85, math.random(95,105), Volume, CHAN_ITEM2 )
+end
+
 function ENT:HitMarker()
 	self.LastHitMarker = CurTime() + 0.15
 
