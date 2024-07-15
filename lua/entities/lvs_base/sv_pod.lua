@@ -31,10 +31,6 @@ function ENT:HandleActive()
 	local Active = self:GetActive()
 
 	if Driver ~= self:GetDriver() then
-		if self:GetlvsLockedStatus() then
-			self:UnLock()
-		end
-
 		local NewDriver = Driver
 		local OldDriver = self:GetDriver()
 		local IsActive = IsValid( Driver )
