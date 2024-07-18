@@ -157,6 +157,10 @@ end )
 =========== LVS HOOKS SERVER ===========
 ========================================
 
+hook.Add( "LVS.IsEngineStartAllowed", "any_name_you_want", function( vehicle )
+	return false -- disable engine start
+end )
+
 hook.Add( "LVS.PlayerKeyDown", "any_name_you_want", function( ply, keyname, pressed )
 	print("test")
 end )
