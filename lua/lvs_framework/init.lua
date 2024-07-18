@@ -1,9 +1,28 @@
 
+local StartTime = SysTime()
+
 if SERVER then
 	AddCSLuaFile("includes/circles/circles.lua")
 end
 
+local function FileIsEmpty( filename )
+	if file.Size( filename, "LUA" ) <= 1 then -- this is suspicous
+		local data = file.Read( filename, "LUA" )
+
+		if data and string.len( data ) <= 1 then -- confirm its empty
+
+			print("[LVS] - refusing to load '"..filename.."'! File is Empty!" )
+
+			return true
+		end
+	end
+
+	return false
+end
+
 for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
+	if FileIsEmpty( "lvs_framework/autorun/"..filename ) then continue end
+
 	if string.StartWith( filename, "sv_") then -- sv_ prefix only load serverside
 		if SERVER then
 			include("lvs_framework/autorun/"..filename)
@@ -30,6 +49,8 @@ for _, filename in pairs( file.Find("lvs_framework/autorun/*.lua", "LUA") ) do
 end
 
 hook.Run( "LVS:Initialize" )
+
+print("[LVS] - initialized ["..math.Round((SysTime() - StartTime) * 1000,2).."ms]")
 
 if CLIENT then
 	hook.Add( "InitPostEntity", "!!!lvscheckupdates", function()
