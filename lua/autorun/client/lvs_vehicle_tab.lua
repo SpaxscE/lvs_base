@@ -220,6 +220,7 @@ list.Set( "ContentCategoryIcons", "[LVS] - Tanks", "icon16/lvs_tanks.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Light", "icon16/lvs_light.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Medium", "icon16/lvs_medium.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Tanks - Heavy", "icon16/lvs_heavy.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Tanks - RP", "icon16/lvs_rp.png" )
 
 list.Set( "ContentCategoryIcons", "[LVS] - Star Wars", "icon16/lvs_starwars.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Star Wars - Gunships", "icon16/lvs_sw_gunship.png" )
