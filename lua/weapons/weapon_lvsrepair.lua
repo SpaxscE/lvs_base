@@ -302,7 +302,7 @@ function SWEP:PrimaryAttack()
 
 	Target:SetHP( math.min( HP + 7, MaxHP ) )
 
-	if EngineMode and HP >= MaxHP and Target:GetDestroyed() then
+	if EngineMode and Target:GetDestroyed() then
 		Target:SetDestroyed( false )
 	end
 
