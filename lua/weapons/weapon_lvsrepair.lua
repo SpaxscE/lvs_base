@@ -84,6 +84,8 @@ function SWEP:FindClosest()
 end
 
 local function IsEngineMode( AimPos, Engine )
+	if not IsValid( Engine ) then return false end
+
 	if not isfunction( Engine.GetDoorHandler ) then return (AimPos - Engine:GetPos()):Length() < 25 end
 
 	local DoorHandler = Engine:GetDoorHandler()
