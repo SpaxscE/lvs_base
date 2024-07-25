@@ -83,6 +83,22 @@ function SWEP:FindClosest()
 	return ClosestPiece
 end
 
+local function IsEngineMode( AimPos, Engine )
+	if not isfunction( Engine.GetDoorHandler ) then return (AimPos - Engine:GetPos()):Length() < 25 end
+
+	local DoorHandler = Engine:GetDoorHandler()
+
+	if IsValid( DoorHandler ) then
+		if DoorHandler:IsOpen() then
+			return (AimPos - Engine:GetPos()):Length() < 50
+		end
+
+		return false
+	end
+
+	return (AimPos - Engine:GetPos()):Length() < 25
+end
+
 if CLIENT then
 	SWEP.PrintName		= "Repair Torch"
 	SWEP.Author			= "Blu-x92"
@@ -180,7 +196,21 @@ if CLIENT then
 			local Pos = ply:GetEyeTrace().HitPos
 
 			if IsValid( lvsEnt ) and (Pos - ply:GetShootPos()):Length() < self.MaxRange and not ply:InVehicle() then
-				DrawText( ply:GetEyeTrace().HitPos, "Frame\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
+				if isfunction( lvsEnt.GetEngine ) then
+					local Engine = lvsEnt:GetEngine()
+
+					local AimPos = ply:GetEyeTrace().HitPos
+
+					local EngineMode = IsEngineMode( AimPos, Engine )
+
+					if IsValid( Engine ) and EngineMode then
+						DrawText( AimPos, "Engine\nHealth: "..math.Round(Engine:GetHP()).."/"..Engine:GetMaxHP(), ColorText )
+					else
+						DrawText( AimPos, "Frame\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
+					end
+				else
+					DrawText( ply:GetEyeTrace().HitPos, "Frame\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
+				end
 			end
 
 			return
@@ -221,6 +251,7 @@ function SWEP:PrimaryAttack()
 
 	self:SetFlameTime( T + 0.3 )
 
+	local EngineMode = false
 	local ArmorMode = true
 	local Target = self:FindClosest()
 
@@ -228,6 +259,19 @@ function SWEP:PrimaryAttack()
 
 	if IsValid( ply ) and not ply:KeyDown( IN_ATTACK2 ) then
 		Target = self:GetLVS()
+
+		if isfunction( Target.GetEngine ) then
+			local Engine = Target:GetEngine()
+
+			local AimPos = ply:GetEyeTrace().HitPos
+
+			EngineMode = IsEngineMode( AimPos, Engine )
+
+			if IsValid( Engine ) and EngineMode then
+				Target = Engine
+			end
+		end
+
 		ArmorMode = false
 	end
 
@@ -257,6 +301,10 @@ function SWEP:PrimaryAttack()
 	if CLIENT then return end
 
 	Target:SetHP( math.min( HP + 7, MaxHP ) )
+
+	if EngineMode and HP >= MaxHP and Target:GetDestroyed() then
+		Target:SetDestroyed( false )
+	end
 
 	if not ArmorMode then return end
 
