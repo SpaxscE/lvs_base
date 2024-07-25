@@ -7,6 +7,7 @@ ENT.DSArmorDamageReductionType = DMG_BULLET + DMG_CLUB
 
 ENT.DSArmorIgnoreDamageType = DMG_SONIC
 ENT.DSArmorIgnoreForce = 0
+
 ENT.DSArmorBulletPenetrationAdd = 250
 
 function ENT:AddDS( data )
