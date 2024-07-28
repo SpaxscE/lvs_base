@@ -43,8 +43,6 @@ if SERVER then
 			entity:EmitSound("items/ammo_pickup.wav")
 		end
 
-		entity:OnMaintenance()
-
 		self.MarkForRemove = true
 
 		SafeRemoveEntityDelayed( self, 0 )
