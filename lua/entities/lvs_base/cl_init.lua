@@ -23,22 +23,22 @@ function ENT:LVSCalcView( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles, fov, pod )
 end
 
-function ENT:PreDraw()
+function ENT:PreDraw( flags )
 	return true
 end
 
-function ENT:PreDrawTranslucent()
+function ENT:PreDrawTranslucent( flags )
 	return true
 end
 
-function ENT:PostDraw()
+function ENT:PostDraw( flags )
 end
 
-function ENT:PostDrawTranslucent()
+function ENT:PostDrawTranslucent( flags )
 end
 
 function ENT:Draw( flags )
-	if self:PreDraw() then
+	if self:PreDraw( flags ) then
 		if self.lvsLegacyDraw then
 			self:DrawModel() -- ugly, but required in order to fix old addons. Refract wont work on these.
 		else
@@ -46,19 +46,19 @@ function ENT:Draw( flags )
 		end
 	end
 
-	self:PostDraw()
+	self:PostDraw( flags )
 end
 
 function ENT:DrawTranslucent( flags )
 	self:DrawTrail()
 
-	if self:PreDrawTranslucent() then
+	if self:PreDrawTranslucent( flags ) then
 		self:DrawModel( flags )
 	else
 		self.lvsLegacyDraw = true -- insert puke simley
 	end
 
-	self:PostDrawTranslucent()
+	self:PostDrawTranslucent( flags )
 end
 
 function ENT:Initialize()
