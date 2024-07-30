@@ -77,13 +77,13 @@ table = lvsEntity:GetPassengerSeats()
 
 bool = lvsEntity:HasActiveSoundEmitters()
 
-entity = ply:GetPassenger( num )
+entity = lvsEntity:GetPassenger( num )
 
 table = lvsEntity:GetEveryone()
 
 number = lvsEntity:GetPodIndex() -- this works on the WeaponHandler aswell
 
-entity = ply:GetVehicle() -- this works on the WeaponHandler aswell
+entity = lvsEntity:GetVehicle() -- this works on the WeaponHandler aswell
 
 table = lvsEntity:GetCrosshairFilterEnts() -- returns all entities that are attached to this vehicle. This is used for the bullet + crosshair trace filter
 
