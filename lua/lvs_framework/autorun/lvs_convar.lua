@@ -1,8 +1,22 @@
 -- 2022 and i still havent bothered creating a system that does this automatically
 
-LVS.FreezeTeams = CreateConVar( "lvs_freeze_teams", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"enable/disable auto ai-team switching" )
-LVS.TeamPassenger = CreateConVar( "lvs_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"only allow players of matching ai-team to enter the vehicle? 1 = team only, 0 = everyone can enter" )
-LVS.PlayerDefaultTeam = CreateConVar( "lvs_default_teams", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"set default player ai-team" )
+LVS.cVar_FreezeTeams = CreateConVar( "lvs_freeze_teams", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"enable/disable auto ai-team switching" )
+LVS.FreezeTeams = LVS.cVar_FreezeTeams and LVS.cVar_FreezeTeams:GetBool() or false
+cvars.AddChangeCallback( "lvs_freeze_teams", function( convar, oldValue, newValue ) 
+	LVS.FreezeTeams = tonumber( newValue ) ~=0
+end, "lvs_freezeteams_callback" )
+
+LVS.cVar_TeamPassenger = CreateConVar( "lvs_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"only allow players of matching ai-team to enter the vehicle? 1 = team only, 0 = everyone can enter" )
+LVS.TeamPassenger = LVS.cVar_TeamPassenger and LVS.cVar_TeamPassenger:GetBool() or false
+cvars.AddChangeCallback( "lvs_teampassenger", function( convar, oldValue, newValue ) 
+	LVS.TeamPassenger = tonumber( newValue ) ~= 0
+end, "lvs_teampassenger_callback" )
+
+LVS.cVar_PlayerDefaultTeam = CreateConVar( "lvs_default_teams", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"set default player ai-team" )
+LVS.PlayerDefaultTeam = LVS.cVar_PlayerDefaultTeam and LVS.cVar_PlayerDefaultTeam:GetInt() or 0
+cvars.AddChangeCallback( "lvs_default_teams", function( convar, oldValue, newValue ) 
+	LVS.PlayerDefaultTeam = math.Round( tonumber( newValue ), 0 )
+end, "lvs_defaultteam_callback" )
 
 LVS.cVar_IgnoreNPCs = CreateConVar( "lvs_ai_ignorenpcs", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"should LVS-AI ignore NPCs?" )
 LVS.IgnoreNPCs = LVS.cVar_IgnoreNPCs and LVS.cVar_IgnoreNPCs:GetBool() or false

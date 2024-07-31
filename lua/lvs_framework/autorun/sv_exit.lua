@@ -10,7 +10,7 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 
 	if not IsValid( Vehicle ) then return end
 
-	if not LVS.FreezeTeams:GetBool() then
+	if not LVS.FreezeTeams then
 		ply:lvsSetAITeam( Vehicle:GetAITEAM() )
 	end
 

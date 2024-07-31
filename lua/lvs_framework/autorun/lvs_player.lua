@@ -1,7 +1,7 @@
 local meta = FindMetaTable( "Player" )
 
 function meta:lvsGetAITeam()
-	return self:GetNWInt( "lvsAITeam", LVS.PlayerDefaultTeam:GetInt() )
+	return self:GetNWInt( "lvsAITeam", LVS.PlayerDefaultTeam )
 end
 
 function meta:lvsGetVehicle()
@@ -264,7 +264,7 @@ LVS.TEAMS = {
 }
 
 function meta:lvsSetAITeam( nTeam )
-	nTeam = nTeam or LVS.PlayerDefaultTeam:GetInt()
+	nTeam = nTeam or LVS.PlayerDefaultTeam
 
 	if self:lvsGetAITeam() ~= nTeam then
 		self:PrintMessage( HUD_PRINTTALK, "[LVS] Your AI-Team has been updated to: "..(LVS.TEAMS[ nTeam ] or "") )
