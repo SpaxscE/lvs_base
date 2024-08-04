@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"MODELS\MAPMODELS\BARBED_WIRE\wire2"
+	"$alphatest"	"1"
+}
