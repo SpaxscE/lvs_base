@@ -54,6 +54,9 @@ local function HandleBullets()
 		local start = bullet.Src
 		local dir = bullet.Dir
 		local TimeAlive = bullet:GetTimeAlive()
+
+		if TimeAlive < 0 then continue end
+
 		local pos = dir * TimeAlive * bullet.Velocity
 		local mul = bullet:GetLength()
 		local Is2ndTickAlive = TimeAlive > FT * 2 -- this system is slow. Takes atleast 2 ticks before it spawns. We need to trace from startpos until lua catches up
@@ -63,7 +66,7 @@ local function HandleBullets()
 		if SERVER then
 			bullet:SetPos( start + pos )
 		else
-			if IsValid( bullet.Entity ) then -- if the vehicle entity is valid...
+			if IsValid( bullet.Entity ) and bullet.SrcEntity then -- if the vehicle entity is valid...
 				local inv = 1 - mul
 
 				-- ..."parent" the bullet to the vehicle for a very short time. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
@@ -283,6 +286,11 @@ else
 			bullet.Filter = bullet.Entity
 		end
 		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
+
+		if bullet.SrcEntity == vector_origin then
+			bullet.SrcEntity = nil
+		end
+
 		bullet.Velocity = net.ReadFloat()
 
 		if net.ReadBool() then

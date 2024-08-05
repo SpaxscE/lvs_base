@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/salza/tankmine/mine"
+	"$bumpmap"    "models/salza/tankmine/mine_nm"			
+	"$halflambert" "1"
+}
