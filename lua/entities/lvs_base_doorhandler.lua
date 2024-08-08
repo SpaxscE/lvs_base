@@ -7,6 +7,8 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 
 ENT.UseRange = 75
 
+ENT._UseTargetAllowed = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
 
@@ -72,6 +74,8 @@ if SERVER then
 		if not IsValid( ent ) then return end
 
 		if (ply:GetPos() - ent:GetPos()):Length() > (ent.UseRange or 75) * 2 then return end
+
+		if not ent._UseTargetAllowed or ply:InVehicle() then return end
 
 		ent:Use( ply, ply )
 	end)
