@@ -289,6 +289,7 @@ function ENT:OnTakeDamage( dmginfo )
 	self:CalcDamage( dmginfo )
 	self:TakePhysicsDamage( dmginfo )
 	self:OnAITakeDamage( dmginfo )
+	self:RemoveAllDecals()
 end
 
 function ENT:OnMaintenance()
