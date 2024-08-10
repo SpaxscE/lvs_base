@@ -67,7 +67,7 @@ if CLIENT then
 		if not istable( self.CrosshairFilterEnts ) then
 			self.CrosshairFilterEnts = {self}
 
-			-- lets ask the server to build the filter for us because it has access to constraint.GetAllConstrainedEntities() 
+			-- lets ask the server to build the filter for us because it has access to constraint.GetAllConstrainedEntities()
 			net.Start( "lvs_player_request_filter" )
 				net.WriteEntity( self )
 			net.SendToServer()
@@ -121,15 +121,15 @@ function ENT:TriggerInput( name, value )
 	end
 end
 
-function ENT:Initialize()	
+function ENT:Initialize()
 	self:SetModel( "models/props_junk/PopCan01a.mdl" )
 	self:PhysicsInit( SOLID_VPHYSICS )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
-	self:SetCollisionGroup( COLLISION_GROUP_WEAPON  ) 
-	
+	self:SetCollisionGroup( COLLISION_GROUP_WEAPON  )
+
 	self:PhysWake()
-	
+
 	self.Inputs = WireLib.CreateInputs( self,{"Fire"} )
 end
 
@@ -139,10 +139,10 @@ end
 
 function ENT:CanShoot()
 	if not self.TriggerFire then return false end
-	
+
 	self.NextShoot = self.NextShoot or 0
-	
-	return self.NextShoot < CurTime()
+
+	return self.NextShoot <= CurTime() - 1e-4
 end
 
 local IsCannon = {
@@ -158,7 +158,7 @@ function ENT:Shoot()
 	local bullet = {}
 	bullet.Src 	= self:GetPos()
 	bullet.Dir 	= self:GetUp()
-	bullet.Spread 	= Vector(self:GetSpread(),self:GetSpread(),self:GetSpread())
+	bullet.Spread 	= Vector(self:GetSpread(),self:GetSpread(), 0)
 	bullet.TracerName = Tracer
 	bullet.Force	= self:GetPenetration() * 100
 	bullet.HullSize 	= self:GetSize()
@@ -194,16 +194,20 @@ function ENT:Shoot()
 
 	LVS:FireBullet( bullet )
 
-	self:SetNextShoot( CurTime() + self:GetShootDelay() )
+	if self.NextShoot and CurTime() - self.NextShoot <= 1e-4 then
+		self:SetNextShoot( self.NextShoot + self:GetShootDelay() )
+	else
+		self:SetNextShoot( CurTime() + self:GetShootDelay() )
+	end
 end
 
-function ENT:Think()	
+function ENT:Think()
 
 	self.BaseClass.Think( self )
-	
+
 	self:Shoot()
 
 	self:NextThink( CurTime() )
-	
+
 	return true
 end

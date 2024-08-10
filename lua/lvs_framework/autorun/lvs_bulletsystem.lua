@@ -9,7 +9,7 @@ function LVS:GetBullet( index )
 end
 
 local NewBullet = {}
-NewBullet.__index = NewBullet 
+NewBullet.__index = NewBullet
 
 function NewBullet:SetPos( pos )
 	self.curpos = pos
@@ -61,7 +61,7 @@ local function HandleBullets()
 		local mul = bullet:GetLength()
 		local Is2ndTickAlive = TimeAlive > FT * 2 -- this system is slow. Takes atleast 2 ticks before it spawns. We need to trace from startpos until lua catches up
 
-		-- startpos, direction and curtime of creation is networked to client. 
+		-- startpos, direction and curtime of creation is networked to client.
 		-- The Bullet position is simulated by doing startpos + dir * time * velocity
 		if SERVER then
 			bullet:SetPos( start + pos )
@@ -137,7 +137,7 @@ local function HandleBullets()
 				dmginfo:SetDamageType( DMG_AIRBOAT )
 				dmginfo:SetInflictor( (IsValid( bullet.Entity ) and bullet.Entity) or (IsValid( bullet.Attacker ) and bullet.Attacker) or game.GetWorld() )
 				dmginfo:SetDamagePosition( EndPos )
-				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
+				dmginfo:SetDamageForce( bullet.Dir * bullet.Force )
 
 				if bullet.Callback then
 					bullet.Callback( bullet.Attacker, traceImpact, dmginfo )
@@ -199,9 +199,24 @@ if SERVER then
 
 		setmetatable( bullet, NewBullet )
 
+		--[[
+			Forgive the lack of optimisation here
+			Using cross products caused spread to shrink awkwardly as the shot direction becomes parallel with worldspace z axis.
+			Using a simplified '(bullet.Dir = 2 * data.Dir + randomOnUnitSphere() * data.Spread):GetNormalized() will not work here because data.Spread.z is always zero for 'some' reason.
+			Using VectorRand() as was written in the original code turns the bullet spread into a rectangle instead of a circle and suffers from the same issue as above ^
+			]]--
+		local theta = 2 * math.pi * math.random()
+		local radius = 0.5 * math.random()
+
+		local shotAngle = data.Dir:Angle()
+		local horizSpread = shotAngle:Right() * math.sin(theta) * data.Spread.x * radius
+		local vertSpread = shotAngle:Up() * math.cos(theta) * data.Spread.y * radius
+
 		bullet.TracerName = data.TracerName or "lvs_tracer_orange"
 		bullet.Src = data.Src or vector_origin
-		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
+		-- bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
+		bullet.Dir = data.Dir + horizSpread + vertSpread
+		bullet.Dir:Normalize()
 		bullet.Force = data.Force or 10
 		bullet.HullSize = data.HullSize or 5
 		bullet.Mins = -vector_one * bullet.HullSize

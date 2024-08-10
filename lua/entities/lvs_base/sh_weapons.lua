@@ -95,7 +95,7 @@ if SERVER then
 
 		return AmmoIsSet
 	end
-	
+
 	function ENT:WeaponsOnRemove()
 		for _, data in pairs( self.WEAPONS ) do
 			for ID, Weapon in pairs( data ) do
@@ -190,7 +190,8 @@ if SERVER then
 	function ENT:CanAttack()
 		local CurWeapon = self:GetActiveWeapon()
 
-		return (CurWeapon._NextFire or 0) < CurTime()
+		-- Fixes missfires on 'some' tickrate values such as 20, 33.333, 49.99999 ete... all of these happen due to floating point precision.
+		return (CurWeapon._NextFire or 0) <= CurTime() - 1e-4
 	end
 
 	function ENT:SetNextAttack( time )
@@ -215,7 +216,7 @@ if SERVER then
 		local T = CurTime()
 		local FT = FrameTime()
 		local CurWeapon, SelectedID = self:GetActiveWeapon()
-	
+
 		for ID, Weapon in pairs( self.WEAPONS[1] ) do
 			local IsActive = ID == SelectedID
 			if Weapon.OnThink then Weapon.OnThink( self, IsActive ) end
@@ -268,7 +269,12 @@ if SERVER then
 
 			local ShootDelay = (CurWeapon.Delay or 0)
 
-			self:SetNextAttack( T + ShootDelay )
+			-- When firing full auto we want to base our next attack time off of our last attack time and not the current time because that's rounded to ticks and thus inaccurate, causing mishaps on low tickrate.
+			if CurWeapon._NextFire and T - CurWeapon._NextFire < 1e-4 then
+				self:SetNextAttack( CurWeapon._NextFire + ShootDelay )
+			else
+				self:SetNextAttack( T + ShootDelay )
+			end
 			self:SetHeat( CurHeat + (CurWeapon.HeatRateUp or 0.2) * math.max(ShootDelay, FT) )
 
 			if not CurWeapon.Attack then return end
@@ -347,14 +353,14 @@ function ENT:PrevWeapon()
 	net.SendToServer()
 end
 
-LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR", 
+LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR",
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 		if not vehicle.LVSHudPaintWeapons then return end
 		vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
 	end
 )
 
-LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
+LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO",
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 		if not vehicle.LVSHudPaintWeaponInfo then return end
 
@@ -514,7 +520,7 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		end
 
 		if isbool( EntTable.WEAPONS[PodID][ID].Icon ) then
-			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255) 
+			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255)
 			self:DrawWeaponIcon( PodID, ID, xPos, yPos, SizeY * 2, SizeY, IsSelected, col )
 		else
 			surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
