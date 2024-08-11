@@ -166,7 +166,21 @@ local function HandleBullets()
 					dmginfo:SetDamageType( bullet.SplashDamageType )
 					dmginfo:SetDamage( bullet.SplashDamage )
 
-					util.BlastDamageInfo( dmginfo, EndPos, bullet.SplashDamageRadius )
+					local BlastPos = EndPos
+		
+					if bullet.SplashDamageType == DMG_BLAST and IsValid( trace.Entity ) then
+						BlastPos = trace.Entity:GetPos()
+
+						if isfunction( trace.Entity.GetBase ) then
+							local Base = trace.Entity:GetBase()
+		
+							if IsValid( Base ) and isentity( Base ) then
+								BlastPos = Base:GetPos()
+							end
+						end
+					end
+
+					util.BlastDamageInfo( dmginfo, BlastPos, bullet.SplashDamageRadius )
 				end
 			else
 				if not traceImpact.HitSky then

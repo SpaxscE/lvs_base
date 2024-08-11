@@ -285,6 +285,14 @@ if SERVER then
 
 		if IsValid( target ) and not target:IsNPC() then
 			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
+
+			if isfunction( target.GetBase ) then
+				local Base = target:GetBase()
+
+				if IsValid( Base ) and isentity( Base ) then
+					Pos = target:GetPos()
+				end
+			end
 		end
 
 		local attacker = self:GetAttacker()
