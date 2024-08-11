@@ -63,6 +63,7 @@ function ENT:InRange( ply, Range )
 
 	return isvector( HitPos )
 end
+
 if SERVER then
 	AccessorFunc(ENT, "soundopen", "SoundOpen", FORCE_STRING)
 	AccessorFunc(ENT, "soundclose", "SoundClose", FORCE_STRING)
