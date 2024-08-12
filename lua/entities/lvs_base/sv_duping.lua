@@ -33,6 +33,8 @@ function ENT:PreEntityCopy()
 	self._DoorHandlers = nil
 	self.pPodKeyIndex = nil
 	self.pSeats = nil
+
+	return true
 end
 
 function ENT:PostEntityCopy()
