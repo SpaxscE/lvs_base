@@ -22,6 +22,8 @@ function ENT:SetupDataTables()
 
 	self:NetworkVar( "Float", 0, "NWHeat" )
 
+	self:NetworkVar( "Bool", 0, "NWOverheated" )
+
 	self:NetworkVar( "Vector", 0, "NWAimVector" )
 
 	if SERVER then

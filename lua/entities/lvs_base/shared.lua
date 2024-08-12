@@ -54,6 +54,7 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
 	self:AddDT( "Bool", "lvsLockedStatus" )
 	self:AddDT( "Bool", "lvsReady" )
+	self:AddDT( "Bool", "NWOverheated" )
 
 	self:AddDT( "Int", "AITEAM", { KeyName = "aiteam", Edit = { type = "Int", order = 2,min = 0, max = 3, category = "AI"} } )
 	self:AddDT( "Int", "SelectedWeapon" )

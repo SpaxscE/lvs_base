@@ -166,6 +166,8 @@ if SERVER then
 
 		CurWeapon.Overheated = overheat
 
+		self:SetNWOverheated( overheat )
+
 		if self:GetHeat() == 0 then return end
 
 		if CurWeapon.OnOverheat then
@@ -315,6 +317,7 @@ if SERVER then
 		if NextWeapon and NextWeapon.OnSelect then
 			NextWeapon.OnSelect( self, old )
 			self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
+			self:SetNWOverheated( NextWeapon.Overheated == true )
 		end
 	end
 
@@ -392,7 +395,7 @@ local Circles = {
 	[5] = {r = 3, col = Color(0,0,0,200)},
 }
 
-local function DrawCircle( X, Y, target_radius, heatvalue )
+local function DrawCircle( X, Y, target_radius, heatvalue, overheated )
 	local endang = 360 * heatvalue
 
 	if endang == 0 then return end
@@ -424,14 +427,22 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 	if not Base:HasWeapon( Base:GetSelectedWeapon() ) then return end
 
 	local Heat = Base:GetNWHeat()
+	local OverHeated = Base:GetNWOverheated()
+
 	local hX = X + w - h * 0.5
 	local hY = Y + h * 0.25 + h * 0.25
-	local hAng = math.cos( CurTime() * 50 ) * 5 * Heat ^ 2
+	local hAng = math.cos( CurTime() * 50 ) * 5 * (OverHeated and 1 or Heat ^ 2)
 
 	surface.SetMaterial( self.HeatMat )
 	surface.SetDrawColor( 0, 0, 0, 200 )
 	surface.DrawTexturedRectRotated( hX + 4, hY + 1, h * 0.5, h * 0.5, hAng )
-	surface.SetDrawColor( 255, 255 * (1 - Heat), 255 * math.max(1 - Heat * 1.5,0), 255 )
+
+	if OverHeated then
+		surface.SetDrawColor( 255, 0, 0, 255 )
+	else
+		surface.SetDrawColor( 255, 255 * (1 - Heat), 255 * math.max(1 - Heat * 1.5,0), 255 )
+	end
+
 	surface.DrawTexturedRectRotated( hX + 2, hY - 1, h * 0.5, h * 0.5, hAng )
 
 	DrawCircle( hX, hY, h * 0.35, Heat )

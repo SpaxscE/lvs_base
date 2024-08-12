@@ -122,6 +122,8 @@ function ENT:SetOverheated( overheat )
 
 	CurWeapon.Overheated = overheat
 
+	self:SetNWOverheated( overheat )
+
 	if self:GetHeat() == 0 then return end
 
 	if CurWeapon.OnOverheat then
@@ -277,6 +279,7 @@ function ENT:OnWeaponChanged( name, old, new)
 	if NextWeapon and NextWeapon.OnSelect then
 		NextWeapon.OnSelect( self )
 		self:SetNWAmmo( NextWeapon._CurAmmo or NextWeapon.Ammo or -1 )
+		self:SetNWOverheated( NextWeapon.Overheated == true )
 	end
 end
 
