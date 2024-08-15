@@ -290,7 +290,7 @@ if SERVER then
 				local Base = target:GetBase()
 
 				if IsValid( Base ) and isentity( Base ) then
-					Pos = target:GetPos()
+					Pos = Base:GetPos()
 				end
 			end
 		end
