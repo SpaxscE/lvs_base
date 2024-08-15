@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/props_fortifications/sandbags_snow"
+	"$nodecal" 1
+}
