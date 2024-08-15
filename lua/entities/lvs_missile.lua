@@ -266,7 +266,7 @@ if SERVER then
 	function ENT:PhysicsCollide( data )
 		if istable( self._FilterEnts ) and self._FilterEnts[ data.HitEntity ] then return end
 
-		self:Detonate()
+		self:Detonate( data.HitEntity )
 	end
 
 	function ENT:OnTakeDamage( dmginfo )	
