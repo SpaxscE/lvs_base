@@ -1,0 +1,176 @@
+AddCSLuaFile()
+
+ENT.Type            = "anim"
+
+ENT.RenderGroup = RENDERGROUP_BOTH 
+
+function ENT:SetupDataTables()
+	self:NetworkVar( "Entity",1, "HoldingPlayer" )
+	self:NetworkVar( "Entity",2, "LinkedSpawnPoint" )
+end
+
+function ENT:GetAITEAM()
+	local spawnpoint =  self:GetLinkedSpawnPoint()
+
+	if IsValid( spawnpoint ) then return spawnpoint:GetAITEAM() end
+	
+	local ply = self:GetHoldingPlayer()
+
+	if not IsValid( ply ) then return 0 end
+
+	return ply:lvsGetAITeam()
+end
+
+function ENT:UpdateTransmitState() 
+	return TRANSMIT_ALWAYS
+end
+
+if SERVER then
+	function ENT:Initialize()
+		self:SetModel( "models/Combine_Helicopter/helicopter_bomb01.mdl" )
+		self:PhysicsInit( SOLID_VPHYSICS )
+		self:DrawShadow( false )
+		self:SetTrigger( true )
+		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
+	end
+
+	function ENT:StartTouch( entity )
+		self:Pickup( entity )
+	end
+
+	function ENT:EndTouch( entity )
+	end
+
+	function ENT:Touch( entity )
+	end
+
+	function ENT:Deliver( entity )
+		self._IsDelivered = true
+		self._DeliveredPlayer = self:GetHoldingPlayer()
+		self._DeliveredTeam = entity:GetAITEAM()
+
+		self:SetLinkedSpawnPoint( entity )
+		self:SetHoldingPlayer( NULL )
+		self:SetPos( entity:GetPos() + Vector(0,0,10) )
+	end
+
+	function ENT:Pickup( entity )
+		if IsValid( self:GetHoldingPlayer() ) then return end
+
+		if not IsValid( entity ) or not entity:IsPlayer() then return end
+
+		local Team = entity:lvsGetAITeam() 
+
+		if Team ~= 1 and Team ~= 2 then return end
+
+		self:SetHoldingPlayer( entity )
+		self:SetLinkedSpawnPoint( NULL )
+		self:SetSolid( SOLID_NONE )
+		self:SetTrigger( false )
+		self:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
+
+		GAMEMODE:OnPlayerPickupGoal( entity, Team, self )
+	end
+
+	function ENT:Drop( ply, team )
+		self:SetHoldingPlayer( NULL )
+		self:SetLinkedSpawnPoint( NULL )
+		self:SetSolid( SOLID_VPHYSICS )
+		self:SetTrigger( true )
+		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
+
+		if self._IsDelivered then
+			GAMEMODE:OnPlayerDropGoal( self._DeliveredPlayer, self._DeliveredTeam, self )
+
+			self._IsDelivered = nil
+			self._DeliveredTeam = nil
+			self._DeliveredPlayer = nil
+
+			return
+		end
+	
+		GAMEMODE:OnPlayerDropGoal( ply, team, self )
+	end
+
+	function ENT:Think()
+		self:NextThink( CurTime() )
+
+		if self._IsDelivered then
+			local LinkedSpawn = self:GetLinkedSpawnPoint()
+
+			if IsValid( LinkedSpawn ) then
+
+				GAMEMODE:DeliveredGoalThink( self._DeliveredPlayer, self:GetAITEAM(), 0.5 )
+
+				return true
+			end
+
+			self:Drop()
+
+			return true
+		end
+
+		local ply = self:GetHoldingPlayer()
+
+		if not IsValid( ply ) then return true end
+
+		local Team = ply:lvsGetAITeam() 
+
+		if not ply:Alive() or (Team ~= 1 and Team ~= 2) then
+			self:Drop( ply, Team )
+
+			return true
+		end
+
+		self:SetPos( ply:GetShootPos() )
+
+		GAMEMODE:DeliveredGoalThink( ply, self:GetAITEAM(), 1 )
+
+		return true
+	end
+
+	function ENT:PhysicsCollide( data, physobj )
+	end
+
+	function ENT:OnTakeDamage( dmginfo )
+	end
+else
+	local ring = Material( "effects/select_ring" )
+	local mat = Material( "sprites/light_glow02_add" )
+	local Mat = Material( "lvs/3d2dmats/arrow.png" )
+
+	function ENT:DrawTranslucent( flags )
+		if IsValid( self:GetHoldingPlayer() ) then return end
+
+		local Pos = self:GetPos() + Vector(0,0,10)
+
+		if IsValid( self:GetLinkedSpawnPoint() ) then
+			render.SetMaterial( ring )
+			render.DrawSprite( Pos, 27 + math.Rand(-1,1), 27 + math.Rand(-1,1), GAMEMODE.ColorNeutral )
+
+			return
+		end
+
+		render.SetMaterial( ring )
+		render.DrawSprite( Pos, 24 + math.Rand(-1,1), 24 + math.Rand(-1,1), GAMEMODE.ColorNeutral )
+
+		render.SetMaterial( mat )
+		render.DrawSprite( Pos, 100, 100, GAMEMODE.ColorNeutral )
+
+		local ply = self:GetHoldingPlayer()
+
+		if IsValid( ply ) then return end
+
+		for i = 0, 1 do
+			cam.Start3D2D( Pos, Angle(180,180 * i + CurTime() * 100,90), 0.1 )
+				surface.SetDrawColor( color_white )
+
+				surface.SetMaterial( Mat )
+				surface.DrawTexturedRect( -100, -100, 200, 200 )
+			cam.End3D2D()
+		end
+	end
+
+	function ENT:Draw( flags )
+	end
+end
