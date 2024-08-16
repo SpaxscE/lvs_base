@@ -220,6 +220,16 @@ end
 local Shadow50 = Color( 0, 0, 0, 50 )
 local Shadow120 = Color( 0, 0, 0, 120 )
 
+local function FindTargetLVS( veh )
+	if not IsValid( veh ) then return NULL end
+
+	if veh.LVS then return veh end
+
+	if not isfunction( veh.GetBase ) then return NULL end
+
+	return veh:GetBase()
+end
+
 function GM:HUDDrawTargetID()
 
 	local ply = LocalPlayer()
@@ -264,7 +274,7 @@ function GM:HUDDrawTargetID()
 	if trace.Entity:IsPlayer() then
 		text = trace.Entity:Nick()
 		Col = self:GetTeamColor( trace.Entity )
-		Health = trace.Entity:Health()
+		Health = math.Round( ((trace.Entity:Health() + trace.Entity:Armor()) / (trace.Entity:GetMaxHealth() + trace.Entity:GetMaxArmor())) * 100, 0 )
 
 		if trace.Entity:lvsGetAITeam() == LocalPlayer():lvsGetAITeam() then
 			local X = scr.x
@@ -285,15 +295,55 @@ function GM:HUDDrawTargetID()
 		end
 
 	else
-		if not trace.Entity.IsFortification and not trace.Entity._lvsPlayerSpawnPoint then return end
+		local lvsVeh = FindTargetLVS( trace.Entity )
 
-		local Owner = trace.Entity:GetCreatedBy()
+		if IsValid( lvsVeh ) then
+			Health = math.Round( (lvsVeh:GetHP() / lvsVeh:GetMaxHP()) * 100, 0 )
 
-		if not IsValid( Owner ) then return end
+			local everyone = lvsVeh:GetEveryone()
+			local someonedriving = #everyone > 0
 
-		text = "Owner: "..Owner:Nick()
-		Col = trace.Entity:GetTeamColor()
-		Health = math.Round( (trace.Entity:GetHP() / trace.Entity:GetMaxHP()) * 100, 0 )
+			text = ""
+
+			for id, passenger in ipairs( everyone ) do
+				text = text..passenger:Nick()
+				Col = self:GetTeamColor( passenger )
+	
+				if id < #everyone then
+					text = text.." & "
+				end
+			end
+
+			if lvsVeh:GetAITEAM() == LocalPlayer():lvsGetAITeam() then
+				local X = scr.x
+				local Y = scr.y
+
+				surface.SetDrawColor( Color(255,0,0,255) )
+
+				surface.DrawLine( X - 20, Y - 20, X + 20, Y + 20 )
+				surface.DrawLine( X + 20, Y - 20, X - 20, Y + 20 )
+
+				surface.SetDrawColor( self.ColorFriend )
+
+				surface.SetMaterial( MatRing ) 
+				surface.DrawTexturedRect(X - 15, Y - 15, 30, 30 )
+
+				surface.SetMaterial( MatGlow ) 
+				surface.DrawTexturedRect(X - 64, Y - 64, 128, 128 )
+			end
+
+			if not someonedriving then return end
+		else
+			if not trace.Entity.IsFortification and not trace.Entity._lvsPlayerSpawnPoint then return end
+
+			local Owner = trace.Entity:GetCreatedBy()
+
+			if not IsValid( Owner ) then return end
+
+			text = "Owner: "..Owner:Nick()
+			Col = trace.Entity:GetTeamColor()
+			Health = math.Round( (trace.Entity:GetHP() / trace.Entity:GetMaxHP()) * 100, 0 )
+		end
 	end
 
 	surface.SetFont( font )
