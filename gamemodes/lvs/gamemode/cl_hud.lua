@@ -298,7 +298,9 @@ function GM:HUDDrawTargetID()
 		local lvsVeh = FindTargetLVS( trace.Entity )
 
 		if IsValid( lvsVeh ) then
-			if lvsVeh:GetAITEAM() ~= LocalPlayer():lvsGetAITeam() then return end
+			local me = LocalPlayer()
+
+			if me:InVehicle() or lvsVeh:GetAITEAM() ~= me:lvsGetAITeam() then return end
 
 			local X = scr.x
 			local Y = scr.y

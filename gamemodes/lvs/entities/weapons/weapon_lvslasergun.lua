@@ -275,38 +275,37 @@ function SWEP:PrimaryAttack()
 
 	local dmgMul = (math.Clamp( self:GetAmmo() / self:GetMaxAmmo(), 0, 1 ) ^ 2) * distMul
 
-	if IsValid( trace.Entity ) then
-		if trace.Entity:IsPlayer() then
-			local dmg = DamageInfo()
-			dmg:SetDamage( math.max( 150 * FrameTime() * dmgMul, 0.5 ) )
-			dmg:SetAttacker( ply )
-			dmg:SetInflictor( self )
+	if not IsValid( trace.Entity ) then
 
-			if dmgMul < 0.1 then
-				dmg:SetDamageType( DMG_SHOCK )
-			else
-				dmg:SetDamageType( DMG_ALWAYSGIB + DMG_DISSOLVE )
-			end
+		ply:LagCompensation( false )
 
-			dmg:SetDamagePosition( trace.HitPos )
+		return
+	end
 
-			trace.Entity:TakeDamageInfo( dmg )
+	if trace.Entity:IsPlayer() then
+		local dmg = DamageInfo()
+		dmg:SetDamage( math.max( 150 * FrameTime() * dmgMul, 0.5 ) )
+		dmg:SetAttacker( ply )
+		dmg:SetInflictor( self )
+
+		if dmgMul < 0.1 then
+			dmg:SetDamageType( DMG_SHOCK )
 		else
-			local target = trace.Entity
-			local class = target:GetClass()
-			if class == "lvs_fortification_mine" then
-				timer.Simple(0, function()
-					if not IsValid( target ) then return end
-
-					target:TakeDamage( 1, ply, self )
-				end)
-			end
-
-			if class == "lvs_objective" then
-				target:SetPos( target:GetPos() - ply:GetAimVector() * FrameTime() * 800 * distMul )
-				target:SetLastTouched( T )
-			end
+			dmg:SetDamageType( DMG_ALWAYSGIB + DMG_DISSOLVE )
 		end
+
+		dmg:SetDamagePosition( trace.HitPos )
+
+		trace.Entity:TakeDamageInfo( dmg )
+
+		ply:LagCompensation( false )
+
+		return
+	end
+
+	if trace.Entity:GetClass() == "lvs_objective" then
+		trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 600 )
+		trace.Entity:SetLastTouched( T )
 	end
 
 	ply:LagCompensation( false )

@@ -12,9 +12,18 @@ if SERVER then
 		local attacker_team = attacker:lvsGetAITeam()
 
 		if not target:IsPlayer() then
+
+			if isfunction( target.GetBase ) then
+				target = target:GetBase()
+			end
+
 			if not isfunction( target.GetAITEAM ) or (target.IsFortification and not target._lvsPlayerSpawnPoint) then return end
 
 			if attacker_team == target:GetAITEAM() then
+				if target.LVS then
+					return true
+				end
+
 				dmginfo:ScaleDamage( 0.01 )
 			end
 
@@ -83,6 +92,66 @@ local function KillMarker()
 
 	ply:EmitSound( "npc/roller/blade_cut.wav", 140, 255, 0.75, CHAN_ITEM2 )
 end
+
+local function VehicleKillMarker()
+	local ply = LocalPlayer()
+
+	ply.LastKillMarker = CurTime() + 0.8
+
+	ply:EmitSound( "lvs/hit_kill.wav", 85, 100, 0.4, CHAN_VOICE )
+end
+
+local function VehicleArmorMarker( IsDamage )
+	local ply = LocalPlayer()
+
+	local ArmorFailed = IsDamage and "takedamage" or "pen"
+
+	ply:EmitSound( "lvs/armor_"..ArmorFailed.."_"..math.random(1,3)..".wav", 85, math.random(95,105), 1, CHAN_ITEM2 )
+end
+
+local function VehicleHitMarker()
+	local ply = LocalPlayer()
+
+	ply.LastHitMarker = CurTime() + 0.4
+
+	ply:EmitSound( "lvs/hit.wav", 85, math.random(95,105), 1, CHAN_ITEM )
+end
+
+local function VehicleCritMarker()
+	local ply = LocalPlayer()
+
+	ply.LastHitMarker = CurTime() + 0.4
+
+	ply:EmitSound( "lvs/hit_crit.wav", 85, math.random(95,105), 1, CHAN_ITEM2 )
+end
+
+hook.Add( "LVS:OnHudIndicator", "!!!lvs_player_hitmarker", function( ply, name )
+	if name == "kill" then
+		VehicleKillMarker()
+
+		return
+	end
+
+	if name == "crit" then
+		VehicleCritMarker()
+
+		return
+	end
+
+	if name == "armorcrit" then
+		VehicleArmorMarker( true )
+
+		return
+	end
+
+	if name == "armorhit" then
+		VehicleArmorMarker( false )
+
+		return
+	end
+
+	VehicleHitMarker()
+end )
 
 net.Receive( "lvs_player_hitmarker", function( len )
 	if not LVS.ShowHitMarker then return end

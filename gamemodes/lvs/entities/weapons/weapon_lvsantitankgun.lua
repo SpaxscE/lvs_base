@@ -101,12 +101,16 @@ function SWEP:PrimaryAttack()
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 6000
 	bullet.HullSize 	= 1
-	bullet.Damage	= 150
+	bullet.Damage	= 100
 
 	bullet.Velocity = 8000
 	bullet.Entity = self
 	bullet.Attacker 	= ply
 	bullet.Callback = function(att, tr, dmginfo)
+		if tr.Entity:IsPlayer() then
+			dmginfo:ScaleDamage( 2 )
+		end
+
 		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
 
 		local effectdata = EffectData()
