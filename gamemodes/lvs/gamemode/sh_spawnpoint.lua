@@ -89,9 +89,10 @@ function GM:PlayerSelectSpawn( pl, transiton )
 	-- If we are in transition, do not reset player's position
 	if ( transiton ) then return end
 
+	local GoalEnt = self:GetGoalEntity()
 	local SpawnPoint = pl:GetSpawnPoint()
 
-	if IsValid( SpawnPoint ) then
+	if IsValid( SpawnPoint ) and not (IsValid( GoalEnt ) and LinkedSpawnPoint == SpawnPoint) then
 
 		hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, SpawnPoint, true )
 
