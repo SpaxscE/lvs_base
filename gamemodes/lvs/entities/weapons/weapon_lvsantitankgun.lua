@@ -103,16 +103,11 @@ function SWEP:PrimaryAttack()
 	bullet.HullSize 	= 1
 	bullet.Damage	= 100
 
-	bullet.SplashDamage = 100
-	bullet.SplashDamageRadius = 25
-	bullet.SplashDamageEffect = "lvs_fortification_explosion_mine"
-	bullet.SplashDamageType = DMG_SONIC
-
-	bullet.Velocity = 4000
+	bullet.Velocity = 8000
 	bullet.Entity = self
 	bullet.Attacker 	= ply
 	bullet.Callback = function(att, tr, dmginfo)
-		dmginfo:SetDamageType( DMG_SNIPER )
+		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
 	end
 
 	LVS:FireBullet( bullet )
