@@ -37,25 +37,6 @@ if SERVER then
 
 else
 	function ENT:Initialize()
-		-- sound precache :(
-
-		local ply = LocalPlayer()
-
-		for id, data in pairs( self:GetInstruments() ) do
-			local name = data.soundFile
-
-			timer.Simple( 0.1, function()
-				if not IsValid( ply ) then return end
-
-				ply:EmitSound( name ,85,100, 0.01)
-
-				timer.Simple( 0.1, function()
-					if not IsValid( ply ) then return end
-
-					ply:StopSound( name )
-				end )
-			end )
-		end
 	end
 
 	local cVarVolume = CreateClientConVar( "lvs_volume_music", 0.1, true, false)
