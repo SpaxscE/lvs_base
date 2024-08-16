@@ -104,7 +104,6 @@ if SERVER then
 			ent:SetModel( v )
 			ent:Spawn()
 			ent:Activate()
-			ent.FortificationIgnorePhysicsDamage = true
 
 			if v == "models/Gibs/HGIBS.mdl" then
 				local ply = self:GetOwner()

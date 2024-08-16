@@ -2,6 +2,8 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
+ENT.FortificationIgnorePhysicsDamage = true
+
 if SERVER then
 	function ENT:Initialize()
 		self:PhysicsInit( SOLID_VPHYSICS )

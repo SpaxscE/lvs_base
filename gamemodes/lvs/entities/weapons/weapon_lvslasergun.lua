@@ -303,7 +303,7 @@ function SWEP:PrimaryAttack()
 			end
 
 			if class == "lvs_objective" then
-				target:SetPos( target:GetPos() - ply:GetAimVector() * FrameTime() * 400 * dmgMul )
+				target:SetPos( target:GetPos() - ply:GetAimVector() * FrameTime() * 800 * distMul )
 				target:SetLastTouched( T )
 			end
 		end

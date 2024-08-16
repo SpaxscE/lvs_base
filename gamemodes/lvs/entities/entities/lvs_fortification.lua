@@ -144,12 +144,23 @@ if SERVER then
 		end )
 	end
 
+	ENT.DamageIgnoreForce = 0
 	ENT.DamageIgnoreType = DMG_GENERIC
 
 	function ENT:OnTakeDamage( dmginfo )
 		if self.IsDestroyed then return end
 
 		if dmginfo:IsDamageType( self.DamageIgnoreType ) then return end
+
+		local IsBlastDamage = dmginfo:IsDamageType( DMG_BLAST )
+		local IsFireDamage = dmginfo:IsDamageType( DMG_BURN )
+		local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
+
+		if not IsBlastDamage and not IsFireDamage and not IsCollisionDamage then
+			if dmginfo:GetDamageForce():Length() < self.DamageIgnoreForce then
+				return
+			end
+		end
 
 		local Damage = dmginfo:GetDamage()
 
