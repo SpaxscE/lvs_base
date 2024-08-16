@@ -278,7 +278,7 @@ function SWEP:PrimaryAttack()
 	if IsValid( trace.Entity ) then
 		if trace.Entity:IsPlayer() then
 			local dmg = DamageInfo()
-			dmg:SetDamage( math.max( 100 * FrameTime() * dmgMul, 0.5 ) )
+			dmg:SetDamage( math.max( 150 * FrameTime() * dmgMul, 0.5 ) )
 			dmg:SetAttacker( ply )
 			dmg:SetInflictor( self )
 
