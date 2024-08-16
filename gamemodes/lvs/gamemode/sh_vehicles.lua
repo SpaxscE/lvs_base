@@ -4,6 +4,7 @@ GM.VehiclePrices = {}
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodhalftrack_us", 700 )
 list.Set( "VehiclePrices", "lvs_helicopter_rebel", 200 )
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 1200 )
+list.Set( "VehiclePrices", "lvs_wheeldrive_dodsherman", 1000 )
 
 local meta = FindMetaTable( "Player" )
 
