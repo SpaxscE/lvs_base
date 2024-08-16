@@ -35,6 +35,11 @@ function GM:Initialize()
 end
 
 function GM:CreateTeams()
+	TEAM_1 = 1
+	team.SetUp( TEAM_1, "Team 1", Color( 200, 200, 200 ) )
+
+	TEAM_2 = 2
+	team.SetUp( TEAM_2, "Team 2", Color( 200, 200, 200 ) )
 end
 
 function GM:HandlePlayerVaulting( ply, velocity, plyTable )
