@@ -84,7 +84,18 @@ function SWEP:Reload()
 	local oldSpawn = ply:GetSpawnPoint()
 
 	if IsValid( oldSpawn ) then
-		if GAMEMODE:GetGameState() >= GAMESTATE_BUILD then
+		if GAMEMODE:GetGameState() == GAMESTATE_MAIN then
+			local GoalEnt = GAMEMODE:GetGoalEntity()
+
+			if IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == oldSpawn then
+
+				ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
+
+				return
+			end
+		end
+	
+		if GAMEMODE:GetGameState() == GAMESTATE_BUILD then
 
 			local MyTeam = ply:lvsGetAITeam()
 
@@ -96,9 +107,7 @@ function SWEP:Reload()
 				CountTeam = CountTeam + 1
 			end
 
-			local GoalEnt = GAMEMODE:GetGoalEntity()
-
-			if CountTeam <= 1 or (IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == oldSpawn) then
+			if CountTeam <= 1 then
 
 				ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
 
