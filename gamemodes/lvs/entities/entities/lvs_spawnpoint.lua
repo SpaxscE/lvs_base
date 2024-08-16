@@ -7,6 +7,7 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 ENT._lvsPlayerSpawnPoint = true
 
 ENT.DefaultHP = 1000
+ENT.DamageIgnoreForce = 0
 ENT.DamageIgnoreType = DMG_GENERIC
 
 function ENT:UpdateTransmitState() 
