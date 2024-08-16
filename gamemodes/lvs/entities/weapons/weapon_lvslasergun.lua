@@ -282,8 +282,9 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
-	if trace.Entity:IsPlayer() then
+	if trace.Entity:IsPlayer() or trace.Entity._lvsLaserGunDetectHit then
 		local dmg = DamageInfo()
+		dmg:SetDamageForce( vector_origin )
 		dmg:SetDamage( math.max( 150 * FrameTime() * dmgMul, 0.5 ) )
 		dmg:SetAttacker( ply )
 		dmg:SetInflictor( self )
@@ -297,14 +298,16 @@ function SWEP:PrimaryAttack()
 		dmg:SetDamagePosition( trace.HitPos )
 
 		trace.Entity:TakeDamageInfo( dmg )
-
-		ply:LagCompensation( false )
-
-		return
 	end
 
-	if trace.Entity:GetClass() == "lvs_objective" then
+	local class =  trace.Entity:GetClass()
+
+	if class == "lvs_objective" then
 		trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 600 )
+		trace.Entity:SetLastTouched( T )
+	end
+
+	if class == "lvs_spawnpoint" then
 		trace.Entity:SetLastTouched( T )
 	end
 

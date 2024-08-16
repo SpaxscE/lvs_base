@@ -13,6 +13,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",1, "CreatedBy" )
 	self:NetworkVar( "Float",1, "HP" )
 	self:NetworkVar( "Float",2, "MaxHP" )
+	self:NetworkVar( "Float", 3, "LastTouched" )
 
 	if SERVER then
 		self:SetHP( self.DefaultHP )

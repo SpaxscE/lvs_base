@@ -4,6 +4,8 @@ ENT.Type            = "anim"
 
 ENT.RenderGroup = RENDERGROUP_BOTH 
 
+ENT._lvsLaserGunDetectHit = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",1, "HoldingPlayer" )
 	self:NetworkVar( "Entity",2, "LinkedSpawnPoint" )

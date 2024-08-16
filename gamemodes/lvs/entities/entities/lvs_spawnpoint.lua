@@ -4,6 +4,7 @@ ENT.Base = "lvs_fortification"
 
 ENT.RenderGroup = RENDERGROUP_BOTH 
 
+ENT._lvsLaserGunDetectHit = true
 ENT._lvsPlayerSpawnPoint = true
 
 ENT.DefaultHP = 1000
@@ -116,6 +117,18 @@ if CLIENT then
 		local Col = self:GetTeamColor()
 
 		local Pos = self:LocalToWorld( Vector(0,0,20) )
+
+		local T = CurTime()
+
+		if (self:GetLastTouched() + 0.25) > T then
+			render.SetMaterial( ring )
+			render.DrawSprite( Pos, 14 + math.Rand(-10,10), 14 + math.Rand(-10,10), Color(150,200,255) )
+
+			render.SetMaterial( mat )
+			render.DrawSprite( Pos, 100, 100, Color(150,200,255) )
+
+			return
+		end
 
 		render.SetMaterial( ring )
 		render.DrawSprite( Pos, 24 + math.Rand(-1,1), 24 + math.Rand(-1,1), Col )

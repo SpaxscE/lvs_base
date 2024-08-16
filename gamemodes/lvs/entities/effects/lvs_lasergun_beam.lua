@@ -78,7 +78,7 @@ function EFFECT:DoImpactEffect( EndPos, Dir )
 	if traceHull.Hit then
 		local T = CurTime()
 
-		if trace.Entity:IsPlayer() and LastSND < T then
+		if (trace.Entity:IsPlayer() or trace.Entity._lvsLaserGunDetectHit) and LastSND < T then
 
 			self.Player:EmitSound("lvs/tournament/weapons/lasergun/hit"..math.random(1,5)..".wav",90,100,1,CHAN_ITEM)
 
