@@ -87,10 +87,6 @@ function SWEP:PrimaryAttack()
 		self:EmitSound("weapons/flaregun/fire.wav",75,255,1)
 
 		ply:ViewPunch( Angle(-math.Rand(3,5),-math.Rand(3,5),0) )
-
-		if not ply:OnGround() then
-			ply:SetVelocity( -ply:GetAimVector() * 650 )
-		end
 	end
 
 	if CLIENT then return end
@@ -100,12 +96,12 @@ function SWEP:PrimaryAttack()
 
 	bullet.Dir = (ply:GetEyeTrace().HitPos - bullet.Src):GetNormalized()
 
-	bullet.Spread 	= ply:IsOnGround() and (Vector(0.1,0.1,0.1) * math.min( ply:GetVelocity():Length() / 400, 1 )) or vector_origin
+	bullet.Spread 	= Vector(0.1,0.1,0.1) * math.min( ply:GetVelocity():Length() / 300, 1 )
 
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 6000
 	bullet.HullSize 	= 1
-	bullet.Damage	= 50
+	bullet.Damage	= 100
 
 	bullet.SplashDamage = 100
 	bullet.SplashDamageRadius = 25
