@@ -28,8 +28,7 @@ if SERVER then
 		local Time = CurTime()
 		local StartTime, Delay = GAMEMODE:GetGameTime()
 
-		if (StartTime + Delay - 1) < Time then
-			physobj:SetVelocityInstantaneous( vector_origin )
+		if (StartTime + Delay - 5) < Time then
 
 			return
 		end
