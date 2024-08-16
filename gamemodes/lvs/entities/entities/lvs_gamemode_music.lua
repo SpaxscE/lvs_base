@@ -50,6 +50,8 @@ else
 		for _, ent in pairs( ents.FindByClass( "lvs_gamemode_music" ) ) do
 			if volume <= 0 then continue end
 
+			if not ent:GetActive() then continue end
+
 			ent:ModSong()
 		end
 	end)
