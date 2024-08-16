@@ -15,7 +15,7 @@ SWEP.ViewModelFOV = 52
 SWEP.HoldType				= "physgun"
 
 SWEP.Primary.ClipSize		= -1
-SWEP.Primary.DefaultClip		= 1000
+SWEP.Primary.DefaultClip		= 2000
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "Uranium"
 
@@ -273,12 +273,12 @@ function SWEP:PrimaryAttack()
 
 	local distMul = math.Clamp( 2000 - (ply:GetShootPos() - trace.HitPos):Length(), 0,1500 ) / 1500
 
-	local dmgMul = (math.Clamp( self:GetAmmo() / self:GetMaxAmmo(), 0, 1 ) ^ 2) * distMul
+	local dmgMul = (math.Clamp( self:GetAmmo() / 1000, 0, 1 ) ^ 2) * distMul
 
 	if IsValid( trace.Entity ) then
 		if trace.Entity:IsPlayer() then
 			local dmg = DamageInfo()
-			dmg:SetDamage( math.max( 1000 * FrameTime() * dmgMul, 0.5 ) )
+			dmg:SetDamage( math.max( 100 * FrameTime() * dmgMul, 0.5 ) )
 			dmg:SetAttacker( ply )
 			dmg:SetInflictor( self )
 
