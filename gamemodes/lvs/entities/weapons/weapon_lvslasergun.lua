@@ -273,7 +273,7 @@ function SWEP:PrimaryAttack()
 
 	local distMul = math.Clamp( 2000 - (ply:GetShootPos() - trace.HitPos):Length(), 0,1500 ) / 1500
 
-	local dmgMul = (math.Clamp( self:GetAmmo() / 1000, 0, 1 ) ^ 2) * distMul
+	local dmgMul = (math.Clamp( self:GetAmmo() / self:GetMaxAmmo(), 0, 1 ) ^ 2) * distMul
 
 	if IsValid( trace.Entity ) then
 		if trace.Entity:IsPlayer() then
@@ -293,12 +293,18 @@ function SWEP:PrimaryAttack()
 			trace.Entity:TakeDamageInfo( dmg )
 		else
 			local target = trace.Entity
-			if target:GetClass() == "lvs_fortification_mine" then
+			local class = target:GetClass()
+			if class == "lvs_fortification_mine" then
 				timer.Simple(0, function()
 					if not IsValid( target ) then return end
 
 					target:TakeDamage( 1, ply, self )
 				end)
+			end
+
+			if class == "lvs_objective" then
+				target:SetPos( target:GetPos() - ply:GetAimVector() * FrameTime() * 400 * dmgMul )
+				target:SetLastTouched( T )
 			end
 		end
 	end

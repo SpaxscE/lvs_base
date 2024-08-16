@@ -7,6 +7,8 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",1, "HoldingPlayer" )
 	self:NetworkVar( "Entity",2, "LinkedSpawnPoint" )
+
+	self:NetworkVar( "Float", 1, "LastTouched" )
 end
 
 function ENT:GetAITEAM()
@@ -151,18 +153,46 @@ else
 			return
 		end
 
-		render.SetMaterial( ring )
-		render.DrawSprite( Pos, 24 + math.Rand(-1,1), 24 + math.Rand(-1,1), GAMEMODE.ColorNeutral )
+		local T = CurTime()
 
-		render.SetMaterial( mat )
-		render.DrawSprite( Pos, 100, 100, GAMEMODE.ColorNeutral )
+		if (self:GetLastTouched() + 0.25) > T then
+			render.SetMaterial( ring )
+			render.DrawSprite( Pos, 14 + math.Rand(-10,10), 14 + math.Rand(-10,10), Color(150,200,255) )
+
+			render.SetMaterial( mat )
+			render.DrawSprite( Pos, 100, 100, Color(150,200,255) )
+
+			cam.Start3D2D( Pos, Angle(math.cos( T ) * 360, math.cos( T * 2 ) * 360,math.sin( T ) * 360), 0.1 )
+				surface.SetDrawColor( color_white )
+
+				surface.SetMaterial( Mat )
+				surface.DrawTexturedRect( -100, -100, 200, 200 )
+			cam.End3D2D()
+
+			if (self._NextFX or 0) < T then
+				self._NextFX = T + 0.02
+	
+				local effectdata = EffectData()
+					effectdata:SetOrigin( Pos + VectorRand() * math.Rand(-10,10) )
+					effectdata:SetNormal( VectorRand() )
+				util.Effect( "lvs_lasergun_hitwall_other", effectdata )
+			end
+
+			return
+		else
+			render.SetMaterial( ring )
+			render.DrawSprite( Pos, 24 + math.Rand(-1,1), 24 + math.Rand(-1,1), GAMEMODE.ColorNeutral )
+
+			render.SetMaterial( mat )
+			render.DrawSprite( Pos, 100, 100, GAMEMODE.ColorNeutral )
+		end
 
 		local ply = self:GetHoldingPlayer()
 
 		if IsValid( ply ) then return end
 
 		for i = 0, 1 do
-			cam.Start3D2D( Pos, Angle(180,180 * i + CurTime() * 100,90), 0.1 )
+			cam.Start3D2D( Pos, Angle(180,180 * i + T * 100,90), 0.1 )
 				surface.SetDrawColor( color_white )
 
 				surface.SetMaterial( Mat )
