@@ -144,7 +144,7 @@ if SERVER then
 		end )
 	end
 
-	ENT.DamageIgnoreForce = 0
+	ENT.DamageIgnoreForce = 3000
 	ENT.DamageIgnoreType = DMG_GENERIC
 
 	function ENT:OnTakeDamage( dmginfo )
