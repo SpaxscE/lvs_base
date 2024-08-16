@@ -27,7 +27,7 @@ list.Set("Fortifications", "repairstation", {
 	Class = "lvs_fortification_vehiclerepair",
 	Model = "models/hunter/plates/plate4x4.mdl",
 	Icon = Material( "entities/lvs_vehicle_repair.png" ),
-	Health = 1000,
+	Health = 2000,
 	Price = 500,
 })
 
@@ -52,7 +52,7 @@ list.Set("Fortifications", "sandbags", {
 		"physics/cardboard/cardboard_box_break3.wav",
 	},
 	Price = 15,
-	Health = 3000,
+	Health = 5000,
 })
 
 list.Set("Fortifications", "hedgehog", {
@@ -70,7 +70,7 @@ list.Set("Fortifications", "hedgehog", {
 		"physics/metal/metal_box_break1.wav",
 		"physics/metal/metal_box_break2.wav",
 	},
-	Health = 1500,
+	Health = 4000,
 	Price = 100,
 })
 
@@ -94,7 +94,7 @@ list.Set("Fortifications", "dragonsteeth", {
 		"physics/concrete/boulder_impact_hard3.wav",
 		"physics/concrete/boulder_impact_hard4.wav",
 	},
-	Health = 2000,
+	Health = 6000,
 	Price = 50,
 })
 
@@ -118,7 +118,7 @@ list.Set("Fortifications", "wirefence", {
 		"physics/metal/metal_chainlink_impact_soft3.wav",
 	},
 	Price = 2,
-	Health = 100,
+	Health = 1000,
 })
 
 list.Set("Fortifications", "ramp", {
@@ -143,7 +143,7 @@ list.Set("Fortifications", "ramp", {
 		"physics/concrete/boulder_impact_hard4.wav",
 	},
 	Price = 15,
-	Health = 1000,
+	Health = 1500,
 })
 
 function SWEP:SetupDataTables()
