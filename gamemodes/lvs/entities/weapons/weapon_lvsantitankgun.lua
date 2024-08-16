@@ -101,13 +101,17 @@ function SWEP:PrimaryAttack()
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 6000
 	bullet.HullSize 	= 1
-	bullet.Damage	= 100
+	bullet.Damage	= 150
 
 	bullet.Velocity = 8000
 	bullet.Entity = self
 	bullet.Attacker 	= ply
 	bullet.Callback = function(att, tr, dmginfo)
 		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
+
+		local effectdata = EffectData()
+		effectdata:SetOrigin( tr.HitPos )
+		util.Effect(  "lvs_fortification_explosion_mine", effectdata )
 	end
 
 	LVS:FireBullet( bullet )
