@@ -55,6 +55,7 @@ if SERVER then
 		ply:ReapplyLoadout()
 
 		ply:SetHealth( ply:GetMaxHealth() )
+		ply:SetArmor( ply:GetMaxArmor() )
 
 		local GoalEnt = GAMEMODE:GetGoalEntity()
 
