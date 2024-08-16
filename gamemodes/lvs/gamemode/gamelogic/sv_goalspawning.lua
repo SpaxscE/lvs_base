@@ -28,7 +28,7 @@ function GM:SpawnRandomGoal()
 		if not IsValid( ent ) then continue end
 
 		local StartPos = ent:GetPos()
-		local EndPos = StartPos - Vector(0,0,-500000)
+		local EndPos = StartPos - Vector(0,0,500000)
 		local trace = util.TraceLine( {
 			start = StartPos,
 			endpos = EndPos,
