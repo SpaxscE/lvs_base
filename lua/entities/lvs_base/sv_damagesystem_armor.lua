@@ -74,3 +74,23 @@ function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
 
 	return Armor
 end
+
+function ENT:OnArmorMaintenance()
+	local Repaired = false
+
+	for _, part in pairs( self:GetChildren() ) do
+		if part:GetClass() ~= "lvs_armor" then continue end
+
+		part:OnRepaired()
+
+		if part:GetHP() ~= part:GetMaxHP() then
+			part:SetHP( part:GetMaxHP() )
+
+			if part:GetDestroyed() then part:SetDestroyed( false ) end
+
+			Repaired = true
+		end
+	end
+
+	return Repaired
+end

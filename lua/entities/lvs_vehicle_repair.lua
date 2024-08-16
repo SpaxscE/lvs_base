@@ -46,18 +46,8 @@ if SERVER then
 			Repaired = true
 		end
 
-		for _, part in pairs( entity:GetChildren() ) do
-			if part:GetClass() ~= "lvs_armor" then continue end
-
-			part:OnRepaired()
-
-			if part:GetHP() ~= part:GetMaxHP() then
-				part:SetHP( part:GetMaxHP() )
-
-				if part:GetDestroyed() then part:SetDestroyed( false ) end
-
-				Repaired = true
-			end
+		if entity:OnArmorMaintenance() then
+			Repaired = true
 		end
 
 		if Repaired then
