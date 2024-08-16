@@ -298,41 +298,25 @@ function GM:HUDDrawTargetID()
 		local lvsVeh = FindTargetLVS( trace.Entity )
 
 		if IsValid( lvsVeh ) then
-			Health = math.Round( (lvsVeh:GetHP() / lvsVeh:GetMaxHP()) * 100, 0 )
+			if lvsVeh:GetAITEAM() ~= LocalPlayer():lvsGetAITeam() then return end
 
-			local everyone = lvsVeh:GetEveryone()
-			local someonedriving = #everyone > 0
+			local X = scr.x
+			local Y = scr.y
 
-			text = ""
+			surface.SetDrawColor( Color(255,0,0,255) )
 
-			for id, passenger in ipairs( everyone ) do
-				text = text..passenger:Nick()
-				Col = self:GetTeamColor( passenger )
-	
-				if id < #everyone then
-					text = text.." & "
-				end
-			end
+			surface.DrawLine( X - 20, Y - 20, X + 20, Y + 20 )
+			surface.DrawLine( X + 20, Y - 20, X - 20, Y + 20 )
 
-			if lvsVeh:GetAITEAM() == LocalPlayer():lvsGetAITeam() then
-				local X = scr.x
-				local Y = scr.y
+			surface.SetDrawColor( self.ColorFriend )
 
-				surface.SetDrawColor( Color(255,0,0,255) )
+			surface.SetMaterial( MatRing ) 
+			surface.DrawTexturedRect(X - 15, Y - 15, 30, 30 )
 
-				surface.DrawLine( X - 20, Y - 20, X + 20, Y + 20 )
-				surface.DrawLine( X + 20, Y - 20, X - 20, Y + 20 )
+			surface.SetMaterial( MatGlow ) 
+			surface.DrawTexturedRect(X - 64, Y - 64, 128, 128 )
 
-				surface.SetDrawColor( self.ColorFriend )
-
-				surface.SetMaterial( MatRing ) 
-				surface.DrawTexturedRect(X - 15, Y - 15, 30, 30 )
-
-				surface.SetMaterial( MatGlow ) 
-				surface.DrawTexturedRect(X - 64, Y - 64, 128, 128 )
-			end
-
-			if not someonedriving then return end
+			return
 		else
 			if not trace.Entity.IsFortification and not trace.Entity._lvsPlayerSpawnPoint then return end
 
