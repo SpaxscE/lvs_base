@@ -173,15 +173,19 @@ function GM:GameSpawnPointRemoved( ply, spawnpoint )
 end
 
 function GM:GameReset()
+	for id, ply in ipairs( player.GetAll() ) do
+		ply:ConCommand( "r_cleardecals" )
+
+		if ply:Team() == TEAM_SPECTATOR then continue end
+
+		ply:Spawn()
+	end
+
 	game.CleanUpMap()
 
 	RunConsoleCommand("g_ragdoll_maxcount", 0 )
 
 	timer.Simple(2, function() RunConsoleCommand("g_ragdoll_maxcount", 32 ) end )
-
-	for _, v in ipairs( player.GetAll() ) do
-		v:ConCommand( "r_cleardecals" )
-	end
 
 	NumSpawnPoints = 0
 end
