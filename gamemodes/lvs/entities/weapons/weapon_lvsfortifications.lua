@@ -180,6 +180,12 @@ function SWEP:GetTrace()
 		end
 	end
 
+	for _, ent in pairs( GAMEMODE:FindSpawnPoints() ) do
+		if (Trace.HitPos - ent:GetPos()):Length() < 64 then
+			SpawnAllowed = false
+		end
+	end
+
 	return Trace, SpawnAllowed
 end
 
