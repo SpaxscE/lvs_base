@@ -59,6 +59,14 @@ function SWEP:PrimaryAttack()
 
 	if not IsValid( ply ) then return end
 
+	local GoalEnt = GAMEMODE:GetGoalEntity()
+
+	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then
+		ply:ChatPrint("#lvs_tool_spawnpoint_fail_objective")
+
+		return
+	end
+
 	if IsValid( ply:GetSpawnPoint() ) then
 		ply:ChatPrint("#lvs_tool_spawnpoint_fail")
 
