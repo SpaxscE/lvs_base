@@ -70,7 +70,7 @@ list.Set("Fortifications", "hedgehog", {
 		"physics/metal/metal_box_break1.wav",
 		"physics/metal/metal_box_break2.wav",
 	},
-	Health = 4000,
+	Health = 2000,
 	Price = 100,
 })
 
@@ -94,7 +94,7 @@ list.Set("Fortifications", "dragonsteeth", {
 		"physics/concrete/boulder_impact_hard3.wav",
 		"physics/concrete/boulder_impact_hard4.wav",
 	},
-	Health = 6000,
+	Health = 3000,
 	Price = 50,
 })
 
