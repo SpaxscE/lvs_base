@@ -28,6 +28,10 @@ function GM:OnPlayerDestroyFortification( attacker, fortification, is_teamkill )
 	if is_teamkill then
 		attacker:TakeMoney( self.MoneyPerFortificationTeamKill )
 	else
-		attacker:AddMoney( self.MoneyPerFortificationKill )
+		if fortification._lvsPlayerSpawnPoint then
+			attacker:AddMoney( self.MoneyPerSpawnPointKill )
+		else
+			attacker:AddMoney( self.MoneyPerFortificationKill )
+		end
 	end
 end
