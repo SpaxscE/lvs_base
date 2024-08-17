@@ -233,6 +233,8 @@ function SWEP:PrimaryAttack()
 
 	if not IsValid( ply ) then return end
 
+	if ply:KeyDown( IN_ATTACK2 ) then return end
+
 	if CLIENT then return end
 
 	local Vehicle = self:GetVehicle()
@@ -403,6 +405,8 @@ end
 
 function SWEP:Think()
 	self:HandleVehicleRemove()
+
+	if not IsFirstTimePredicted() then return end
 
 	local ply = self:GetOwner()
 
