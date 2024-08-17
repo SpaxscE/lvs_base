@@ -21,7 +21,7 @@ SWEP.Secondary.Ammo		= "none"
 
 SWEP.SpawnDistance = 512
 SWEP.RemoveDistance = 512
-SWEP.RemoveTime = 20
+SWEP.RemoveTime = 10
 
 function SWEP:GetRemoveTime()
 	if GAMEMODE:GetGameState() <= GAMESTATE_BUILD then return 1 end
