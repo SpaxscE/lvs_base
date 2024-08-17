@@ -22,7 +22,7 @@
 			"text"		"lvs_build_time"
 			"help"		"How long the build phase should be"
 			"type"		"Numeric"
-			"default"	"150"
+			"default"	"300"
 		}
 		3
 		{
