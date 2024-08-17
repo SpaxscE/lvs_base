@@ -7,7 +7,7 @@ ENT.RenderGroup = RENDERGROUP_BOTH
 ENT._lvsLaserGunDetectHit = true
 ENT._lvsPlayerSpawnPoint = true
 
-ENT.DefaultHP = 1000
+ENT.DefaultHP = 100
 ENT.DamageIgnoreForce = 0
 ENT.DamageIgnoreType = DMG_GENERIC
 
