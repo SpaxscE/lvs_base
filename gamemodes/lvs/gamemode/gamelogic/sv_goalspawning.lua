@@ -72,13 +72,17 @@ end
 function GM:SpawnTempEnts()
 	local Index = 0
 
-	self:FindSpawnPoints()
+	-- copy table, so we dont clog it up if this is called again
+	local SpawnPoints = table.Copy( self:FindSpawnPoints() )
 
-	if not istable( self.SpawnPoints ) or #self.SpawnPoints == 0 then print("[LVS] - ERROR can not start gamemode! No spawn points!\n\n") return end
+	if not istable( SpawnPoints ) or #SpawnPoints == 0 then print("[LVS] - ERROR can not start gamemode! No spawn points!\n\n") return end
+
+	-- add player spawns for more variation to maps that have a spawn room
+	table.Add( SpawnPoints, ents.FindByClass( "lvs_spawnpoint" ) )
 
 	while Index < 16 do
-		for _, point in pairs( self.SpawnPoints ) do
-			if math.random(1,#self.SpawnPoints) ~= 1 then continue end
+		for _, point in pairs( SpawnPoints ) do
+			if math.random(1,#SpawnPoints) ~= 1 then continue end
 
 			local Ent = ents.Create( "lvs_objective_spawnpoint" )
 			Ent:SetPos( point:GetPos() + Vector(0,0,16) )
