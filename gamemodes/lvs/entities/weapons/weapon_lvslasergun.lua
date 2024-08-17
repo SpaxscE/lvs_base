@@ -285,7 +285,7 @@ function SWEP:PrimaryAttack()
 	if trace.Entity:IsPlayer() or trace.Entity._lvsLaserGunDetectHit then
 		local dmg = DamageInfo()
 		dmg:SetDamageForce( vector_origin )
-		dmg:SetDamage( math.max( 150 * FrameTime() * dmgMul, 0.5 ) )
+		dmg:SetDamage( math.max( 200 * FrameTime() * dmgMul, 0.5 ) )
 		dmg:SetAttacker( ply )
 		dmg:SetInflictor( self )
 
