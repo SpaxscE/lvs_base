@@ -99,7 +99,7 @@ function SWEP:PrimaryAttack()
 	bullet.Spread 	= Vector(0.1,0.1,0.1) * math.min( ply:GetVelocity():Length() / 300, 1 )
 
 	bullet.TracerName = "lvs_tracer_antitankgun"
-	bullet.Force	= 6000
+	bullet.Force	= 4000
 	bullet.HullSize 	= 1
 	bullet.Damage	= 100
 
