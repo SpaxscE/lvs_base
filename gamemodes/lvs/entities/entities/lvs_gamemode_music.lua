@@ -62,7 +62,10 @@ else
 	local songs = {
 		warmup = {
 			[1] = {"guitar1"},
-			[2] = {"synth"},
+			[2] = {"guitar2"},
+			[3] = {"karamba"},
+			[4] = {"synth"},
+			[5] = {"voices"},
 		},
 		lowaction = {
 			[1] = {"bass"},
