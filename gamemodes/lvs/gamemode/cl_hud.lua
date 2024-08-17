@@ -318,7 +318,23 @@ function GM:HUDDrawTargetID()
 			surface.SetMaterial( MatGlow ) 
 			surface.DrawTexturedRect(X - 64, Y - 64, 128, 128 )
 
-			return
+			Col = self.ColorFriend
+
+			local everyone = lvsVeh:GetEveryone()
+
+			text = ""
+
+			for id, passenger in ipairs( everyone ) do
+				text = text..passenger:Nick()
+
+				if id < #everyone then
+					text = text.." & "
+				end
+			end
+
+			Health = math.Round( (lvsVeh:GetHP() / lvsVeh:GetMaxHP()) * 100, 0 )
+
+			if #everyone < 1 then return end
 		else
 			if not trace.Entity.IsFortification and not trace.Entity._lvsPlayerSpawnPoint then return end
 
