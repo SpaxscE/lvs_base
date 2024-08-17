@@ -65,6 +65,12 @@ function SWEP:PrimaryAttack()
 		return
 	end
 
+	if ply:WaterLevel() >= 1 then
+		ply:ChatPrint("#lvs_tool_spawnpoint_underwater")
+
+		return
+	end
+
 	ply:CreateSpawnPoint()
 
 	ply:ChatPrint("#lvs_tool_spawnpoint_success")
