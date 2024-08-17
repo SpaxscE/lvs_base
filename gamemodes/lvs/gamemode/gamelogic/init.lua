@@ -186,6 +186,4 @@ function GM:GameReset()
 	RunConsoleCommand("g_ragdoll_maxcount", 0 )
 
 	timer.Simple(2, function() RunConsoleCommand("g_ragdoll_maxcount", 32 ) end )
-
-	NumSpawnPoints = 0
 end
