@@ -30,7 +30,7 @@
 			"text"		"lvs_match_duration"
 			"help"		"Maximum duration of the battle mode"
 			"type"		"Numeric"
-			"default"	"900"
+			"default"	"1200"
 		}
 		4
 		{

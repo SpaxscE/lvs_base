@@ -178,6 +178,10 @@ function GM:GameReset()
 
 		if ply:Team() == TEAM_SPECTATOR then continue end
 
+		if ply:InVehicle() then
+			ply:ExitVehicle()
+		end
+
 		ply:Spawn()
 	end
 
