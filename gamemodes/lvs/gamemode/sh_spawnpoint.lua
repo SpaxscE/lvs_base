@@ -66,7 +66,7 @@ function GM:PlayerSelectSpawn( pl, transiton )
 	local GoalEnt = self:GetGoalEntity()
 	local SpawnPoint = pl:GetSpawnPoint()
 
-	if IsValid( SpawnPoint ) and not (IsValid( GoalEnt ) and LinkedSpawnPoint == SpawnPoint) then
+	if IsValid( SpawnPoint ) and not (IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == SpawnPoint) then
 
 		hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, SpawnPoint, true )
 
