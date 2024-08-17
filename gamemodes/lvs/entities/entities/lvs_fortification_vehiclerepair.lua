@@ -4,13 +4,6 @@ ENT.Base = "lvs_fortification_vehicleblocker"
 
 DEFINE_BASECLASS( "lvs_fortification" )
 
-local DoNotHealType = {
-	["plane"] =  true,
-	["helicopter"] =  true,
-	["starfighter"] =  true,
-	["repulsorlift"] =  true,
-}
-	
 if SERVER then
 	function ENT:Initialize()
 		BaseClass.Initialize( self )
@@ -27,30 +20,14 @@ if SERVER then
 
 		local Repaired = false
 
-		if entity.GetVehicleType and DoNotHealType[ entity:GetVehicleType() ] then
-			goto SkipHeal
-		end
-
 		if entity:GetHP() ~= entity:GetMaxHP() then
 			entity:SetHP( entity:GetMaxHP() )
 
 			Repaired = true
 		end
 
-		:: SkipHeal ::
-
-		for _, part in pairs( entity:GetChildren() ) do
-			if part:GetClass() ~= "lvs_armor" then continue end
-
-			part:OnRepaired()
-
-			if part:GetHP() ~= part:GetMaxHP() then
-				part:SetHP( part:GetMaxHP() )
-
-				if part:GetDestroyed() then part:SetDestroyed( false ) end
-
-				Repaired = true
-			end
+		if entity:OnArmorMaintenance() then
+			Repaired = true
 		end
 
 		if Repaired then

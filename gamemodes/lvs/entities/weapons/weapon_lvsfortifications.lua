@@ -28,7 +28,7 @@ list.Set("Fortifications", "repairstation", {
 	Model = "models/hunter/plates/plate4x4.mdl",
 	Icon = Material( "entities/lvs_vehicle_repair.png" ),
 	Health = 2000,
-	Price = 500,
+	Price = 200,
 })
 
 list.Set("Fortifications", "sandbags", {
