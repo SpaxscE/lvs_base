@@ -1,9 +1,9 @@
 
 GM.MoneyPerKill = 100
-GM.MoneyPerKillVehicle = 500
-
 GM.MoneyPerTeamKill = 250
-GM.MoneyPerTeamKillVehicle = 1000
+
+GM.MoneyPerKillVehicleMultiplier = 1 -- give them full purchase price
+GM.MoneyPerTeamKillVehicleMultiplier = 2
 
 GM.MoneyPerFortificationKill = 200
 GM.MoneyPerFortificationTeamKill = 200

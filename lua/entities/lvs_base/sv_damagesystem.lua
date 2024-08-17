@@ -206,12 +206,12 @@ function ENT:CalcDamage( dmginfo )
 	end
 
 	if NewHealth <= 0 then
+		self.FinalAttacker = dmginfo:GetAttacker() 
+		self.FinalInflictor = dmginfo:GetInflictor()
+
 		self:SetDestroyed( IsCollisionDamage )
 
 		self:ClearPDS()
-
-		self.FinalAttacker = dmginfo:GetAttacker() 
-		self.FinalInflictor = dmginfo:GetInflictor()
 
 		local Attacker = self.FinalAttacker
 		if IsValid( Attacker ) and Attacker:IsPlayer() then
@@ -386,6 +386,8 @@ function ENT:SetDestroyed( SuppressOnDestroy )
 	if self.Destroyed then return end
 
 	self.Destroyed = true
+
+	hook.Run( "LVS.OnVehicleDestroyed", self, self.FinalAttacker, self.FinalInflictor )
 
 	hook.Run( "LVS.UpdateRelationship", self )
 
