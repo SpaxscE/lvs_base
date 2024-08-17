@@ -1,10 +1,7 @@
 GM.Vehicles = {}
 GM.VehiclePrices = {}
 
-list.Set( "VehiclePrices", "lvs_wheeldrive_dodhalftrack_us", 700 )
 list.Set( "VehiclePrices", "lvs_helicopter_rebel", 200 )
-list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 1200 )
-list.Set( "VehiclePrices", "lvs_wheeldrive_dodsherman", 1000 )
 
 local meta = FindMetaTable( "Player" )
 
@@ -69,7 +66,6 @@ function GM:BuildVehiclePrices()
 
 		if not Spawnable then continue end
 
-		local DamageForce = v.t.CannonArmorPenetration
 		local IgnoreForce = v.t.DSArmorIgnoreForce
 		local MaxHealth = v.t.MaxHealth
 		local MaxShield = v.t.MaxShield
@@ -79,10 +75,6 @@ function GM:BuildVehiclePrices()
 			local Base = scripted_ents.GetList()[ v.t.Base ].t
 
 			if Base then
-				if not DamageForce then
-					DamageForce = Base.CannonArmorPenetration
-				end
-
 				if not IgnoreForce then
 					IgnoreForce = Base.DSArmorIgnoreForce
 				end
@@ -101,7 +93,6 @@ function GM:BuildVehiclePrices()
 			end
 		end
 
-		DamageForce = DamageForce or 0
 		IgnoreForce = IgnoreForce or 0
 		MaxHealth = MaxHealth or 0
 		MaxShield = MaxShield or 0
@@ -115,7 +106,14 @@ function GM:BuildVehiclePrices()
 			if v.t.Base == "lvs_base_wheeldrive_trailer" then
 				self.VehiclePrices[s] = math.Round( IgnoreForce * 0.05 + (MaxHealth + MaxShield) * 0.15, 0 )
 			else
-				self.VehiclePrices[s] = math.Round( IgnoreForce * 0.05 + DamageForce * 0.1 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 )
+				local PriceClassPunishment = 0
+
+				-- helis are just too strong
+				if v.t.Base == "lvs_base_helicopter" then
+					PriceClassPunishment = 200
+				end
+	
+				self.VehiclePrices[s] = math.Round( IgnoreForce * 0.1 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment
 			end
 		end
 
