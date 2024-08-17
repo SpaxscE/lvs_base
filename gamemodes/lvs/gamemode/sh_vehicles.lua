@@ -110,7 +110,7 @@ function GM:BuildVehiclePrices()
 
 				-- helis are just too strong
 				if v.t.Base == "lvs_base_helicopter" then
-					PriceClassPunishment = 200
+					PriceClassPunishment = 400
 				end
 	
 				self.VehiclePrices[s] = math.Round( IgnoreForce * 0.1 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment
