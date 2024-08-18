@@ -1,44 +1,29 @@
 
 -- attempt at fixing dupe support
 
-function ENT:PostEntityPaste(Player,Ent,CreatedEntities)
-	self.MaxHealth = self:GetHP()
+function ENT:PostEntityPaste( Player, Ent, CreatedEntities )
+
+	if isnumber( self._DuplicatorRestoreMaxHealthTo ) then
+		self.MaxHealth = self._DuplicatorRestoreMaxHealthTo
+	end
+
+	if self.SetlvsReady then
+		self:SetlvsReady( false )
+	end
+
+	if self.SetActive then
+		self:SetActive( false )
+	end
+
+	if self.SetEngineActive then
+		self:SetEngineActive( false )
+	end
 
 	if not self.SetAI then return end
 	
 	if IsValid( Player ) and Player:IsAdmin() then return end
 
 	self:SetAI( false )
-end
-
-local Active
-local EngineActive
-local HP
-
-function ENT:PreEntityCopy()
-	Active = self:GetActive()
-	EngineActive = self:GetEngineActive()
-	HP = self:GetHP()
-
-	self:SetlvsReady( false )
-	self:SetActive( false )
-	self:SetEngineActive( false )
-	self:SetHP( self:GetMaxHP() )
-end
-
-function ENT:PostEntityCopy()
-	timer.Simple(0, function()
-		if not IsValid( self ) then return end
-
-		self:SetlvsReady( true )
-		self:SetActive( Active )
-		self:SetEngineActive( EngineActive )
-		self:SetHP( HP )
-
-		Active = nil
-		EngineActive = nil
-		HP = nil
-	end)
 end
 
 function ENT:OnEntityCopyTableFinish( data )
@@ -51,6 +36,8 @@ function ENT:OnEntityCopyTableFinish( data )
 	data._dmgParts = nil
 	data._DoorHandlers = nil
 	data._pdsParts = nil
+
+	data._DuplicatorRestoreMaxHealthTo = self:GetMaxHP()
 
 	for id, entry in pairs( data ) do
 		if not isfunction( entry ) then continue end
