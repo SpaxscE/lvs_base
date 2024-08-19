@@ -331,7 +331,9 @@ function SWEP:PrimaryAttack()
 
 	self:SetVehicle( ply._SpawnedVehicle )
 
-	self:EnterVehicle( ply._SpawnedVehicle )
+	if (trace.HitPos - ply:GetShootPos()):Length() < self.SpawnDistance * 0.5 then
+		self:EnterVehicle( ply._SpawnedVehicle )
+	end
 
 	ply:ChatPrint( "#lvs_tool_vehicles_buy" )
 end
