@@ -1,7 +1,32 @@
 
 ========================================
-=========== LVS HOOKS SHARED ===========
+===============  SHARED  ===============
 ========================================
+
+local GameState = GAMEMODE:GetGameState()
+
+-- gamestates are:
+0 = GAMESTATE_WAIT_FOR_PLAYERS
+1 = GAMESTATE_BUILD
+2 = GAMESTATE_START
+3 = GAMESTATE_MAIN
+4 = GAMESTATE_END
+
+
+
+
+local GoalEnt = GAMEMODE:GetGoalEntity() -- gets the goal entity, returns NULL when not spawned
+
+local GoalPos = GAMEMODE:GetGoalPos() -- returns the goal pos
+
+
+local table_players_team1 = GAMEMODE:GameGetPlayersTeam1() -- returns all players in team 1
+
+local table_players_team2 = GAMEMODE:GameGetPlayersTeam2() -- returns all players in team 2
+
+local table_players_both_teams = GAMEMODE:GameGetPlayers() -- returns all players, except spectators
+
+local table_players_both_teams_alive = GAMEMODE:GameGetAlivePlayers()  -- returns all players of both teams that are alive
 
 
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 9999 ) -- set price for tiger tank to 9999
@@ -18,22 +43,56 @@ end )
 
 
 ========================================
-========== LVS HOOKS SERVER  ===========
+===============  SERVER  ===============
 ========================================
 
+player:SendGameNotify( text, color, lifetime ) -- send a notification to player in the center of the screen
+
+GAMEMODE:SendGameNotify( text, color, lifetime ) -- send a notification to all player in the center of the screen
+
+GAMEMODE:CreateGoalEntity( Pos ) -- spawn goal at given position
+
+GAMEMODE:RemoveGoalEntity() -- removes the goal entity
+
+GAMEMODE:GameReset() -- resets the entire game
+
+
+hook.Add( "LVS.OnGameStateChanged", "any_name_you_want", function( oldstate, newstate )
+	print( newstate )
+end )
+
+-- gamestates are:
+0 = GAMESTATE_WAIT_FOR_PLAYERS
+1 = GAMESTATE_BUILD
+2 = GAMESTATE_START
+3 = GAMESTATE_MAIN
+4 = GAMESTATE_END
+
+
+
 hook.Add( "LVS.PlayerLoadoutWeapons", "any_name_you_want", function( ply, class )
+
+	-- give custom sweps here
+	ply:Give("weapon_ar2")
+	ply:Give("weapon_crowbar")
+
 	return true  -- return true prevent giving of standard weapons
 end )
 
 
+
 hook.Add( "LVS.PlayerLoadoutTools", "any_name_you_want", function( ply, class )
+
+	-- give custom tools here
+	ply:Give("weapon_physgun")
+
 	return true  -- return true prevent giving of standard tools
 end )
 
 
 
 ========================================
-=========== LVS HOOKS CLIENT ===========
+===============  CLIENT  ===============
 ========================================
 
 local hide = {

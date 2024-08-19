@@ -173,6 +173,10 @@ hook.Add( "LVS.OnPlayerCannotDrive", "any_name_you_want", function( ply, vehicle
 	print(ply:GetName().." can not drive :(")
 end )
 
+hook.Add( "LVS.OnVehicleDestroyed", "any_name_you_want", function( vehicle, attacker, inflictor )
+	print( attacker:Nick().." destroyed vehicle "..vehicle:GetClass() )
+end )
+
 ========================================
 =========== LVS HOOKS CLIENT ===========
 ========================================
