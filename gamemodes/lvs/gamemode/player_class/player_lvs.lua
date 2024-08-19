@@ -43,6 +43,7 @@ function PLAYER:Loadout()
 		if not hook.Run( "LVS.PlayerLoadoutWeapons", self.Player ) and GetConVar( "lvs_weapons" ):GetBool() then
 			self.Player:GiveAmmo( 40, "SniperRound", true )
 
+			self.Player:Give( "weapon_lvsmelee" )
 			self.Player:Give( "weapon_lvslasergun" )
 			self.Player:Give( "weapon_lvsantitankgun" )
 			self.Player:Give( "weapon_lvsmines" )

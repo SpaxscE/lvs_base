@@ -40,7 +40,7 @@ if CLIENT then
 	SWEP.PrintName		= "#lvs_weapon_lasergun"
 	SWEP.Author			= "Blu-x92"
 
-	SWEP.Slot				= 0
+	SWEP.Slot				= 1
 	SWEP.SlotPos			= 1
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
