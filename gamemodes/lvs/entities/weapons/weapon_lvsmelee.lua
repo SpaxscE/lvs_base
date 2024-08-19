@@ -136,11 +136,17 @@ end
 function SWEP:PrimaryAttack()
 	local ply = self:GetOwner()
 
-	ply:SetAnimation( PLAYER_ATTACK1 )
+	ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
+	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( "range_fists_l" ), 0, true )
+	ply:AnimSetGestureWeight( GESTURE_SLOT_ATTACK_AND_RELOAD, 1 )
 end
 
 function SWEP:SecondaryAttack()
-	self:PrimaryAttack()
+	local ply = self:GetOwner()
+
+	ply:AnimResetGestureSlot( GESTURE_SLOT_GRENADE )
+	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_GRENADE, ply:LookupSequence( "range_fists_r" ), 0, true )
+	ply:AnimSetGestureWeight( GESTURE_SLOT_GRENADE, 1 )
 end
 
 function SWEP:Reload()
