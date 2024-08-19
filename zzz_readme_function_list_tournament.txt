@@ -46,6 +46,14 @@ end )
 ===============  SERVER  ===============
 ========================================
 
+player:ReapplyLoadout() -- reapplys the loadout, restocks ammo, makes sure the tools/weapons you have are allowed to be used in current game state
+
+local table_list_entities = player:GetEntityList() -- returns a list of all entities the player spawned, such as fortifications, spawnpoints, vehicles
+
+player:ClearEntityList( keep_spawnpoints ) -- removes all entities in the list, it wont delete spawnpoints if keep_spawnpoints == true
+
+player:AddEntityList( entity ) -- adds a entity to players entity list
+
 player:SendGameNotify( text, color, lifetime ) -- send a notification to player in the center of the screen
 
 GAMEMODE:SendGameNotify( text, color, lifetime ) -- send a notification to all player in the center of the screen
