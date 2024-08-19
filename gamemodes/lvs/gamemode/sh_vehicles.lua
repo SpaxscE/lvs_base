@@ -129,7 +129,11 @@ function GM:BuildVehiclePrices()
 					PriceClassPunishment = 250 * (((v.t.TurnRatePitch or 1) + (v.t.TurnRateYaw or 1) + (v.t.TurnRateRoll or 1)) * (v.t.ThrustUp or 1))
 				end
 	
-				self.VehiclePrices[s] = math.Round( IgnoreForce * 0.1 +  DamageForce * 0.01 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment
+				if v.t.VehicleCategory == "Cars" and v.t.VehicleSubCategory == "Civilian" then
+					PriceClassPunishment = -200
+				end
+
+				self.VehiclePrices[s] = math.max( math.Round( IgnoreForce * 0.1 +  DamageForce * 0.01 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment, 0 )
 			end
 		end
 
