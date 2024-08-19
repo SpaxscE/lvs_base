@@ -278,6 +278,10 @@ function SWEP:PrimaryAttack()
 			end)
 		else
 			if ply:KeyDown( IN_RELOAD ) then
+				ply:EmitSound("buttons/button14.wav")
+
+				ply:ChatPrint( "#lvs_tool_vehicles_remove" )
+
 				Vehicle:Remove()
 			else
 				ply:ChatPrint( "#lvs_tool_vehicles_already_have_vehicle" )
