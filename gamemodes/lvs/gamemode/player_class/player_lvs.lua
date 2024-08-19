@@ -81,27 +81,6 @@ function PLAYER:CreateMove( cmd )
 
 	if ( self.TauntCam:CreateMove( cmd, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
 
-	local ply = self.Player
-
-	if ply:Alive() and not ply:InVehicle() and cmd:KeyDown( IN_JUMP ) then
-		if not ply.tickCountBH then
-			ply.tickCountBH = 0
-		end
-
-		ply.tickCountBH = ply.tickCountBH + 1
-
-		if ply:GetMoveType() ~= MOVETYPE_WALK or ply:WaterLevel() > 1 then return end
-
-		if ply.tickCountBH > 2 then
-			cmd:RemoveKey( IN_JUMP )
-
-			ply.tickCountBH = nil
-		end
-	else
-		if ply.tickCountBH then
-			ply.tickCountBH = nil
-		end
-	end
 end
 
 function PLAYER:CalcView( view )
@@ -112,43 +91,10 @@ function PLAYER:CalcView( view )
 
 end
 
-local JUMPING
-
 function PLAYER:StartMove( move )
-	if bit.band( move:GetButtons(), IN_JUMP ) ~= 0 and bit.band( move:GetOldButtons(), IN_JUMP ) == 0 and self.Player:OnGround() and not self.Player:InVehicle() then
-		JUMPING = true
-	end
 end
 
 function PLAYER:FinishMove( move )
-
-	if JUMPING then
-		local forward = move:GetAngles()
-		forward.p = 0
-		forward = forward:Forward()
-
-		local speedBoostPerc = ( ( not self.Player:Crouching() ) and 0.25 ) or 0.1
-		local speedAddition = math.abs( move:GetForwardSpeed() * speedBoostPerc )
-		local maxSpeed = move:GetMaxSpeed() * ( 1 + speedBoostPerc )
-		local newSpeed = speedAddition + move:GetVelocity():Length2D()
-
-		if newSpeed > maxSpeed then
-			if move:GetVelocity():Dot(forward) < 0 then -- neu
-				speedAddition = speedAddition - (newSpeed - maxSpeed)
-			else
-				speedAddition = speedAddition + (newSpeed - maxSpeed) -- neu
-			end
-		end
-
-		if move:GetForwardSpeed() < 0 then
-			speedAddition = -speedAddition
-		end
-
-		move:SetVelocity(forward * speedAddition + move:GetVelocity())
-	end
-
-	JUMPING = nil
-
 end
 
 player_manager.RegisterClass( "player_lvs", PLAYER, "player_default" )
