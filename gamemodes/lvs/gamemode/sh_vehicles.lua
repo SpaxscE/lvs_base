@@ -1,15 +1,24 @@
 GM.Vehicles = {}
 GM.VehiclePrices = {}
 
-list.Set( "VehiclePrices", "lvs_helicopter_rebel", 200 )
-list.Set( "VehiclePrices", "lvs_wheeldrive_dodhalftrack_us", 250 )
+--overwrite default calculated price
+list.Set( "VehiclePrices", "lvs_helicopter_rebel", 600 )
+list.Set( "VehiclePrices", "lvs_wheeldrive_dodhalftrack_us", 275 )
 
 local meta = FindMetaTable( "Player" )
 
 function meta:lvsSetCurrentVehicle( class, icon )
+	if not GAMEMODE:VehicleClassAllowed( class ) then return end
+
+	if not ply:IsAdmin() and GAMEMODE:VehicleClassAdminOnly( class ) then return end
+
+	if hook.Run( "LVS.OnPlayerSelectVehicle", self, class ) then return end
+
 	self._lvsCurrentVehicle = class
 
-	if SERVER then return end
+	if SERVER then
+		return
+	end
 
 	self._lvsCurrentVehicleData = {}
 	self._lvsCurrentVehicleData.icon = Material( icon )
