@@ -109,13 +109,15 @@ if CLIENT then
 	function SWEP:DoDrawCrosshair( x, y )
 		local ply = LocalPlayer()
 
-		if not ply:KeyDown( IN_RELOAD ) then return end
+		if not ply:KeyDown( IN_RELOAD ) or ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
 
 		local Vehicle = self:GetVehicle()
 
 		if not IsValid( Vehicle ) or (ply:GetPos() - Vehicle:GetPos()):Length() > self.RemoveDistance then return end
 
-		local TimeLeft = math.Round( self:GetVehicleRemoveTime() - CurTime(), 0 )
+		local Time = self:GetVehicleRemoveTime() - CurTime()
+
+		local TimeLeft = math.Round( Time, Time > 1 and 0 or 1 )
 
 		if TimeLeft < 0 then return end
 
