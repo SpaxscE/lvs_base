@@ -303,7 +303,7 @@ function SWEP:PrimaryAttack()
 	local class =  trace.Entity:GetClass()
 
 	if class == "lvs_objective" then
-		trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 600 )
+		trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 1200 )
 		trace.Entity:SetLastTouched( T )
 	end
 
