@@ -43,6 +43,20 @@ function SWEP:GetTrace()
 
 	local SpawnAllowed = (Trace.HitPos - ply:GetShootPos()):Length() < self.SpawnDistance
 
+	local StartPos = Trace.HitPos + Vector(0,0,8)
+
+	local roofTrace = util.TraceHull( {
+		start = StartPos,
+		endpos = StartPos + Vector(0,0,160),
+		mins = Vector( -8, -8, 0 ),
+		maxs = Vector( 8, 8, 0 ),
+		mask = MASK_SOLID_BRUSHONLY
+	} )
+
+	if roofTrace.Hit then
+		SpawnAllowed = false
+	end
+
 	return Trace, SpawnAllowed
 end
 
