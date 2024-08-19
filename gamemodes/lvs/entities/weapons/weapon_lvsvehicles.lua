@@ -110,11 +110,25 @@ if CLIENT then
 		return true
 	end
 
+	function SWEP:CalcMenu( Open )
+		if self._oldOpen == Open then return end
+
+		self._oldOpen = Open
+
+		if Open then
+			GAMEMODE:OpenBuyMenu()
+		else
+			GAMEMODE:CloseBuyMenu()
+		end
+	end
+
 	local IconInstructionA = Material( "lvs/instructions/mouse_right.png" )
 	local IconInstructionB = Material( "lvs/instructions/mouse_left.png" )
 
 	function SWEP:DrawHUD()
 		local ply = LocalPlayer()
+
+		self:CalcMenu( ply:KeyDown( IN_ATTACK2 ) )
 
 		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
 
@@ -278,6 +292,8 @@ function SWEP:PrimaryAttack()
 
 	self:SetVehicle( ply._SpawnedVehicle )
 
+	self:EnterVehicle( ply._SpawnedVehicle )
+
 	ply:ChatPrint( "#lvs_tool_vehicles_buy" )
 end
 
@@ -355,27 +371,32 @@ function SWEP:HandleVehicleRemove()
 	Vehicle:Remove()
 end
 
-if SERVER then
-	function SWEP:Think()
-		self:HandleVehicleRemove()
-	end
+function SWEP:Think()
+	self:HandleVehicleRemove()
+end
 
-	function SWEP:EnterVehicle( vehicle )
+if SERVER then
+	function SWEP:EnterVehicle( target )
 		local ply = self:GetOwner()
 
-		if not IsValid( vehicle ) or not IsValid( ply ) then return end
+		if not IsValid( ply ) or not IsValid( target ) or not target.IsInitialized then return end
 
-		if not vehicle:IsInitialized() then
-			timer.Simple( 0, function()
+		if not target:IsInitialized() then
+
+			timer.Simple(0, function()
 				if not IsValid( self ) then return end
 
-				self:EnterVehicle( vehicle )
-			end )
+				self:EnterVehicle( target )
+			end)
 
 			return
 		end
 
-		vehicle:SetPassenger( ply )
+		local DriverSeat = target:GetDriverSeat()
+
+		if not IsValid( DriverSeat ) then return end
+
+		ply:EnterVehicle( DriverSeat )
 	end
 
 	function SWEP:Holster( wep )
@@ -389,30 +410,6 @@ if SERVER then
 	end
 
 	return
-end
-
-function SWEP:CalcMenu( Open )
-	if self._oldOpen == Open then return end
-
-	self._oldOpen = Open
-
-	if Open then
-		GAMEMODE:OpenBuyMenu()
-	else
-		GAMEMODE:CloseBuyMenu()
-	end
-end
-
-function SWEP:Think()
-	self:HandleVehicleRemove()
-
-	if not IsFirstTimePredicted() then return end
-
-	local ply = self:GetOwner()
-
-	if not IsValid( ply ) then return end
-
-	self:CalcMenu( ply:KeyDown( IN_ATTACK2 ) )
 end
 
 function SWEP:Holster( wep )
