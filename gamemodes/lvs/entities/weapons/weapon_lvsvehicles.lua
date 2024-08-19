@@ -134,7 +134,18 @@ if CLIENT then
 
 		local Vehicle = self:GetVehicle()
 
-		if not ply:KeyDown( IN_RELOAD ) then
+		if ply:KeyDown( IN_RELOAD ) then
+			if not IsValid( Vehicle ) or vgui.CursorVisible() then return end
+
+			local X = ScrW() * 0.5
+			local Y = ScrH() - 105
+
+			surface.SetDrawColor( 255, 255, 255, 255 )
+			surface.SetMaterial( IconInstructionB )
+			surface.DrawTexturedRect( X - 32, Y, 64, 64 )
+
+			draw.DrawText( "#lvs_tool_vehicles_store_remove", "LVS_FONT", X, Y + 68, color_white, TEXT_ALIGN_CENTER )
+		else
 		
 			if IsValid( Vehicle ) or vgui.CursorVisible() then return end
 
@@ -171,14 +182,8 @@ if CLIENT then
 
 		if not IsValid( Vehicle ) then DrawText( X, Y + 34, "#lvs_tool_vehicles_novehicle", Color(255,0,0,255) ) return end
 
-		if (ply:GetPos() - Vehicle:GetPos()):Length() > self.RemoveDistance then DrawText( X, Y + 34, "#lvs_tool_vehicles_too_far", Color(255,0,0, math.abs( math.cos( CurTime() * 5 ) ) * 255 ) )
-			Y = ScrH() - 105
-
-			surface.SetDrawColor( 255, 255, 255, 255 )
-			surface.SetMaterial( IconInstructionB )
-			surface.DrawTexturedRect( X - 32, Y, 64, 64 )
-
-			draw.DrawText( "#lvs_tool_vehicles_store_remove", "LVS_FONT", X, Y + 68, color_white, TEXT_ALIGN_CENTER )
+		if (ply:GetPos() - Vehicle:GetPos()):Length() > self.RemoveDistance then
+			DrawText( X, Y + 34, "#lvs_tool_vehicles_too_far", Color(255,0,0, math.abs( math.cos( CurTime() * 5 ) ) * 255 ) )
 
 			return
 		end
