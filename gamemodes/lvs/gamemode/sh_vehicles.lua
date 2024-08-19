@@ -10,7 +10,7 @@ local meta = FindMetaTable( "Player" )
 function meta:lvsSetCurrentVehicle( class, icon )
 	if not GAMEMODE:VehicleClassAllowed( class ) then return end
 
-	if not ply:IsAdmin() and GAMEMODE:VehicleClassAdminOnly( class ) then return end
+	if not self:IsAdmin() and GAMEMODE:VehicleClassAdminOnly( class ) then return end
 
 	if hook.Run( "LVS.OnPlayerSelectVehicle", self, class ) then return end
 
