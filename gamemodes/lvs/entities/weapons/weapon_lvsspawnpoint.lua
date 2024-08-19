@@ -3,10 +3,10 @@ AddCSLuaFile()
 SWEP.Category				= "[LVS]"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= false
-SWEP.ViewModel = "models/weapons/c_arms.mdl"
-SWEP.WorldModel = ""
-SWEP.ViewModelFOV = 54
-SWEP.UseHands = false
+SWEP.ViewModel			= "models/weapons/c_arms.mdl"
+SWEP.WorldModel			= ""
+SWEP.ViewModelFOV			= 54
+SWEP.UseHands				= false
 
 SWEP.HoldType				= "normal"
 
@@ -22,7 +22,23 @@ SWEP.Secondary.Ammo		= "none"
 
 SWEP.SpawnDistance = 512
 
+function SWEP:GetRemoveTime()
+	return 1
+end
+
 function SWEP:SetupDataTables()
+	self:NetworkVar( "Float", 1, "SpawnRemoveTime" )
+	self:NetworkVar( "Bool", 1, "SpawnValid" )
+end
+
+function SWEP:IsRequestingDelete()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return false end
+
+	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
+
+	return ply:KeyDown( IN_ATTACK2 ) or ply:KeyDown( IN_RELOAD )
 end
 
 if CLIENT then
@@ -39,6 +55,66 @@ if CLIENT then
 
 	--SWEP.WepSelectIcon 			= surface.GetTextureID( "weapons/lvsrepair" )
 
+	local circles = include("includes/circles/circles.lua")
+
+	local Circle = circles.New(CIRCLE_OUTLINED, 30, 0, 0, 5)
+	Circle:SetColor( color_white )
+	Circle:SetX( ScrW() * 0.5 )
+	Circle:SetY( ScrH() * 0.5 )
+	Circle:SetStartAngle( 0 )
+	Circle:SetEndAngle( 0 )
+
+	local ColorText = Color(255,255,255,255)
+
+	local function DrawText( x, y, text, col )
+		local font = "TargetIDSmall"
+
+		draw.DrawText( text, font, x + 1, y + 1, Color( 0, 0, 0, 120 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( text, font, x + 2, y + 2, Color( 0, 0, 0, 50 ), TEXT_ALIGN_CENTER )
+		draw.DrawText( text, font, x, y, col or color_white, TEXT_ALIGN_CENTER )
+	end
+
+	function SWEP:DoDrawCrosshair( x, y )
+		if not self:GetSpawnValid() then return end
+
+		local ply = LocalPlayer()
+
+		if not self:IsRequestingDelete() then return end
+
+		local Time = self:GetSpawnRemoveTime() - CurTime()
+	
+		local TimeLeft = math.Round( Time, Time > 1 and 0 or 1 )
+
+		if TimeLeft < 0 then return end
+
+		draw.DrawText( TimeLeft, "LVS_FONT_HUD_LARGE", x, y - 20, color_white, TEXT_ALIGN_CENTER )
+
+		return true
+	end
+
+	function SWEP:DrawHUD()
+		if not self:GetSpawnValid() then return end
+
+		local ply = LocalPlayer()
+
+		if not self:IsRequestingDelete() then return end
+
+		local X = ScrW() * 0.5
+		local Y = ScrH() * 0.5
+
+		local RemoveTime = math.min( (self:GetSpawnRemoveTime() - CurTime()) / self:GetRemoveTime(), 1 )
+
+		if RemoveTime < 0 then return end
+
+		draw.NoTexture()
+
+		Circle:SetX( X )
+		Circle:SetY( Y )
+		Circle:SetStartAngle( -360 * RemoveTime )
+		Circle:SetEndAngle( 0 )
+		Circle()
+	end
+
 	function SWEP:PrimaryAttack()
 	end
 
@@ -52,6 +128,30 @@ if CLIENT then
 end
 
 function SWEP:Think()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	local Delete = self:IsRequestingDelete()
+	local SpawnValid = IsValid( ply:GetSpawnPoint() )
+
+	if self._oldDelete ~= Delete then
+		self._oldDelete = Delete
+
+		self:SetSpawnValid( SpawnValid )
+
+		if Delete then
+			self:SetSpawnRemoveTime( CurTime() + self:GetRemoveTime() )
+		end
+	end
+
+	if not Delete or not SpawnValid then return end
+
+	local RemoveTime = (self:GetSpawnRemoveTime() - CurTime()) / self:GetRemoveTime()
+
+	if RemoveTime > 0 then return end
+
+	self:DeleteSpawn()
 end
 
 function SWEP:PrimaryAttack()
@@ -87,10 +187,12 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	self:Reload()
 end
 
 function SWEP:Reload()
+end
+
+function SWEP:DeleteSpawn()
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return end
