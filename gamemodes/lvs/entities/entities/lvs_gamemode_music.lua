@@ -186,13 +186,17 @@ else
 		local availableSongs = songs[ NewSongType ]
 		local pickedSong = availableSongs[ NewIntensity ]
 
-		for id, data in pairs( self:GetInstruments() ) do
+		local instruments = self:GetInstruments() 
+
+		for id, data in pairs( instruments) do
 			if not data.snd then continue end
 
 			if table.HasValue( pickedSong, id ) then
-				data.snd:ChangeVolume( volume, 0 )
+				data.snd:PlayEx( volume, 100 )
 			else
-				data.snd:ChangeVolume( 0, 0 )
+				data.snd:Stop()
+
+				instruments[ id ].snd = nil
 			end
 		end
 
@@ -212,7 +216,6 @@ else
 
 			local snd = CreateSound( ply, data.soundFile )
 			snd:SetSoundLevel( 0 )
-			snd:PlayEx( 0, 100 )
 
 			instruments[ id ].snd = snd
 		end
