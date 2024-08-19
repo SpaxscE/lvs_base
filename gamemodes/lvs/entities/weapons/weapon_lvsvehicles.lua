@@ -171,7 +171,17 @@ if CLIENT then
 
 		if not IsValid( Vehicle ) then DrawText( X, Y + 34, "#lvs_tool_vehicles_novehicle", Color(255,0,0,255) ) return end
 
-		if (ply:GetPos() - Vehicle:GetPos()):Length() > self.RemoveDistance then DrawText( X, Y + 34, "#lvs_tool_vehicles_too_far", Color(255,0,0, math.abs( math.cos( CurTime() * 5 ) ) * 255 ) ) return end
+		if (ply:GetPos() - Vehicle:GetPos()):Length() > self.RemoveDistance then DrawText( X, Y + 34, "#lvs_tool_vehicles_too_far", Color(255,0,0, math.abs( math.cos( CurTime() * 5 ) ) * 255 ) )
+			Y = ScrH() - 105
+
+			surface.SetDrawColor( 255, 255, 255, 255 )
+			surface.SetMaterial( IconInstructionB )
+			surface.DrawTexturedRect( X - 32, Y, 64, 64 )
+
+			draw.DrawText( "#lvs_tool_vehicles_store_remove", "LVS_FONT", X, Y + 68, color_white, TEXT_ALIGN_CENTER )
+
+			return
+		end
 
 		if #Vehicle:GetEveryone() > 0 then DrawText( X, Y + 34, "#lvs_tool_vehicles_in_use", Color(255,0,0, math.abs( math.cos( CurTime() * 5 ) ) * 255 ) ) return end
 
@@ -267,7 +277,11 @@ function SWEP:PrimaryAttack()
 				Vehicle:Remove()
 			end)
 		else
-			ply:ChatPrint( "#lvs_tool_vehicles_already_have_vehicle" )
+			if ply:KeyDown( IN_RELOAD ) then
+				Vehicle:Remove()
+			else
+				ply:ChatPrint( "#lvs_tool_vehicles_already_have_vehicle" )
+			end
 
 			return
 		end
