@@ -80,19 +80,28 @@ end
 function PLAYER:CreateMove( cmd )
 
 	if ( self.TauntCam:CreateMove( cmd, self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
---[[
-	local bhstop = 0xFFFF - IN_JUMP
-	
-	if self.Player:WaterLevel() < 2 and self.Player:Alive() and self.Player:GetMoveType() == MOVETYPE_WALK then
-		if not self.Player:InVehicle() and bit.band( cmd:GetButtons(), IN_JUMP) > 0 then
-			if self.Player:IsOnGround() then
-				cmd:SetButtons( cmd:GetButtons() or IN_JUMP)
-			else
-				cmd:SetButtons( bit.band(cmd:GetButtons(), bhstop) )
-			end
+
+	local ply = self.Player
+
+	if ply:Alive() and not ply:InVehicle() and cmd:KeyDown( IN_JUMP ) then
+		if not ply.tickCountBH then
+			ply.tickCountBH = 0
+		end
+
+		ply.tickCountBH = ply.tickCountBH + 1
+
+		if ply:GetMoveType() ~= MOVETYPE_WALK or ply:WaterLevel() > 1 then return end
+
+		if ply.tickCountBH > 2 then
+			cmd:RemoveKey( IN_JUMP )
+
+			ply.tickCountBH = nil
+		end
+	else
+		if ply.tickCountBH then
+			ply.tickCountBH = nil
 		end
 	end
-]]
 end
 
 function PLAYER:CalcView( view )
