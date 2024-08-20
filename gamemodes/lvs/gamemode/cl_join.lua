@@ -8,9 +8,15 @@ function GM:OpenJoinMenu()
 	local X = ScrW()
 	local Y = ScrH()
 
-	local Canvas = vgui.Create("DPanel")
+	local Canvas = vgui.Create( "DFrame" )
 	Canvas:SetPos( 0, 0 )
 	Canvas:SetSize( X, Y )
+	Canvas:SetTitle( "" )
+	Canvas:SetDraggable( false )
+	Canvas:SetScreenLock( true )
+	Canvas:MakePopup()
+	Canvas:Center()
+	Canvas:DockPadding( 0, 25, 0, 0 )
 	Canvas.Paint = function(self, w, h )
 		surface.SetMaterial( blur )
 
@@ -22,31 +28,14 @@ function GM:OpenJoinMenu()
 		surface.SetDrawColor( 255, 255, 255, 255 )
 
 		surface.DrawTexturedRect( 0, 0, w, h )
-	end
 
-	self.JoinBar = Canvas
-
-	local TopBar = vgui.Create("DPanel", Canvas )
-	TopBar:SetSize( 1, 25 )
-	TopBar:Dock( TOP )
-	TopBar.Paint = function(self, w, h )
-		surface.SetDrawColor( Color( 0, 0, 0, 255 ) )
-		surface.DrawRect(0, 0, w, h)
-	
 		surface.SetDrawColor( LVS.ThemeColor )
-		surface.DrawRect(1, 1, w - 2, h - 2)
+		surface.DrawRect( 0, 0, w, 25 )
 
 		draw.SimpleText( "[LVS] - Tournament", "LVS_FONT", 5, 11, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	end
 
-	local TopBarClose = vgui.Create( "DButton", TopBar )
-	TopBarClose:SetText( "#lvs_close" )
-	TopBarClose:SetSize( 50, 25 )
-	TopBarClose:Dock( RIGHT )
-	TopBarClose:DockMargin( 0, 0, 0, 0 )
-	function TopBarClose:DoClick()
-		GAMEMODE:CloseJoinMenu()
-	end
+	self.JoinBar = Canvas
 
 	local PaddingW = (X - 400) * 0.5
 	local PaddingH = (Y - 25 - 300) * 0.5
@@ -111,13 +100,9 @@ function GM:OpenJoinMenu()
 
 		RunConsoleCommand( "changeteam", TEAM_SPECTATOR )
 	end
-
-	gui.EnableScreenClicker( true )
 end
 
 function GM:CloseJoinMenu()
-	gui.EnableScreenClicker( false )
-
 	if IsValid( self.JoinBar ) then
 		self.JoinBar:Remove()
 	end

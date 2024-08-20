@@ -4,13 +4,20 @@ local default_animations = { "idle_all_01", "menu_walk" }
 function GM:OpenPlayerEditor()
 	local window = vgui.Create("DFrame")
 	window:SetSize(  960, 700 )
-	window:SetTitle( "#smwidget.playermodel_title" )
+	window:SetTitle( "" )
 	window:SetSize( math.min( ScrW() - 16, window:GetWide() ), math.min( ScrH() - 16, window:GetTall() ) )
 	window:SetSizable( true )
 	window:SetMinWidth( window:GetWide() )
 	window:SetMinHeight( window:GetTall() )
 	window:Center()
 	window:MakePopup()
+	window.Paint = function(self, w, h )
+		draw.RoundedBox( 8, 0, 0, w, h, Color( 0, 0, 0, 255 ) )
+		draw.RoundedBoxEx( 8, 1, 26, w-2, h-27, Color( 120, 120, 120, 255 ), false, false, true, true )
+		draw.RoundedBoxEx( 8, 0, 0, w, 25, LVS.ThemeColor, true, true )
+
+		draw.SimpleText( "#smwidget.playermodel_title", "LVS_FONT", 5, 11, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	end
 
 	local mdl = window:Add( "DModelPanel" )
 	mdl:Dock( FILL )
