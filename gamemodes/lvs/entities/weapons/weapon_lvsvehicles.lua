@@ -144,9 +144,13 @@ if CLIENT then
 	function SWEP:DrawHUD()
 		local ply = LocalPlayer()
 
-		self:CalcMenu( ply:KeyDown( IN_ATTACK2 ) )
+		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then
+			self:CalcMenu( false )
 
-		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return end
+			return
+		end
+
+		self:CalcMenu( ply:KeyDown( IN_ATTACK2 ) )
 
 		local Vehicle = self:GetVehicle()
 
