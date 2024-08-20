@@ -177,7 +177,7 @@ if CLIENT then
 
 		if not Multiplier then smFov = fov return end
 
-		smFov = smFov + (fov * (1 - Multiplier) + 120 * Multiplier - smFov) * FrameTime() * 10
+		smFov = smFov + (fov * (1 - Multiplier) + 100 * Multiplier - smFov) * FrameTime() * 10
 
 		local view = {}
 		view.origin = GetViewOrigin()
