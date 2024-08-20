@@ -237,12 +237,14 @@ end
 
 function SWEP:Deploy()
 	self:ResetPlayerSpeed()
+	self:SetSprinting( false )
 
 	return true
 end
 
 function SWEP:Holster( wep )
 	self:ResetPlayerSpeed()
+	self:SetSprinting( false )
 
 	return true
 end
