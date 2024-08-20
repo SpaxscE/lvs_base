@@ -2,101 +2,8 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
-list.Set( "lvsDynamicSongs", "Song1", {
-	segments = 5,
-	duration = 213,
-	stages = 7,
-	songs = {
-		warmup = {
-			[1] = {"guitar1"},
-			[2] = {"guitar2"},
-			[3] = {"karamba"},
-			[4] = {"synth"},
-			[5] = {"voices"},
-		},
-		lowaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum1"},
-			[3] = {"bass","drum1","guitar1"},
-			[4] = {"bass","drum1","guitar1","synth"},
-			[5] = {"bass","drum1","guitar1","synth","guitar2"},
-			[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
-			[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
-		},
-		highaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum2"},
-			[3] = {"bass","drum2","guitar2"},
-			[4] = {"bass","drum2","guitar2","synth"},
-			[5] = {"bass","drum2","guitar2","synth","karamba"},
-			[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
-			[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
-		},
-	},
-	instruments = {
-		bass = "lvs/tournament/music/song1/bass.ogg",
-		drum1 = "lvs/tournament/music/song1/drum1.ogg",
-		drum2 = "lvs/tournament/music/song1/drum2.ogg",
-		guitar1 = "lvs/tournament/music/song1/guitar1.ogg",
-		guitar2 = "lvs/tournament/music/song1/guitar2.ogg",
-		synth = "lvs/tournament/music/song1/synth.ogg",
-		karamba = "lvs/tournament/music/song1/karamba.ogg",
-		voices = "lvs/tournament/music/song1/voices.ogg",
-	},
-})
-
-list.Set( "lvsDynamicSongs", "Song2", {
-	segments = 20,
-	duration = 224.5,
-	stages = 7,
-	songs = {
-		warmup = {
-			[1] = {"guitar1"},
-			[2] = {"guitar2"},
-			[3] = {"karamba"},
-			[4] = {"synth"},
-			[5] = {"voices"},
-		},
-		lowaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum1"},
-			[3] = {"bass","drum1","guitar1"},
-			[4] = {"bass","drum1","guitar1","synth"},
-			[5] = {"bass","drum1","guitar1","synth","guitar2"},
-			[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
-			[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
-		},
-		highaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum2"},
-			[3] = {"bass","drum2","guitar2"},
-			[4] = {"bass","drum2","guitar2","synth"},
-			[5] = {"bass","drum2","guitar2","synth","karamba"},
-			[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
-			[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
-		},
-	},
-	instruments = {
-		bass = "lvs/tournament/music/song2/bass.ogg",
-		drum1 = "lvs/tournament/music/song2/drum1.ogg",
-		drum2 = "lvs/tournament/music/song2/drum2.ogg",
-		guitar1 = "lvs/tournament/music/song2/guitar1.ogg",
-		guitar2 = "lvs/tournament/music/song2/guitar2.ogg",
-		synth = "lvs/tournament/music/song2/synth.ogg",
-		karamba = "lvs/tournament/music/song2/karamba.ogg",
-		voices = "lvs/tournament/music/song2/voices.ogg",
-	},
-})
-
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
-	self:NetworkVar( "String",0, "Song" )
-
-	if SERVER then
-		local _, SongName = table.Random( list.Get( "lvsDynamicSongs" ) )
-
-		self:SetSong( SongName )
-	end
 end
 
 if SERVER then
@@ -129,7 +36,104 @@ if SERVER then
 	end
 
 else
+	list.Set( "lvsDynamicSongs", "Song1", {
+		segments = 5,
+		duration = 213,
+		stages = 7,
+		songs = {
+			warmup = {
+				[1] = {"guitar1"},
+				[2] = {"guitar2"},
+				[3] = {"karamba"},
+				[4] = {"synth"},
+				[5] = {"voices"},
+			},
+			lowaction = {
+				[1] = {"bass"},
+				[2] = {"bass","drum1"},
+				[3] = {"bass","drum1","guitar1"},
+				[4] = {"bass","drum1","guitar1","synth"},
+				[5] = {"bass","drum1","guitar1","synth","guitar2"},
+				[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
+				[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
+			},
+			highaction = {
+				[1] = {"bass"},
+				[2] = {"bass","drum2"},
+				[3] = {"bass","drum2","guitar2"},
+				[4] = {"bass","drum2","guitar2","synth"},
+				[5] = {"bass","drum2","guitar2","synth","karamba"},
+				[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
+				[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
+			},
+		},
+		instruments = {
+			bass = "lvs/tournament/music/song1/bass.ogg",
+			drum1 = "lvs/tournament/music/song1/drum1.ogg",
+			drum2 = "lvs/tournament/music/song1/drum2.ogg",
+			guitar1 = "lvs/tournament/music/song1/guitar1.ogg",
+			guitar2 = "lvs/tournament/music/song1/guitar2.ogg",
+			synth = "lvs/tournament/music/song1/synth.ogg",
+			karamba = "lvs/tournament/music/song1/karamba.ogg",
+			voices = "lvs/tournament/music/song1/voices.ogg",
+		},
+	})
+
+	list.Set( "lvsDynamicSongs", "Song2", {
+		segments = 20,
+		duration = 224.5,
+		stages = 7,
+		songs = {
+			warmup = {
+				[1] = {"guitar1"},
+				[2] = {"guitar2"},
+				[3] = {"karamba"},
+				[4] = {"synth"},
+				[5] = {"voices"},
+			},
+			lowaction = {
+				[1] = {"bass"},
+				[2] = {"bass","drum1"},
+				[3] = {"bass","drum1","guitar1"},
+				[4] = {"bass","drum1","guitar1","synth"},
+				[5] = {"bass","drum1","guitar1","synth","guitar2"},
+				[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
+				[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
+			},
+			highaction = {
+				[1] = {"bass"},
+				[2] = {"bass","drum2"},
+				[3] = {"bass","drum2","guitar2"},
+				[4] = {"bass","drum2","guitar2","synth"},
+				[5] = {"bass","drum2","guitar2","synth","karamba"},
+				[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
+				[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
+			},
+		},
+		instruments = {
+			bass = "lvs/tournament/music/song2/bass.ogg",
+			drum1 = "lvs/tournament/music/song2/drum1.ogg",
+			drum2 = "lvs/tournament/music/song2/drum2.ogg",
+			guitar1 = "lvs/tournament/music/song2/guitar1.ogg",
+			guitar2 = "lvs/tournament/music/song2/guitar2.ogg",
+			synth = "lvs/tournament/music/song2/synth.ogg",
+			karamba = "lvs/tournament/music/song2/karamba.ogg",
+			voices = "lvs/tournament/music/song2/voices.ogg",
+		},
+	})
+
 	function ENT:Initialize()
+		local _, SongName = table.Random( list.Get( "lvsDynamicSongs" ) )
+
+		self:SetSong( SongName )
+	end
+
+	function ENT:SetSong( newsong )
+		self._curSongName = newsong
+	end
+
+	function ENT:GetSong()
+		return self._curSongName or "Song1"
 	end
 
 	local cVarVolume = CreateClientConVar( "lvs_volume_music", 0.1, true, false)
