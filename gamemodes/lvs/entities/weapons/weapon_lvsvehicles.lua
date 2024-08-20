@@ -338,7 +338,7 @@ function SWEP:PrimaryAttack()
 	if (trace.HitPos - ply:GetShootPos()):Length() < self.SpawnDistance * 0.5 then
 		self:EnterVehicle( ply._SpawnedVehicle )
 
-		ply._lvsKeyDisabler = CurTime() + 1.5
+		ply._lvsKeyDisabler = CurTime() + 0.5
 	end
 
 	ply:ChatPrint( "#lvs_tool_vehicles_buy" )
