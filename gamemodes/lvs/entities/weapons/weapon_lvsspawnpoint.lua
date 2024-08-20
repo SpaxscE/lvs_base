@@ -142,6 +142,8 @@ function SWEP:Think()
 
 		if Delete then
 			self:SetSpawnRemoveTime( CurTime() + self:GetRemoveTime() )
+
+			self._HintedOnce = nil
 		end
 	end
 
@@ -225,7 +227,11 @@ function SWEP:DeleteSpawn()
 
 			if CountTeam <= 1 then
 
-				ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
+				if not self._HintedOnce then
+					ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
+
+					self._HintedOnce = true
+				end
 
 				return
 			end
