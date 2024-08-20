@@ -2,8 +2,101 @@ AddCSLuaFile()
 
 ENT.Type            = "anim"
 
+list.Set( "lvsDynamicSongs", "Song1", {
+	segments = 5,
+	duration = 213,
+	stages = 7,
+	songs = {
+		warmup = {
+			[1] = {"guitar1"},
+			[2] = {"guitar2"},
+			[3] = {"karamba"},
+			[4] = {"synth"},
+			[5] = {"voices"},
+		},
+		lowaction = {
+			[1] = {"bass"},
+			[2] = {"bass","drum1"},
+			[3] = {"bass","drum1","guitar1"},
+			[4] = {"bass","drum1","guitar1","synth"},
+			[5] = {"bass","drum1","guitar1","synth","guitar2"},
+			[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
+			[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
+		},
+		highaction = {
+			[1] = {"bass"},
+			[2] = {"bass","drum2"},
+			[3] = {"bass","drum2","guitar2"},
+			[4] = {"bass","drum2","guitar2","synth"},
+			[5] = {"bass","drum2","guitar2","synth","karamba"},
+			[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
+			[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
+		},
+	},
+	instruments = {
+		bass = "lvs/tournament/music/song1/bass.ogg",
+		drum1 = "lvs/tournament/music/song1/drum1.ogg",
+		drum2 = "lvs/tournament/music/song1/drum2.ogg",
+		guitar1 = "lvs/tournament/music/song1/guitar1.ogg",
+		guitar2 = "lvs/tournament/music/song1/guitar2.ogg",
+		synth = "lvs/tournament/music/song1/synth.ogg",
+		karamba = "lvs/tournament/music/song1/karamba.ogg",
+		voices = "lvs/tournament/music/song1/voices.ogg",
+	},
+})
+
+list.Set( "lvsDynamicSongs", "Song2", {
+	segments = 20,
+	duration = 224.5,
+	stages = 7,
+	songs = {
+		warmup = {
+			[1] = {"guitar1"},
+			[2] = {"guitar2"},
+			[3] = {"karamba"},
+			[4] = {"synth"},
+			[5] = {"voices"},
+		},
+		lowaction = {
+			[1] = {"bass"},
+			[2] = {"bass","drum1"},
+			[3] = {"bass","drum1","guitar1"},
+			[4] = {"bass","drum1","guitar1","synth"},
+			[5] = {"bass","drum1","guitar1","synth","guitar2"},
+			[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
+			[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
+		},
+		highaction = {
+			[1] = {"bass"},
+			[2] = {"bass","drum2"},
+			[3] = {"bass","drum2","guitar2"},
+			[4] = {"bass","drum2","guitar2","synth"},
+			[5] = {"bass","drum2","guitar2","synth","karamba"},
+			[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
+			[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
+		},
+	},
+	instruments = {
+		bass = "lvs/tournament/music/song2/bass.ogg",
+		drum1 = "lvs/tournament/music/song2/drum1.ogg",
+		drum2 = "lvs/tournament/music/song2/drum2.ogg",
+		guitar1 = "lvs/tournament/music/song2/guitar1.ogg",
+		guitar2 = "lvs/tournament/music/song2/guitar2.ogg",
+		synth = "lvs/tournament/music/song2/synth.ogg",
+		karamba = "lvs/tournament/music/song2/karamba.ogg",
+		voices = "lvs/tournament/music/song2/voices.ogg",
+	},
+})
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool",0, "Active" )
+	self:NetworkVar( "String",0, "Song" )
+
+	if SERVER then
+		local _, SongName = table.Random( list.Get( "lvsDynamicSongs" ) )
+
+		self:SetSong( SongName )
+	end
 end
 
 if SERVER then
@@ -56,37 +149,6 @@ else
 		end
 	end)
 
-	local stages = 7
-	local segments = 5
-	local duration = 213
-	local songs = {
-		warmup = {
-			[1] = {"guitar1"},
-			[2] = {"guitar2"},
-			[3] = {"karamba"},
-			[4] = {"synth"},
-			[5] = {"voices"},
-		},
-		lowaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum1"},
-			[3] = {"bass","drum1","guitar1"},
-			[4] = {"bass","drum1","guitar1","synth"},
-			[5] = {"bass","drum1","guitar1","synth","guitar2"},
-			[6] = {"bass","drum1","guitar1","synth","karamba","guitar2"},
-			[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
-		},
-		highaction = {
-			[1] = {"bass"},
-			[2] = {"bass","drum2"},
-			[3] = {"bass","drum2","guitar2"},
-			[4] = {"bass","drum2","guitar2","synth"},
-			[5] = {"bass","drum2","guitar2","synth","karamba"},
-			[6] = {"bass","drum2","guitar2","synth","karamba","guitar1"},
-			[7] = {"bass","drum2","guitar2","synth","karamba","guitar1","voices"},
-		},
-	}
-
 	function ENT:GetSongType()
 		if GAMEMODE:GetGameState() <= GAMESTATE_START then return "warmup" end
 
@@ -119,43 +181,31 @@ else
 	end
 
 	function ENT:GetIntensity()
-		if GAMEMODE:GetGameState() <= GAMESTATE_START then return math.random( 1, #songs.warmup ) end
+		local SongData = list.Get( "lvsDynamicSongs" )[ self:GetSong() ]
+
+		if GAMEMODE:GetGameState() <= GAMESTATE_START then
+			if not self._RandomWarmupVariant then
+				self._RandomWarmupVariant = math.random( 1, #SongData.songs.warmup )
+			end
+
+			return self._RandomWarmupVariant
+		end
 
 		local Team1, Team2 = GAMEMODE:GetGameProgression()
 
-		local Intensity = 1 + math.Round( math.min( Team1 + Team2, 1 ) * (stages - 1), 0 )
+		local Intensity = 1 + math.Round( math.min( Team1 + Team2, 1 ) * (SongData.stages - 1), 0 )
 
 		return Intensity
 	end
 
 	function ENT:GetInstruments()
 		if not self.Instruments then
-			self.Instruments = {
-				bass = {
-					soundFile = "lvs/tournament/music/song1/bass.ogg",
-				},
-				drum1 = {
-					soundFile = "lvs/tournament/music/song1/drum1.ogg",
-				},
-				drum2 = {
-					soundFile = "lvs/tournament/music/song1/drum2.ogg",
-				},
-				guitar1 = {
-					soundFile = "lvs/tournament/music/song1/guitar1.ogg",
-				},
-				guitar2 = {
-					soundFile = "lvs/tournament/music/song1/guitar2.ogg",
-				},
-				synth = {
-					soundFile = "lvs/tournament/music/song1/synth.ogg",
-				},
-				karamba = {
-					soundFile = "lvs/tournament/music/song1/karamba.ogg",
-				},
-				voices = {
-					soundFile = "lvs/tournament/music/song1/voices.ogg",
-				},
-			}
+			self.Instruments = {}
+
+			for id, filepath in pairs( list.Get( "lvsDynamicSongs" )[ self:GetSong() ].instruments ) do
+				self.Instruments[ id ] = { soundFile = filepath }
+			end
+
 		end
 
 		return self.Instruments
@@ -183,7 +233,7 @@ else
 			self:ResetSong()
 		end
 
-		local availableSongs = songs[ NewSongType ]
+		local availableSongs = list.Get( "lvsDynamicSongs" )[ self:GetSong() ].songs[ NewSongType ]
 		local pickedSong = availableSongs[ NewIntensity ]
 
 		local instruments = self:GetInstruments() 
@@ -271,13 +321,15 @@ else
 
 		if (self.InternalThink or 0) > T then return end
 
-		local progress = duration / segments
+		local SongData = list.Get( "lvsDynamicSongs" )[ self:GetSong() ]
+
+		local progress = SongData.duration / SongData.segments
 
 		self.InternalThink = T + progress
 
 		local curProgression = self:GetProgression()
 	
-		if curProgression >= duration then
+		if curProgression >= SongData.duration then
 			curProgression = 0
 		end
 
