@@ -3,6 +3,13 @@ AddCSLuaFile()
 
 DEFINE_BASECLASS( "player_default" )
 
+if ( CLIENT ) then
+
+	CreateConVar( "cl_playerskin", "0", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD }, "The skin to use, if the model has any" )
+	CreateConVar( "cl_playerbodygroups", "0", { FCVAR_ARCHIVE, FCVAR_USERINFO, FCVAR_DONTRECORD }, "The bodygroups to use, if the model has any" )
+
+end
+
 local PLAYER = {}
 
 PLAYER.SlowWalkSpeed		= 75
@@ -31,6 +38,25 @@ function PLAYER:SetupDataTables()
 
 	BaseClass.SetupDataTables( self )
 
+end
+
+function PLAYER:SetModel()
+	BaseClass.SetModel( self )
+
+	local skin = self.Player:GetInfoNum( "cl_playerskin", 0 )
+	self.Player:SetSkin( skin )
+
+	local bodygroups = self.Player:GetInfo( "cl_playerbodygroups" )
+	if ( bodygroups == nil ) then bodygroups = "" end
+
+	local groups = string.Explode( " ", bodygroups )
+	for k = 0, self.Player:GetNumBodyGroups() - 1 do
+		self.Player:SetBodygroup( k, tonumber( groups[ k + 1 ] ) or 0 )
+	end
+end
+
+function PLAYER:Spawn()
+	BaseClass.Spawn( self )
 end
 
 function PLAYER:Loadout()

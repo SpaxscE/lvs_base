@@ -2,6 +2,7 @@ include( "shared.lua" )
 include( "cl_hud.lua" )
 include( "cl_join.lua" )
 include( "cl_scoreboard.lua" )
+include( "cl_playereditor.lua" )
 include( "buymenu/cl_buymenu.lua" )
 include( "buymenu/cl_buymenu_button.lua" )
 

@@ -7,6 +7,7 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "cl_hud.lua" )
 AddCSLuaFile( "cl_join.lua" )
 AddCSLuaFile( "cl_scoreboard.lua" )
+AddCSLuaFile( "cl_playereditor.lua" )
 AddCSLuaFile( "buymenu/cl_buymenu.lua" )
 AddCSLuaFile( "buymenu/cl_buymenu_button.lua" )
 AddCSLuaFile( "shared.lua" )
@@ -35,7 +36,7 @@ end
 
 --F1
 function GM:ShowHelp( ply )
-	ply:SendLua( "GAMEMODE:OpenJoinMenu()" )
+	ply:SendLua( "GAMEMODE:OpenPlayerEditor()" )
 end
 
 --F2
@@ -45,7 +46,7 @@ end
 
 --F3
 function GM:ShowSpare1( ply )
-	ply:SendLua( "GAMEMODE:OpenBuyMenu()" )
+	ply:SendLua( "LVS:OpenMenu()" )
 end
 
 --F4
