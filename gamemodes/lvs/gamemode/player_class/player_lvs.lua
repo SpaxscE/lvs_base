@@ -72,10 +72,10 @@ function PLAYER:Loadout()
 			self.Player:Give( "weapon_lvslasergun" )
 			self.Player:Give( "weapon_lvsantitankgun" )
 			self.Player:Give( "weapon_lvsmines" )
-			self.Player:Give( "weapon_lvsmelee" )
 		end
 	end
 
+	self.Player:Give( "weapon_lvsmelee" )
 	self.Player:Give( "weapon_lvsspawnpoint" )
 
 	if not hook.Run( "LVS.PlayerLoadoutTools", self.Player ) then
