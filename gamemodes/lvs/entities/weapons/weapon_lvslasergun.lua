@@ -40,7 +40,7 @@ if CLIENT then
 	SWEP.PrintName		= "#lvs_weapon_lasergun"
 	SWEP.Author			= "Blu-x92"
 
-	SWEP.Slot				= 1
+	SWEP.Slot				= 0
 	SWEP.SlotPos			= 1
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
@@ -328,7 +328,7 @@ function SWEP:OnDrop()
 	self:ResetFire()
 end
 
-function SWEP:OnDeploy()
+function SWEP:Deploy()
 	self:SendWeaponAnim( ACT_VM_DRAW )
 
 	return true

@@ -9,6 +9,40 @@ function SWEP:GetCrosshairFilterEnts()
 	return { self, self:GetOwner() }
 end
 
+function SWEP:GetOriginalSpeed()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if ply._OriginalRunSpeed then return ply._OriginalRunSpeed end
+
+	return ply:GetRunSpeed()
+end
+
+function SWEP:SetPlayerSpeed( new )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if not ply._OriginalRunSpeed then
+		ply._OriginalRunSpeed = ply:GetRunSpeed()
+	end
+
+	ply:SetRunSpeed( math.max( new, ply:GetWalkSpeed() ) )
+end
+
+function SWEP:ResetPlayerSpeed()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if ply._OriginalRunSpeed then
+		ply:SetRunSpeed( ply._OriginalRunSpeed )
+
+		ply._OriginalRunSpeed = nil
+	end
+end
+
 if CLIENT then
 	local color_red = Color(255,0,0,255)
 

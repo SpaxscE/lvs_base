@@ -30,7 +30,7 @@ if CLIENT then
 	SWEP.PrintName		= "#lvs_weapon_antitankgun"
 	SWEP.Author			= "Blu-x92"
 
-	SWEP.Slot				= 2
+	SWEP.Slot				= 1
 	SWEP.SlotPos			= 1
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
@@ -137,6 +137,12 @@ function SWEP:OnRemove()
 end
 
 function SWEP:OnDrop()
+end
+
+function SWEP:Deploy()
+	self:SendWeaponAnim( ACT_VM_DRAW )
+
+	return true
 end
 
 function SWEP:Holster( wep )

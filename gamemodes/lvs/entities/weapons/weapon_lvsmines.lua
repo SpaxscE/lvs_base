@@ -30,7 +30,7 @@ SWEP.Secondary.Ammo		= "none"
 
 if CLIENT then
 	SWEP.PrintName		= "#lvs_weapon_mines"
-	SWEP.Slot				= 3
+	SWEP.Slot				= 2
 	SWEP.SlotPos			= 1
 
 	SWEP.DrawWeaponInfoBox 	= false

@@ -11,7 +11,7 @@ SWEP.ViewModel			= "models/weapons/c_arms.mdl"
 SWEP.WorldModel			= ""
 SWEP.UseHands				= true
 
-SWEP.HoldType				= "fist"
+SWEP.HoldType				= "normal"
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip		= -1
@@ -23,17 +23,117 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
+SWEP.SprintTime = 10
+SWEP.SprintSpeedAdd = 300
+
 SWEP.MeleeThirdPerson = true
+SWEP.MeleeAnimations = true
+
+function SWEP:SetupDataTables()
+	self:NetworkVar( "Bool", 1, "Sprinting" )
+	self:NetworkVar( "Float", 1, "SprintTime" )
+end
+
+function SWEP:IsSprinting()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return false end
+
+	return ply:KeyDown( IN_SPEED ) and ply:KeyDown( IN_FORWARD ) and ply:GetVelocity():Length2D() > ply:GetWalkSpeed()
+end
+
+function SWEP:GetSpeedMultiplier()
+	if not self:IsSprinting() then return 0 end
+
+	return math.Clamp( 1 - (self:GetSprintTime() - CurTime()) / self.SprintTime, 0, 1 )
+end
 
 if CLIENT then
 	SWEP.PrintName		= "#GMOD_Fists"
 	SWEP.Author			= "Blu-x92"
 
-	SWEP.Slot				= 0
+	SWEP.Slot				= 3
 	SWEP.SlotPos			= 1
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 		draw.SimpleText( "D", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
+	end
+
+	local ColorNormal = color_white
+	local ColorLow = Color(255,0,0,255)
+
+	local function DrawPlayerHud( X, Y, ply )
+		local kmh = math.Round(ply:GetVelocity():Length2D() * 0.09144,0)
+		draw.DrawText( "km/h ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
+		draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
+	end
+
+	function SWEP:DrawHUD()
+		local ply = self:GetOwner()
+
+		if not IsValid( ply ) or ply:InVehicle() or not ply:Alive() then return end
+
+		local editor = LVS.HudEditors["VehicleInfo"]
+
+		if not editor then return end
+
+		local X = ScrW()
+		local Y = ScrH()
+
+		local ScaleX = editor.w / editor.DefaultWidth
+		local ScaleY = editor.h / editor.DefaultHeight
+
+		local PosX = editor.X / ScaleX
+		local PosY = editor.Y / ScaleY
+
+		local Width = editor.w / ScaleX
+		local Height = editor.h / ScaleY
+
+		local ScrW = X / ScaleX
+		local ScrH = Y / ScaleY
+
+		if ScaleX == 1 and ScaleY == 1 then
+			DrawPlayerHud( PosX, PosY, ply )
+		else
+			local m = Matrix()
+			m:Scale( Vector( ScaleX, ScaleY, 1 ) )
+
+			cam.PushModelMatrix( m )
+				DrawPlayerHud( PosX, PosY, ply )
+			cam.PopModelMatrix()
+		end
+	end
+
+	hook.Add("CalcMainActivity", "!!!!!lvs_testanim", function( ply )
+		if ply:InVehicle() or not ply:OnGround() or ply:IsFlagSet( FL_ANIMDUCKING ) or ply.m_bInSwim then return end
+
+		local weapon = ply:GetActiveWeapon() 
+
+		if not IsValid( weapon ) or not weapon.MeleeAnimations then return end
+
+		local vel = ply:GetVelocity()
+		local velL = ply:WorldToLocal( ply:GetPos() + vel )
+
+		if velL.x < 1 or velL.x < math.abs(velL.y) * 0.95 then return end
+
+		if vel:Length2D() <= 400 then return end
+
+		ply.CalcIdeal = ACT_MP_RUN
+		ply.CalcSeqOverride = ply:LookupSequence( "run_all_02" )
+
+		return ply.CalcIdeal, ply.CalcSeqOverride
+	end)
+
+	local function GetSpeedMultiplier( ply )
+		if not ply:Alive() or ply:GetViewEntity() ~= ply then return false end
+
+		local weapon = ply:GetActiveWeapon()
+
+		if not IsValid( weapon ) or not weapon.MeleeThirdPerson or not isfunction( weapon.GetSpeedMultiplier ) then return false end
+
+		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
+
+		return weapon:GetSpeedMultiplier()
 	end
 
 	local function GetViewOrigin()
@@ -60,73 +160,58 @@ if CLIENT then
 		return trace.HitPos
 	end
 
-	local function Validate( ply )
-		if not ply:Alive() or ply:GetViewEntity() ~= ply then return false end
-
-		local weapon = ply:GetActiveWeapon()
-
-		if not IsValid( weapon ) or not weapon.MeleeThirdPerson then return false end
-
-		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
-
-		return true
-	end
-
-	local circle = Material( "vgui/circle" )
-	local size = 5
-
 	function SWEP:DoDrawCrosshair( x, y )
-		local ply = LocalPlayer()
-
-		local pos = GetViewOrigin() + ply:EyeAngles():Forward() * 100
-
-		local scr = pos:ToScreen()
-
-		if scr.visible then
-			surface.SetMaterial( circle )
-			surface.SetDrawColor( 0, 0, 0, 255 )
-			surface.DrawTexturedRect( scr.x - size * 0.5 + 1, scr.y - size * 0.5 + 1, size, size )
-
-			surface.SetDrawColor( 255, 255, 255, 255 )
-			surface.DrawTexturedRect( scr.x - size * 0.5, scr.y - size * 0.5, size, size )
-		end
-
 		return true
 	end
 
 	function SWEP:CalcView( ply, pos, angles, fov )
 		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() then return end
 
-		ply._lvsCalcViewTime = CurTime() + 0.1
-
 		return GetViewOrigin(), ply:EyeAngles(), fov
 	end
 
-	-- this is used for when the CalcView hook somehow doesn't get called but the SWEP:CalcView function is. If the hook fails this will probably fail aswell tho
-	hook.Add( "ShouldDrawLocalPlayer", "!!!!!!!!!!!!simple_thirdperson",  function( ply )
-		if (ply._lvsCalcViewTime or 0) < CurTime() then return end
-
-		if not Validate( ply ) then return end
-
-		return true
-	end )
+	local smFov = 0
 
 	hook.Add( "CalcView", "!!!!!!!!!!!!simple_thirdperson",  function( ply, pos, angles, fov )
-		if not Validate( ply ) then return end
+		local Multiplier = GetSpeedMultiplier( ply )
+
+		if not Multiplier then smFov = fov return end
+
+		smFov = smFov + (fov * (1 - Multiplier) + 120 * Multiplier - smFov) * FrameTime() * 10
 
 		local view = {}
 		view.origin = GetViewOrigin()
 		view.angles = ply:EyeAngles()
-		view.fov = fov
+		view.fov = smFov
 		view.drawviewer = true
-
-		ply._lvsCalcViewTime = CurTime() + 0.1
 
 		return view
 	end )
+
 end
 
 function SWEP:Think()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	local T = CurTime()
+
+	local Sprinting = self:IsSprinting()
+
+	if Sprinting ~= self:GetSprinting() then
+		self:SetSprinting( Sprinting )
+
+		if Sprinting then
+			self:SetSprintTime( T + self.SprintTime )
+		else
+			self:ResetPlayerSpeed()
+		end
+	end
+
+	if not Sprinting then return end
+
+	self:SetPlayerSpeed( self:GetOriginalSpeed() + self.SprintSpeedAdd * self:GetSpeedMultiplier() )
 end
 
 function SWEP:Initialize()
@@ -134,34 +219,30 @@ function SWEP:Initialize()
 end
 
 function SWEP:PrimaryAttack()
-	local ply = self:GetOwner()
-
-	ply:AnimResetGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD )
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, ply:LookupSequence( "range_fists_l" ), 0, true )
-	ply:AnimSetGestureWeight( GESTURE_SLOT_ATTACK_AND_RELOAD, 1 )
 end
 
 function SWEP:SecondaryAttack()
-	local ply = self:GetOwner()
-
-	ply:AnimResetGestureSlot( GESTURE_SLOT_GRENADE )
-	ply:AddVCDSequenceToGestureSlot( GESTURE_SLOT_GRENADE, ply:LookupSequence( "range_fists_r" ), 0, true )
-	ply:AnimSetGestureWeight( GESTURE_SLOT_GRENADE, 1 )
 end
 
 function SWEP:Reload()
 end
 
 function SWEP:OnRemove()
+	self:ResetPlayerSpeed()
 end
 
 function SWEP:OnDrop()
+	self:ResetPlayerSpeed()
 end
 
-function SWEP:OnDeploy()
+function SWEP:Deploy()
+	self:ResetPlayerSpeed()
+
 	return true
 end
 
 function SWEP:Holster( wep )
+	self:ResetPlayerSpeed()
+
 	return true
 end

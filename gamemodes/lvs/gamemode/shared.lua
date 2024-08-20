@@ -36,17 +36,3 @@ end
 
 function GM:CreateTeams()
 end
-
-function GM:HandlePlayerVaulting( ply, velocity, plyTable )
-
-	if not plyTable then plyTable = ply:GetTable() end
-
-	if velocity:LengthSqr() < 300000 then return end
-
-	if ply:IsOnGround() then return end
-
-	plyTable.CalcIdeal = ACT_MP_SWIM
-
-	return true
-
-end

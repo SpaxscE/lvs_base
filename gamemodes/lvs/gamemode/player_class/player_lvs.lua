@@ -6,7 +6,7 @@ DEFINE_BASECLASS( "player_default" )
 local PLAYER = {}
 
 PLAYER.SlowWalkSpeed		= 75
-PLAYER.WalkSpeed 			= 150
+PLAYER.WalkSpeed 			= 175
 PLAYER.RunSpeed			= 300
 
 PLAYER.CrouchedWalkSpeed	= 0.3		-- Multiply move speed by this when crouching
@@ -43,10 +43,10 @@ function PLAYER:Loadout()
 		if not hook.Run( "LVS.PlayerLoadoutWeapons", self.Player ) and GetConVar( "lvs_weapons" ):GetBool() then
 			self.Player:GiveAmmo( 40, "SniperRound", true )
 
-			self.Player:Give( "weapon_lvsmelee" )
 			self.Player:Give( "weapon_lvslasergun" )
 			self.Player:Give( "weapon_lvsantitankgun" )
 			self.Player:Give( "weapon_lvsmines" )
+			self.Player:Give( "weapon_lvsmelee" )
 		end
 	end
 
