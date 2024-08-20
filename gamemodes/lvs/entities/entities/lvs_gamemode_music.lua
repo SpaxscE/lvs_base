@@ -132,28 +132,28 @@ else
 		if not self.Instruments then
 			self.Instruments = {
 				bass = {
-					soundFile = "lvs/tournament/music/bass.ogg",
+					soundFile = "lvs/tournament/music/song1/bass.ogg",
 				},
 				drum1 = {
-					soundFile = "lvs/tournament/music/drum1.ogg",
+					soundFile = "lvs/tournament/music/song1/drum1.ogg",
 				},
 				drum2 = {
-					soundFile = "lvs/tournament/music/drum2.ogg",
+					soundFile = "lvs/tournament/music/song1/drum2.ogg",
 				},
 				guitar1 = {
-					soundFile = "lvs/tournament/music/guitar1.ogg",
+					soundFile = "lvs/tournament/music/song1/guitar1.ogg",
 				},
 				guitar2 = {
-					soundFile = "lvs/tournament/music/guitar2.ogg",
+					soundFile = "lvs/tournament/music/song1/guitar2.ogg",
 				},
 				synth = {
-					soundFile = "lvs/tournament/music/synth.ogg",
+					soundFile = "lvs/tournament/music/song1/synth.ogg",
 				},
 				karamba = {
-					soundFile = "lvs/tournament/music/karamba.ogg",
+					soundFile = "lvs/tournament/music/song1/karamba.ogg",
 				},
 				voices = {
-					soundFile = "lvs/tournament/music/voices.ogg",
+					soundFile = "lvs/tournament/music/song1/voices.ogg",
 				},
 			}
 		end
