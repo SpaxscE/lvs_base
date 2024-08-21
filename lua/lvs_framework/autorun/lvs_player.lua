@@ -160,9 +160,9 @@ local function GetInput( ply, name )
 			ply._lvsKeyDown = {}
 		end
 
-		return ply._lvsKeyDown[ name ]
+		return ply._lvsKeyDown[ name ] == true
 	else
-		local Key = ply:lvsGetControls()[ name ]
+		local Key = ply:lvsGetControls()[ name ] or 0
 
 		if IS_MOUSE_ENUM[ Key ] then
 			return input.IsMouseDown( Key ) 
