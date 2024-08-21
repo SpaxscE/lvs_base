@@ -116,7 +116,7 @@ if CLIENT then
 
 		if velL.x < 1 or velL.x < math.abs(velL.y) * 0.95 then return end
 
-		if vel:Length2D() <= 400 then return end
+		if vel:Length2D() <= 250 then return end
 
 		ply.CalcIdeal = ACT_MP_RUN
 		ply.CalcSeqOverride = ply:LookupSequence( "run_all_02" )
