@@ -39,6 +39,12 @@ function SWEP:IsSprinting()
 
 	if not IsValid( ply ) then return false end
 
+	local GoalEnt = GAMEMODE:GetGoalEntity()
+
+	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then
+		return false
+	end
+
 	return ply:KeyDown( IN_SPEED ) and ply:KeyDown( IN_FORWARD ) and ply:GetVelocity():Length2D() > ply:GetWalkSpeed()
 end
 
@@ -198,6 +204,12 @@ function SWEP:Think()
 	local T = CurTime()
 
 	local Sprinting = self:IsSprinting()
+
+	local GoalEnt = GAMEMODE:GetGoalEntity()
+
+	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then
+		Sprinting = false
+	end
 
 	if Sprinting ~= self:GetSprinting() then
 		self:SetSprinting( Sprinting )
