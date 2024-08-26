@@ -5,6 +5,10 @@ GM.VehiclePrices = {}
 list.Set( "VehiclePrices", "lvs_helicopter_rebel", 600 )
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodhalftrack_us", 275 )
 
+list.Set( "VehiclePrices", "lvs_plane_p51", 425 )
+list.Set( "VehiclePrices", "lvs_plane_p47", 545 )
+
+
 local meta = FindMetaTable( "Player" )
 
 function meta:lvsSetCurrentVehicle( class, icon )
