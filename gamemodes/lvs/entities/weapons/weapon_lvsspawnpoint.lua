@@ -53,7 +53,17 @@ if CLIENT then
 
 	SWEP.DrawWeaponInfoBox 	= true
 
-	--SWEP.WepSelectIcon 			= surface.GetTextureID( "weapons/lvsrepair" )
+	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
+		draw.SimpleText( "?", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
+
+		-- Borders
+		y = y + 10
+		x = x + 10
+		wide = wide - 20
+
+		-- Draw weapon info box
+		self:PrintWeaponInfo( x + wide + 20, y + tall * 0.95, alpha )
+	end
 
 	local circles = include("includes/circles/circles.lua")
 

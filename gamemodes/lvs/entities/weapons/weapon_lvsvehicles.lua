@@ -73,7 +73,7 @@ if CLIENT then
 	SWEP.DrawWeaponInfoBox 	= true
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
-		draw.SimpleText( "D", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
+		draw.SimpleText( "o", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
 
 		-- Borders
 		y = y + 10
