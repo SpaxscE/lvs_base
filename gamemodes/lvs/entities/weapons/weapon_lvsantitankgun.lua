@@ -37,6 +37,20 @@ if CLIENT then
 		draw.SimpleText( "i", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
 	end
 
+	function SWEP:DoDrawCrosshair( x, y )
+
+		local Mul = self:GetBulletSpreadMultiplicator()
+
+		if Mul <= 0.1 then return end
+
+		local CrossHairColor = Color( GetConVar( "cl_crosshaircolor_r" ):GetInt(), GetConVar( "cl_crosshaircolor_g" ):GetInt(), GetConVar( "cl_crosshaircolor_b" ):GetInt(), 255 )
+		
+		surface.DrawCircle( x, y, 4 + 55 * Mul, color_black )
+		surface.DrawCircle( x, y, 5 + 55 * Mul, CrossHairColor )
+
+		return true
+	end
+
 	function SWEP:SetWeaponHoldType( t )
 		t = string.lower( t )
 
@@ -69,6 +83,14 @@ function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
 end
 
+function SWEP:GetBulletSpreadMultiplicator()
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return 0 end
+
+	return math.min( ply:GetVelocity():Length() / 300, 1 )
+end
+
 function SWEP:PrimaryAttack()
 	if not self:CanPrimaryAttack() then return end
 
@@ -96,7 +118,7 @@ function SWEP:PrimaryAttack()
 
 	bullet.Dir = (ply:GetEyeTrace().HitPos - bullet.Src):GetNormalized()
 
-	bullet.Spread 	= Vector(0.1,0.1,0.1) * math.min( ply:GetVelocity():Length() / 300, 1 )
+	bullet.Spread 	= Vector(0.1,0.1,0.1) * self:GetBulletSpreadMultiplicator()
 
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 4000
