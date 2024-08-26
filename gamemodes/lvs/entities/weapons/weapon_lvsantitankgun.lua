@@ -43,10 +43,8 @@ if CLIENT then
 
 		if Mul <= 0.1 then return end
 
-		local CrossHairColor = Color( GetConVar( "cl_crosshaircolor_r" ):GetInt(), GetConVar( "cl_crosshaircolor_g" ):GetInt(), GetConVar( "cl_crosshaircolor_b" ):GetInt(), 255 )
-		
 		surface.DrawCircle( x, y, 4 + 55 * Mul, color_black )
-		surface.DrawCircle( x, y, 5 + 55 * Mul, CrossHairColor )
+		surface.DrawCircle( x, y, 5 + 55 * Mul, color_white )
 
 		return true
 	end
