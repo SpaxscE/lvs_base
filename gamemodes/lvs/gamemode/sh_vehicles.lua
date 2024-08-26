@@ -133,7 +133,11 @@ function GM:BuildVehiclePrices()
 					PriceClassPunishment = -200
 				end
 
-				self.VehiclePrices[s] = math.max( math.Round( IgnoreForce * 0.1 +  DamageForce * 0.01 + (MaxHealth + MaxShield * 100) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment, 0 )
+				if v.t.VehicleCategory == "Star Wars" and v.t.VehicleSubCategory ~= "Walkers" then
+					PriceClassPunishment = 400
+				end
+
+				self.VehiclePrices[s] = math.max( math.Round( IgnoreForce * 0.1 +  DamageForce * 0.01 + (MaxHealth + MaxShield * 10) * 0.1 + MaxVelocity * 0.1, 0 ) + PriceClassPunishment, 0 )
 			end
 		end
 
