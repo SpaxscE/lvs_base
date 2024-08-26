@@ -217,7 +217,11 @@ function SWEP:DeleteSpawn()
 
 			if IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == oldSpawn then
 
-				ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
+				if not self._HintedOnce then
+					ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
+
+					self._HintedOnce = true
+				end
 
 				return
 			end
