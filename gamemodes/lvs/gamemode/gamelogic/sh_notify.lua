@@ -121,6 +121,8 @@ function GM:OnPlayerPickupGoal( ply, team, ent )
 		net.WriteInt( GAME_GOAL_PICKUP, 4 )
 	net.Broadcast()
 
+	if not IsValid( ply ) then return end
+
 	ply:AddMoney( self.MoneyPerGoal )
 end
 
@@ -131,6 +133,8 @@ function GM:OnPlayerDropGoal( ply, team, ent )
 		net.WriteInt( GAME_GOAL_DROP, 4 )
 	net.Broadcast()
 
+	if not IsValid( ply ) then return end
+
 	ply:AddMoney( self.MoneyPerGoalDrop )
 end
 
@@ -140,6 +144,8 @@ function GM:OnPlayerDeliverGoal( ply, target, goal )
 		net.WriteInt( goal:GetAITEAM(), 3 )
 		net.WriteInt( GAME_GOAL_DELIVER, 4 )
 	net.Broadcast()
+
+	if not IsValid( ply ) then return end
 
 	ply:AddMoney( self.MoneyPerGoalDelivered )
 end
