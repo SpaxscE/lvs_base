@@ -120,7 +120,7 @@ function SWEP:UpdateInput( KeyAttack )
 			self.ChargeStartTime = nil
 			self.ChargeFinishTime = T
 
-			self:EmitSound("lvs/tournament/weapons/lasergun/fire_stop.wav",75,100,1,CHAN_ITEM)
+			self:EmitSound("lvs/tournament/weapons/lasergun/fire_stop.wav",75,100,1,CHAN_STATIC)
 		end
 	end
 end
