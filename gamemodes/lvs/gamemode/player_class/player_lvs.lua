@@ -16,7 +16,7 @@ PLAYER.SlowWalkSpeed		= 75
 PLAYER.WalkSpeed 			= 175
 PLAYER.RunSpeed			= 300
 
-PLAYER.CrouchedWalkSpeed	= 0.3		-- Multiply move speed by this when crouching
+PLAYER.CrouchedWalkSpeed	= 1		-- Multiply move speed by this when crouching
 
 PLAYER.DuckSpeed			= 0.1		-- How fast to go from not ducking, to ducking
 PLAYER.UnDuckSpeed			= 0.1		-- How fast to go from ducking, to not ducking
