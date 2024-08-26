@@ -28,17 +28,20 @@ end
 
 function ENT:OnEntityCopyTableFinish( data )
 	data.CrosshairFilterEnts = nil
-	data._DoorHandlers = nil
 	data.pPodKeyIndex = nil
 	data.pSeats = nil
 	data.WEAPONS = nil
-	data._armorParts = nil
-	data._dmgParts = nil
-	data._DoorHandlers = nil
-	data._pdsParts = nil
+
+	-- everything with "_" at the start, usually temporary variables or variables used for timing. This will fix vehicles that are saved at a high curtime and then being spawned on a fresh server with low curtime
+	for id, _ in pairs( data ) do
+		if not string.StartsWith( id, "_" ) then continue end
+
+		data[ id ] = nil
+	end
 
 	data._DuplicatorRestoreMaxHealthTo = self:GetMaxHP()
 
+	-- all functions need to go
 	for id, entry in pairs( data ) do
 		if not isfunction( entry ) then continue end
 
