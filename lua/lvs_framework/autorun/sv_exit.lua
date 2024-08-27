@@ -34,7 +34,7 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 	local zOffset = 15
 	local ValidPositions = {}
 
-	if isvector( Pod.ExitPos ) then 
+	if isvector( Pod.ExitPos ) and Vehicle:GetUp().z > 0.9 then 
 		local data = {
 			pos = Vehicle:LocalToWorld( Pod.ExitPos ),
 			dist = 1,
@@ -142,11 +142,8 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 		end
 	end
 
-	if not ExitPos then
-		ExitPos = Pod:LocalToWorld( Vector(0,0,zOffset) )
-
-		if not util.IsInWorld( ExitPos ) then return end
-	end
+	-- all my plans failed, lets just let source do its thing
+	if not ExitPos then return end
 
 	local ViewAngles = (StartPos - ExitPos):Angle()
 	ViewAngles.p = 0
