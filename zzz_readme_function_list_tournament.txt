@@ -84,7 +84,7 @@ hook.Add( "LVS.PlayerLoadoutWeapons", "any_name_you_want", function( ply, class 
 	ply:Give("weapon_ar2")
 	ply:Give("weapon_crowbar")
 
-	return true  -- return true prevent giving of standard weapons
+	--return true  -- return true prevent giving of standard weapons
 end )
 
 
@@ -94,7 +94,7 @@ hook.Add( "LVS.PlayerLoadoutTools", "any_name_you_want", function( ply, class )
 	-- give custom tools here
 	ply:Give("weapon_physgun")
 
-	return true  -- return true prevent giving of standard tools
+	--return true  -- return true prevent giving of standard tools
 end )
 
 
