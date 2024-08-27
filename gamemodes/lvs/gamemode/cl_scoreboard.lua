@@ -81,7 +81,7 @@ local function CreatePlayerLine( ply, Parent, AlternateColor )
 	plyPanel.Mute:SetSize( 32, 32 )
 	plyPanel.Mute:Dock( RIGHT )
 	plyPanel.Mute.Think = function( self )
-		if not IsValid( self.Player ) then return end
+		if not IsValid( plyPanel.Player ) then return end
 
 		if self.Muted == nil or self.Muted ~= plyPanel.Player:IsMuted() then
 			self.Muted = plyPanel.Player:IsMuted()
