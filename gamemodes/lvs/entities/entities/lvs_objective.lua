@@ -99,6 +99,12 @@ if SERVER then
 	function ENT:Think()
 		self:NextThink( CurTime() )
 
+		local PhysObj = self:GetPhysicsObject()
+
+		if IsValid( PhysObj ) and PhysObj:IsMotionEnabled() and not self:IsPlayerHolding() then
+			PhysObj:EnableMotion( false )
+		end
+
 		if self._IsDelivered then
 			local LinkedSpawn = self:GetLinkedSpawnPoint()
 
@@ -138,6 +144,16 @@ if SERVER then
 
 	function ENT:OnTakeDamage( dmginfo )
 	end
+
+	hook.Add( "PlayerDisconnected", "!!!!lvs_drop_goal_on_disconnect", function( ply )
+		local GoalEnt = GAMEMODE:GetGoalEntity()
+
+		if not IsValid( GoalEnt ) or GoalEnt:GetHoldingPlayer() ~= ply then return end
+
+		local Team = ply:lvsGetAITeam() 
+
+		GoalEnt:Drop( ply, Team )
+	end )
 else
 	local ring = Material( "effects/select_ring" )
 	local mat = Material( "sprites/light_glow02_add" )
