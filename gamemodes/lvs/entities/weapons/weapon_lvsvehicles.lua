@@ -127,6 +127,8 @@ if CLIENT then
 	end
 
 	function SWEP:CalcMenu( Open )
+		if LocalPlayer() ~= self:GetOwner() then return end
+
 		if self._oldOpen == Open then return end
 
 		self._oldOpen = Open
