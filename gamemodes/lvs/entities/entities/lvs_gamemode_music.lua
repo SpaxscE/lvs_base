@@ -86,9 +86,8 @@ else
 		songs = {
 			warmup = {
 				[1] = {"guitar2"},
-				[2] = {"karamba"},
-				[3] = {"synth"},
-				[4] = {"voices"},
+				[2] = {"synth"},
+				[3] = {"voices"},
 			},
 			lowaction = {
 				[1] = {"guitar1"},
@@ -100,7 +99,7 @@ else
 				[7] = {"bass","drum1","guitar1","synth","karamba","guitar2","voices"},
 			},
 			highaction = {
-				[1] = {"guitar1","guitar2"},
+				[1] = {"guitar1"},
 				[2] = {"drum2","guitar2","guitar1"},
 				[3] = {"drum2","bass"},
 				[4] = {"bass","drum2","guitar1"},
