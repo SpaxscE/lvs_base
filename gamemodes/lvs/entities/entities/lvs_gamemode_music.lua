@@ -101,7 +101,7 @@ else
 			highaction = {
 				[1] = {"guitar1"},
 				[2] = {"drum2","guitar2","guitar1"},
-				[3] = {"drum2","bass"},
+				[3] = {"bass","drum2"},
 				[4] = {"bass","drum2","guitar1"},
 				[5] = {"bass","drum2","guitar1","drum1"},
 				[6] = {"bass","drum2","guitar1","drum1","synth"},
