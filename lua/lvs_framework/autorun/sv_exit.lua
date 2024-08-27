@@ -149,6 +149,7 @@ hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
 	end
 
 	local ViewAngles = (StartPos - ExitPos):Angle()
+	ViewAngles.p = 0
 	ViewAngles.r = 0
 
 	ply:SetPos( ExitPos )
