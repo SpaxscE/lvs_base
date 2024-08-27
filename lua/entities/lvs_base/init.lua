@@ -117,6 +117,7 @@ function ENT:PostInitialize( PObj )
 	end)
 
 	self:SetlvsReady( true )
+	self:GetCrosshairFilterEnts()
 
 	self:OnSpawnFinish( PObj )
 end
@@ -321,7 +322,9 @@ function ENT:RebuildCrosshairFilterEnts()
 end
 
 function ENT:GetCrosshairFilterEnts()
-	if not istable( self.CrosshairFilterEnts ) or not self:IsInitialized() then
+	if not self:IsInitialized() then return { self } end
+
+	if not istable( self.CrosshairFilterEnts ) then
 		self.CrosshairFilterEnts = {}
 
 		for _, Entity in pairs( constraint.GetAllConstrainedEntities( self ) ) do
