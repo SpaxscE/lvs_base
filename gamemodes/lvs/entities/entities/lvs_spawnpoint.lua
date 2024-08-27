@@ -24,6 +24,16 @@ function ENT:GetAITEAM()
 end
 
 if SERVER then
+
+	ENT.GibModels = {
+		"models/gibs/manhack_gib01.mdl",
+		"models/gibs/manhack_gib02.mdl",
+		"models/gibs/manhack_gib03.mdl",
+		"models/gibs/manhack_gib04.mdl",
+		"models/props_c17/canisterchunk01a.mdl",
+		"models/props_c17/canisterchunk01d.mdl",
+	}
+
 	function ENT:Initialize()	
 		self:SetModel( "models/maxofs2d/hover_plate.mdl" )
 		self:PhysicsInit( SOLID_VPHYSICS )
