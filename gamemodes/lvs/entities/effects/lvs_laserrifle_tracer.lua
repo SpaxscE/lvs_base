@@ -39,7 +39,7 @@ function EFFECT:Init( data )
 	self.StartPos = att and att.Pos or data:GetStart()
 	self.EndPos = self.Player:GetEyeTrace().HitPos
 
-	self.LifeTimeTracer = math.min( 0.25, self.StartPos:Distance( self.EndPos ) / 10000 )
+	self.LifeTimeTracer = 0.1
 	self.DieTimeTracer  = T + self.LifeTimeTracer
 
 	self:SetRenderBoundsWS( self.StartPos, self.EndPos )

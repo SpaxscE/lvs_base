@@ -62,7 +62,7 @@ if CLIENT then
 		end
 
 		local Clip = self:Clip1()
-		local ColDyn = Clip > 1 and color_white or color_red
+		local ColDyn = Clip > self.AmmoWarningCountClip and color_white or color_red
 
 		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, ColDyn, TEXT_ALIGN_RIGHT )
 
