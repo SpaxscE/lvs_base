@@ -72,6 +72,14 @@ if CLIENT then
 
 		local ColDyn2 = Ammo > self.AmmoWarningCountMag and color_white or color_red
 
+		if Clip >= 10 then
+			X = X + 18
+
+			if Clip >= 100 then
+				X = X + 18
+			end
+		end
+
 		draw.DrawText( "/", "LVS_FONT_HUD_LARGE", X + 96, Y + 30, ColDyn2, TEXT_ALIGN_LEFT )
 
 		draw.DrawText( Ammo, "LVS_FONT", X + 110, Y + 40, ColDyn2, TEXT_ALIGN_LEFT )
