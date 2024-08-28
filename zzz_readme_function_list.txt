@@ -79,6 +79,8 @@ bool = lvsEntity:HasActiveSoundEmitters()
 
 entity = lvsEntity:GetPassenger( num )
 
+entity = lvsEntity:GetPassengerSeat( num )
+
 table = lvsEntity:GetEveryone()
 
 number = lvsEntity:GetPodIndex() -- this works on the WeaponHandler aswell
