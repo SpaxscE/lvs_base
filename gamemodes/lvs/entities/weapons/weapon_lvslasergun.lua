@@ -271,9 +271,7 @@ function SWEP:PrimaryAttack()
 
 	local trace = ply:GetEyeTrace()
 
-	local distMul = math.Clamp( 2000 - (ply:GetShootPos() - trace.HitPos):Length(), 0,1500 ) / 1500
-
-	local dmgMul = (math.Clamp( self:GetAmmo() / self:GetMaxAmmo(), 0, 1 ) ^ 2) * distMul
+	local dmgMul = math.Clamp( 2000 - (ply:GetShootPos() - trace.HitPos):Length(), 0,1500 ) / 1500
 
 	if not IsValid( trace.Entity ) then
 
