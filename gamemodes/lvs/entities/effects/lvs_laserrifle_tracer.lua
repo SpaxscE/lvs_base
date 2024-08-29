@@ -27,7 +27,7 @@ function EFFECT:Init( data )
 
 	self.Player = self.Ent:GetOwner()
 
-	local T = CurTime()
+	local T = UnPredictedCurTime()
 
 	self.LifeTime = 0.75
 	self.DieTime = T + self.LifeTime
@@ -51,7 +51,7 @@ function EFFECT:Init( data )
 end
 
 function EFFECT:Think()
-	if not IsValid( self.Ent ) or not IsValid( self.Player ) or (self.DieTime or 0) < CurTime() then
+	if not IsValid( self.Ent ) or not IsValid( self.Player ) or (self.DieTime or 0) < UnPredictedCurTime() then
 		return false
 	end
 
@@ -74,7 +74,7 @@ function EFFECT:DoImpactEffect()
 end
 
 function EFFECT:Render()
-	local T = CurTime()
+	local T = UnPredictedCurTime()
 
 	if not self.DieTime then return end
 
