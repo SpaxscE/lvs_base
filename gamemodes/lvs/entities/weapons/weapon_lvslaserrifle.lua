@@ -14,8 +14,8 @@ SWEP.ViewModelFOV = 42
 
 SWEP.HoldType				= "shotgun"
 
-SWEP.Primary.ClipSize		= 6
-SWEP.Primary.DefaultClip		= 12
+SWEP.Primary.ClipSize		= 8
+SWEP.Primary.DefaultClip		= 16
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "GaussEnergy"
 
@@ -68,19 +68,23 @@ function SWEP:PrimaryAttack()
 
 	local dmgMul = (math.Clamp( 2000 - (Pos - trace.HitPos):Length(), 0,1500 ) / 1500) ^ 2
 
-	if SERVER then
-		if trace.Entity:IsPlayer() or trace.Entity._lvsLaserGunDetectHit then
-			local dmg = DamageInfo()
-			dmg:SetDamageForce( Dir * 12000 * dmgMul )
-			dmg:SetDamage( 45 + 150 * dmgMul )
-			dmg:SetAttacker( ply )
-			dmg:SetInflictor( self )
-			dmg:SetDamageType( DMG_DISSOLVE )
-			dmg:SetDamagePosition( trace.HitPos )
+	if SERVER and IsValid( trace.Entity ) then
+		local dmg = DamageInfo()
+		dmg:SetDamage( 23 + 27 * dmgMul )
+		dmg:SetAttacker( ply )
+		dmg:SetInflictor( self )
+		dmg:SetDamageType( DMG_SONIC + DMG_DISSOLVE )
+		dmg:SetDamagePosition( trace.HitPos )
 
-			trace.Entity:TakeDamageInfo( dmg )
-			trace.Entity:SetVelocity( Dir * 200 * dmgMul )
+		if trace.Entity:IsPlayer() then
+			dmg:SetDamageForce( Dir * 40000 * dmgMul )
+
+			trace.Entity:SetVelocity( Dir * 250 * dmgMul )
+		else
+			dmg:SetDamageForce( Dir * 4000 * dmgMul )
 		end
+
+		trace.Entity:TakeDamageInfo( dmg )
 	end
 
 	ply:LagCompensation( false )
@@ -120,10 +124,6 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-	if self:Clip1() >= self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) == 0 then return end
-
-	self:TakePrimaryAmmo( self:Clip1() )
-
 	self:DefaultReload( ACT_VM_RELOAD )
 end
 
