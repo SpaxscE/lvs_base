@@ -102,10 +102,7 @@ function EFFECT:Render()
 	for i = 0, Num do
 		local Frac = i / Num
 
-		local Width = (4 + 15 * ScaleMuzzle) * (1 - Frac)
-
-		if i == 0 then Width = 0 end
-		if i == 1 then Width = Width * 0.25 end
+		local Width = (4 + 36 * ScaleMuzzle) * math.sin( Frac * math.pi )
 
 		render.AddBeam( self.StartPos + Dir * Dist * Frac, Width, Frac, ColorScaled )
 	end
