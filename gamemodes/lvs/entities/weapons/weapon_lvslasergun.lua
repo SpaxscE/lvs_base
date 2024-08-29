@@ -254,11 +254,13 @@ function SWEP:IsHolding()
 
 	local HoldEntity = self:GetHoldEntity()
 
-	if not IsValid( ply ) or not IsValid( HoldEntity ) then return false end
+	if not IsValid( ply ) or not IsValid( HoldEntity ) then self:StopHold() return false end
+
+	if HoldEntity:GetMoveType() ~= MOVETYPE_VPHYSICS or HoldEntity:GetCollisionGroup() == COLLISION_GROUP_DEBRIS then self:StopHold() return false end
 
 	local PhysObj = HoldEntity:GetPhysicsObject()
 
-	if not IsValid( PhysObj ) then return false end
+	if not IsValid( PhysObj ) then self:StopHold() return false end
 
 	HoldEntity:SetPhysicsAttacker( ply, 1 )
 
@@ -296,7 +298,7 @@ function SWEP:StartHold( target )
 		target = target:GetBase()
 	end
 
-	if target:GetMoveType() ~= MOVETYPE_VPHYSICS then return end
+	if target:GetMoveType() ~= MOVETYPE_VPHYSICS or target:GetCollisionGroup() == COLLISION_GROUP_DEBRIS then return end
 
 	if target.LVS then
 		if ply:GetNWEntity( "lvs_current_spawned_vehicle" ) ~= target then
