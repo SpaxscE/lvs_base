@@ -265,14 +265,15 @@ function SWEP:IsHolding()
 	HoldEntity:SetPhysicsAttacker( ply, 1 )
 
 	local shootpos = ply:GetShootPos()
+	local aimdir = ply:GetAimVector()
 
-	local TargetPos = shootpos + ply:GetAimVector() * self:GetHoldDist()
+	local TargetPos = shootpos + aimdir * self:GetHoldDist()
 
 	local GrabPos = HoldEntity:LocalToWorld( self:GetHoldPos() )
 
 	local dmgMul = math.Clamp( 2000 - (shootpos - GrabPos):Length(), 0,1500 ) / 1500
 
-	if dmgMul <= 0 then
+	if dmgMul <= 0 or aimdir:Dot( (GrabPos - shootpos):GetNormalized() ) < 0 then
 		self:StopHold()
 
 		return false
@@ -282,7 +283,7 @@ function SWEP:IsHolding()
 	local Dir = Sub:GetNormalized()
 	local Dist = math.min( Sub:Length(), 100 ) * dmgMul
 
-	local Force = (Dir * Dist - PhysObj:GetVelocityAtPoint( GrabPos ) * 0.1) * PhysObj:GetMass() * FrameTime() * 100
+	local Force = (Dir * Dist - PhysObj:GetVelocityAtPoint( GrabPos ) * 0.05) * PhysObj:GetMass() * FrameTime() * 100
 
 	PhysObj:ApplyForceOffset( Force, GrabPos )
 
@@ -290,6 +291,8 @@ function SWEP:IsHolding()
 end
 
 function SWEP:StartHold( target )
+	if CLIENT then return end
+
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return end
@@ -322,6 +325,8 @@ function SWEP:StartHold( target )
 end
 
 function SWEP:StopHold()
+	if CLIENT then return end
+
 	self:SetHoldEntity( NULL )
 	self:SetHoldPos( vector_origin )
 	self:SetHoldDist( 0 )
@@ -340,9 +345,9 @@ function SWEP:PrimaryAttack()
 
 	ply:SetAnimation( PLAYER_ATTACK1 )
 
-	if self:IsHolding() then return end
-
 	if CLIENT then return end
+
+	if self:IsHolding() then return end
 
 	local T = CurTime()
 	local FT = FrameTime()
