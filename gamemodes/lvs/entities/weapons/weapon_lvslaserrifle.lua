@@ -94,16 +94,7 @@ function SWEP:PrimaryAttack()
 	if IsFirstTimePredicted() then
 		self:EmitSound("LVS.ION_CANNON_FIRE")
 
-		-- make this a counter strike spread pattern?
-		local Recoil = Angle(-1,0,0) + Angle(-2,-1,0) * dmgMul
-
-		ply:ViewPunch( Recoil )
-
-		local EyeAng = ply:EyeAngles()
-		EyeAng.p = math.Clamp( EyeAng.p + Recoil.p, -90, 90 )
-		EyeAng.y = EyeAng.y + Recoil.y
-
-		ply:SetEyeAngles( EyeAng )
+		ply:ViewPunch( Angle(-1,0,0) + Angle(-2,-1,0) * dmgMul )
 
 		if ply:OnGround() then
 			Dir.z = 0
