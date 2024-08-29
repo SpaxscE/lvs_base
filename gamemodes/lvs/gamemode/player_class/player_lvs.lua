@@ -72,6 +72,7 @@ function PLAYER:Loadout()
 
 			self.Player:Give( "weapon_lvslasergun" )
 			self.Player:Give( "weapon_lvsantitankgun" )
+			self.Player:Give( "weapon_lvslaserrifle" )
 			self.Player:Give( "weapon_lvsmines" )
 		end
 	end
