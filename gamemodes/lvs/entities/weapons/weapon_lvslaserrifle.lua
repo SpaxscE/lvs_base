@@ -70,7 +70,7 @@ function SWEP:PrimaryAttack()
 
 	if SERVER and IsValid( trace.Entity ) then
 		local dmg = DamageInfo()
-		dmg:SetDamage( 23 + 27 * dmgMul )
+		dmg:SetDamage( 25 + 30 * dmgMul )
 		dmg:SetAttacker( ply )
 		dmg:SetInflictor( self )
 		dmg:SetDamageType( DMG_SONIC + DMG_DISSOLVE )
