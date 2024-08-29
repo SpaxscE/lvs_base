@@ -34,6 +34,10 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Float", 0, "Charge" )
 	self:NetworkVar( "Bool", 0, "Active" )
 	self:NetworkVar( "Bool", 1, "ShootActive" )
+
+	self:NetworkVar( "Entity", 0, "HoldEntity" )
+	self:NetworkVar( "Vector", 0, "HoldPos" )
+	self:NetworkVar( "Float", 1, "HoldDist" )
 end
 
 if CLIENT then
@@ -158,6 +162,8 @@ end
 function SWEP:StopFire()
 	self:StopSound("lvs/tournament/weapons/lasergun/fire_loop.wav")
 
+	self:StopHold()
+
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return end
@@ -243,6 +249,82 @@ function SWEP:Initialize()
 	self:SetSkin( 1 )
 end
 
+function SWEP:IsHolding()
+	local ply = self:GetOwner()
+
+	local HoldEntity = self:GetHoldEntity()
+
+	if not IsValid( ply ) or not IsValid( HoldEntity ) then return false end
+
+	local PhysObj = HoldEntity:GetPhysicsObject()
+
+	if not IsValid( PhysObj ) then return false end
+
+	HoldEntity:SetPhysicsAttacker( ply, 1 )
+
+	local shootpos = ply:GetShootPos()
+
+	local TargetPos = shootpos + ply:GetAimVector() * self:GetHoldDist()
+
+	local GrabPos = HoldEntity:LocalToWorld( self:GetHoldPos() )
+
+	local dmgMul = math.Clamp( 2000 - (shootpos - GrabPos):Length(), 0,1500 ) / 1500
+
+	if dmgMul <= 0 then
+		self:StopHold()
+
+		return false
+	end
+
+	local Sub = TargetPos - GrabPos
+	local Dir = Sub:GetNormalized()
+	local Dist = math.min( Sub:Length(), 100 ) * dmgMul
+
+	local Force = (Dir * Dist - PhysObj:GetVelocityAtPoint( GrabPos ) * 0.1) * PhysObj:GetMass() * FrameTime() * 100
+
+	PhysObj:ApplyForceOffset( Force, GrabPos )
+
+	return true
+end
+
+function SWEP:StartHold( target )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if target.GetBase then
+		target = target:GetBase()
+	end
+
+	if target:GetMoveType() ~= MOVETYPE_VPHYSICS then return end
+
+	if target.LVS then
+		if ply:GetNWEntity( "lvs_current_spawned_vehicle" ) ~= target then
+			if not target:IsDestroyed() then return end
+		end
+	end
+
+	local PhysObj = target:GetPhysicsObject()
+
+	if not IsValid( PhysObj ) or not PhysObj:IsMotionEnabled() then return end
+
+	self:SetHoldEntity( target )
+
+	local trace = ply:GetEyeTrace()
+
+	local shootpos = ply:GetShootPos()
+	local aimpos = trace.HitPos
+
+	self:SetHoldPos( target:WorldToLocal( trace.HitPos ) )
+	self:SetHoldDist( (shootpos - aimpos):Length() )
+end
+
+function SWEP:StopHold()
+	self:SetHoldEntity( NULL )
+	self:SetHoldPos( vector_origin )
+	self:SetHoldDist( 0 )
+end
+
 function SWEP:PrimaryAttack()
 	if not self:GetActive() then return end
 
@@ -255,6 +337,8 @@ function SWEP:PrimaryAttack()
 	if not IsValid( ply ) then return end
 
 	ply:SetAnimation( PLAYER_ATTACK1 )
+
+	if self:IsHolding() then return end
 
 	if CLIENT then return end
 
@@ -296,17 +380,17 @@ function SWEP:PrimaryAttack()
 		dmg:SetDamagePosition( trace.HitPos )
 
 		trace.Entity:TakeDamageInfo( dmg )
-	end
 
-	local class =  trace.Entity:GetClass()
+		local class =  trace.Entity:GetClass()
 
-	if class == "lvs_objective" then
-		trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 1200 )
-		trace.Entity:SetLastTouched( T )
-	end
-
-	if class == "lvs_spawnpoint" then
-		trace.Entity:SetLastTouched( T )
+		if class == "lvs_objective" then
+			trace.Entity:SetPos( trace.Entity:GetPos() - ply:GetAimVector() * FrameTime() * 1200 )
+			trace.Entity:SetLastTouched( T )
+		end
+	else
+		if dmgMul > 0 then
+			self:StartHold( trace.Entity )
+		end
 	end
 
 	ply:LagCompensation( false )

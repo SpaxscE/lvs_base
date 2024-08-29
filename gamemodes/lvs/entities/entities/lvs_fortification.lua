@@ -172,6 +172,7 @@ if SERVER then
 		local NewHealth = math.Clamp( CurHealth - Damage, -self:GetMaxHP(), self:GetMaxHP() )
 
 		self:SetHP( NewHealth )
+		self:SetLastTouched( CurTime() )
 
 		if NewHealth <= 0 then
 			self:Destroy()

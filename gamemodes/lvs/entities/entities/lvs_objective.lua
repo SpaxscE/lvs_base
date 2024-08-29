@@ -143,6 +143,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
+		self:SetLastTouched( CurTime() )
 	end
 
 	hook.Add( "PlayerDisconnected", "!!!!lvs_drop_goal_on_disconnect", function( ply )

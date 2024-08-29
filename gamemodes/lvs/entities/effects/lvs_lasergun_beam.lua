@@ -189,6 +189,14 @@ function EFFECT:Render()
 		local StartPos = att.Pos
 		local EndPos = self.Player:GetEyeTrace().HitPos
 
+		if IsValid( self.Ent ) then
+			local HoldEntity = self.Ent:GetHoldEntity()
+
+			if IsValid( HoldEntity ) then
+				EndPos = HoldEntity:LocalToWorld( self.Ent:GetHoldPos() )
+			end
+		end
+
 		self:RenderBeam( StartPos, EndPos )
 
 		local att1 = vm:GetAttachment( vm:LookupAttachment( "fork1t" ) )
@@ -210,6 +218,12 @@ function EFFECT:Render()
 
 	local StartPos = att.Pos
 	local EndPos = self.Player:GetEyeTrace().HitPos
+
+	local HoldEntity = self.Ent:GetHoldEntity()
+
+	if IsValid( HoldEntity ) then
+		EndPos = HoldEntity:LocalToWorld( self.Ent:GetHoldPos() )
+	end
 
 	self:RenderBeam( StartPos, EndPos )
 
