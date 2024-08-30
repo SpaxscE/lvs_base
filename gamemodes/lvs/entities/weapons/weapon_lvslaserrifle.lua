@@ -84,7 +84,9 @@ function SWEP:PrimaryAttack()
 			dmg:SetDamageForce( Dir * 4000 * dmgMul )
 		end
 
+		SuppressHostEvents( NULL ) 
 		trace.Entity:TakeDamageInfo( dmg )
+		SuppressHostEvents( ply )
 	end
 
 	ply:LagCompensation( false )
