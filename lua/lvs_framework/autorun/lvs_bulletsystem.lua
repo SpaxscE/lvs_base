@@ -319,7 +319,6 @@ else
 
 		if IsValid( ply ) then
 			bullet.Muted = bullet.Entity == ply:lvsGetVehicle() or bullet.Entity:GetOwner() == ply
-			PrintChat(bullet.Muted)
 		end
 
 		Index = Index + 1
