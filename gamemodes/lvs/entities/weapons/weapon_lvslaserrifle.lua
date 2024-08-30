@@ -64,7 +64,12 @@ function SWEP:PrimaryAttack()
 
 	ply:LagCompensation( true )
 
-	local trace = ply:GetEyeTrace()
+	local trace = util.TraceLine( {
+		start = Pos,
+		endpos = Pos + Dir * 5000000,
+		filter = ply,
+		mask = MASK_SHOT_PORTAL
+	} )
 
 	local dmgMul = (math.Clamp( 2000 - (Pos - trace.HitPos):Length(), 0,1500 ) / 1500) ^ 2
 
@@ -106,7 +111,7 @@ function SWEP:PrimaryAttack()
 		ply:SetVelocity( -Dir * 200 * dmgMul )
 
 		local effectdata = EffectData()
-		effectdata:SetStart( ply:GetEyeTrace().HitPos )
+		effectdata:SetStart( trace.HitPos )
 		effectdata:SetOrigin( self:GetPos() )
 		effectdata:SetEntity( self )
 		util.Effect( "lvs_laserrifle_tracer", effectdata )

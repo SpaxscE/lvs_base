@@ -39,8 +39,8 @@ function EFFECT:Init( data )
 
 	local att = self:FindAttachment()
 
-	self.StartPos = att and att.Pos or data:GetStart()
-	self.EndPos = self.Player:GetEyeTrace().HitPos
+	self.StartPos = att and att.Pos or data:GetOrigin()
+	self.EndPos = data:GetStart()
 
 	self.LifeTimeTracer = 0.1
 	self.DieTimeTracer  = T + self.LifeTimeTracer
@@ -71,6 +71,19 @@ function EFFECT:DoImpactEffect()
 		effectdata:SetOrigin( trace.HitPos )
 		effectdata:SetNormal( trace.HitNormal )
 	util.Effect( "lvs_laserrifle_hitwall", effectdata )
+
+	if (trace.HitPos - self.EndPos):Length() > 16 then
+		local trace2 = util.TraceLine( {
+			start = self.EndPos - Dir,
+			endpos = self.EndPos + Dir,
+			mask = MASK_SOLID_BRUSHONLY
+		} )
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( trace2.HitPos )
+			effectdata:SetNormal( trace2.HitNormal )
+		util.Effect( "lvs_laserrifle_hitwall", effectdata )
+	end
 end
 
 function EFFECT:Render()
