@@ -239,13 +239,13 @@ if SERVER then
 				ent:PhysicsDestroy()
 			end)
 
-			timer.Simple( 119.5, function()
+			timer.Simple( 179.5, function()
 				if not IsValid( ent ) then return end
 
 				ent:SetRenderFX( kRenderFxFadeFast  ) 
 			end)
 
-			timer.Simple( 120, function()
+			timer.Simple( 180, function()
 				if not IsValid( ent ) then return end
 
 				ent:Remove()
