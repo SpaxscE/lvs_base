@@ -121,7 +121,7 @@ local function HandleBullets()
 
 		-- !!workaround!! todo: implement proper breaking
 		if IsValid( trace.Entity ) and trace.Entity:GetClass() == "func_breakable_surf" then
-			trace.Entity:Fire("break")
+			if SERVER then trace.Entity:Fire("break") end
 
 			trace.Hit = false -- goes right through...
 		end
