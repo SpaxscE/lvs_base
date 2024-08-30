@@ -46,6 +46,31 @@ function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
 end
 
+function SWEP:Vaporize( target, pos, dir )
+	if target:GetClass() ~= "prop_door_rotating" then return end
+
+	local gib = ents.Create( "lvs_vaporized_door" )
+	gib:SetPos( target:GetPos() )
+	gib:SetAngles( target:GetAngles() )
+	gib:SetModel( target:GetModel() )
+	gib:SetSkin( target:GetSkin() )
+	gib:SetHolePos( target:WorldToLocal( pos ) )
+	gib:SetHoleDir( dir )
+	gib:Spawn()
+
+	target:Extinguish()
+	target:SetNoDraw( true )
+	target:SetNotSolid( true )
+
+	if target:GetInternalVariable( "m_bLocked" ) then
+		target:Fire("unlock", "", 0)
+	end
+
+	if target:GetInternalVariable( "m_eDoorState" ) ~= 0 then
+		target:Fire("open", "", 0)
+	end
+end
+
 function SWEP:PrimaryAttack()
 	if not self:CanPrimaryAttack() then return end
 
@@ -71,9 +96,26 @@ function SWEP:PrimaryAttack()
 		mask = MASK_SHOT_PORTAL
 	} )
 
+	local traceWater = util.TraceLine( {
+		start = Pos,
+		endpos = Pos + Dir * 5000000,
+		filter = ply,
+		mask = MASK_WATER,
+	} )
+
+	if traceWater.Hit then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( traceWater.HitPos )
+		effectdata:SetScale( 5 )
+		effectdata:SetFlags( 2 )
+		util.Effect( "WaterSplash", effectdata, true, true )
+	end
+
 	local dmgMul = (math.Clamp( 2000 - (Pos - trace.HitPos):Length(), 0,1500 ) / 1500) ^ 2
 
 	if SERVER and IsValid( trace.Entity ) then
+		self:Vaporize( trace.Entity, trace.HitPos, trace.HitNormal )
+
 		local dmg = DamageInfo()
 		dmg:SetDamage( 35 + 35 * dmgMul )
 		dmg:SetAttacker( ply )
