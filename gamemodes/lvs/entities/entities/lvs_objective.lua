@@ -110,7 +110,7 @@ if SERVER then
 
 			if IsValid( LinkedSpawn ) then
 
-				GAMEMODE:DeliveredGoalThink( self._DeliveredPlayer, self:GetAITEAM(), 0.5 )
+				GAMEMODE:DeliveredGoalThink( self._DeliveredPlayer, self:GetAITEAM(), GAMEMODE.GoalProgressMultiplier )
 
 				return true
 			end
@@ -134,7 +134,7 @@ if SERVER then
 
 		self:SetPos( ply:GetShootPos() )
 
-		GAMEMODE:DeliveredGoalThink( ply, self:GetAITEAM(), 1 )
+		GAMEMODE:DeliveredGoalThink( ply, self:GetAITEAM(), GAMEMODE.GoalProgressMultiplierDelivered )
 
 		return true
 	end
