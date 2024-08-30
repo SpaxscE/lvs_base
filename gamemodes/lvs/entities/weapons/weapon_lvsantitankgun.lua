@@ -120,7 +120,7 @@ function SWEP:PrimaryAttack()
 
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 4000
-	bullet.HullSize 	= 1
+	bullet.HullSize 	= 2
 	bullet.Damage	= 100
 
 	bullet.Velocity = 8000
