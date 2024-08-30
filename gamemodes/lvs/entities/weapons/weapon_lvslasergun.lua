@@ -386,7 +386,9 @@ function SWEP:PrimaryAttack()
 
 		dmg:SetDamagePosition( trace.HitPos )
 
+		SuppressHostEvents( NULL ) 
 		trace.Entity:TakeDamageInfo( dmg )
+		SuppressHostEvents( ply )
 
 		local class =  trace.Entity:GetClass()
 

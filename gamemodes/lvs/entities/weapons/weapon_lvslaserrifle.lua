@@ -70,10 +70,10 @@ function SWEP:PrimaryAttack()
 
 	if SERVER and IsValid( trace.Entity ) then
 		local dmg = DamageInfo()
-		dmg:SetDamage( 25 + 30 * dmgMul )
+		dmg:SetDamage( 35 + 35 * dmgMul )
 		dmg:SetAttacker( ply )
 		dmg:SetInflictor( self )
-		dmg:SetDamageType( DMG_SONIC + DMG_DISSOLVE )
+		dmg:SetDamageType( DMG_BULLET + DMG_DISSOLVE )
 		dmg:SetDamagePosition( trace.HitPos )
 
 		if trace.Entity:IsPlayer() then

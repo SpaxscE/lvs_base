@@ -18,10 +18,21 @@ local Materials = {
 	"particle/smokesprites_0016"
 }
 
+local NextPlay = 0
 local DecalMat = Material( util.DecalMaterial( "FadingScorch" ) )
 function EFFECT:Init( data )
 	local Pos = data:GetOrigin()
 	local Dir = data:GetNormal()
+
+	local T = CurTime()
+
+	local ply = LocalPlayer()
+
+	if IsValid( ply ) and NextPlay < T and (ply:GetPos() - Pos):Length() < 256 then
+		sound.Play( "ambient/energy/zap"..math.random(1,9)..".wav", Pos, 75, 100, 1 )
+
+		NextPlay = T + 0.05
+	end
 
 	local emitter = ParticleEmitter( Pos, false )
 
