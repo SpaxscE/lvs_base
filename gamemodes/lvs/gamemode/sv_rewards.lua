@@ -14,5 +14,5 @@ GM.MoneyPerGoal = 150
 GM.MoneyPerGoalDrop = 150
 GM.MoneyPerGoalDelivered = 600
 
-GM.GoalProgressMultiplier = 0.334
+GM.GoalProgressMultiplier = 0.25
 GM.GoalProgressMultiplierDelivered = 1
