@@ -18,13 +18,15 @@ end
 function GM:OnPlayerDestroyFortification( attacker, fortification, is_teamkill )
 	if self:GetGameState() == GAMESTATE_WAIT_FOR_PLAYERS then return end
 
+	local Price = fortification.ReturnMoney or 25
+
 	if is_teamkill then
-		attacker:TakeMoney( self.MoneyPerFortificationTeamKill )
+		attacker:TakeMoney( Price * self.MoneyPerFortificationTeamKillMultiplier )
 	else
 		if fortification._lvsPlayerSpawnPoint then
 			attacker:AddMoney( self.MoneyPerSpawnPointKill )
 		else
-			attacker:AddMoney( self.MoneyPerFortificationKill )
+			attacker:AddMoney( Price * self.MoneyPerFortificationKillMultiplier )
 		end
 	end
 end

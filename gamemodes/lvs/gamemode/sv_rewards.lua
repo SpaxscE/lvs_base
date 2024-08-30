@@ -1,15 +1,15 @@
 
-GM.MoneyPerKill = 100
-GM.MoneyPerTeamKill = 250
+GM.MoneyPerKill = 200
+GM.MoneyPerTeamKill = 400
 
-GM.MoneyPerKillVehicleMultiplier = 1 -- give them full purchase price
+GM.MoneyPerKillVehicleMultiplier = 1
 GM.MoneyPerTeamKillVehicleMultiplier = 2
 
-GM.MoneyPerFortificationKill = 200
-GM.MoneyPerFortificationTeamKill = 200
+GM.MoneyPerFortificationKillMultiplier = 3
+GM.MoneyPerFortificationTeamKillMultiplier = 6
 
 GM.MoneyPerSpawnPointKill = 400
 
-GM.MoneyPerGoal = 40
-GM.MoneyPerGoalDrop = 80
-GM.MoneyPerGoalDelivered = 160
+GM.MoneyPerGoal = 150
+GM.MoneyPerGoalDrop = 150
+GM.MoneyPerGoalDelivered = 600
