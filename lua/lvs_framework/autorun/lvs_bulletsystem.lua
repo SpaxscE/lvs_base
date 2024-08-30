@@ -76,6 +76,7 @@ local function HandleBullets()
 			end
 		end
 
+		local TraceMask = bullet.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 		local Filter = bullet.Filter
 
 		local trace = util.TraceHull( {
@@ -84,7 +85,7 @@ local function HandleBullets()
 			filter = Filter,
 			mins = bullet.Mins,
 			maxs = bullet.Maxs,
-			mask = MASK_SHOT_HULL
+			mask = TraceMask
 		} )
 
 		--debugoverlay.Line( Is2ndTickAlive and start + pos - dir or start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
@@ -118,6 +119,13 @@ local function HandleBullets()
 			end
 		end
 
+		-- !!workaround!! todo: implement proper breaking
+		if IsValid( trace.Entity ) and trace.Entity:GetClass() == "func_breakable_surf" then
+			trace.Entity:Fire("break")
+
+			trace.Hit = false -- goes right through...
+		end
+
 		if trace.Hit then
 			-- hulltrace doesnt hit the wall due to its hullsize...
 			-- so this needs an extra trace line
@@ -125,7 +133,7 @@ local function HandleBullets()
 				start = Is2ndTickAlive and start + pos - dir or start,
 				endpos = start + pos + dir * 250,
 				filter = Filter,
-				mask = MASK_SHOT_HULL
+				mask = TraceMask
 			} )
 
 			if SERVER then
