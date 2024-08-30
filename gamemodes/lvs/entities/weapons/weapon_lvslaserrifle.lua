@@ -46,8 +46,12 @@ function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
 end
 
+local AllowedClasses = {
+	["prop_door_rotating"] = true,
+}
+
 function SWEP:Vaporize( target, pos, dir )
-	if target:GetClass() ~= "prop_door_rotating" then return end
+	if not AllowedClasses[ target:GetClass() ] then return end
 
 	local gib = ents.Create( "lvs_vaporized_door" )
 	gib:SetPos( target:GetPos() )
@@ -62,13 +66,9 @@ function SWEP:Vaporize( target, pos, dir )
 	target:SetNoDraw( true )
 	target:SetNotSolid( true )
 
-	if target:GetInternalVariable( "m_bLocked" ) then
-		target:Fire("unlock", "", 0)
-	end
-
-	if target:GetInternalVariable( "m_eDoorState" ) ~= 0 then
-		target:Fire("open", "", 0)
-	end
+	target:Fire("unlock", "", 0)
+	target:Fire("open", "", 0.05)
+	target:Fire("kill", "", 0.1)
 end
 
 function SWEP:PrimaryAttack()

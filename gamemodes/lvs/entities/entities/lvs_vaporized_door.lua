@@ -27,8 +27,8 @@ if SERVER then
 
 		self:SetName("cockdestroyer"..Time)
 
-		Dissolver:Fire("dissolve","cockdestroyer"..Time,0.2)
-		Dissolver:Fire( "kill", "",  0.25 )
+		Dissolver:Fire("dissolve","cockdestroyer"..Time,0)
+		Dissolver:Fire( "kill", "",  0.1 )
 
 		self:EmitSound("ambient/energy/weld"..math.random(1,2)..".wav")
 	end
@@ -45,7 +45,7 @@ if SERVER then
 end
 
 if CLIENT then
-	local Delay = 0.5
+	local Delay = 2
 
 	function ENT:Initialize()
 		self.FinishTime = CurTime() + Delay
@@ -95,13 +95,11 @@ if CLIENT then
 		local Bounds = self:GetBounds()
 		local Dir = self:GetHoleDir()
 
-		for i = -1,1,1 do
-			cam.Start3D2D( self:LocalToWorld( self:GetHolePos() ) + Dir * i, Dir:Angle() + Angle(90,0,0), 1.8 )
-				surface.SetDrawColor( Color(150 * InvScale, 200 * InvScale, 255 * InvScale, 255 * InvScale) )
-				surface.SetMaterial( ring )
-				surface.DrawTexturedRect( -Bounds.z * 0.5, -Bounds.y * 0.5, Bounds.z, Bounds.y )
-			cam.End3D2D()
-		end
+		cam.Start3D2D( self:LocalToWorld( self:GetHolePos() ) - Dir, Dir:Angle() + Angle(90,0,0), 1.8 )
+			surface.SetDrawColor( Color(150 * InvScale, 200 * InvScale, 255 * InvScale, 255 * InvScale) )
+			surface.SetMaterial( ring )
+			surface.DrawTexturedRect( -Bounds.z * 0.5, -Bounds.y * 0.5, Bounds.z, Bounds.y )
+		cam.End3D2D()
 
 		self:Draw( flags )
 	end
@@ -142,70 +140,10 @@ if CLIENT then
 		render.SetStencilEnable( false )
 	end
 
-	function ENT:GetEmitter()
-		if IsValid( self.Emitter ) then return self.Emitter end
-
-		self.Emitter = ParticleEmitter( self:GetPos(), false )
-
-		return self.Emitter
-	end
-
-	function ENT:FinishEmitter()
-		if not IsValid( self.Emitter ) then return end
-
-		self.Emitter:Finish()
-	end
-
 	function ENT:OnRemove()
-		self:FinishEmitter()
 		self:GetHoleCutter():Remove()
 	end
 
 	function ENT:Think()
-		local Scale = self:GetScale()
-
-		if Scale >= 1 or Scale <= 0.1 then self:FinishEmitter() return end
-
-		local Bounds = self:GetBounds()
-
-		local emitter = self:GetEmitter()
-
-		local StartPos = self:LocalToWorld( self:GetHolePos() )
-		local StartDir = self:GetHoleDir()
-		local StartAng = StartDir:Angle()
-
-		local Width = Bounds.y * 0.6
-		local Height = Bounds.z * 0.6
-
-		for i = 10, 360, 10 do
-			local X = math.cos( math.rad( i ) ) * Height
-			local Y = math.sin( math.rad( i ) ) * Width
-
-			local Pos = StartPos + StartAng:Up() * X + StartAng:Right() * Y + VectorRand()
-			local Dist = (Pos - StartPos):Length()
-
-			local particle = emitter:Add( "effects/fleck_tile"..math.random(1,2), Pos )
-
-			if not particle then continue end
-
-			local Size = math.Rand(2,4)
-
-			particle:SetVelocity( -StartDir * 1000 / Dist )
-			particle:SetDieTime( math.Rand(1.4,1.8) )
-			particle:SetAirResistance( 0 ) 
-			particle:SetStartAlpha( 255 )
-			particle:SetStartSize( Size )
-			particle:SetEndSize( 0 )
-			particle:SetRoll( math.Rand(-1,1) * math.pi )
-			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor(0,0,0)
-			particle:SetGravity( Vector(0,0,-600) )
-			particle:SetCollide( true )
-			particle:SetBounce( 0.1 )
-		end
-
-		self:SetNextClientThink( CurTime() + 0.04 )
-
-		return true
 	end
 end
