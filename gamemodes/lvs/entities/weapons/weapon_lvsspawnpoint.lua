@@ -226,7 +226,7 @@ function SWEP:DeleteSpawn()
 				return
 			end
 		end
-	
+
 		if GAMEMODE:GetGameState() == GAMESTATE_BUILD then
 
 			local MyTeam = ply:lvsGetAITeam()
