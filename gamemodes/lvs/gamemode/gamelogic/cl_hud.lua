@@ -168,8 +168,12 @@ function GM:HUDPaintMain()
 		local myPos = ply:GetPos()
 		local myTeam = ply:lvsGetAITeam()
 
+		local numPoints = 0
+
 		for _, ent in pairs( _LVS_ALL_SPAWN_POINTS ) do
 			if ent:GetAITEAM() ~= myTeam then continue end
+
+			numPoints = numPoints + 1
 
 			local pos = ent:GetPos() + Vector(0,0,20)
 			local scr = pos:ToScreen()
@@ -192,7 +196,7 @@ function GM:HUDPaintMain()
 			draw.SimpleText( math.Round( Dist * 0.0254, 0 ).."m", "LVS_FONT_SWITCHER", scr.x, scr.y + 24, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 		end
 
-		self:DrawGoalInfo( ply, GoalEnt, ColorDefend, "#lvs_goal_deliver" )
+		self:DrawGoalInfo( ply, GoalEnt, ColorDefend, numPoints == 0 and "#lvs_goal_survive" or "#lvs_goal_deliver" )
 
 		return
 	end
