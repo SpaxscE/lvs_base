@@ -58,11 +58,7 @@ function meta:CreateSpawnPoint()
 	return ent
 end
 
-function GM:PlayerSelectSpawn( pl, transiton )
-
-	-- If we are in transition, do not reset player's position
-	if ( transiton ) then return end
-
+function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 	local GoalEnt = self:GetGoalEntity()
 	local SpawnPoint = pl:GetSpawnPoint()
 
@@ -75,37 +71,65 @@ function GM:PlayerSelectSpawn( pl, transiton )
 
 	self:FindSpawnPoints()
 
-	local Count = table.Count( self.SpawnPoints )
+	local SpawnPoints = table.Copy( self.SpawnPoints )
 
-	if ( Count == 0 ) then
-		Msg("[PlayerSelectSpawn] Error! No spawn points!\n")
-		return nil
-	end
+	local Team = pl:lvsGetAITeam()
 
-	-- If any of the spawnpoints have a MASTER flag then only use that one.
-	-- This is needed for single player maps.
-	for k, v in pairs( self.SpawnPoints ) do
+	if not dont_filter then
+		-- add team members as spawnpoint
+		for _, target in pairs( self:GameGetPlayersTeam( Team ) ) do
+			if target == pl or not target:Alive() or target:InVehicle() or not target:OnGround() then continue end
 
-		if ( v:HasSpawnFlags( 1 ) && hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, v, true ) ) then
-			return v
+			table.insert( SpawnPoints,  target )
 		end
 
+		-- remove all spawns too close to the goal
+		if IsValid( GoalEnt ) then
+			local GoalPos = GoalEnt:GetPos()
+
+			for id, target in pairs( SpawnPoints ) do
+				if not IsValid( target ) then continue end
+
+				local MaxDist = target:IsPlayer() and 4000 or 1500
+
+				if (target:GetPos() - GoalPos):Length() < MaxDist then
+					SpawnPoints[ id ] = nil
+				end
+			end
+		end
+
+		-- remove all spawns too close to enemies
+		for id, target in pairs( SpawnPoints ) do
+			if not IsValid( target ) then continue end
+
+			local Pos = target:GetPos()
+
+			for _, enemy in pairs( self:GameGetEnemyPlayersTeam( Team ) ) do
+				if not IsValid( enemy ) or enemy:InVehicle() then continue end
+
+				if (enemy:GetPos() - Pos):Length() < 1000 then
+					SpawnPoints[ id ] = nil
+				end
+			end
+		end
 	end
+
+	local Count = table.Count( SpawnPoints )
 
 	local ChosenSpawnPoint = nil
 
-	-- Try to work out the best, random spawnpoint
 	for i = 1, Count do
 
-		ChosenSpawnPoint = table.Random( self.SpawnPoints )
+		ChosenSpawnPoint = table.Random( SpawnPoints )
 
-		if ( IsValid( ChosenSpawnPoint ) && ChosenSpawnPoint:IsInWorld() ) then
-			if ( ( ChosenSpawnPoint == pl:GetVar( "LastSpawnpoint" ) || ChosenSpawnPoint == self.LastSpawnPoint ) && Count > 1 ) then continue end
+		if IsValid( ChosenSpawnPoint ) and ChosenSpawnPoint:IsInWorld() then
+			if ( ChosenSpawnPoint == pl:GetVar( "LastSpawnpoint" ) or ChosenSpawnPoint == self.LastSpawnPoint ) and Count > 1 then continue end
 
-			if ( hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, ChosenSpawnPoint, i == Count ) ) then
+			if ChosenSpawnPoint:IsPlayer() or hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, ChosenSpawnPoint, (i == Count) ) then
 
 				self.LastSpawnPoint = ChosenSpawnPoint
 				pl:SetVar( "LastSpawnpoint", ChosenSpawnPoint )
+
 				return ChosenSpawnPoint
 
 			end
@@ -114,8 +138,12 @@ function GM:PlayerSelectSpawn( pl, transiton )
 
 	end
 
-	return ChosenSpawnPoint
+	-- all spawnpoints are too close to something. Just select a random one we dont care at this point...
+	if not dont_filter then
+		return self:PlayerSelectSpawn( pl, transiton, true )
+	end
 
+	return ChosenSpawnPoint
 end
 
 function GM:FindSpawnPoints()

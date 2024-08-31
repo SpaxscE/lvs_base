@@ -53,6 +53,38 @@ function GM:GetGameTime()
 	return ent:GetGameTime(), ent:GetGameTimeAdd()
 end
 
+function GM:GameGetEnemyPlayersTeam( Team )
+	if Team == 1 then
+		return self:GameGetPlayersTeam2()
+	end
+
+	if Team == 2 then
+		return self:GameGetPlayersTeam1()
+	end
+
+	return {}
+end
+
+function GM:GameGetPlayersTeam( Team )
+	if Team == 1 then
+		return self:GameGetPlayersTeam1()
+	end
+
+	if Team == 2 then
+		return self:GameGetPlayersTeam2()
+	end
+
+	local players = {}
+
+	for _, ply in ipairs( player.GetAll() ) do
+		if ply:lvsGetAITeam() ~= Team then continue end
+
+		table.insert( players, ply )
+	end
+
+	return players
+end
+
 function GM:GameGetPlayersTeam1()
 	local players = {}
 
