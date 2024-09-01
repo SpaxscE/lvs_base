@@ -113,7 +113,7 @@ list.Set("Fortifications", "haeuschen", {
 		"models/props_debris/concrete_spawnchunk001d.mdl",
 		"models/props_debris/rebar004a_32.mdl",
 	},
-	Health = 50000,
+	Health = 25000,
 	Price = 250,
 })
 
