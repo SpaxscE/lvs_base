@@ -251,8 +251,12 @@ function SWEP:DeleteSpawn()
 			end
 		end
 
-		ply:ChatPrint("#lvs_tool_spawnpoint_deleted")
-		ply:EmitSound("buttons/lever7.wav")
+		if not self._HintedOnce then
+			ply:ChatPrint("#lvs_tool_spawnpoint_deleted")
+			ply:EmitSound("buttons/lever7.wav")
+
+			self._HintedOnce = true
+		end
 
 		oldSpawn:Remove()
 
