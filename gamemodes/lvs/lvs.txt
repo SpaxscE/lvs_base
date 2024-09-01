@@ -22,7 +22,7 @@
 			"text"		"lvs_build_time"
 			"help"		"How long the build phase should be"
 			"type"		"Numeric"
-			"default"	"300"
+			"default"	"200"
 		}
 		3
 		{
@@ -30,7 +30,7 @@
 			"text"		"lvs_match_duration"
 			"help"		"Maximum duration of the battle mode"
 			"type"		"Numeric"
-			"default"	"1200"
+			"default"	"1800"
 		}
 		4
 		{
