@@ -50,7 +50,7 @@ CreateClientConVar( "lvs_mouseaim_type", 0, true, false)
 CreateClientConVar( "lvs_edit_hud", 1, true, false)
 CreateClientConVar( "lvs_sensitivity_x", 1, true, true)
 CreateClientConVar( "lvs_sensitivity_y", 1, true, true)
-CreateClientConVar( "lvs_return_delta", 1, true, true)
+CreateClientConVar( "lvs_return_delta", 2, true, true)
 
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
