@@ -386,7 +386,7 @@ function SWEP:PrimaryAttack()
 	local trace, allowed = self:GetTrace()
 
 	if not allowed then
-		ply:ChatPrint( "#lvs_fortifications_cant_build" )
+		ply:ChatPrint( "#lvs_fortifications_cannot_build" )
 
 		return
 	end
