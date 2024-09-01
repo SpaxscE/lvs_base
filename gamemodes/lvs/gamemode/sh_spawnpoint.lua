@@ -51,6 +51,11 @@ function meta:CreateSpawnPoint()
 
 	self:AddEntityList( ent )
 
+	-- parent to elevators
+	if IsValid( trace.Entity ) and not trace.Entity:IsWorld() and trace.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS then
+		ent:SetParent( trace.Entity )
+	end
+
 	self:SetSpawnPoint( ent )
 
 	GAMEMODE:GameSpawnPointCreated( self, ent )
