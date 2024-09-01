@@ -145,7 +145,14 @@ local function HandleBullets()
 				dmginfo:SetDamageType( DMG_AIRBOAT )
 				dmginfo:SetInflictor( (IsValid( bullet.Entity ) and bullet.Entity) or (IsValid( bullet.Attacker ) and bullet.Attacker) or game.GetWorld() )
 				dmginfo:SetDamagePosition( EndPos )
-				dmginfo:SetDamageForce( bullet.Dir * bullet.Force ) 
+
+				if bullet.Force1km then
+					local Mul = math.min( (start - EndPos):Length() / 39370, 1 )
+					local invMul = math.max( 1 - Mul, 0 )
+					dmginfo:SetDamageForce( bullet.Dir * (bullet.Force * invMul + bullet.Force1km * Mul) )
+				else
+					dmginfo:SetDamageForce( bullet.Dir * bullet.Force )
+				end
 
 				if bullet.Callback then
 					bullet.Callback( bullet.Attacker, traceImpact, dmginfo )
@@ -225,6 +232,11 @@ if SERVER then
 		bullet.Src = data.Src or vector_origin
 		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
 		bullet.Force = data.Force or 10
+
+		if data.Force1km then
+			bullet.Force1km = data.Force1km
+		end
+
 		bullet.HullSize = data.HullSize or 5
 		bullet.Mins = -vector_one * bullet.HullSize
 		bullet.Maxs = vector_one * bullet.HullSize
