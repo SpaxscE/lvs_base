@@ -98,6 +98,25 @@ list.Set("Fortifications", "dragonsteeth", {
 	Price = 50,
 })
 
+list.Set("Fortifications", "haeuschen", {
+	Name = "#lvs_bunker",
+	Purpose = "#lvs_bunker_info",
+	Class = "lvs_fortification_vehicleblocker",
+	Model = "models/props_phx/misc/bunker01.mdl",
+	Icon = Material( "lvs/fortifications/bunker.png" ),
+	Offset = -2.8,
+	GibModels = {
+		"models/props_junk/rock001a.mdl",
+		"models/props_combine/breenbust_chunk05.mdl",
+		"models/props_combine/breenbust_chunk06.mdl",
+		"models/props_combine/breenbust_chunk07.mdl",
+		"models/props_debris/concrete_spawnchunk001d.mdl",
+		"models/props_debris/rebar004a_32.mdl",
+	},
+	Health = 50000,
+	Price = 250,
+})
+
 list.Set("Fortifications", "wirefence", {
 	Name = "#lvs_wirefence",
 	Purpose = "#lvs_wirefence_info",
@@ -366,7 +385,11 @@ function SWEP:PrimaryAttack()
 
 	local trace, allowed = self:GetTrace()
 
-	if not allowed then return end
+	if not allowed then
+		ply:ChatPrint( "#lvs_fortifications_cant_build" )
+
+		return
+	end
 
 	if not ply:CanAfford( Object.Price ) then
 		ply:ChatPrint( "#lvs_hint_nomoney" )
