@@ -111,24 +111,26 @@ if SERVER then
 	function ENT:OnCollide( data, physobj )
 		if not self.TouchDamageEnabled or not data.HitEntity:IsPlayer() then return end
 
-		local dmginfo = DamageInfo()
-		dmginfo:SetDamage( self.TouchDamage )
-		dmginfo:SetAttacker( self:GetCreatedBy() )
-		dmginfo:SetInflictor( self )
-		dmginfo:SetDamagePosition( data.HitPos )
-		dmginfo:SetDamageType( DMG_SLASH ) 
+		if self:IsEnemy( data.HitEntity ) then
+			local dmginfo = DamageInfo()
+			dmginfo:SetDamage( self.TouchDamage )
+			dmginfo:SetAttacker( self:GetCreatedBy() )
+			dmginfo:SetInflictor( self )
+			dmginfo:SetDamagePosition( data.HitPos )
+			dmginfo:SetDamageType( DMG_SLASH ) 
 
-		data.HitEntity:TakeDamageInfo( dmginfo )
+			data.HitEntity:TakeDamageInfo( dmginfo )
+		end
 
 		if istable( self.TouchSounds ) then
-			self.EmitSound( table.Random( self.TouchSounds ) )
+			self:EmitSound( table.Random( self.TouchSounds ), 60, 100, 0.1 + math.min(data.TheirOldVelocity:Length() / 400,0.9) )
 
 			return
 		end
 
 		if not isstring( self.TouchSounds ) then return end
 
-		self.EmitSound( self.TouchSounds )
+		self:EmitSound( self.TouchSounds, 60, 100, 0.1 + math.min(data.TheirOldVelocity:Length() / 400,0.9) )
 	end
 
 	function ENT:PhysicsCollide( data, physobj )

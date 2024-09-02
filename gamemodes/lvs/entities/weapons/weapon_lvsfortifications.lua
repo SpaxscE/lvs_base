@@ -126,7 +126,7 @@ list.Set("Fortifications", "wirefence", {
 	Icon = Material( "lvs/fortifications/wirefence.png" ),
 	Members = {
 		TouchDamageEnabled = true,
-		TouchDamage = 10,
+		TouchDamage = 1,
 		TouchSounds = {
 			"physics/metal/metal_chainlink_impact_soft1.wav",
 			"physics/metal/metal_chainlink_impact_soft2.wav",
