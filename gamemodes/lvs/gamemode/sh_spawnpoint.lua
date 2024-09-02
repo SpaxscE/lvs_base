@@ -90,6 +90,10 @@ function meta:SetSpawnPoint( ent )
 	self:SetNWEntity( "spawnpoint", ent )
 end
 
+local BlockedClasses = {
+	["func_lod"] = true,
+}
+
 function meta:CreateSpawnPoint()
 	if IsValid( self:GetSpawnPoint() ) then
 		return self:GetSpawnPoint()
@@ -119,7 +123,7 @@ function meta:CreateSpawnPoint()
 	self:AddEntityList( ent )
 
 	-- parent to elevators
-	if IsValid( trace.Entity ) and not trace.Entity:IsWorld() and trace.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS then
+	if IsValid( trace.Entity ) and not trace.Entity:IsWorld() and trace.Entity:GetMoveType() ~= MOVETYPE_VPHYSICS and not BlockedClasses[ trace.Entity:GetClass() ] then
 		ent:SetParent( trace.Entity )
 	end
 

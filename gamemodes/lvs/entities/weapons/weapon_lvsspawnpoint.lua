@@ -67,7 +67,7 @@ function SWEP:IsRequestingDelete()
 
 	if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
 
-	return ply:KeyDown( IN_ATTACK2 ) or ply:KeyDown( IN_RELOAD )
+	return (ply:KeyDown( IN_ATTACK2 ) or ply:KeyDown( IN_RELOAD )) and not ply:KeyDown( IN_ATTACK )
 end
 
 if CLIENT then
@@ -223,19 +223,21 @@ if CLIENT then
 	end)
 
 	local function GetSpeedMultiplier( ply )
-		if not ply:Alive() or ply:GetViewEntity() ~= ply then return false end
-
 		local weapon = ply:GetActiveWeapon()
 
 		if not IsValid( weapon ) or not weapon.MeleeThirdPerson or not isfunction( weapon.GetSpeedMultiplier ) then return false end
+
+		if weapon.ShouldFirstPerson and weapon:ShouldFirstPerson() then return false end
 
 		if ply:InVehicle() and not ply:GetAllowWeaponsInVehicle() then return false end
 
 		return weapon:GetSpeedMultiplier()
 	end
 
-	local function GetViewOrigin()
-		local ply = LocalPlayer()
+	local function GetViewOrigin( ply )
+		if not ply then
+			ply = LocalPlayer()
+		end
 
 		if not IsValid( ply ) then return vector_origin end
 
@@ -249,7 +251,6 @@ if CLIENT then
 		local trace = util.TraceHull({
 			start = pos,
 			endpos = endpos,
-			mask = MASK_SOLID_BRUSHONLY,
 			mins = Vector(-5,-5,-5),
 			maxs = Vector(5,5,5),
 			filter = { ply },
@@ -258,8 +259,20 @@ if CLIENT then
 		return trace.HitPos
 	end
 
+	function SWEP:ShouldFirstPerson()
+		local ply = self:GetOwner()
+
+		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:IsPlayingTaunt() then return true end
+
+		local pos = ply:GetShootPos()
+
+		if (GetViewOrigin( ply ) - pos):Length() < 20 then return true end
+
+		return false
+	end
+
 	function SWEP:CalcView( ply, pos, angles, fov )
-		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:IsPlayingTaunt() then return end
+		if self:ShouldFirstPerson() then return end
 
 		return GetViewOrigin(), ply:EyeAngles(), fov
 	end
@@ -269,7 +282,7 @@ if CLIENT then
 	hook.Add( "CalcView", "!!!!!!!!!!!!simple_thirdperson",  function( ply, pos, angles, fov )
 		local Multiplier = GetSpeedMultiplier( ply )
 
-		if not Multiplier or ply:IsPlayingTaunt() then smFov = fov return end
+		if not Multiplier then smFov = fov return end
 
 		smFov = smFov + (fov * (1 - Multiplier) + 100 * Multiplier - smFov) * math.min( FrameTime() * 10, 1 )
 
