@@ -77,7 +77,6 @@ function PLAYER:Loadout()
 		end
 	end
 
-	self.Player:Give( "weapon_lvsmelee" )
 	self.Player:Give( "weapon_lvsspawnpoint" )
 
 	if not hook.Run( "LVS.PlayerLoadoutTools", self.Player ) then
