@@ -3,10 +3,11 @@ AddCSLuaFile()
 SWEP.Category				= "[LVS]"
 SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= false
+
 SWEP.ViewModel			= "models/weapons/c_arms.mdl"
-SWEP.WorldModel			= ""
-SWEP.ViewModelFOV			= 54
-SWEP.UseHands				= false
+SWEP.WorldModel			= "models/weapons/c_arms.mdl"
+SWEP.UseHands				= true
+SWEP.ViewModelFOV			= 90
 
 SWEP.HoldType				= "normal"
 
@@ -63,6 +64,9 @@ if CLIENT then
 
 		-- Draw weapon info box
 		self:PrintWeaponInfo( x + wide + 20, y + tall * 0.95, alpha )
+	end
+
+	function SWEP:DrawWorldModel()
 	end
 
 	local circles = include("includes/circles/circles.lua")
@@ -269,6 +273,14 @@ function SWEP:Initialize()
 end
 
 function SWEP:Deploy()
+	local ply = self:GetOwner()
+
+	if IsValid( ply ) then
+		local vm = ply:GetViewModel()
+		vm:SendViewModelMatchingSequence( vm:LookupSequence( "seq_admire" ) )
+		vm:SetPlaybackRate( 1 )
+	end
+
 	return true
 end
 
