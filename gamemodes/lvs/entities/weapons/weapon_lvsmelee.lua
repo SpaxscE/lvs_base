@@ -165,7 +165,7 @@ if CLIENT then
 	end
 
 	function SWEP:CalcView( ply, pos, angles, fov )
-		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() then return end
+		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:FlashlightIsOn() then return end
 
 		return GetViewOrigin(), ply:EyeAngles(), fov
 	end
@@ -175,7 +175,7 @@ if CLIENT then
 	hook.Add( "CalcView", "!!!!!!!!!!!!simple_thirdperson",  function( ply, pos, angles, fov )
 		local Multiplier = GetSpeedMultiplier( ply )
 
-		if not Multiplier then smFov = fov return end
+		if not Multiplier or ply:FlashlightIsOn() then smFov = fov return end
 
 		smFov = smFov + (fov * (1 - Multiplier) + 100 * Multiplier - smFov) * math.min( FrameTime() * 10, 1 )
 
