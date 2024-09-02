@@ -155,7 +155,7 @@ local function HandleBullets()
 				end
 
 				if bullet.Callback then
-					bullet.Callback( bullet.Attacker, traceImpact, dmginfo )
+					bullet.Callback( bullet.Attacker, trace, dmginfo )
 				end
 
 				trace.Entity:TakeDamageInfo( dmginfo )
