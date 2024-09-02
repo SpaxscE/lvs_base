@@ -8,14 +8,81 @@ function meta:GetSpawnPoint()
 end
 
 if CLIENT then
-	-- info spawn points dont exist clientside
-	-- TODO: network positions to client
 	function GM:FindSpawnPoints()
-		return {}
+		if not istable( self.SpawnPoints ) then
+			self.SpawnPoints = {}
+
+			net.Start( "lvs_request_spawnpoint_locations" )
+			net.SendToServer()
+		end
+
+		return self.SpawnPoints
 	end
+
+	local FakeSpawnPointEntity = {}
+	FakeSpawnPointEntity.__index = FakeSpawnPointEntity
+
+	function FakeSpawnPointEntity:SetPos( pos )
+		self.curpos = pos or vector_origin
+	end
+
+	function FakeSpawnPointEntity:GetPos()
+		if not self.curpos then return vector_origin end
+
+		return self.curpos
+	end
+
+	function FakeSpawnPointEntity:GetAngles()
+		return angle_zero
+	end
+
+	function FakeSpawnPointEntity:IsValid()
+		return true
+	end
+
+	net.Receive( "lvs_request_spawnpoint_locations", function( len )
+		GAMEMODE.SpawnPoints = {}
+
+		local Num = net.ReadInt( 10 )
+
+		if Num <= 0 then return end
+
+		for i = 1, Num do
+			local SpawnPoint = {}
+
+			setmetatable( SpawnPoint, FakeSpawnPointEntity )
+
+			SpawnPoint:SetPos( net.ReadVector() )
+
+			table.insert( GAMEMODE.SpawnPoints, SpawnPoint )
+		end
+	end )
 
 	return
 end
+
+util.AddNetworkString( "lvs_request_spawnpoint_locations" )
+
+net.Receive( "lvs_request_spawnpoint_locations", function( len, ply )
+	if ply._lvsHasSpawnPointRequested then return end
+
+	ply._lvsHasSpawnPointRequested = true
+
+	local SpawnPoints = GAMEMODE:FindSpawnPoints()
+
+	net.Start( "lvs_request_spawnpoint_locations" )
+		net.WriteInt( table.Count( SpawnPoints ), 10 )
+
+		for _, ent in pairs( SpawnPoints ) do
+			local pos = vector_origin
+
+			if IsValid( ent ) then pos = ent:GetPos() end
+
+			net.WriteVector( pos )
+		end
+
+	net.Send( ply )
+end )
 
 function meta:SetSpawnPoint( ent )
 	self._CurSpawnPoint = ent
