@@ -19,7 +19,7 @@ if SERVER then
 
 		self:PhysWake()
 
-		self:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
+		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 
 		self:DrawShadow( false )
 	end
