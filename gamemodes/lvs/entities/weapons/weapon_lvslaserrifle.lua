@@ -145,13 +145,6 @@ function SWEP:PrimaryAttack()
 
 		ply:ViewPunch( Angle(-1,0,0) + Angle(-2,-1,0) * dmgMul )
 
-		if ply:OnGround() then
-			Dir.z = 0
-			Dir:Normalize()
-
-			ply:SetVelocity( -Dir * 200 * dmgMul )
-		end
-
 		local effectdata = EffectData()
 		effectdata:SetStart( trace.HitPos )
 		effectdata:SetOrigin( self:GetPos() )

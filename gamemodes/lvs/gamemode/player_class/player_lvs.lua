@@ -67,7 +67,7 @@ function PLAYER:Loadout()
 
 	if GameState ~= GAMESTATE_BUILD then
 		if not hook.Run( "LVS.PlayerLoadoutWeapons", self.Player ) and GetConVar( "lvs_weapons" ):GetBool() then
-			self.Player:GiveAmmo( 40, "SniperRound", true )
+			self.Player:GiveAmmo( 6, "SniperRound", true )
 			self.Player:GiveAmmo( 24, "GaussEnergy", true )
 
 			self.Player:Give( "weapon_lvslasergun" )

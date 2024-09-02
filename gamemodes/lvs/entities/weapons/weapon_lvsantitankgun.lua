@@ -13,8 +13,8 @@ SWEP.UseHands				= true
 
 SWEP.HoldType				= "rpg"
 
-SWEP.Primary.ClipSize		= 4
-SWEP.Primary.DefaultClip		= 4
+SWEP.Primary.ClipSize		= 1
+SWEP.Primary.DefaultClip		= 1
 SWEP.Primary.Automatic		= true
 SWEP.Primary.Ammo			= "SniperRound"
 
@@ -22,6 +22,11 @@ SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
+
+SWEP.DisableBallistics = false
+
+SWEP.AmmoWarningCountClip = 0
+SWEP.AmmoWarningCountMag = 1
 
 function SWEP:SetupDataTables()
 end
@@ -107,6 +112,15 @@ function SWEP:PrimaryAttack()
 		self:EmitSound("weapons/flaregun/fire.wav",75,255,1)
 
 		ply:ViewPunch( Angle(-math.Rand(3,5),-math.Rand(3,5),0) )
+
+		local Dir = ply:GetAimVector()
+
+		if ply:OnGround() then
+			Dir.z = 0
+			Dir:Normalize()
+		end
+
+		ply:SetVelocity( -Dir * 200 )
 	end
 
 	if CLIENT then return end
@@ -120,6 +134,7 @@ function SWEP:PrimaryAttack()
 
 	bullet.TracerName = "lvs_tracer_antitankgun"
 	bullet.Force	= 4000
+	bullet.Force1km	= 0
 	bullet.HullSize 	= 2
 	bullet.Damage	= 100
 
@@ -132,6 +147,8 @@ function SWEP:PrimaryAttack()
 		end
 
 		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
+
+		if not tr.HitWorld then return end
 
 		local effectdata = EffectData()
 		effectdata:SetOrigin( tr.HitPos )
