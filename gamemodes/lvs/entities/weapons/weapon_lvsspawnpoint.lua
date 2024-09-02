@@ -25,7 +25,7 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
-SWEP.SprintTime = 10
+SWEP.SprintTime = 3
 SWEP.SprintSpeedAdd = 300
 
 SWEP.MeleeThirdPerson = true
@@ -33,6 +33,14 @@ SWEP.MeleeAnimations = true
 
 SWEP.SpawnDistance = 512
 SWEP.SpawnDistanceEnemy = 2048
+
+SWEP.RemoveTime = 10
+
+function SWEP:GetRemoveTime()
+	if GAMEMODE:GetGameState() <= GAMESTATE_BUILD then return 1 end
+
+	return self.RemoveTime
+end
 
 function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool", 1, "Sprinting" )
@@ -42,16 +50,20 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Bool", 2, "SpawnValid" )
 end
 
-function SWEP:GetRemoveTime()
-	return 1
-end
-
 function SWEP:IsSprinting()
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return false end
 
-	return ply:KeyDown( IN_SPEED ) and ply:KeyDown( IN_FORWARD ) and ply:GetVelocity():Length2D() > ply:GetWalkSpeed()
+	local IsSprinting = ply:KeyDown( IN_SPEED ) and ply:KeyDown( IN_FORWARD ) and ply:GetVelocity():Length2D() > ply:GetWalkSpeed()
+
+	if not IsSprinting then return false end
+
+	local GoalEnt = GAMEMODE:GetGoalEntity()
+
+	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then return false end
+
+	return not IsValid( ply:GetSpawnPoint() )
 end
 
 function SWEP:GetSpeedMultiplier()

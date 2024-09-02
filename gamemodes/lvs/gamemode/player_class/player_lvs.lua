@@ -19,14 +19,14 @@ PLAYER.RunSpeed			= 300
 PLAYER.CrouchedWalkSpeed	= 1		-- Multiply move speed by this when crouching
 
 PLAYER.DuckSpeed			= 0.1		-- How fast to go from not ducking, to ducking
-PLAYER.UnDuckSpeed			= 0.1		-- How fast to go from ducking, to not ducking
+PLAYER.UnDuckSpeed		= 0.1		-- How fast to go from ducking, to not ducking
 
 PLAYER.JumpPower			= 200		-- How powerful our jump should be
 PLAYER.CanUseFlashlight		= true		-- Can we use the flashlight
 PLAYER.MaxHealth			= 100		-- Max health we can have
-PLAYER.MaxArmor				= 100		-- Max armor we can have
+PLAYER.MaxArmor			= 100		-- Max armor we can have
 PLAYER.StartHealth			= 100		-- How much health we start with
-PLAYER.StartArmor			= 100			-- How much armour we start with
+PLAYER.StartArmor			= 100		-- How much armour we start with
 PLAYER.DropWeaponOnDie		= false		-- Do we drop our weapon when we die
 PLAYER.TeammateNoCollide	= true		-- Do we collide with teammates or run straight through them
 PLAYER.AvoidPlayers			= true		-- Automatically swerves around other players
