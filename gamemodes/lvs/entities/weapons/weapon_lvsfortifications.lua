@@ -20,6 +20,7 @@ SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.SpawnDistance = 512
+SWEP.SpawnDistanceEnemy = 2048
 
 list.Set("Fortifications", "repairstation", {
 	Name = "#lvs_repairstation",
@@ -187,6 +188,7 @@ function SWEP:GetTrace()
 
 	if not IsValid( ply ) then return end
 
+	local MyTeam = ply:lvsGetAITeam()
 	local Trace = ply:GetEyeTrace()
 
 	local SpawnAllowed = (Trace.HitPos - ply:GetShootPos()):Length() < self.SpawnDistance
@@ -201,6 +203,18 @@ function SWEP:GetTrace()
 
 	for _, ent in pairs( GAMEMODE:FindSpawnPoints() ) do
 		if (Trace.HitPos - ent:GetPos()):Length() < 64 then
+			SpawnAllowed = false
+		end
+	end
+
+	for _, spawnpoint in ipairs( ents.FindByClass( "lvs_spawnpoint" ) ) do
+		if not SpawnAllowed then break end
+
+		local Team = spawnpoint:GetAITEAM()
+
+		if Team == MyTeam then continue end
+
+		if (spawnpoint:GetPos() - Trace.HitPos):Length() < self.SpawnDistanceEnemy then
 			SpawnAllowed = false
 		end
 	end

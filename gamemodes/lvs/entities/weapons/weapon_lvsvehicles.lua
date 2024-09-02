@@ -20,6 +20,8 @@ SWEP.Secondary.Automatic		= true
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.SpawnDistance = 512
+SWEP.SpawnDistanceEnemy = 2048
+
 SWEP.RemoveDistance = 512
 SWEP.RemoveTime = 10
 
@@ -39,9 +41,22 @@ function SWEP:GetTrace()
 
 	if not IsValid( ply ) then return end
 
+	local MyTeam = ply:lvsGetAITeam()
 	local Trace = ply:GetEyeTrace()
 
 	local SpawnAllowed = (Trace.HitPos - ply:GetShootPos()):Length() < self.SpawnDistance
+
+	for _, spawnpoint in ipairs( ents.FindByClass( "lvs_spawnpoint" ) ) do
+		if not SpawnAllowed then break end
+
+		local Team = spawnpoint:GetAITEAM()
+
+		if Team == MyTeam then continue end
+
+		if (spawnpoint:GetPos() - Trace.HitPos):Length() < self.SpawnDistanceEnemy then
+			SpawnAllowed = false
+		end
+	end
 
 	local StartPos = Trace.HitPos + Vector(0,0,8)
 
