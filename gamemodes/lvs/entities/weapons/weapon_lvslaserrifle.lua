@@ -148,9 +148,9 @@ function SWEP:PrimaryAttack()
 		if ply:OnGround() then
 			Dir.z = 0
 			Dir:Normalize()
-		end
 
-		ply:SetVelocity( -Dir * 200 * dmgMul )
+			ply:SetVelocity( -Dir * 200 * dmgMul )
+		end
 
 		local effectdata = EffectData()
 		effectdata:SetStart( trace.HitPos )
