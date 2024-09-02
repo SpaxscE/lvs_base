@@ -136,16 +136,12 @@ function SWEP:PrimaryAttack()
 	bullet.Force	= 4000
 	bullet.Force1km	= 0
 	bullet.HullSize 	= 2
-	bullet.Damage	= 100
+	bullet.Damage	= 200
 
 	bullet.Velocity = 8000
 	bullet.Entity = self
 	bullet.Attacker 	= ply
 	bullet.Callback = function(att, tr, dmginfo)
-		if tr.Entity:IsPlayer() then
-			dmginfo:ScaleDamage( 2 )
-		end
-
 		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
 
 		if not tr.HitWorld then return end
