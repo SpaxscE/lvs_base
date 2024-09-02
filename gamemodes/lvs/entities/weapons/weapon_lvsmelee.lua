@@ -232,7 +232,15 @@ function SWEP:Think()
 end
 
 function SWEP:Initialize()
-	self:SetHoldType( self.HoldType )
+	local ply = self:GetOwner()
+
+	if not IsValid( ply ) then return end
+
+	if ply:FlashlightIsOn() then
+		self:SetHoldType( self.HoldTypeFlashlight )
+	else
+		self:SetHoldType( self.HoldType )
+	end
 end
 
 function SWEP:PrimaryAttack()
