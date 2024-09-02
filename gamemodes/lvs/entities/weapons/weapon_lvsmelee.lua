@@ -8,8 +8,9 @@ SWEP.Spawnable			= true
 SWEP.AdminSpawnable		= false
 
 SWEP.ViewModel			= "models/weapons/c_arms.mdl"
-SWEP.WorldModel			= ""
+SWEP.WorldModel			= "models/weapons/c_arms.mdl"
 SWEP.UseHands				= true
+SWEP.ViewModelFOV			= 90
 
 SWEP.HoldType				= "normal"
 
@@ -104,6 +105,9 @@ if CLIENT then
 		end
 	end
 
+	function SWEP:DrawWorldModel()
+	end
+
 	hook.Add("CalcMainActivity", "!!!!!lvs_testanim", function( ply )
 		if ply:InVehicle() or not ply:OnGround() or ply:IsFlagSet( FL_ANIMDUCKING ) or ply.m_bInSwim then return end
 
@@ -165,7 +169,7 @@ if CLIENT then
 	end
 
 	function SWEP:CalcView( ply, pos, angles, fov )
-		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:FlashlightIsOn() then return end
+		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:FlashlightIsOn() or ply:IsPlayingTaunt() then return end
 
 		return GetViewOrigin(), ply:EyeAngles(), fov
 	end
@@ -175,7 +179,7 @@ if CLIENT then
 	hook.Add( "CalcView", "!!!!!!!!!!!!simple_thirdperson",  function( ply, pos, angles, fov )
 		local Multiplier = GetSpeedMultiplier( ply )
 
-		if not Multiplier or ply:FlashlightIsOn() then smFov = fov return end
+		if not Multiplier or ply:FlashlightIsOn() or ply:IsPlayingTaunt() then smFov = fov return end
 
 		smFov = smFov + (fov * (1 - Multiplier) + 100 * Multiplier - smFov) * math.min( FrameTime() * 10, 1 )
 
@@ -233,9 +237,20 @@ end
 
 function SWEP:OnDrop()
 	self:ResetPlayerSpeed()
+
+	self:Remove() -- You can't drop fists
 end
 
 function SWEP:Deploy()
+
+	local ply = self:GetOwner()
+
+	if IsValid( ply ) then
+		local vm = ply:GetViewModel()
+		vm:SendViewModelMatchingSequence( vm:LookupSequence( "seq_admire" ) )
+		vm:SetPlaybackRate( 1 )
+	end
+
 	self:ResetPlayerSpeed()
 	self:SetSprinting( false )
 
