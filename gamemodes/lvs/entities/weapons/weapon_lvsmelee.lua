@@ -13,6 +13,7 @@ SWEP.UseHands				= true
 SWEP.ViewModelFOV			= 90
 
 SWEP.HoldType				= "normal"
+SWEP.HoldTypeFlashlight		= "pistol"
 
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip		= -1
@@ -109,7 +110,7 @@ if CLIENT then
 	end
 
 	hook.Add("CalcMainActivity", "!!!!!lvs_testanim", function( ply )
-		if ply:InVehicle() or not ply:OnGround() or ply:IsFlagSet( FL_ANIMDUCKING ) or ply.m_bInSwim then return end
+		if ply:FlashlightIsOn() or ply:InVehicle() or not ply:OnGround() or ply:IsFlagSet( FL_ANIMDUCKING ) or ply.m_bInSwim then return end
 
 		local weapon = ply:GetActiveWeapon() 
 
@@ -169,7 +170,7 @@ if CLIENT then
 	end
 
 	function SWEP:CalcView( ply, pos, angles, fov )
-		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:FlashlightIsOn() or ply:IsPlayingTaunt() then return end
+		if not IsValid( ply ) or ply:GetViewEntity() ~= ply or not ply:Alive() or ply:IsPlayingTaunt() then return end
 
 		return GetViewOrigin(), ply:EyeAngles(), fov
 	end
@@ -179,7 +180,7 @@ if CLIENT then
 	hook.Add( "CalcView", "!!!!!!!!!!!!simple_thirdperson",  function( ply, pos, angles, fov )
 		local Multiplier = GetSpeedMultiplier( ply )
 
-		if not Multiplier or ply:FlashlightIsOn() or ply:IsPlayingTaunt() then smFov = fov return end
+		if not Multiplier or ply:IsPlayingTaunt() then smFov = fov return end
 
 		smFov = smFov + (fov * (1 - Multiplier) + 100 * Multiplier - smFov) * math.min( FrameTime() * 10, 1 )
 
@@ -198,6 +199,18 @@ function SWEP:Think()
 	local ply = self:GetOwner()
 
 	if not IsValid( ply ) then return end
+
+	local LightsOn = ply:FlashlightIsOn() 
+
+	if ply._OldFlashLightOn ~= LightsOn then
+		ply._OldFlashLightOn = LightsOn
+
+		if LightsOn then
+			self:SetHoldType( self.HoldTypeFlashlight )
+		else
+			self:SetHoldType( self.HoldType )
+		end
+	end
 
 	local T = CurTime()
 
