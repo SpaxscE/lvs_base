@@ -216,7 +216,7 @@ if SERVER then
 			ent:Spawn()
 			ent:Activate()
 			ent:SetRenderMode( RENDERMODE_TRANSALPHA )
-			ent:SetCollisionGroup( COLLISION_GROUP_WORLD )
+			ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS )
 
 			local PhysObj = ent:GetPhysicsObject()
 
