@@ -36,7 +36,24 @@ function GM:SpawnRandomGoal()
 			mask = MASK_SOLID_BRUSHONLY,
 		} )
 
-		if trace.HitSky then continue end
+		local Hit = trace.HitSky
+
+		local traceUp = util.TraceLine( {
+			start = StartPos,
+			endpos = StartPos + Vector(0,0,16),
+			filter = ent,
+		} )
+
+		local traceDn = util.TraceLine( {
+			start = StartPos,
+			endpos = StartPos - Vector(0,0,16),
+			filter = ent,
+		} )
+
+		-- both up and down trace are hitting. The spawnpoint must be stuck in a brush or prop.
+		if traceUp.Hit and traceDn.Hit then Hit = true end
+
+		if Hit then continue end
 
 		for _, ply in pairs( AllPlayers ) do
 			local DistToPlayer = (ent:GetPos() - ply:GetPos()):LengthSqr()
@@ -75,10 +92,14 @@ function GM:SpawnTempEnts()
 	-- copy table, so we dont clog it up if this is called again
 	local SpawnPoints = table.Copy( self:FindSpawnPoints() )
 
-	if not istable( SpawnPoints ) or #SpawnPoints == 0 then print("[LVS] - ERROR can not start gamemode! No spawn points!\n\n") return end
+	if not istable( SpawnPoints ) then SpawnPoints = {} end
 
 	-- add player spawns for more variation to maps that have a spawn room
 	table.Add( SpawnPoints, ents.FindByClass( "lvs_spawnpoint" ) )
+
+	-- add players as possible spawnpoints aswell
+	table.Add( SpawnPoints, self:GameGetPlayersTeam1() )
+	table.Add( SpawnPoints, self:GameGetPlayersTeam2() )
 
 	while Index < 16 do
 		for _, point in pairs( SpawnPoints ) do
