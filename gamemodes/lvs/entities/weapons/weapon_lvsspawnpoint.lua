@@ -22,6 +22,7 @@ SWEP.Secondary.Automatic		= false
 SWEP.Secondary.Ammo		= "none"
 
 SWEP.SpawnDistance = 512
+SWEP.SpawnDistanceEnemy = 2048
 
 function SWEP:GetRemoveTime()
 	return 1
@@ -175,8 +176,21 @@ function SWEP:PrimaryAttack()
 
 	if not IsValid( ply ) then return end
 
-	local GoalEnt = GAMEMODE:GetGoalEntity()
+	local MyTeam = ply:lvsGetAITeam()
+	local MyPos = ply:GetPos()
+	for _, spawnpoint in ipairs( ents.FindByClass( "lvs_spawnpoint" ) ) do
+		local Team = spawnpoint:GetAITEAM()
 
+		if Team == MyTeam then continue end
+
+		if (spawnpoint:GetPos() - MyPos):Length() < self.SpawnDistanceEnemy then
+			ply:ChatPrint("#lvs_tool_spawnpoint_fail_enemy")
+
+			return
+		end
+	end
+
+	local GoalEnt = GAMEMODE:GetGoalEntity()
 	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then
 		ply:ChatPrint("#lvs_tool_spawnpoint_fail_objective")
 
