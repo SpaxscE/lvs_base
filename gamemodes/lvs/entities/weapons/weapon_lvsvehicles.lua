@@ -62,7 +62,7 @@ function SWEP:GetTrace()
 
 	local roofTrace = util.TraceHull( {
 		start = StartPos,
-		endpos = StartPos + Vector(0,0,180),
+		endpos = StartPos + Vector(0,0,200),
 		mins = Vector( -32, -32, 0 ),
 		maxs = Vector( 32, 32, 0 ),
 		mask = MASK_SOLID_BRUSHONLY
