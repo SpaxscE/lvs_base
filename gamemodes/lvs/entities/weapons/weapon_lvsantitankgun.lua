@@ -13,10 +13,10 @@ SWEP.UseHands				= true
 
 SWEP.HoldType				= "rpg"
 
-SWEP.Primary.ClipSize		= 1
-SWEP.Primary.DefaultClip		= 1
+SWEP.Primary.ClipSize		= 2
+SWEP.Primary.DefaultClip		= 2
 SWEP.Primary.Automatic		= true
-SWEP.Primary.Ammo			= "SniperRound"
+SWEP.Primary.Ammo			= "RPG_Round"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
@@ -29,6 +29,7 @@ SWEP.AmmoWarningCountClip = 0
 SWEP.AmmoWarningCountMag = 1
 
 function SWEP:SetupDataTables()
+	self:NetworkVar( "Float", 0, "ReloadTime" )
 end
 
 if CLIENT then
@@ -37,6 +38,12 @@ if CLIENT then
 
 	SWEP.Slot				= 1
 	SWEP.SlotPos			= 1
+
+	function SWEP:DrawWorldModel( flags )
+		if self:GetReloadTime() > CurTime() then return end
+
+		self:DrawModel( flags )
+	end
 
 	function SWEP:DrawWeaponSelection( x, y, wide, tall, alpha )
 		draw.SimpleText( "i", "WeaponIcons", x + wide/2, y + tall*0.2, Color( 255, 210, 0, 255 ), TEXT_ALIGN_CENTER )
@@ -69,8 +76,8 @@ if CLIENT then
 		self.ActivityTranslate[ ACT_MP_ATTACK_CROUCH_PRIMARYFIRE ]	= index + 5
 		
 		if t == "rpg" then
-			self.ActivityTranslate[ ACT_MP_RELOAD_STAND ]				= ACT_HL2MP_IDLE_PISTOL + 6
-			self.ActivityTranslate[ ACT_MP_RELOAD_CROUCH ]				= ACT_HL2MP_IDLE_PISTOL + 6
+			self.ActivityTranslate[ ACT_MP_RELOAD_STAND ]				= ACT_HL2MP_IDLE_SMG1 + 6
+			self.ActivityTranslate[ ACT_MP_RELOAD_CROUCH ]				= ACT_HL2MP_IDLE_SMG1 + 6
 		end
 		
 		self.ActivityTranslate[ ACT_MP_JUMP ]						= index + 7
@@ -97,7 +104,7 @@ end
 function SWEP:PrimaryAttack()
 	if not self:CanPrimaryAttack() then return end
 
-	self:SetNextPrimaryFire( CurTime() + 1 )
+	self:SetNextPrimaryFire( CurTime() + 0.5 )
 
 	self:TakePrimaryAmmo( 1 )
 
@@ -108,8 +115,7 @@ function SWEP:PrimaryAttack()
 	if not IsValid( ply ) then return end
 
 	if IsFirstTimePredicted() then
-		self:EmitSound("weapons/ar2/ar2_altfire.wav",75,80,1,CHAN_ITEM)
-		self:EmitSound("weapons/flaregun/fire.wav",75,255,1)
+		self:EmitSound("weapons/357/357_fire"..math.random(2,3)..".wav",75,75,1)
 
 		ply:ViewPunch( Angle(-math.Rand(3,5),-math.Rand(3,5),0) )
 
@@ -136,19 +142,17 @@ function SWEP:PrimaryAttack()
 	bullet.Force	= 4000
 	bullet.Force1km	= 0
 	bullet.HullSize 	= 2
-	bullet.Damage	= 200
+	bullet.Damage	= 100
 
 	bullet.Velocity = 8000
 	bullet.Entity = self
 	bullet.Attacker 	= ply
 	bullet.Callback = function(att, tr, dmginfo)
+		if tr.Entity:IsPlayer() then
+			dmginfo:ScaleDamage( 2 )
+		end
+
 		dmginfo:SetDamageType( DMG_SNIPER + DMG_ALWAYSGIB )
-
-		if not tr.HitWorld then return end
-
-		local effectdata = EffectData()
-		effectdata:SetOrigin( tr.HitPos )
-		util.Effect(  "lvs_fortification_explosion_mine", effectdata )
 	end
 
 	LVS:FireBullet( bullet )
@@ -158,8 +162,32 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-	if self:DefaultReload( ACT_VM_RELOAD ) then
-		self:EmitSound("npc/sniper/reload1.wav")
+	if self:Clip1() >= self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) == 0 then return end
+
+	self:TakePrimaryAmmo( self:Clip1() )
+
+	if self:DefaultReload( ACT_VM_DRAW ) then
+		self:SetReloadTime( CurTime() + 1 )
+
+		if CLIENT then return end
+
+		local ent = ents.Create( "weapon_lvsantitankgun_gib" )
+		ent:SetPos( self.Owner:GetShootPos() )
+		ent:SetAngles( self.Owner:EyeAngles() )
+		ent:Spawn()
+		ent:Activate()
+
+		ent:EmitSound("npc/zombie/claw_miss1.wav")
+
+		local PhysObj = ent:GetPhysicsObject()
+
+		local ply = self:GetOwner()
+
+		if not IsValid( ply ) or not IsValid( PhysObj) then return end
+
+		PhysObj:SetVelocityInstantaneous( ply:GetAimVector() * 400 + ply:GetVelocity() )
+
+		PhysObj:AddAngleVelocity( VectorRand() * 500 ) 
 	end
 end
 
