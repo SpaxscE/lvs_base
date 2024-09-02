@@ -104,8 +104,37 @@ if SERVER then
 		self:TakeDamageInfo( dmginfo )
 	end
 
+	ENT.TouchSounds = "common/null.wav"
+	ENT.TouchDamageEnabled = false
+	ENT.TouchDamage = 0
+
+	function ENT:OnCollide( data, physobj )
+		if not self.TouchDamageEnabled or not data.HitEntity:IsPlayer() then return end
+
+		local dmginfo = DamageInfo()
+		dmginfo:SetDamage( self.TouchDamage )
+		dmginfo:SetAttacker( self:GetCreatedBy() )
+		dmginfo:SetInflictor( self )
+		dmginfo:SetDamagePosition( data.HitPos )
+		dmginfo:SetDamageType( DMG_SLASH ) 
+
+		data.HitEntity:TakeDamageInfo( dmginfo )
+
+		if istable( self.TouchSounds ) then
+			self.EmitSound( table.Random( self.TouchSounds ) )
+
+			return
+		end
+
+		if not isstring( self.TouchSounds ) then return end
+
+		self.EmitSound( self.TouchSounds )
+	end
+
 	function ENT:PhysicsCollide( data, physobj )
 		if not IsValid( data.HitEntity ) then return end
+
+		self:OnCollide( data, physobj )
 
 		if data.HitEntity.FortificationIgnorePhysicsDamage then return end
 

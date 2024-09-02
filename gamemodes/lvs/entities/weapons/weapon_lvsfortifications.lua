@@ -124,6 +124,15 @@ list.Set("Fortifications", "wirefence", {
 	Class = "lvs_fortification_playerblocker",
 	Model = "models/diggercars/props/wire_test.mdl",
 	Icon = Material( "lvs/fortifications/wirefence.png" ),
+	Members = {
+		TouchDamageEnabled = true,
+		TouchDamage = 10,
+		TouchSounds = {
+			"physics/metal/metal_chainlink_impact_soft1.wav",
+			"physics/metal/metal_chainlink_impact_soft2.wav",
+			"physics/metal/metal_chainlink_impact_soft3.wav",
+		},
+	},
 	GibModels = {
 		"models/props_debris/rebar001a_32.mdl",
 		"models/props_debris/rebar001b_48.mdl",
@@ -432,6 +441,10 @@ function SWEP:PrimaryAttack()
 	Ent:Activate()
 
 	Ent:SetCreatedBy( ply )
+
+	if Object.Members then
+		table.Merge( Ent, Object.Members )
+	end
 
 	Ent.ReturnMoney = Object.Price
 
