@@ -115,7 +115,11 @@ function SWEP:PrimaryAttack()
 	if not IsValid( ply ) then return end
 
 	if IsFirstTimePredicted() then
-		self:EmitSound("^weapons/smg1/npc_smg1_fire1.wav",100, 60, 1, CHAN_STATIC )
+		if CLIENT and ply == LocalPlayer() then
+			self:EmitSound("weapons/357/357_fire"..math.random(2,3)..".wav",75,75,1)
+		else
+			self:EmitSound("^weapons/smg1/npc_smg1_fire1.wav",140, 55, 1, CHAN_STATIC )
+		end
 
 		ply:ViewPunch( Angle(-math.Rand(3,5),-math.Rand(3,5),0) )
 
