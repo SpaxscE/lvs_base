@@ -6,9 +6,9 @@ sound.Add( {
 	level = 120,
 	pitch = {98, 102},
 	sound = {
-		"^lvs/weapons/ion_cannon_shot1.wav",
-		"^lvs/weapons/ion_cannon_shot2.wav",
-		"^lvs/weapons/ion_cannon_shot3.wav",
+		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot1.wav",
+		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot2.wav",
+		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot3.wav",
 	}
 } )
 
