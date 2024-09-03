@@ -162,18 +162,22 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-	if self:Clip1() >= self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) == 0 then return end
+	local Clip = self:Clip1()
 
-	self:TakePrimaryAmmo( self:Clip1() )
+	if Clip >= self.Primary.ClipSize or self:GetOwner():GetAmmoCount( self.Primary.Ammo ) == 0 then return end
+
+	self:TakePrimaryAmmo( Clip )
 
 	if self:DefaultReload( ACT_VM_DRAW ) then
 		self:SetReloadTime( CurTime() + 1 )
 
 		if CLIENT then return end
 
-		local ent = ents.Create( "weapon_lvsantitankgun_gib" )
+		local ent = ents.Create( "weapon_lvsbasegun_gib" )
+		ent:SetModel( "models/weapons/w_rocket_launcher.mdl" )
 		ent:SetPos( self.Owner:GetShootPos() )
 		ent:SetAngles( self.Owner:EyeAngles() )
+		ent:SetAmmo( Clip, self.Primary.Ammo )
 		ent:Spawn()
 		ent:Activate()
 
