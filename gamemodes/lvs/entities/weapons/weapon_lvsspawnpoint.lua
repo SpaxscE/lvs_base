@@ -280,7 +280,15 @@ if CLIENT then
 
 		if (GetViewOrigin( ply ) - pos):Length() < 20 then return true end
 
-		return false
+		local trace = util.TraceHull({
+			start = pos,
+			endpos = pos + Vector(0,0,20),
+			mins = Vector(-8,-8,0),
+			maxs = Vector(8,8,0),
+			filter = { ply },
+		})
+
+		return trace.Hit
 	end
 
 	function SWEP:CalcView( ply, pos, angles, fov )
