@@ -132,7 +132,10 @@ function SWEP:PrimaryAttack()
 		end
 
 		SuppressHostEvents( NULL ) 
-		trace.Entity:TakeDamageInfo( dmg )
+
+		--trace.Entity:TakeDamageInfo( dmg )
+		trace.Entity:DispatchTraceAttack( dmg, trace )
+
 		SuppressHostEvents( ply )
 	end
 
