@@ -65,7 +65,7 @@ function PLAYER:Loadout()
 
 	self.Player:RemoveAllAmmo()
 
-	if GameState ~= GAMESTATE_BUILD then
+	if GameState > GAMESTATE_BUILD then
 		if not hook.Run( "LVS.PlayerLoadoutWeapons", self.Player ) and GetConVar( "lvs_weapons" ):GetBool() then
 			self.Player:GiveAmmo( 2, "RPG_Round", true )
 			self.Player:GiveAmmo( 24, "GaussEnergy", true )
@@ -79,19 +79,16 @@ function PLAYER:Loadout()
 
 	self.Player:Give( "weapon_lvsspawnpoint" )
 
-	if not hook.Run( "LVS.PlayerLoadoutTools", self.Player ) then
-		if GameState ~= GAMESTATE_WAIT_FOR_PLAYERS then
-			if GameState <= GAMESTATE_BUILD then
+	if GameState > GAMESTATE_WAIT_FOR_PLAYERS then
+		if not hook.Run( "LVS.PlayerLoadoutTools", self.Player ) then
+			if GameState == GAMESTATE_BUILD then
 				self.Player:Give( "weapon_lvsfortifications" )
 			end
 
-			if GameState > GAMESTATE_START then
+			if GameState >= GAMESTATE_START then
 				self.Player:Give( "weapon_lvsvehicles" )
 				self.Player:Give( "weapon_lvsweldingtorch" )
 			end
-		else
-			self.Player:Give( "weapon_lvsvehicles" )
-			self.Player:Give( "weapon_lvsweldingtorch" )
 		end
 	end
 

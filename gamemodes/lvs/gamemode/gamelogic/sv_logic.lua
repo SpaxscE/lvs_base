@@ -2,12 +2,7 @@
 include("sv_goalspawning.lua")
 
 local NextAddPoints = 0
-function GM:DeliveredGoalThink( ply, team, Mul )
-
-	if not Mul then
-		Mul = 1
-	end
-
+function GM:DeliveredGoalThink( ply, team )
 	local T = CurTime()
 
 	if NextAddPoints > T then return end
@@ -19,7 +14,7 @@ function GM:DeliveredGoalThink( ply, team, Mul )
 	local ConVar = GetConVar( "lvs_match_duration" )
 
 	if ConVar then
-		Duration = ConVar:GetInt() * Mul
+		Duration = ConVar:GetInt()
 	end
 
 	self:AddGameProgression( team, 1 / Duration )

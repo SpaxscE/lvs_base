@@ -34,7 +34,7 @@ SWEP.MeleeAnimations = true
 SWEP.SpawnDistance = 512
 SWEP.SpawnDistanceEnemy = 2048
 
-SWEP.RemoveTime = 10
+SWEP.RemoveTime = 15
 
 function SWEP:GetRemoveTime()
 	if GAMEMODE:GetGameState() <= GAMESTATE_BUILD then return 1 end
@@ -415,13 +415,6 @@ function SWEP:PrimaryAttack()
 		end
 	end
 
-	local GoalEnt = GAMEMODE:GetGoalEntity()
-	if IsValid( GoalEnt ) and GoalEnt:GetHoldingPlayer() == ply then
-		ply:ChatPrint("#lvs_tool_spawnpoint_fail_objective")
-
-		return
-	end
-
 	if IsValid( ply:GetSpawnPoint() ) then
 		ply:ChatPrint("#lvs_tool_spawnpoint_fail")
 
@@ -490,21 +483,6 @@ function SWEP:DeleteSpawn()
 	local oldSpawn = ply:GetSpawnPoint()
 
 	if IsValid( oldSpawn ) then
-		if GAMEMODE:GetGameState() == GAMESTATE_MAIN then
-			local GoalEnt = GAMEMODE:GetGoalEntity()
-
-			if IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == oldSpawn then
-
-				if not self._HintedOnce then
-					ply:ChatPrint("#lvs_tool_spawnpoint_hint_active_game")
-
-					self._HintedOnce = true
-				end
-
-				return
-			end
-		end
-
 		if GAMEMODE:GetGameState() == GAMESTATE_BUILD then
 
 			local MyTeam = ply:lvsGetAITeam()

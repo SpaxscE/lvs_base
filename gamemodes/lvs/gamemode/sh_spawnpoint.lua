@@ -138,18 +138,34 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 	local GoalEnt = self:GetGoalEntity()
 	local SpawnPoint = pl:GetSpawnPoint()
 
-	if IsValid( SpawnPoint ) and not (IsValid( GoalEnt ) and GoalEnt:GetLinkedSpawnPoint() == SpawnPoint) then
+	local Team = pl:lvsGetAITeam()
 
-		hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, SpawnPoint, true )
+	if IsValid( SpawnPoint ) then
 
-		return SpawnPoint
+		local Pos = SpawnPoint:GetPos()
+
+		local EnemyNearby = false
+
+		for _, enemy in pairs( self:GameGetEnemyPlayersTeam( Team ) ) do
+			if not IsValid( enemy ) or enemy:InVehicle() then continue end
+
+			if (enemy:GetPos() - Pos):Length() < 1000 then
+				EnemyNearby = true
+
+				break
+			end
+		end
+
+		if not EnemyNearby then
+			hook.Call( "IsSpawnpointSuitable", GAMEMODE, pl, SpawnPoint, true )
+
+			return SpawnPoint
+		end
 	end
 
 	self:FindSpawnPoints()
 
 	local SpawnPoints = table.Copy( self.SpawnPoints )
-
-	local Team = pl:lvsGetAITeam()
 
 	if not dont_filter then
 		-- add team members as spawnpoint

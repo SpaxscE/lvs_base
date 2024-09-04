@@ -158,7 +158,7 @@ if SERVER then
 
 		local PhysObj = data.HitEntity:GetPhysicsObject()
 
-		if not IsValid( PhysObj ) then return end
+		if not IsValid( PhysObj ) or data.HitEntity:GetCollisionGroup() == COLLISION_GROUP_DEBRIS then return end
 
 		self:TakeCollisionDamage( self:GetHP(), data.HitEntity )
 
@@ -231,7 +231,9 @@ if SERVER then
 	}
 
 	function ENT:SpawnGibs()
-		local pos = self:LocalToWorld( self:OBBCenter() )
+		local mins = self:OBBMins()
+		local maxs = self:OBBMaxs()
+
 		local ang = self:GetAngles()
 
 		self.GibModels = istable( self.GibModels ) and self.GibModels or gibs
@@ -240,6 +242,8 @@ if SERVER then
 			local ent = ents.Create( "prop_physics" )
 
 			if not IsValid( ent ) then continue end
+
+			local pos = self:LocalToWorld( Vector( math.Rand( mins.x, maxs.x ), math.Rand( mins.y, maxs.y ), math.Rand( mins.z, maxs.z ) ) )
 
 			ent:SetPos( pos )
 			ent:SetAngles( ang )

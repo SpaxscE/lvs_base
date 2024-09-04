@@ -126,7 +126,7 @@ list.Set("Fortifications", "wirefence", {
 	Icon = Material( "lvs/fortifications/wirefence.png" ),
 	Members = {
 		TouchDamageEnabled = true,
-		TouchDamage = 1,
+		TouchDamage = 5,
 		TouchSounds = {
 			"physics/metal/metal_chainlink_impact_soft1.wav",
 			"physics/metal/metal_chainlink_impact_soft2.wav",
@@ -147,7 +147,7 @@ list.Set("Fortifications", "wirefence", {
 		"physics/metal/metal_chainlink_impact_soft3.wav",
 	},
 	Price = 2,
-	Health = 1000,
+	Health = 100,
 })
 
 list.Set("Fortifications", "ramp", {
@@ -444,6 +444,14 @@ function SWEP:PrimaryAttack()
 
 	if Object.Members then
 		table.Merge( Ent, Object.Members )
+	end
+
+	if Object.Material then
+		Ent:SetMaterial( Material )
+	end
+
+	if Object.Color then
+		Ent:SetColor( Color )
 	end
 
 	Ent.ReturnMoney = Object.Price

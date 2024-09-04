@@ -23,7 +23,7 @@ SWEP.SpawnDistance = 512
 SWEP.SpawnDistanceEnemy = 2048
 
 SWEP.RemoveDistance = 512
-SWEP.RemoveTime = 10
+SWEP.RemoveTime = 15
 
 function SWEP:GetRemoveTime()
 	if GAMEMODE:GetGameState() <= GAMESTATE_BUILD then return 1 end

@@ -13,6 +13,3 @@ GM.MoneyPerSpawnPointKill = 200
 GM.MoneyPerGoal = 150
 GM.MoneyPerGoalDrop = 75
 GM.MoneyPerGoalDelivered = 300
-
-GM.GoalProgressMultiplier = 0.25
-GM.GoalProgressMultiplierDelivered = 1
