@@ -147,7 +147,7 @@ list.Set("Fortifications", "wirefence", {
 		"physics/metal/metal_chainlink_impact_soft3.wav",
 	},
 	Price = 2,
-	Health = 100,
+	Health = 500,
 })
 
 list.Set("Fortifications", "ramp", {
