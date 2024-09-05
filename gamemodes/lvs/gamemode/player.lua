@@ -154,6 +154,9 @@ function GM:OnPlayerChangedTeam( ply, oldteam, newteam )
 	ply:ClearEntityList()
 	ply:ResetMoney()
 
+	-- reset buymenu everytime they change team
+	ply:SendLua( "GAMEMODE:ResetBuyMenu()" )
+
 	if newteam == TEAM_SPECTATOR then
 
 		local Pos = ply:EyePos()

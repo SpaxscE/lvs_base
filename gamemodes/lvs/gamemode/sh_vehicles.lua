@@ -16,6 +16,8 @@ function meta:lvsSetCurrentVehicle( class, icon )
 
 	if not self:IsAdmin() and GAMEMODE:VehicleClassAdminOnly( class ) then return end
 
+	if not self:VehicleClassAllowed( class ) then return end
+
 	if hook.Run( "LVS.OnPlayerSelectVehicle", self, class ) then return end
 
 	self._lvsCurrentVehicle = class
@@ -51,6 +53,15 @@ end
 
 function meta:lvsGetCurrentVehicle()
 	return self._lvsCurrentVehicle or ""
+end
+
+function meta:VehicleClassAllowed( class )
+
+	local HookAllowed = hook.Run( "LVS.PlayerVehicleClassAllowed", self, class )
+
+	if isbool( HookAllowed ) then return HookAllowed end
+
+	return true
 end
 
 function meta:lvsRemoveCurrentVehicle()

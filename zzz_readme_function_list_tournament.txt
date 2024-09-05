@@ -33,12 +33,18 @@ list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 9999 ) -- set price for ti
 
 
 
-
 hook.Add( "LVS.OnPlayerSelectVehicle", "any_name_you_want", function( ply, class )
 	if class == "lvs_trailer_flak" then  -- disallow spawning of flak
 		return true   -- return true to prevent
 	end
 end )
+
+
+hook.Add( "LVS.PlayerVehicleClassAllowed", "any_name_you_want", function( ply, class )
+
+	if class == "lvs_wheeldrive_montreal" then return false end -- this will hide the montreal from the buylist for this specific player and prevent it from being spawned
+
+end)
 
 
 

@@ -74,6 +74,8 @@ local function BuildBuyMenu()
 		draw.RoundedBox( 5, 0, 0, w, h, color_white )
 	end
 
+	local ply = LocalPlayer()
+
 	local CategoryNameTranslate = {}
 	local Categorised = {}
 	local SubCategorised = {}
@@ -154,6 +156,8 @@ local function BuildBuyMenu()
 					continue
 				end
 
+				if not ply:VehicleClassAllowed( ent.ClassName ) then continue end
+
 				Vehicles[ Index ] = {
 					nicename	= ent.PrintName or ent.ClassName,
 					classname = ent.ClassName,
@@ -189,7 +193,10 @@ local function BuildBuyMenu()
 			subnode.DoClick = function( self )
 				local Vehicles = {}
 				local Index = 1
+
 				for k, ent in SortedPairsByMemberValue( data, "PrintName" ) do
+					if not ply:VehicleClassAllowed( ent.ClassName ) then continue end
+
 					Vehicles[ Index ] = {
 						nicename	= ent.PrintName or ent.ClassName,
 						classname = ent.ClassName,
@@ -254,9 +261,13 @@ function GM:CloseBuyMenu()
 	BuyMenu:SetVisible( false )
 end
 
-concommand.Add( "buymenu_reload", function( ply, cmd, args )
+function GM:ResetBuyMenu()
 	if not IsValid( BuyMenu ) then return end
 
 	BuyMenu:Remove()
 	BuyMenu = nil
+end
+
+concommand.Add( "buymenu_reload", function( ply, cmd, args )
+	GAMEMODE:ResetBuyMenu()
 end )
