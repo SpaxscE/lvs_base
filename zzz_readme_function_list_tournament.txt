@@ -33,6 +33,7 @@ local table_players_both_teams = GAMEMODE:GameGetPlayers() -- returns all player
 local table_players_both_teams_alive = GAMEMODE:GameGetAlivePlayers()  -- returns all players of team1 and team2 that are alive
 
 
+
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 9999 ) -- set price for tiger tank to 9999
 
 
@@ -66,7 +67,7 @@ player:AddEntityList( entity ) -- adds a entity to players entity list
 
 player:SendGameNotify( text, color, lifetime ) -- send a notification to player in the center of the screen
 
-GAMEMODE:SendGameNotify( text, color, lifetime ) -- send a notification to all player in the center of the screen
+GAMEMODE:SendGameNotify( text, color, lifetime ) -- send a notification to all players in the center of the screen
 
 GAMEMODE:CreateGoalEntity( Pos ) -- spawn goal at given position
 
