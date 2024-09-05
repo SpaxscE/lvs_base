@@ -20,13 +20,17 @@ local GoalEnt = GAMEMODE:GetGoalEntity() -- gets the goal entity, returns NULL w
 local GoalPos = GAMEMODE:GetGoalPos() -- returns the goal pos
 
 
+local_table_players_team_whatever = GAMEMODE:GameGetPlayersTeam( num_team ) -- returns all players in num_team numbers team. Where num_team can be 0 1 2 or 3, however only 1 and 2 are really used.
+
+local table_players_enemy = GAMEMODE:GameGetEnemyPlayersTeam( num_team ) -- returns all players that are enemy to num_team numbers team. Meaning if you have num_team 1, it will return all team 2 players
+
 local table_players_team1 = GAMEMODE:GameGetPlayersTeam1() -- returns all players in team 1
 
 local table_players_team2 = GAMEMODE:GameGetPlayersTeam2() -- returns all players in team 2
 
 local table_players_both_teams = GAMEMODE:GameGetPlayers() -- returns all players, except spectators
 
-local table_players_both_teams_alive = GAMEMODE:GameGetAlivePlayers()  -- returns all players of both teams that are alive
+local table_players_both_teams_alive = GAMEMODE:GameGetAlivePlayers()  -- returns all players of team1 and team2 that are alive
 
 
 list.Set( "VehiclePrices", "lvs_wheeldrive_dodtiger", 9999 ) -- set price for tiger tank to 9999
