@@ -84,7 +84,7 @@ end )
 
 
 
-hook.Add( "LVS.PlayerLoadoutWeapons", "any_name_you_want", function( ply, class )
+hook.Add( "LVS.PlayerLoadoutWeapons", "any_name_you_want", function( ply )
 
 	-- give custom sweps here
 	ply:Give("weapon_ar2")
@@ -95,7 +95,7 @@ end )
 
 
 
-hook.Add( "LVS.PlayerLoadoutTools", "any_name_you_want", function( ply, class )
+hook.Add( "LVS.PlayerLoadoutTools", "any_name_you_want", function( ply )
 
 	-- give custom tools here
 	ply:Give("weapon_physgun")
