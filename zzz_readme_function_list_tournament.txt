@@ -42,7 +42,7 @@ end )
 
 hook.Add( "LVS.PlayerVehicleClassAllowed", "any_name_you_want", function( ply, class )
 
-	if class == "lvs_wheeldrive_montreal" then return false end -- this will hide the montreal from the buylist for this specific player and prevent it from being spawned
+	if class == "lvs_wheeldrive_montreal" then return false end -- this will hide the montreal from the buylist and prevent it from being spawned
 
 end)
 
