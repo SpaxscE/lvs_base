@@ -165,6 +165,8 @@ if CLIENT then
 					end
 				end
 
+				if not ShouldBother and visible >= 0.5 then continue end
+
 				local Col = visible < 0.5 and Color( GAMEMODE.ColorFriendDark.r, GAMEMODE.ColorFriendDark.g, GAMEMODE.ColorFriendDark.b, 100 ) or GAMEMODE.ColorFriend
 
 				surface.SetDrawColor( Col )
