@@ -81,7 +81,7 @@ function PLAYER:Loadout()
 
 	if GameState > GAMESTATE_WAIT_FOR_PLAYERS then
 		if not hook.Run( "LVS.PlayerLoadoutTools", self.Player ) then
-			if GameState == GAMESTATE_BUILD then
+			if GameState == GAMESTATE_BUILD or GameState == GAMESTATE_DEBUG then
 				self.Player:Give( "weapon_lvsfortifications" )
 			end
 

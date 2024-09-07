@@ -4,7 +4,7 @@ GAMESTATE_BUILD = 1
 GAMESTATE_START = 2
 GAMESTATE_MAIN = 3
 GAMESTATE_END = 4
-GAMESTATE_STOP = 5
+GAMESTATE_DEBUG = 5
 
 function GM:GetGameProgression()
 	local ent = self:GameNetworkEntity()
@@ -41,7 +41,7 @@ end
 function GM:GetGameState()
 	local ent = self:GameNetworkEntity()
 
-	if not IsValid( ent ) then return GAMESTATE_STOP end
+	if not IsValid( ent ) then return GAMESTATE_DEBUG end
 
 	return ent:GetGameState()
 end
