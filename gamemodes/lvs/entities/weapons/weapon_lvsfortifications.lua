@@ -219,6 +219,9 @@ function SWEP:GetTrace()
 	for _, spawnpoint in ipairs( ents.FindByClass( "lvs_spawnpoint" ) ) do
 		if not SpawnAllowed then break end
 
+		-- why did this error? i dont know
+		if not spawnpoint.GetAITEAM then continue end
+
 		local Team = spawnpoint:GetAITEAM()
 
 		if Team == MyTeam then continue end
