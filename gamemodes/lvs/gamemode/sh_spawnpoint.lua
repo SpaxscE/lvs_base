@@ -203,8 +203,7 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 	end
 
 	if IsValid( SelectedVehicleSpawn ) then
-
-		pl:SetPos( SelectedVehicleSpawn:GetPos() )
+		pl:SetPos( SelectedVehicleSpawn:LocalToWorld( SelectedVehicleSpawn:OBBCenter() ) + SelectedVehicleSpawn:GetVelocity():GetNormalized() * (SelectedVehicleSpawn:BoundingRadius() + 50) )
 
 		-- a timer is needed, because the player needs to be outside the vehicle during the spawn process
 		timer.Simple(0, function()
