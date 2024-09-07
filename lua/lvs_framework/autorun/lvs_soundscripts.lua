@@ -1,18 +1,5 @@
 
 sound.Add( {
-	name = "LVS.ION_CANNON_FIRE",
-	channel = CHAN_STATIC,
-	volume = 1,
-	level = 120,
-	pitch = {98, 102},
-	sound = {
-		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot1.wav",
-		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot2.wav",
-		"^lvs/tournament/weapons/laserrifle/ion_cannon_shot3.wav",
-	}
-} )
-
-sound.Add( {
 	name = "LVS.Physics.Scrape",
 	channel = CHAN_STATIC,
 	level = 80,
