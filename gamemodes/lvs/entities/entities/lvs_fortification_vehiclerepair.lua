@@ -92,9 +92,9 @@ if CLIENT then
 
 		local veh = ply:lvsGetVehicle()
 
-		if not IsValid( veh ) then return end
+		if not IsValid( veh ) or ply:GetVehicle() ~= veh:GetDriverSeat() then return end
 
-		local ShouldBother = veh:GetHP() < veh:GetMaxHP() 
+		local ShouldBother = veh:GetHP() < veh:GetMaxHP()
 
 		local maxX = ScrW()
 		local maxY = ScrH()
