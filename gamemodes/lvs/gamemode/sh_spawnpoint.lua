@@ -163,6 +163,73 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 		end
 	end
 
+	local VehicleSpawns = {}
+	-- loop through all players that are in a vehicle
+	for _, target in pairs( self:GameGetPlayersTeam( Team ) ) do
+		local veh = target:lvsGetVehicle()
+
+		if not IsValid( veh ) or target == pl or not target:Alive() then continue end
+
+		-- dont place players in locked vehicles
+		if veh:GetlvsLockedStatus() then continue end
+
+		-- check if the vehicle has an empty seat available
+		local hasEmptyPod = false 
+		for _, pod in pairs( veh:GetPassengerSeats() ) do
+			if not IsValid( pod ) or IsValid( pod:GetDriver() ) then continue end
+
+			hasEmptyPod = true
+
+			break
+		end
+
+		if hasEmptyPod then
+			table.insert( VehicleSpawns, veh )
+		end
+	end
+
+	local SelectedVehicleSpawn
+	local LastPos = pl:GetPos()
+	local LastDist
+
+	for _, veh in pairs( VehicleSpawns ) do
+		local Sub = LastPos - veh:GetPos()
+		local Dist = Sub:Length()
+
+		if not LastDist or LastDist > Dist then
+			SelectedVehicleSpawn = veh
+			LastDist = Dist
+		end
+	end
+
+	if IsValid( SelectedVehicleSpawn ) then
+
+		pl:SetPos( SelectedVehicleSpawn:GetPos() )
+
+		-- a timer is needed, because the player needs to be outside the vehicle during the spawn process
+		timer.Simple(0, function()
+			if not IsValid( pl ) then return end
+
+			if not IsValid( SelectedVehicleSpawn ) then return end
+
+			-- check again if the vehicle has an empty seat, so in case this is called like 10 times at the same frame and the vehicle is already full by now we dont end up with players in noclip
+			local hasEmptyPod = false 
+			for _, pod in pairs( SelectedVehicleSpawn:GetPassengerSeats() ) do
+				if not IsValid( pod ) or IsValid( pod:GetDriver() ) then continue end
+
+				hasEmptyPod = true
+
+				break
+			end
+
+			if hasEmptyPod then
+				SelectedVehicleSpawn:SetPassenger( pl )
+			end
+		end)
+
+		return
+	end
+
 	self:FindSpawnPoints()
 
 	local SpawnPoints = table.Copy( self.SpawnPoints )
@@ -172,7 +239,7 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 		for _, target in pairs( self:GameGetPlayersTeam( Team ) ) do
 			if target == pl or not target:Alive() or target:InVehicle() or not target:OnGround() then continue end
 
-			table.insert( SpawnPoints,  target )
+			table.insert( SpawnPoints, target )
 		end
 
 		-- remove all spawns too close to the goal
