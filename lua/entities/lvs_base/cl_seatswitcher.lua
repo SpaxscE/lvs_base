@@ -9,7 +9,7 @@ LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, 10,  350, 30, 350, 30, "SEAT SWI
 )
 
 function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
-	local pSeats = self:GetPassengerSeats()
+	local pSeats = table.Copy( self:GetPassengerSeats() )
 	local SeatCount = table.Count( pSeats ) 
 
 	if SeatCount <= 0 then return end
