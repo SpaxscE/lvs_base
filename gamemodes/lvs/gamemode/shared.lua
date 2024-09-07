@@ -13,6 +13,10 @@ GM.ColorNeutral = Color(0,255,255,255)
 GM.ColorFriendDark = Color(0,50,100,255)
 GM.ColorEnemyDark = Color(100,0,0,255)
 
+GM.SpawnDistanceEnemy = 2048
+GM.SpawnDistanceGoal = 2048
+GM.SpawnDistanceGoalPlayer = 4096
+
 DeriveGamemode( "base" )
 
 include( "player_class/player_lvs.lua" )

@@ -149,7 +149,7 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 		for _, enemy in pairs( self:GameGetEnemyPlayersTeam( Team ) ) do
 			if not IsValid( enemy ) or enemy:InVehicle() then continue end
 
-			if (enemy:GetPos() - Pos):Length() < 1000 then
+			if (enemy:GetPos() - Pos):Length() < self.SpawnDistanceEnemy then
 				EnemyNearby = true
 
 				break
@@ -249,7 +249,7 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 			for id, target in pairs( SpawnPoints ) do
 				if not IsValid( target ) then continue end
 
-				local MaxDist = target:IsPlayer() and 4000 or 1500
+				local MaxDist = target:IsPlayer() and self.SpawnDistanceGoalPlayer or self.SpawnDistanceGoal
 
 				if (target:GetPos() - GoalPos):Length() < MaxDist then
 					SpawnPoints[ id ] = nil
@@ -266,7 +266,7 @@ function GM:PlayerSelectSpawn( pl, transiton, dont_filter )
 			for _, enemy in pairs( self:GameGetEnemyPlayersTeam( Team ) ) do
 				if not IsValid( enemy ) or enemy:InVehicle() then continue end
 
-				if (enemy:GetPos() - Pos):Length() < 1000 then
+				if (enemy:GetPos() - Pos):Length() < self.SpawnDistanceEnemy then
 					SpawnPoints[ id ] = nil
 				end
 			end
