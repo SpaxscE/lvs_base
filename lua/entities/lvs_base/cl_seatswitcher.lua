@@ -19,6 +19,8 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 	draw.NoTexture() 
 
 	local HasAI = self:GetAI()
+	local HasAIGunners = self:GetAIGunners()
+
 	local MySeat = ply:GetVehicle():GetNWInt( "pPodIndex", -1 )
 
 	local Passengers = {}
@@ -31,7 +33,9 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 
 	if HasAI then
 		Passengers[1] = "[AI] "..self.PrintName
+	end
 
+	if HasAIGunners then
 		for _, Pod in pairs( self:GetPassengerSeats() ) do
 			if IsValid( Pod:GetDriver() ) then continue end
 	

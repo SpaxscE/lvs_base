@@ -58,7 +58,7 @@ function ENT:GetAI()
 
 	if not IsValid( veh ) then return false end
 
-	return veh:GetAI()
+	return veh:GetAIGunners()
 end
 
 function ENT:GetAITEAM()
