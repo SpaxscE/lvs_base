@@ -33,3 +33,43 @@ function ENT:GetAimVector()
 		return self:GetForward()
 	end
 end
+
+function ENT:LVSPaintHitMarker( scr )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	Base:LVSPaintHitMarker( scr )
+end
+
+function ENT:LVSDrawCircle( X, Y, target_radius, value )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	Base:LVSDrawCircle( X, Y, target_radius, value )
+end
+
+function ENT:PaintCrosshairCenter( Pos2D, Col )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	Base:PaintCrosshairCenter( Pos2D, Col )
+end
+
+function ENT:PaintCrosshairOuter( Pos2D, Col )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	Base:PaintCrosshairOuter( Pos2D, Col )
+end
+
+function ENT:PaintCrosshairSquare( Pos2D, Col )
+	local Base = self:GetVehicle()
+
+	if not IsValid( Base ) then return end
+
+	Base:PaintCrosshairSquare( Pos2D, Col )
+end
