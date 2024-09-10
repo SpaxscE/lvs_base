@@ -52,7 +52,25 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Bool", "Active" )
 	self:AddDT( "Bool", "EngineActive" )
 	self:AddDT( "Bool", "AI",	{ KeyName = "aicontrolled",	Edit = { type = "Boolean",	order = 1,	category = "AI"} } )
-	self:AddDT( "Bool", "AIGunners" )
+
+	local ShowAIGunnerInMenu = false
+
+	if istable( self.WEAPONS ) then
+		for id, _ in pairs( self.WEAPONS ) do
+			if id == 1 then continue end
+
+			ShowAIGunnerInMenu = true
+
+			break
+		end
+	end
+
+	if ShowAIGunnerInMenu then
+		self:AddDT( "Bool", "AIGunners",	{ KeyName = "aigunners",	Edit = { type = "Boolean",	order = 2,	category = "AI"} } )
+	else
+		self:AddDT( "Bool", "AIGunners" )
+	end
+
 	self:AddDT( "Bool", "lvsLockedStatus" )
 	self:AddDT( "Bool", "lvsReady" )
 	self:AddDT( "Bool", "NWOverheated" )
