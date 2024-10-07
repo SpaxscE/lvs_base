@@ -83,6 +83,7 @@ if SERVER then
 		local ent = net.ReadEntity()
 
 		if not IsValid( ent ) or not ent._UseTargetAllowed or not ent.UseRange or ply:InVehicle() then return end
+		if hook.Call("PlayerUse", nil, ply, ent) == false then return end
 
 		local Range = ent.UseRange * 2
 
