@@ -22,11 +22,11 @@ function NewBullet:GetPos()
 end
 
 function NewBullet:SetGravity( new )
-	self._Gravity = new
+	self.Gravity = new
 end
 
 function NewBullet:GetGravity()
-	return self._Gravity or vector_origin
+	return self.Gravity or vector_origin
 end
 
 function NewBullet:GetDir()
@@ -82,7 +82,6 @@ local function HandleBullets()
 		end
 
 		local mul = bullet:GetLength()
-		local Is2ndTickAlive = TimeAlive > FT * 2 -- this system is slow. Takes atleast 2 ticks before it spawns. We need to trace from startpos until lua catches up
 
 		-- startpos, direction and curtime of creation is networked to client. 
 		-- The Bullet position is simulated by doing startpos + dir * time * velocity
@@ -103,7 +102,7 @@ local function HandleBullets()
 		local Filter = bullet.Filter
 
 		local trace = util.TraceHull( {
-			start = Is2ndTickAlive and start + pos - dir or start,
+			start = start,
 			endpos = start + pos + dir * bullet.Velocity * FT,
 			filter = Filter,
 			mins = bullet.Mins,
@@ -111,7 +110,7 @@ local function HandleBullets()
 			mask = TraceMask
 		} )
 
-		--debugoverlay.Line( Is2ndTickAlive and start + pos - dir or start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
+		--debugoverlay.Line( start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
 
 		if CLIENT then
 			if not bullet.Muted and mul == 1 and LVS.EnableBulletNearmiss then
@@ -153,7 +152,7 @@ local function HandleBullets()
 			-- hulltrace doesnt hit the wall due to its hullsize...
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
-				start = Is2ndTickAlive and start + pos - dir or start,
+				start = start,
 				endpos = start + pos + dir * 250,
 				filter = Filter,
 				mask = TraceMask
