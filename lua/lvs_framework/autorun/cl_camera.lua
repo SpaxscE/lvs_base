@@ -55,17 +55,37 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 		local weapon = base:GetActiveWeapon()
 
 		if weapon and weapon.CalcView then
-			return weapon.CalcView( base, ply, pos, angles, newfov, pod )
+			local view = weapon.CalcView( base, ply, pos, angles, newfov, pod )
+
+			ply._lvsViewPos = view.origin
+			ply._lvsViewAngles = view.angles
+			
+			return view
 		else
-			return vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+			local view = vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+
+			ply._lvsViewPos = view.origin
+			ply._lvsViewAngles = view.angles
+
+			return view
 		end
 	else
 		local weapon = vehicle:GetActiveWeapon()
 
 		if weapon and weapon.CalcView then
-			return weapon.CalcView( vehicle, ply, pos, angles, newfov, pod )
+			local view = weapon.CalcView( vehicle, ply, pos, angles, newfov, pod )
+
+			ply._lvsViewPos = view.origin
+			ply._lvsViewAngles = view.angles
+
+			return view
 		else
-			return vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+			local view = vehicle:LVSCalcView( ply, pos, angles, newfov, pod )
+
+			ply._lvsViewPos = view.origin
+			ply._lvsViewAngles = view.angles
+
+			return view
 		end
 	end
 end )

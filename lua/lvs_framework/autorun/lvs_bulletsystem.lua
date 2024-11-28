@@ -80,6 +80,25 @@ local function HandleBullets()
 	local T = CurTime()
 	local FT = FrameTime()
 
+	local EarPos = vector_origin
+
+	if CLIENT then
+		local EarTarget = LocalPlayer()
+		local ViewEnt = EarTarget:GetViewEntity()
+
+		if ViewEnt == EarTarget then
+			if IsValid( EarTarget:lvsGetVehicle() ) then
+				EarPos = EarTarget._lvsViewPos
+			else
+				EarPos = EarTarget:GetShootPos()
+			end
+		else
+			EarTarget = ViewEnt
+
+			EarPos = EarTarget:GetPos()
+		end
+	end
+
 	for id, bullet in pairs( LVS._ActiveBullets ) do -- loop through bullet table
 		if bullet:GetSpawnTime() + 5 < T then -- destroy all bullets older than 5 seconds
 			LVS._ActiveBullets[ id ] = nil
@@ -138,12 +157,23 @@ local function HandleBullets()
 		if CLIENT then
 			--debugoverlay.Line( traceStart, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
 
-			if not bullet.Muted and mul == 1 and LVS.EnableBulletNearmiss then
-				-- whats more expensive, spamming this effect or doing distance checks to localplayer for each bullet think? Alternative method?
-				local effectdata = EffectData()
-				effectdata:SetOrigin( bullet:GetPos() )
-				effectdata:SetFlags( 2 )
-				util.Effect( "TracerSound", effectdata )
+			if not bullet.Muted and LVS.EnableBulletNearmiss then
+				local BulletPos = bullet:GetPos()
+				local EarDist = (EarPos - BulletPos):LengthSqr()
+
+				if bullet.OldEarDist and bullet.OldEarDist < EarDist then
+
+					if EarDist < 50000 then
+						local effectdata = EffectData()
+						effectdata:SetOrigin( EarPos + (BulletPos - EarPos):GetNormalized() * 20 )
+						effectdata:SetFlags( 2 )
+						util.Effect( "TracerSound", effectdata )
+					end
+
+					bullet.Muted = true
+				end
+
+				bullet.OldEarDist = EarDist
 			end
 
 			if not bullet.HasHitWater then
