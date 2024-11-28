@@ -21,8 +21,20 @@ function NewBullet:GetPos()
 	return self.curpos
 end
 
+function NewBullet:SetGravity( new )
+	self._Gravity = new
+end
+
+function NewBullet:GetGravity()
+	return self._Gravity or vector_origin
+end
+
 function NewBullet:GetDir()
 	return self.Dir or vector_origin
+end
+
+function NewBullet:SetDir( newdir )
+	self.Dir = newdir
 end
 
 function NewBullet:GetTimeAlive()
@@ -52,12 +64,23 @@ local function HandleBullets()
 		end
 
 		local start = bullet.Src
-		local dir = bullet.Dir
+		local dir = bullet.StartDir
 		local TimeAlive = bullet:GetTimeAlive()
 
 		if TimeAlive < 0 then continue end
 
-		local pos = dir * TimeAlive * bullet.Velocity
+		local pos
+
+		if bullet.EnableBallistics then
+			local posUnaffected = dir * TimeAlive * bullet.Velocity
+
+			pos = posUnaffected + bullet:GetGravity() * (TimeAlive ^ 2)
+
+			bullet:SetDir( ((start + pos) - start):GetNormalized() )
+		else
+			pos = dir * TimeAlive * bullet.Velocity
+		end
+
 		local mul = bullet:GetLength()
 		local Is2ndTickAlive = TimeAlive > FT * 2 -- this system is slow. Takes atleast 2 ticks before it spawns. We need to trace from startpos until lua catches up
 
@@ -231,6 +254,7 @@ if SERVER then
 		bullet.TracerName = data.TracerName or "lvs_tracer_orange"
 		bullet.Src = data.Src or vector_origin
 		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
+		bullet.StartDir = bullet.Dir
 		bullet.Force = data.Force or 10
 
 		if data.Force1km then
@@ -256,8 +280,11 @@ if SERVER then
 		bullet.SplashDamageEffect = data.SplashDamageEffect or "lvs_bullet_impact"
 		bullet.SplashDamageType = data.SplashDamageType or DMG_SONIC
 		bullet.StartTime = CurTime()
+		bullet.EnableBallistics = data.EnableBallistics == true
 
-		local ReplaceEffect = isstring( bullet.SplashDamageEffect )
+		if bullet.EnableBallistics then
+			bullet:SetGravity( physenv.GetGravity() )
+		end
 
 		if InfMap then
 			for _, ply in ipairs( player.GetAll() ) do
@@ -276,6 +303,7 @@ if SERVER then
 					net.WriteFloat( bullet.SrcEntity.y )
 					net.WriteFloat( bullet.SrcEntity.z )
 					net.WriteFloat( bullet.Velocity )
+					net.WriteBool( bullet.EnableBallistics )
 				net.Send( ply )
 			end
 		else
@@ -292,6 +320,7 @@ if SERVER then
 				net.WriteFloat( bullet.SrcEntity.y )
 				net.WriteFloat( bullet.SrcEntity.z )
 				net.WriteFloat( bullet.Velocity )
+				net.WriteBool( bullet.EnableBallistics )
 			net.SendPVS( bullet.Src )
 		end
 
@@ -309,6 +338,7 @@ else
 		bullet.TracerName = net.ReadString()
 		bullet.Src = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Dir = net.ReadAngle():Forward()
+		bullet.StartDir = bullet.Dir
 		bullet.StartTime = net.ReadFloat()
 		bullet.HullSize = net.ReadFloat()
 		bullet.Mins = -vector_one * bullet.HullSize
@@ -327,10 +357,10 @@ else
 
 		bullet.Velocity = net.ReadFloat()
 
-		if net.ReadBool() then
-			bullet.SplashDamageEffect = net.ReadString()
-		else
-			bullet.SplashDamageEffect = "lvs_bullet_impact"
+		bullet.EnableBallistics = net.ReadBool()
+
+		if bullet.EnableBallistics then
+			bullet:SetGravity( physenv.GetGravity() )
 		end
 
 		bullet.StartTimeCL = CurTime() + RealFrameTime()
