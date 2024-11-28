@@ -55,7 +55,7 @@ function EFFECT:doFX( pos, curpos )
 
 	local particle = self.emitter:Add( "particles/flamelet"..math.random(1,5), pos )
 	if particle then
-		particle:SetVelocity( -self.Dir * math.Rand(250,800) + self.Dir * 7000 )
+		particle:SetVelocity( -self.Dir * math.Rand(250,800) + self.Dir * 1500 )
 		particle:SetDieTime( math.Rand(0.2,0.4) )
 		particle:SetAirResistance( 0 ) 
 		particle:SetStartAlpha( 255 )

@@ -16,6 +16,7 @@ local NewBullet = {}
 NewBullet.__index = NewBullet 
 
 function NewBullet:SetPos( pos )
+	self.oldpos = self.curpos
 	self.curpos = pos
 end
 
@@ -86,7 +87,7 @@ local function HandleBullets()
 		end
 
 		local start = bullet.Src
-		local dir = bullet.StartDir
+		local dir = bullet.Dir
 		local TimeAlive = bullet:GetTimeAlive()
 
 		if TimeAlive < 0 then continue end
@@ -94,7 +95,7 @@ local function HandleBullets()
 		local pos
 
 		if bullet.EnableBallistics then
-			local posUnaffected = dir * TimeAlive * bullet.Velocity
+			local posUnaffected = bullet.StartDir * TimeAlive * bullet.Velocity
 
 			pos = posUnaffected + bullet:GetGravity() * (TimeAlive ^ 2)
 
@@ -123,8 +124,10 @@ local function HandleBullets()
 		local TraceMask = bullet.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 		local Filter = bullet.Filter
 
+		local traceStart = bullet.oldpos or start
+
 		local trace = util.TraceHull( {
-			start = start,
+			start = traceStart,
 			endpos = start + pos + dir * bullet.Velocity * FT,
 			filter = Filter,
 			mins = bullet.Mins,
@@ -132,9 +135,9 @@ local function HandleBullets()
 			mask = TraceMask
 		} )
 
-		--debugoverlay.Line( start, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
-
 		if CLIENT then
+			--debugoverlay.Line( traceStart, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
+
 			if not bullet.Muted and mul == 1 and LVS.EnableBulletNearmiss then
 				-- whats more expensive, spamming this effect or doing distance checks to localplayer for each bullet think? Alternative method?
 				local effectdata = EffectData()
@@ -174,7 +177,7 @@ local function HandleBullets()
 			-- hulltrace doesnt hit the wall due to its hullsize...
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
-				start = start,
+				start = traceStart,
 				endpos = start + pos + dir * 250,
 				filter = Filter,
 				mask = TraceMask
