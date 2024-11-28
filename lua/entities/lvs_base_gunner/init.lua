@@ -97,8 +97,20 @@ function ENT:TakeAmmo( num )
 	self:SetNWAmmo( CurWeapon._CurAmmo )
 end
 
-function ENT:GetHeat()
-	local CurWeapon = self:GetActiveWeapon()
+function ENT:GetHeat( weaponid )
+	local CurWeapon
+
+	if isnumber( weaponid ) and weaponid > 0 then
+		local Base = self:GetVehicle()
+
+		if IsValid( Base ) then
+			CurWeapon = Base.WEAPONS[ self:GetPodIndex() ][ weaponid ]
+		else
+			CurWeapon = self:GetActiveWeapon()
+		end
+	else
+		CurWeapon = self:GetActiveWeapon()
+	end
 
 	if not CurWeapon then return 0 end
 

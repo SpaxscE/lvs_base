@@ -141,8 +141,14 @@ if SERVER then
 		self:SetNWAmmo( CurWeapon._CurAmmo )
 	end
 
-	function ENT:GetHeat()
-		local CurWeapon = self:GetActiveWeapon()
+	function ENT:GetHeat( weaponid )
+		local CurWeapon
+
+		if isnumber( weaponid ) and weaponid > 0 then
+			CurWeapon = self.WEAPONS[1][ weaponid ]
+		else
+			CurWeapon = self:GetActiveWeapon()
+		end
 
 		if not CurWeapon then return 0 end
 
