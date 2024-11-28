@@ -118,7 +118,7 @@ end
 function ENT:OnRemove()
 	CountTotal[ self:EntIndex() ] = nil
 
-	if not self.emitter then return end
+	if not IsValid(self.emitter) then return end
 
 	self.emitter:Finish()
 end
