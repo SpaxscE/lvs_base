@@ -2,6 +2,10 @@ local LVS = LVS
 
 LVS._ActiveBullets = {}
 
+function LVS:RemoveBullet( index )
+	LVS._ActiveBullets[ index ] = nil
+end
+
 function LVS:GetBullet( index )
 	if not LVS._ActiveBullets then return end
 
@@ -13,6 +17,24 @@ NewBullet.__index = NewBullet
 
 function NewBullet:SetPos( pos )
 	self.curpos = pos
+end
+
+function NewBullet:GetBulletIndex()
+	return self.bulletindex
+end
+
+function NewBullet:Remove()
+	if SERVER and self.EnableBallistics then
+		net.Start( "lvs_remove_bullet", true )
+			net.WriteInt( self.bulletindex, 13 )
+		net.Broadcast()
+
+		LVS._ActiveBullets[ self.bulletindex ] = nil
+
+		return
+	end
+
+	LVS:RemoveBullet( self.bulletindex )
 end
 
 function NewBullet:GetPos()
@@ -231,7 +253,7 @@ local function HandleBullets()
 				end
 			end
 
-			LVS._ActiveBullets[ id ] = nil
+			bullet:Remove()
 		end
 	end
 end
@@ -240,12 +262,25 @@ local vector_one = Vector(1,1,1)
 
 if SERVER then
 	util.AddNetworkString( "lvs_fire_bullet" )
+	util.AddNetworkString( "lvs_remove_bullet" )
 
 	hook.Add( "Tick", "!!!!lvs_bullet_handler", function( ply, ent ) -- from what i understand, think can "skip" on lag, while tick still simulates all steps
 		HandleBullets()
 	end )
 
+	local Index = 0
+	local MaxIndex = 4094 -- this is the util.effect limit
+
 	function LVS:FireBullet( data )
+
+		Index = Index + 1
+
+		if Index > MaxIndex then
+			Index = 1
+		end
+
+		LVS._ActiveBullets[ Index ] = nil
+
 		local bullet = {}
 
 		setmetatable( bullet, NewBullet )
@@ -290,6 +325,7 @@ if SERVER then
 				local NewPos = Vector( bullet.Src.x, bullet.Src.y, bullet.Src.z ) - InfMap.unlocalize_vector( Vector(), ply.CHUNK_OFFSET )
 
 				net.Start( "lvs_fire_bullet", true )
+					net.WriteInt( Index, 13 )
 					net.WriteString( bullet.TracerName )
 					net.WriteFloat( NewPos.x )
 					net.WriteFloat( NewPos.y )
@@ -307,6 +343,7 @@ if SERVER then
 			end
 		else
 			net.Start( "lvs_fire_bullet", true )
+				net.WriteInt( Index, 13 )
 				net.WriteString( bullet.TracerName )
 				net.WriteFloat( bullet.Src.x )
 				net.WriteFloat( bullet.Src.y )
@@ -323,13 +360,19 @@ if SERVER then
 			net.SendPVS( bullet.Src )
 		end
 
-		table.insert(LVS._ActiveBullets, bullet )
+		bullet.bulletindex = Index
+		LVS._ActiveBullets[ Index ] = bullet
 	end
 else
-	local Index = 0
-	local MaxIndex = 4094 -- this is the util.effect limit
+	net.Receive( "lvs_remove_bullet", function( length )
+		LVS:RemoveBullet( net.ReadInt( 13 ) )
+	end)
 
 	net.Receive( "lvs_fire_bullet", function( length )
+		local Index = net.ReadInt( 13 )
+
+		LVS._ActiveBullets[ Index ] = nil
+
 		local bullet = {}
 
 		setmetatable( bullet, NewBullet )
@@ -370,11 +413,7 @@ else
 			bullet.Muted = bullet.Entity == ply:lvsGetVehicle() or bullet.Entity:GetOwner() == ply
 		end
 
-		Index = Index + 1
-		if Index > MaxIndex then
-			Index = 1
-		end
-
+		bullet.bulletindex = Index
 		LVS._ActiveBullets[ Index ] = bullet
 
 		local effectdata = EffectData()
