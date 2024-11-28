@@ -264,7 +264,7 @@ local function PaintIdentifier( ent )
 
 		if Team > 3 then continue end
 
-		v:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor, v )
+		v:LVSHudPaintVehicleIdentifier( Pos.x, Pos.y, IndicatorColor )
 	end
 end
 

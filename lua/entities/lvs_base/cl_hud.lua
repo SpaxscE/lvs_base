@@ -22,17 +22,15 @@ end
 
 ENT.VehicleIdentifierRange = 10000
 
-function ENT:LVSHudPaintVehicleIdentifier( X, Y, In_Col, target_ent )
-	if not IsValid( target_ent ) then return end
-
-	local HP = target_ent:GetHP()
+function ENT:LVSHudPaintVehicleIdentifier( X, Y, In_Col )
+	local HP = self:GetHP()
 
 	surface.SetDrawColor( In_Col.r, In_Col.g, In_Col.b, In_Col.a )
-	LVS:DrawDiamond( X + 1, Y + 1, 20, HP / target_ent:GetMaxHP() )
+	LVS:DrawDiamond( X + 1, Y + 1, 20, HP / self:GetMaxHP() )
 
-	if target_ent:GetMaxShield() > 0 and HP > 0 then
+	if self:GetMaxShield() > 0 and HP > 0 then
 		surface.SetDrawColor( 200, 200, 255, In_Col.a )
-		LVS:DrawDiamond( X + 1, Y + 1, 24, target_ent:GetShield() / target_ent:GetMaxShield() )
+		LVS:DrawDiamond( X + 1, Y + 1, 24, self:GetShield() / self:GetMaxShield() )
 	end
 end
 
