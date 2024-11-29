@@ -24,7 +24,7 @@ function NewBullet:GetBulletIndex()
 end
 
 function NewBullet:Remove()
-	if SERVER and self.EnableBallistics then
+	if SERVER then
 		net.Start( "lvs_remove_bullet", true )
 			net.WriteInt( self.bulletindex, 13 )
 		net.Broadcast()
@@ -158,6 +158,77 @@ function NewBullet:DoBulletFlight( TimeAlive )
 	end
 end
 
+function NewBullet:OnCollide( trace )
+	if CLIENT then return end
+
+	if trace.Entity == self.LastDamageTarget then return end
+
+	local Attacker = (IsValid( self.Attacker ) and self.Attacker) or (IsValid( self.Entity ) and self.Entity) or game.GetWorld()
+	local Inflictor = (IsValid( self.Entity ) and self.Entity) or (IsValid( self.Attacker ) and self.Attacker) or game.GetWorld()
+
+	local dmginfo = DamageInfo()
+	dmginfo:SetDamage( self.Damage )
+	dmginfo:SetAttacker( Attacker )
+	dmginfo:SetInflictor( Inflictor )
+	dmginfo:SetDamageType( DMG_AIRBOAT )
+	dmginfo:SetDamagePosition( trace.HitPos )
+
+	if self.Force1km then
+		local Mul = math.min( (self.Src - trace.HitPos):Length() / 39370, 1 )
+		local invMul = math.max( 1 - Mul, 0 )
+
+		dmginfo:SetDamageForce( self.Dir * (self.Force * invMul + self.Force1km * Mul) )
+	else
+		dmginfo:SetDamageForce( self.Dir * self.Force )
+	end
+
+	if self.Callback then
+		self.Callback( Attacker, trace, dmginfo )
+	end
+
+	trace.Entity:DispatchTraceAttack( dmginfo, trace )
+
+	self.LastDamageTarget = trace.Entity
+end
+
+function NewBullet:OnCollideFinal( trace )
+	if CLIENT then return end
+
+	self:OnCollide( trace )
+
+	if not self.SplashDamage or not self.SplashDamageRadius then return end
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( trace.HitPos )
+	effectdata:SetNormal( trace.HitWorld and trace.HitNormal or self.Dir )
+	effectdata:SetMagnitude( self.SplashDamageRadius / 250 )
+	util.Effect( self.SplashDamageEffect, effectdata )
+
+	local Attacker = (IsValid( self.Attacker ) and self.Attacker) or (IsValid( self.Entity ) and self.Entity) or game.GetWorld()
+	local Inflictor = (IsValid( self.Entity ) and self.Entity) or (IsValid( self.Attacker ) and self.Attacker) or game.GetWorld()
+
+	local dmginfo = DamageInfo()
+	dmginfo:SetAttacker( Attacker )
+	dmginfo:SetInflictor( Inflictor )
+	dmginfo:SetDamage( self.SplashDamage )
+	dmginfo:SetDamageType( self.SplashDamageType )
+	dmginfo:SetDamagePosition( trace.HitPos )
+	dmginfo:SetDamageForce( self.Dir * self.SplashDamageForce )
+
+	if self.SplashDamageType == DMG_BLAST and IsValid( trace.Entity ) then
+		trace.Entity:DispatchTraceAttack( dmginfo, trace )
+
+		dmginfo:SetDamageType( DMG_SONIC )
+		dmginfo:SetDamageForce( vector_origin )
+
+		util.BlastDamageInfo( dmginfo, trace.HitPos, self.SplashDamageRadius )
+
+		return
+	end
+
+	util.BlastDamageInfo( dmginfo, trace.HitPos, self.SplashDamageRadius )
+end
+
 function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	local TraceMask = self.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 
@@ -166,6 +237,13 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	if self.HullTraceResult then
 		traceHull = self.HullTraceResult
 	else
+		local traceLine = util.TraceLine( {
+			start = traceStart,
+			endpos = traceEnd,
+			filter = Filter,
+			mask = TraceMask
+		} )
+
 		local trace = util.TraceHull( {
 			start = traceStart,
 			endpos = traceEnd,
@@ -175,9 +253,15 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 			mask = TraceMask
 		} )
 
+		if traceLine.Entity == trace.Entity and trace.Hit and traceLine.Hit then
+			trace = traceLine
+		end
+
 		if trace.Hit then
 			self.HullTraceResult = trace
 			traceHull = trace
+
+			self:OnCollide( trace )
 		else
 			traceHull = { Hit = false }
 		end
@@ -194,11 +278,13 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 		return
 	end
 
+	self:OnCollideFinal( traceLine )
+
 	self:Remove()
 
 	if SERVER then return end
 
-	if not traceImpact.HitSky then
+	if not traceLine.HitSky then
 		local effectdata = EffectData()
 		effectdata:SetOrigin( traceLine.HitPos )
 		effectdata:SetEntity( traceLine.Entity )
@@ -319,6 +405,7 @@ if SERVER then
 		bullet.SrcEntity = data.SrcEntity or vector_origin
 		bullet.Callback = data.Callback
 		bullet.SplashDamage = data.SplashDamage
+		bullet.SplashDamageForce = data.SplashDamageForce or 500
 		bullet.SplashDamageRadius = data.SplashDamageRadius
 		bullet.SplashDamageEffect = data.SplashDamageEffect or "lvs_bullet_impact"
 		bullet.SplashDamageType = data.SplashDamageType or DMG_SONIC
