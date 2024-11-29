@@ -204,6 +204,20 @@ function meta:lvsSetInputDisabled( disable )
 end
 
 if CLIENT then
+	function meta:lvsSetView( view )
+		self._lvsViewPos = view.origin or vector_origin
+		self._lvsViewAngles = view.angles or angle_zero
+
+		return view
+	end
+
+	function meta:lvsGetView()
+		local pos = self._lvsViewPos or vector_origin
+		local ang = self._lvsViewAngles or angle_zero
+
+		return pos, ang
+	end
+
 	net.Receive( "lvs_buildcontrols", function( len )
 		local ply = LocalPlayer()
 		if not IsValid( ply ) then return end

@@ -16,7 +16,6 @@ local NewBullet = {}
 NewBullet.__index = NewBullet 
 
 function NewBullet:SetPos( pos )
-	self.oldpos = self.curpos
 	self.curpos = pos
 end
 
@@ -76,218 +75,195 @@ function NewBullet:GetLength()
 	return math.min((CurTime() - self:GetSpawnTime()) * 14,1)
 end
 
+function NewBullet:HandleWaterImpact( traceStart, traceEnd, Filter )
+	if self.HasHitWater then return end
+
+	local traceWater = util.TraceLine( {
+		start = traceStart,
+		endpos = traceEnd,
+		filter = Filter,
+		mask = MASK_WATER,
+	} )
+
+	if not traceWater.Hit then return end
+
+	self.HasHitWater = true
+
+	local effectdata = EffectData()
+	effectdata:SetOrigin( traceWater.HitPos )
+	effectdata:SetScale( 10 + self.HullSize * 0.5 )
+	effectdata:SetFlags( 2 )
+	util.Effect( "WaterSplash", effectdata, true, true )
+end
+
+function NewBullet:HandleFlybySound( EarPos )
+	if self.Muted or not LVS.EnableBulletNearmiss then return end
+
+	local BulletPos = self:GetPos()
+
+	local EarDist = (EarPos - BulletPos):LengthSqr()
+
+	if self.OldEarDist and self.OldEarDist < EarDist then
+
+		if EarDist < 50000 then
+			local effectdata = EffectData()
+			effectdata:SetOrigin( EarPos + (BulletPos - EarPos):GetNormalized() * 20 )
+			effectdata:SetFlags( 2 )
+			util.Effect( "TracerSound", effectdata )
+		end
+
+		self.Muted = true
+	end
+
+	self.OldEarDist = EarDist
+end
+
+function NewBullet:DoBulletFlight( TimeAlive )
+
+	local StartPos = self.Src
+	local StartDirection = self.StartDir
+
+	local Velocity = self.Velocity
+
+	local PosOffset
+
+	-- startpos, direction and curtime of creation is networked to client. 
+	-- the bullet position is simulated by doing startpos + dir * time * velocity
+	if self.EnableBallistics then
+		local PosTheoretical = StartDirection * TimeAlive * Velocity
+
+		PosOffset = PosTheoretical + self:GetGravity() * (TimeAlive ^ 2)
+
+		self:SetDir( (StartPos + PosOffset - StartPos):GetNormalized() )
+	else
+		PosOffset = self.Dir * TimeAlive * Velocity
+	end
+
+	if SERVER then
+		self:SetPos( StartPos + PosOffset )
+	else
+
+		-- "parent" the bullet to the vehicle for a very short time on client. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
+		if IsValid( self.Entity ) and self.SrcEntity then
+			local mul = self:GetLength()
+			local inv = 1 - mul
+
+			self:SetPos( StartPos * mul + self.Entity:LocalToWorld( self.SrcEntity ) * inv + PosOffset )
+
+			return
+		end
+
+		-- if no parent detected, run same code as server
+		self:SetPos( StartPos + PosOffset )
+	end
+end
+
+function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
+	local TraceMask = self.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
+
+	local traceHull
+
+	if self.HullTraceResult then
+		traceHull = self.HullTraceResult
+	else
+		local trace = util.TraceHull( {
+			start = traceStart,
+			endpos = traceEnd,
+			filter = Filter,
+			mins = self.Mins,
+			maxs = self.Maxs,
+			mask = TraceMask
+		} )
+
+		if trace.Hit then
+			self.HullTraceResult = trace
+			traceHull = trace
+		else
+			traceHull = { Hit = false }
+		end
+	end
+
+	local traceLine = util.TraceLine( {
+		start = traceStart,
+		endpos = traceEnd,
+		filter = Filter,
+		mask = TraceMask
+	} )
+
+	if not traceLine.Hit or not traceHull.Hit then
+		return
+	end
+
+	self:Remove()
+
+	if SERVER then return end
+
+	if not traceImpact.HitSky then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( traceLine.HitPos )
+		effectdata:SetEntity( traceLine.Entity )
+		effectdata:SetStart( traceStart )
+		effectdata:SetNormal( traceLine.HitNormal )
+		effectdata:SetSurfaceProp( traceLine.SurfaceProps )
+		util.Effect( "Impact", effectdata )
+	end
+end
+
+local function GetEarPos()
+	if SERVER then return vector_origin end
+
+	local EarPos
+
+	local ply = LocalPlayer()
+	local ViewEnt = ply:GetViewEntity()
+
+	if ViewEnt == ply then
+		if IsValid( ply:lvsGetVehicle() ) then
+			EarPos = ply:lvsGetView()
+		else
+			EarPos = ply:GetShootPos()
+		end
+	else
+		EarPos = ViewEnt:GetPos()
+	end
+
+	return EarPos
+end
+
 local function HandleBullets()
 	local T = CurTime()
 	local FT = FrameTime()
 
-	local EarPos = vector_origin
+	local EarPos = GetEarPos()
 
-	if CLIENT then
-		local EarTarget = LocalPlayer()
-		local ViewEnt = EarTarget:GetViewEntity()
-
-		if ViewEnt == EarTarget then
-			if IsValid( EarTarget:lvsGetVehicle() ) then
-				EarPos = EarTarget._lvsViewPos
-			else
-				EarPos = EarTarget:GetShootPos()
-			end
-		else
-			EarTarget = ViewEnt
-
-			EarPos = EarTarget:GetPos()
-		end
-	end
-
-	for id, bullet in pairs( LVS._ActiveBullets ) do -- loop through bullet table
+	for id, bullet in pairs( LVS._ActiveBullets ) do
 		if bullet:GetSpawnTime() + 5 < T then -- destroy all bullets older than 5 seconds
-			LVS._ActiveBullets[ id ] = nil
+			bullet:Remove()
+
 			continue
 		end
 
-		local start = bullet.Src
-		local dir = bullet.Dir
 		local TimeAlive = bullet:GetTimeAlive()
 
-		if TimeAlive < 0 then continue end
+		if TimeAlive < 0 then continue end -- CurTime() is predicted, this can be a negative number in some cases.
 
-		local pos
-
-		if bullet.EnableBallistics then
-			local posUnaffected = bullet.StartDir * TimeAlive * bullet.Velocity
-
-			pos = posUnaffected + bullet:GetGravity() * (TimeAlive ^ 2)
-
-			bullet:SetDir( ((start + pos) - start):GetNormalized() )
-		else
-			pos = dir * TimeAlive * bullet.Velocity
-		end
-
-		local mul = bullet:GetLength()
-
-		-- startpos, direction and curtime of creation is networked to client. 
-		-- The Bullet position is simulated by doing startpos + dir * time * velocity
-		if SERVER then
-			bullet:SetPos( start + pos )
-		else
-			if IsValid( bullet.Entity ) and bullet.SrcEntity then -- if the vehicle entity is valid...
-				local inv = 1 - mul
-
-				-- ..."parent" the bullet to the vehicle for a very short time. This will give the illusion of the bullet not lagging behind even tho it is fired later on client
-				bullet:SetPos( start * mul + bullet.Entity:LocalToWorld( bullet.SrcEntity ) * inv + pos )
-			else
-				bullet:SetPos( start + pos )
-			end
-		end
-
-		local TraceMask = bullet.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 		local Filter = bullet.Filter
 
-		local traceStart = bullet.oldpos or start
-
-		local trace = util.TraceHull( {
-			start = traceStart,
-			endpos = start + pos + dir * bullet.Velocity * FT,
-			filter = Filter,
-			mins = bullet.Mins,
-			maxs = bullet.Maxs,
-			mask = TraceMask
-		} )
+		local traceStart = bullet:GetPos()
+			bullet:DoBulletFlight( TimeAlive )
+		local traceEnd = bullet:GetPos()
 
 		if CLIENT then
-			--debugoverlay.Line( traceStart, start + pos + dir * bullet.Velocity * FT, Color( 255, 255, 255 ), true )
+			debugoverlay.Line( traceStart, traceEnd, Color( 255, 255, 255 ), true )
 
-			if not bullet.Muted and LVS.EnableBulletNearmiss then
-				local BulletPos = bullet:GetPos()
-				local EarDist = (EarPos - BulletPos):LengthSqr()
+			-- bullet flyby sounds
+			bullet:HandleFlybySound( EarPos )
 
-				if bullet.OldEarDist and bullet.OldEarDist < EarDist then
-
-					if EarDist < 50000 then
-						local effectdata = EffectData()
-						effectdata:SetOrigin( EarPos + (BulletPos - EarPos):GetNormalized() * 20 )
-						effectdata:SetFlags( 2 )
-						util.Effect( "TracerSound", effectdata )
-					end
-
-					bullet.Muted = true
-				end
-
-				bullet.OldEarDist = EarDist
-			end
-
-			if not bullet.HasHitWater then
-				local traceWater = util.TraceLine( {
-					start = start + pos - dir,
-					endpos = start + pos + dir * bullet.Velocity * FT,
-					filter = Filter,
-					mask = MASK_WATER,
-				} )
-
-				if traceWater.Hit then
-					LVS._ActiveBullets[ id ].HasHitWater = true
-
-					local effectdata = EffectData()
-					effectdata:SetOrigin( traceWater.HitPos )
-					effectdata:SetScale( 10 + bullet.HullSize * 0.5 )
-					effectdata:SetFlags( 2 )
-					util.Effect( "WaterSplash", effectdata, true, true )
-				end
-			end
+			-- bullet water impact effects
+			bullet:HandleWaterImpact( traceStart, traceEnd, Filter )
 		end
 
-		-- !!workaround!! todo: implement proper breaking
-		if IsValid( trace.Entity ) and trace.Entity:GetClass() == "func_breakable_surf" then
-			if SERVER then trace.Entity:Fire("break") end
-
-			trace.Hit = false -- goes right through...
-		end
-
-		if trace.Hit then
-			-- hulltrace doesnt hit the wall due to its hullsize...
-			-- so this needs an extra trace line
-			local traceImpact = util.TraceLine( {
-				start = traceStart,
-				endpos = start + pos + dir * bullet.Velocity,
-				filter = Filter,
-				mask = TraceMask
-			} )
-
-			if SERVER then
-				local EndPos = traceImpact.Hit and traceImpact.HitPos or trace.HitPos
-
-				local dmginfo = DamageInfo()
-				dmginfo:SetDamage( bullet.Damage )
-				dmginfo:SetAttacker( (IsValid( bullet.Attacker ) and bullet.Attacker) or (IsValid( bullet.Entity ) and bullet.Entity) or game.GetWorld() )
-				dmginfo:SetDamageType( DMG_AIRBOAT )
-				dmginfo:SetInflictor( (IsValid( bullet.Entity ) and bullet.Entity) or (IsValid( bullet.Attacker ) and bullet.Attacker) or game.GetWorld() )
-				dmginfo:SetDamagePosition( EndPos )
-
-				if bullet.Force1km then
-					local Mul = math.min( (start - EndPos):Length() / 39370, 1 )
-					local invMul = math.max( 1 - Mul, 0 )
-					dmginfo:SetDamageForce( bullet.Dir * (bullet.Force * invMul + bullet.Force1km * Mul) )
-				else
-					dmginfo:SetDamageForce( bullet.Dir * bullet.Force )
-				end
-
-				if bullet.Callback then
-					bullet.Callback( bullet.Attacker, trace, dmginfo )
-				end
-
-				trace.Entity:TakeDamageInfo( dmginfo )
-
-				if IsValid( trace.Entity ) and trace.Entity.GetBloodColor then
-					local BloodColor = trace.Entity:GetBloodColor()
-
-					if BloodColor and BloodColor ~= DONT_BLEED then
-						local effectdata = EffectData()
-						effectdata:SetOrigin( EndPos )
-						effectdata:SetColor( BloodColor )
-						util.Effect( "BloodImpact", effectdata, true, true )
-					end
-				end
-
-				if bullet.SplashDamage and bullet.SplashDamageRadius then
-					local effectdata = EffectData()
-					effectdata:SetOrigin( EndPos )
-					effectdata:SetNormal( trace.HitWorld and trace.HitNormal or dir )
-					effectdata:SetMagnitude( bullet.SplashDamageRadius / 250 )
-					util.Effect( bullet.SplashDamageEffect, effectdata )
-
-					dmginfo:SetDamageType( bullet.SplashDamageType )
-					dmginfo:SetDamage( bullet.SplashDamage )
-
-					local BlastPos = EndPos
-		
-					if bullet.SplashDamageType == DMG_BLAST and IsValid( trace.Entity ) then
-						BlastPos = trace.Entity:GetPos()
-
-						if isfunction( trace.Entity.GetBase ) then
-							local Base = trace.Entity:GetBase()
-		
-							if IsValid( Base ) and isentity( Base ) then
-								BlastPos = Base:GetPos()
-							end
-						end
-					end
-
-					util.BlastDamageInfo( dmginfo, BlastPos, bullet.SplashDamageRadius )
-				end
-
-				if not traceImpact.HitSky then
-					local effectdata = EffectData()
-					effectdata:SetOrigin( traceImpact.HitPos )
-					effectdata:SetEntity( traceImpact.Entity )
-					effectdata:SetStart( start )
-					effectdata:SetNormal( traceImpact.HitNormal )
-					effectdata:SetSurfaceProp( traceImpact.SurfaceProps )
-					util.Effect( "Impact", effectdata )
-				end
-			end
-
-			bullet:Remove()
-		end
+		bullet:HandleCollision( traceStart, traceEnd, Filter )
 	end
 end
 
