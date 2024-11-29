@@ -215,18 +215,21 @@ function NewBullet:OnCollideFinal( trace )
 	dmginfo:SetDamagePosition( trace.HitPos )
 	dmginfo:SetDamageForce( self.Dir * self.SplashDamageForce )
 
+	local BlastPos = trace.HitPos
+
 	if self.SplashDamageType == DMG_BLAST and IsValid( trace.Entity ) then
-		trace.Entity:DispatchTraceAttack( dmginfo, trace )
+		BlastPos = trace.Entity:GetPos()
 
-		dmginfo:SetDamageType( DMG_SONIC )
-		dmginfo:SetDamageForce( vector_origin )
+		if isfunction( trace.Entity.GetBase ) then
+			local Base = trace.Entity:GetBase()
 
-		util.BlastDamageInfo( dmginfo, trace.HitPos, self.SplashDamageRadius )
-
-		return
+			if IsValid( Base ) and isentity( Base ) then
+				BlastPos = Base:GetPos()
+			end
+		end
 	end
 
-	util.BlastDamageInfo( dmginfo, trace.HitPos, self.SplashDamageRadius )
+	util.BlastDamageInfo( dmginfo, BlastPos, self.SplashDamageRadius )
 end
 
 function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
