@@ -192,19 +192,7 @@ function NewBullet:OnCollide( trace )
 end
 
 function NewBullet:OnCollideFinal( trace )
-	if CLIENT then
-		if not trace.HitSky then
-			local effectdata = EffectData()
-			effectdata:SetOrigin( trace.HitPos )
-			effectdata:SetEntity( trace.Entity )
-			effectdata:SetStart( traceStart )
-			effectdata:SetNormal( trace.HitNormal )
-			effectdata:SetSurfaceProp( trace.SurfaceProps )
-			util.Effect( "Impact", effectdata )
-		end
-
-		return
-	end
+	if CLIENT then return end
 
 	self:OnCollide( trace )
 
@@ -244,12 +232,13 @@ end
 function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	local TraceMask = self.HullSize <= 1 and MASK_SHOT_PORTAL or MASK_SHOT_HULL
 
+	local traceLine
 	local traceHull
 
 	if self.HullTraceResult then
 		traceHull = self.HullTraceResult
 	else
-		local traceLine = util.TraceLine( {
+		traceLine = util.TraceLine( {
 			start = traceStart,
 			endpos = traceEnd,
 			filter = Filter,
@@ -267,12 +256,6 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 
 		if traceLine.Entity == trace.Entity and trace.Hit and traceLine.Hit then
 			trace = traceLine
-
-			self:OnCollideFinal( trace )
-
-			self:Remove()
-
-			return
 		end
 
 		if trace.Hit then
@@ -285,12 +268,14 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 		end
 	end
 
-	local traceLine = util.TraceLine( {
-		start = traceStart,
-		endpos = traceEnd,
-		filter = Filter,
-		mask = TraceMask
-	} )
+	if not traceLine then
+		traceLine = util.TraceLine( {
+			start = traceStart,
+			endpos = traceEnd,
+			filter = Filter,
+			mask = TraceMask
+		} )
+	end
 
 	if not traceLine.Hit or not traceHull.Hit then
 		return
@@ -299,6 +284,18 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	self:OnCollideFinal( traceLine )
 
 	self:Remove()
+
+	if SERVER then return end
+
+	if not traceLine.HitSky then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( traceLine.HitPos )
+		effectdata:SetEntity( traceLine.Entity )
+		effectdata:SetStart( traceStart )
+		effectdata:SetNormal( traceLine.HitNormal )
+		effectdata:SetSurfaceProp( traceLine.SurfaceProps )
+		util.Effect( "Impact", effectdata )
+	end
 end
 
 local function GetEarPos()
