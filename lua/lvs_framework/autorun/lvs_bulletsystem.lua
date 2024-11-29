@@ -208,7 +208,7 @@ local function HandleBullets()
 			-- so this needs an extra trace line
 			local traceImpact = util.TraceLine( {
 				start = traceStart,
-				endpos = start + pos + dir * 250,
+				endpos = start + pos + dir * bullet.Velocity,
 				filter = Filter,
 				mask = TraceMask
 			} )
@@ -274,7 +274,7 @@ local function HandleBullets()
 
 					util.BlastDamageInfo( dmginfo, BlastPos, bullet.SplashDamageRadius )
 				end
-			else
+
 				if not traceImpact.HitSky then
 					local effectdata = EffectData()
 					effectdata:SetOrigin( traceImpact.HitPos )
