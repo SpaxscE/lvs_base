@@ -105,7 +105,7 @@ function NewBullet:HandleFlybySound( EarPos )
 
 	if self.OldEarDist and self.OldEarDist < EarDist then
 
-		if EarDist < 50000 then
+		if EarDist < 250000 then
 			local effectdata = EffectData()
 			effectdata:SetOrigin( EarPos + (BulletPos - EarPos):GetNormalized() * 20 )
 			effectdata:SetFlags( 2 )
@@ -192,7 +192,19 @@ function NewBullet:OnCollide( trace )
 end
 
 function NewBullet:OnCollideFinal( trace )
-	if CLIENT then return end
+	if CLIENT then
+		if not trace.HitSky then
+			local effectdata = EffectData()
+			effectdata:SetOrigin( trace.HitPos )
+			effectdata:SetEntity( trace.Entity )
+			effectdata:SetStart( traceStart )
+			effectdata:SetNormal( trace.HitNormal )
+			effectdata:SetSurfaceProp( trace.SurfaceProps )
+			util.Effect( "Impact", effectdata )
+		end
+
+		return
+	end
 
 	self:OnCollide( trace )
 
@@ -255,6 +267,12 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 
 		if traceLine.Entity == trace.Entity and trace.Hit and traceLine.Hit then
 			trace = traceLine
+
+			self:OnCollideFinal( trace )
+
+			self:Remove()
+
+			return
 		end
 
 		if trace.Hit then
@@ -281,18 +299,6 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	self:OnCollideFinal( traceLine )
 
 	self:Remove()
-
-	if SERVER then return end
-
-	if not traceLine.HitSky then
-		local effectdata = EffectData()
-		effectdata:SetOrigin( traceLine.HitPos )
-		effectdata:SetEntity( traceLine.Entity )
-		effectdata:SetStart( traceStart )
-		effectdata:SetNormal( traceLine.HitNormal )
-		effectdata:SetSurfaceProp( traceLine.SurfaceProps )
-		util.Effect( "Impact", effectdata )
-	end
 end
 
 local function GetEarPos()
