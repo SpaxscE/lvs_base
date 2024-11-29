@@ -56,6 +56,7 @@ function EFFECT:Init( data )
 
 	local bullet_dir = data:GetStart()
 	local dir = data:GetNormal()
+	local magnitude = data:GetMagnitude()
 
 	local ent = data:GetEntity()
 	local surface = data:GetSurfaceProp()
@@ -67,6 +68,35 @@ function EFFECT:Init( data )
 
 	local DieTime = math.Rand(0.8,1.4)
 
+	for i = 1, 60 * magnitude do
+		local spark = emitter:Add("effects/spark", pos + dir * 8)
+
+		spark:SetStartAlpha( 255 )
+		spark:SetEndAlpha( 0 )
+		spark:SetCollide( true )
+		spark:SetBounce( math.Rand(0,1) )
+		spark:SetColor( 255, 255, 255 )
+		spark:SetGravity( Vector(0,0,-600) )
+		spark:SetEndLength(0)
+
+		local size = math.Rand(4, 6) * magnitude
+		spark:SetEndSize( size )
+		spark:SetStartSize( size )
+
+		spark:SetStartLength( math.Rand(20,40) * magnitude )
+		spark:SetDieTime( math.Rand(0.4, 1.2) )
+		spark:SetVelocity( (dir * math.Rand(300, 600) + VectorRand() * 300) * magnitude )
+	end
+
+	local flash = emitter:Add( "effects/yellowflare",pos )
+	flash:SetPos( pos + dir * 15 )
+	flash:SetStartAlpha( 200 )
+	flash:SetEndAlpha( 0 )
+	flash:SetColor( 255,255,255 )
+	flash:SetEndSize( 0 )
+	flash:SetDieTime( 0.075 )
+	flash:SetStartSize( 300 * magnitude ^ 2 )
+	
 	if self.SparkSurface[ surfaceName ] then
 		if IsValid( ent ) and ent.LVS then
 			if (90 - math.deg( math.acos( math.Clamp( -dir:Dot( bullet_dir ) ,-1,1) ) )) > 10 then
@@ -162,7 +192,7 @@ function EFFECT:Init( data )
 			particle:SetStartSize( 5 )
 			particle:SetDieTime( math.Rand(0.5, 1) )
 			particle:SetEndSize( math.Rand(15, 30) )
-			particle:SetVelocity( (dir * math.Rand(40, 200) + VectorRand() * 50) * 1.5 )
+			particle:SetVelocity( (dir * math.Rand(80, 400) + VectorRand() * 100) * 1.5 )
 		end
     
 		for n = 0,6 do
@@ -170,7 +200,7 @@ function EFFECT:Init( data )
 
 			if not particle then continue end
 
-			particle:SetVelocity( (dir * 25 * i + VectorRand() * 25) )
+			particle:SetVelocity( (dir * 50 * i + VectorRand() * 50) )
 			particle:SetDieTime( (i / 8) * DieTime )
 			particle:SetAirResistance( 10 ) 
 			particle:SetStartAlpha( 255 )
