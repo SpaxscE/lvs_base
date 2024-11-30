@@ -24,17 +24,16 @@ function NewBullet:GetBulletIndex()
 end
 
 function NewBullet:Remove()
+	local index = self.bulletindex
+
 	if SERVER then
+		-- prevents ghost bullets if the client fails to detect the hit
 		net.Start( "lvs_remove_bullet", true )
-			net.WriteInt( self.bulletindex, 13 )
-		net.Broadcast()
-
-		LVS._ActiveBullets[ self.bulletindex ] = nil
-
-		return
+			net.WriteInt( index, 13 )
+		net.SendPVS( self:GetPos() )
 	end
 
-	LVS:RemoveBullet( self.bulletindex )
+	LVS:RemoveBullet( index )
 end
 
 function NewBullet:GetPos()
