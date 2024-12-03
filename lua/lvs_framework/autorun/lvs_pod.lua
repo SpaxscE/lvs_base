@@ -2,6 +2,37 @@
 local meta = FindMetaTable( "Vehicle" )
 
 if CLIENT then
+	function meta:lvsGetPodIndex()
+		local id = self:GetNWInt( "pPodIndex", -1 )
+
+		if id ~= -1 then return id end
+
+		-- code below is bandaid fix for ent:GetNWInt taking up to 5 minutes to update on client...
+
+		local mat = self:GetMaterial()
+
+		-- material is more reliable than ent:GetNWInt... unless someone has changed it on client...
+		if string.StartsWith(mat, "podindexlvs") then
+
+			local id_by_material = tonumber( string.TrimLeft( mat, "podindexlvs" ) )
+
+			if id_by_material then return id_by_material end
+		end
+
+		local col = self:GetColor()
+		local id_by_color = col.r
+
+		-- 255 or 0 is suspicous...
+		if id_by_color == 255 or id_by_color == 0 then return -1 end
+
+		-- lets just assume its right... right?
+		if id_by_color == col.g and id_by_color == col.b then
+			return id_by_color
+		end
+
+		return -1
+	end
+
 	function meta:GetCameraHeight()
 		if not self._lvsCamHeight then
 			self._lvsCamHeight = 0
@@ -58,6 +89,10 @@ if CLIENT then
 	end)
 
 	return
+end
+
+function meta:lvsGetPodIndex()
+	return self:GetNWInt( "pPodIndex", -1 )
 end
 
 function meta:GetCameraHeight()
@@ -133,4 +168,13 @@ end
 
 function meta:lvsGetWeapon()
 	return self._lvsWeaponEnt
+end
+
+function meta:lvsSetPodIndex( index )
+	-- garbage networking
+	self:SetNWInt( "pPodIndex", index )
+
+	-- more reliable networking, lol
+	self:SetMaterial( "podindexlvs"..index )
+	self:SetColor( Color( index, index, index, 0 ) )
 end

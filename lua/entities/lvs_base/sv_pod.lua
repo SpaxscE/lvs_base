@@ -132,11 +132,12 @@ function ENT:AddDriverSeat( Pos, Ang )
 		Pod:Activate()
 		Pod:SetParent( self )
 		Pod:SetNotSolid( true )
-		Pod:SetColor( Color( 255, 255, 255, 0 ) ) 
 		Pod:SetRenderMode( RENDERMODE_TRANSALPHA )
 		Pod:DrawShadow( false )
 		Pod.DoNotDuplicate = true
-		Pod:SetNWInt( "pPodIndex", 1 )
+
+		Pod:lvsSetPodIndex( 1 )
+
 		Pod:PhysicsDestroy()
 
 		debugoverlay.BoxAngles( Pod:GetPos(), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 255, 93, 0, 200 ) )
@@ -167,7 +168,6 @@ function ENT:AddPassengerSeat( Pos, Ang )
 	Pod:Activate()
 	Pod:SetParent( self )
 	Pod:SetNotSolid( true )
-	Pod:SetColor( Color( 255, 255, 255, 0 ) ) 
 	Pod:SetRenderMode( RENDERMODE_TRANSALPHA )
 
 	debugoverlay.BoxAngles( Pod:GetPos(), Pod:OBBMins(), Pod:OBBMaxs(), Pod:GetAngles(), 5, Color( 100, 65, 127, 200 ) )
@@ -186,7 +186,8 @@ function ENT:AddPassengerSeat( Pos, Ang )
 		end
 	end
 
-	Pod:SetNWInt( "pPodIndex", self.pPodKeyIndex )
+	Pod:lvsSetPodIndex( self.pPodKeyIndex )
+
 	Pod:PhysicsDestroy()
 
 	self:DeleteOnRemove( Pod )

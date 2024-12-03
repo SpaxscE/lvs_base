@@ -195,7 +195,7 @@ function ENT:GetPassengerSeat( num )
 
 			if not IsValid( Pod ) then continue end
 
-			local id = Pod:GetNWInt( "pPodIndex", -1 )
+			local id = Pod:lvsGetPodIndex()
 
 			if id == -1 then continue end
 
@@ -254,7 +254,7 @@ function ENT:GetPassenger( num )
 				return NULL
 			end
 
-			local id = Pod:GetNWInt( "pPodIndex", -1 )
+			local id = Pod:lvsGetPodIndex()
 
 			if id == -1 then continue end
 
