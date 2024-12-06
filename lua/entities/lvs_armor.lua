@@ -61,10 +61,18 @@ if SERVER then
 		local pos = dmginfo:GetDamagePosition()
 		local dir = Force:GetNormalized()
 
+		local base = self:GetBase()
+
 		local trace = util.TraceLine( {
 			start = pos - dir * 20,
 			endpos = pos + dir * 20,
 		} )
+
+		local parent = trace.Entity
+
+		if IsValid( trace.Entity ) and isfunction( trace.Entity.GetBase ) and trace.Entity:GetBase() == base then
+			trace.Entity = base
+		end
 
 		local DotHitNormal = math.Clamp( trace.HitNormal:Dot( dir ) ,-1,1) 
 
@@ -84,11 +92,11 @@ if SERVER then
 				DisableBounce = true
 			end
 		end
-	
+
 		if DamageForce <= ArmorEffective then
 			local T = CurTime()
 
-			if trace.Entity ~= self:GetBase() then
+			if trace.Entity ~= base then
 				self._NextBounce = T + 1
 
 				return false
@@ -97,7 +105,7 @@ if SERVER then
 			local Ax = math.acos( DotHitNormal )
 			local HitAngle = 90 - (180 - math.deg( Ax ))
 
-			if HitAngle > 20 then
+			if HitAngle > 30 then
 				local effectdata = EffectData()
 					effectdata:SetOrigin( trace.HitPos )
 					effectdata:SetNormal( -dir )
@@ -148,7 +156,7 @@ if SERVER then
 		hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
 		hit_decal:Spawn()
 		hit_decal:Activate()
-		hit_decal:SetParent( trace.Entity )
+		hit_decal:SetParent( parent )
 
 		if not self:GetDestroyed() then
 			self:SetDestroyed( true )
