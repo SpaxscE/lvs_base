@@ -224,7 +224,7 @@ if SERVER then
 		local FT = FrameTime()
 		local CurWeapon, SelectedID = self:GetActiveWeapon()
 	
-		for ID, Weapon in pairs( self.WEAPONS[1] ) do
+		for ID, Weapon in pairs( EntTable.WEAPONS[1] ) do
 			local IsActive = ID == SelectedID
 			if Weapon.OnThink then Weapon.OnThink( self, IsActive ) end
 
