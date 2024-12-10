@@ -1,10 +1,11 @@
 
 ENT.IconVehicleLocked = Material( "lvs/locked.png" )
 
-LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, 10,  350, 30, 350, 30, "SEAT SWITCHER", 
+LVS:AddHudEditor( "SeatSwitcher", ScrW() - 360, 10,  350, 60, 350, 60, "SEAT SWITCHER", 
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 		if not vehicle.LVSHudPaintSeatSwitcher then return end
-		vehicle:LVSHudPaintSeatSwitcher( X, Y, W, H, ScrX, ScrY, ply )
+
+		vehicle:LVSHudPaintSeatSwitcher( X, Y, W, 30, ScrX, ScrY, ply )
 	end
 )
 
