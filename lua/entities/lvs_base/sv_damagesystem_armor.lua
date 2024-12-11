@@ -33,8 +33,8 @@ function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
 		mins = mins,
 		maxs = maxs,
 		Callback = function( tbl, ent, dmginfo )
-			if not IsValid( Armor ) or not dmginfo:IsDamageType( self.DSArmorBulletPenetrationType ) then return true end
-	
+			if not IsValid( Armor ) or not dmginfo:IsDamageType( self.DSArmorBulletPenetrationType + DMG_BLAST ) then return true end
+
 			local MaxHealth = self:GetMaxHP()
 			local MaxArmor = Armor:GetMaxHP()
 			local Damage = dmginfo:GetDamage()

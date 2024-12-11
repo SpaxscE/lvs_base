@@ -86,17 +86,8 @@ function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype,
 
 	local startpos = pos - forward * radius
 
-	local traceCenter = util.TraceLine( {
-		start = startpos,
-		endpos = pos + forward * radius,
-		filter = { attacker, inflictor },
-		ignoreworld = true,
-	} )
-
-	local fragmentangle = 32
+	local fragmentangle = 10
 	local numfragments = 16
-
-	local numhits = 0
 
 	for i = 1, numfragments do
 		local ang = forward:Angle() + Angle( math.random(-fragmentangle,fragmentangle), math.random(-fragmentangle,fragmentangle), 0 )
@@ -115,42 +106,15 @@ function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype,
 
 		if not IsValid( trace.Entity ) then continue end
 
-		if not HitEntities[ trace.Entity ] then
-			debugoverlay.Line( startpos, traceCenter.HitPos, 10, Color( 255, 0, 255, 255 ), true )
-
-			HitEntities[ trace.Entity ] = {
-				origin = traceCenter.HitPos,
-				numhits = 0,
-			}
-		end
-
-		numhits = numhits + 1
-
-		HitEntities[ trace.Entity ].numhits = HitEntities[ trace.Entity ].numhits + 1
-	end
-
-	if numhits <= 0 then return end
-
-	local damagefragmented = damage / numfragments
-
-	for ent, data in pairs( HitEntities ) do
-
-		local damageboost = 1
-		if traceCenter.Entity == ent then
-			damageboost = numfragments / numhits
-		end
-
-		local damage_fragmented = data.numhits * damagefragmented * damageboost
-
 		local dmginfo = DamageInfo()
 		dmginfo:SetAttacker( attacker )
 		dmginfo:SetInflictor( inflictor )
-		dmginfo:SetDamage( damage_fragmented )
-		dmginfo:SetDamageForce( forward * force )
-		dmginfo:SetDamagePosition( data.origin )
+		dmginfo:SetDamage( damage / numfragments )
+		dmginfo:SetDamageForce( dir * force )
+		dmginfo:SetDamagePosition( trace.HitPos )
 		dmginfo:SetDamageType( DMG_BLAST )
 
-		ent:TakeDamageInfo( dmginfo )
+		trace.Entity:TakeDamageInfo( dmginfo )
 	end
 end
 

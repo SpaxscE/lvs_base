@@ -55,6 +55,7 @@ if SERVER then
 
 		local Damage = dmginfo:GetDamage()
 		local DamageForce = Force:Length()
+		local IsBlastDamage = dmginfo:IsDamageType( DMG_BLAST )
 
 		local CurHealth = self:GetHP()
 
@@ -93,7 +94,7 @@ if SERVER then
 			end
 		end
 
-		if DamageForce <= ArmorEffective then
+		if DamageForce <= ArmorEffective and not IsBlastDamage then
 			local T = CurTime()
 
 			if trace.Entity ~= base then
@@ -151,12 +152,14 @@ if SERVER then
 		self:OnHealthChanged( dmginfo, CurHealth, NewHealth )
 		self:SetHP( NewHealth )
 
-		local hit_decal = ents.Create( "lvs_armor_penetrate" )
-		hit_decal:SetPos( trace.HitPos )
-		hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
-		hit_decal:Spawn()
-		hit_decal:Activate()
-		hit_decal:SetParent( parent )
+		if not IsBlastDamage then
+			local hit_decal = ents.Create( "lvs_armor_penetrate" )
+			hit_decal:SetPos( trace.HitPos )
+			hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
+			hit_decal:Spawn()
+			hit_decal:Activate()
+			hit_decal:SetParent( parent )
+		end
 
 		if not self:GetDestroyed() then
 			self:SetDestroyed( true )
