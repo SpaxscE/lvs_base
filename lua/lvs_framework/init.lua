@@ -70,7 +70,7 @@ end
 
 resource.AddWorkshop("2912816023")
 
-function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype, radius, force )
+function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damagetype, radius, force )
 
 	local dmginfo = DamageInfo()
 	dmginfo:SetAttacker( attacker )
@@ -78,24 +78,23 @@ function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype,
 	dmginfo:SetDamage( damage )
 	dmginfo:SetDamageType( DMG_SONIC )
 
-	util.BlastDamageInfo( dmginfo, pos, radius )
+	util.BlastDamageInfo( dmginfo, startpos, radius )
 
 	if damagetype ~= DMG_BLAST then return end
 
-	local HitEntities = {}
+	local FragmentAngle = 10
+	local NumFragments = 16
+	local NumFragmentsMissed = 0
 
-	local startpos = pos - forward * radius
+	local RegisteredHits = {}
 
-	local fragmentangle = 10
-	local numfragments = 16
-
-	for i = 1, numfragments do
-		local ang = forward:Angle() + Angle( math.random(-fragmentangle,fragmentangle), math.random(-fragmentangle,fragmentangle), 0 )
+	for i = 1, NumFragments do
+		local ang = forward:Angle() + Angle( math.random(-FragmentAngle,FragmentAngle), math.random(-FragmentAngle,FragmentAngle), 0 )
 		local dir = ang:Forward()
 
-		local endpos = pos + dir * radius
+		local endpos = startpos + dir * radius
 
-		debugoverlay.Line( startpos, endpos, 10, Color( 255, 0, 0, 255 ), true )
+		--debugoverlay.Line( startpos, endpos, 10, Color( 255, 0, 0, 255 ), true )
 
 		local trace = util.TraceLine( {
 			start = startpos,
@@ -104,17 +103,54 @@ function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype,
 			ignoreworld = true,
 		} )
 
+		if not trace.Hit then
+			NumFragmentsMissed = NumFragmentsMissed + 1
+
+			continue
+		end
+
 		if not IsValid( trace.Entity ) then continue end
+
+		if not RegisteredHits[ trace.Entity ] then
+			RegisteredHits[ trace.Entity ] = {}
+		end
+
+		table.insert( RegisteredHits[ trace.Entity ], {
+			origin = trace.HitPos,
+			force = dir * force,
+		} )
+	end
+
+	if NumFragmentsMissed == NumFragments then return end
+
+	local DamageBoost = NumFragments / ( NumFragments - NumFragmentsMissed )
+
+	for ent, data in pairs( RegisteredHits ) do
+		local NumHits = #data
+		local AverageOrigin = vector_origin
+		local AverageForce = vector_origin
+
+		for _, HitData in pairs( data ) do
+			AverageOrigin = AverageOrigin + HitData.origin
+			AverageForce = AverageForce + HitData.force
+		end
+
+		AverageOrigin = AverageOrigin / NumHits
+		AverageForce = AverageForce / NumHits
+
+		local TotalDamage = ( ( NumHits * DamageBoost ) / NumFragments ) * damage
+
+		debugoverlay.Cross( AverageOrigin, 50, 10, Color( 255, 0, 255 ) )
 
 		local dmginfo = DamageInfo()
 		dmginfo:SetAttacker( attacker )
 		dmginfo:SetInflictor( inflictor )
-		dmginfo:SetDamage( damage / numfragments )
-		dmginfo:SetDamageForce( dir * force )
-		dmginfo:SetDamagePosition( trace.HitPos )
+		dmginfo:SetDamage( TotalDamage )
+		dmginfo:SetDamageForce( AverageForce )
+		dmginfo:SetDamagePosition( AverageOrigin )
 		dmginfo:SetDamageType( DMG_BLAST )
 
-		trace.Entity:TakeDamageInfo( dmginfo )
+		ent:TakeDamageInfo( dmginfo )
 	end
 end
 
