@@ -140,7 +140,7 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 
 		local TotalDamage = ( ( NumHits * DamageBoost ) / NumFragments ) * damage
 
-		debugoverlay.Cross( AverageOrigin, 50, 10, Color( 255, 0, 255 ) )
+		--debugoverlay.Cross( AverageOrigin, 50, 10, Color( 255, 0, 255 ) )
 
 		local dmginfo = DamageInfo()
 		dmginfo:SetAttacker( attacker )
