@@ -38,6 +38,14 @@ function ENT:AddWeapon( weaponData, PodID )
 	table.insert( self.WEAPONS[ PodID ], data )
 end
 
+function ENT:UpdateWeapon( PodID, WeaponID, weaponData )
+	if not self.WEAPONS[ PodID ] then return end
+
+	if not self.WEAPONS[ PodID ][ WeaponID ] then return end
+
+	table.Merge( self.WEAPONS[ PodID ][ WeaponID ], weaponData )
+end
+
 function ENT:HasWeapon( ID )
 	return istable( self.WEAPONS[1][ ID ] )
 end
