@@ -29,6 +29,7 @@ if SERVER then
 		return self._FilterEnts or {}
 	end
 	function ENT:SetDamage( num ) self._dmg = num end
+	function ENT:SetForce( num ) self._force = num end
 	function ENT:SetThrust( num ) self._thrust = num end
 	function ENT:SetRadius( num ) self._radius = num end
 	function ENT:SetAttacker( ent )
@@ -43,6 +44,7 @@ if SERVER then
 
 	function ENT:GetAttacker() return self._attacker or NULL end
 	function ENT:GetDamage() return (self._dmg or 2000) end
+	function ENT:GetForce() return (self._force or 8000) end
 	function ENT:GetRadius() return (self._radius or 400) end
 
 	function ENT:Initialize()
@@ -107,9 +109,14 @@ if SERVER then
 	function ENT:PhysicsSimulate( phys, deltatime )
 		phys:Wake()
 
-		local ForceLinear, ForceAngle = phys:CalculateForceOffset( physenv.GetGravity(), phys:LocalToWorld( phys:GetMassCenter() + Vector(10,0,0) ) )
+		local ForceLinear = physenv.GetGravity()
 
-		ForceAngle = ForceAngle - phys:GetAngleVelocity()  * 5
+		local Pos = self:GetPos()
+		local TargetPos = Pos + self:GetVelocity()
+
+		local AngForce = -self:WorldToLocalAngles( (TargetPos - Pos):Angle() )
+
+		local ForceAngle = (Vector(AngForce.r,-AngForce.p,-AngForce.y) * 10 - phys:GetAngleVelocity() * 5 ) * 250 * deltatime
 
 		return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 	end
@@ -182,21 +189,9 @@ if SERVER then
 			effectdata:SetOrigin( Pos )
 		util.Effect( self.ExplosionEffect, effectdata )
 
-		if IsValid( target ) and not target:IsNPC() then
-			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
-
-			if isfunction( target.GetBase ) then
-				local Base = target:GetBase()
-
-				if IsValid( Base ) and isentity( Base ) then
-					Pos = Base:GetPos()
-				end
-			end
-		end
-
 		local attacker = self:GetAttacker()
 
-		util.BlastDamage( self, IsValid( attacker ) and attacker or game.GetWorld(), Pos, self:GetRadius(), self:GetDamage() )
+		LVS:BlastDamage( Pos, self:GetForward(), IsValid( attacker ) and attacker or game.GetWorld(), self, self:GetDamage(), DMG_BLAST, self:GetRadius(), self:GetForce() )
 
 		SafeRemoveEntityDelayed( self, FrameTime() )
 	end

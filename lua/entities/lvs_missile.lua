@@ -89,6 +89,7 @@ if SERVER then
 	end
 	function ENT:SetTarget( ent ) self:SetNWTarget( ent ) end
 	function ENT:SetDamage( num ) self._dmg = num end
+	function ENT:SetForce( num ) self._force = num end
 	function ENT:SetThrust( num ) self._thrust = num end
 	function ENT:SetSpeed( num ) self._speed = num end
 	function ENT:SetTurnSpeed( num ) self._turnspeed = num end
@@ -97,6 +98,7 @@ if SERVER then
 
 	function ENT:GetAttacker() return self._attacker or NULL end
 	function ENT:GetDamage() return (self._dmg or 100) end
+	function ENT:GetForce() return (self._force or 4000) end
 	function ENT:GetRadius() return (self._radius or 250) end
 	function ENT:GetSpeed() return (self._speed or 4000) end
 	function ENT:GetTurnSpeed() return (self._turnspeed or 1) * 100 end
@@ -126,12 +128,6 @@ if SERVER then
 		local Target = self:GetNWTarget()
 
 		if not IsValid( Target ) then return Vector(0,0,0) end
-
-		if isfunction( Target.GetShield ) then
-			if Target:GetShield() > 0 then
-				return Target:LocalToWorld( VectorRand() * math.random( -1000, 1000 ) )
-			end
-		end
 
 		if isfunction( Target.GetMissileOffset ) then
 			return Target:LocalToWorld( Target:GetMissileOffset() )
@@ -283,21 +279,9 @@ if SERVER then
 			effectdata:SetOrigin( Pos )
 		util.Effect( self.ExplosionEffect, effectdata )
 
-		if IsValid( target ) and not target:IsNPC() then
-			Pos = target:GetPos() -- place explosion inside the hit targets location so they receive full damage. This fixes all the garbage code the LFS' missile required in order to deliver its damage
-
-			if isfunction( target.GetBase ) then
-				local Base = target:GetBase()
-
-				if IsValid( Base ) and isentity( Base ) then
-					Pos = Base:GetPos()
-				end
-			end
-		end
-
 		local attacker = self:GetAttacker()
 
-		util.BlastDamage( self, IsValid( attacker ) and attacker or game.GetWorld(), Pos, self:GetRadius(), self:GetDamage() )
+		LVS:BlastDamage( Pos, self:GetForward(), IsValid( attacker ) and attacker or game.GetWorld(), self, self:GetDamage(), DMG_BLAST, self:GetRadius(), self:GetForce() )
 
 		SafeRemoveEntityDelayed( self, FrameTime() )
 	end
@@ -425,11 +409,7 @@ else
 
 			DrawDiamond( TargetPos.x, TargetPos.y, 40, ID * 1337 - T * 100 )
 
-			if isfunction( Target.GetShield ) and Target:GetShield() > 0 then
-				draw.DrawText("WEAK LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			else
-				draw.DrawText(" FULL LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-			end
+			draw.DrawText("LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
 			if not MissilePos.visible then continue end
 

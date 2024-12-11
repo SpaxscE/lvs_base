@@ -70,6 +70,90 @@ end
 
 resource.AddWorkshop("2912816023")
 
+function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype, radius, force )
+
+	local dmginfo = DamageInfo()
+	dmginfo:SetAttacker( attacker )
+	dmginfo:SetInflictor( inflictor )
+	dmginfo:SetDamage( damage )
+	dmginfo:SetDamageType( DMG_SONIC )
+
+	util.BlastDamageInfo( dmginfo, pos, radius )
+
+	if damagetype ~= DMG_BLAST then return end
+
+	local HitEntities = {}
+
+	local startpos = pos - forward * radius
+
+	local traceCenter = util.TraceLine( {
+		start = startpos,
+		endpos = pos + forward * radius,
+		filter = { attacker, inflictor },
+		ignoreworld = true,
+	} )
+
+	local fragmentangle = 32
+	local numfragments = 16
+
+	local numhits = 0
+
+	for i = 1, numfragments do
+		local ang = forward:Angle() + Angle( math.random(-fragmentangle,fragmentangle), math.random(-fragmentangle,fragmentangle), 0 )
+		local dir = ang:Forward()
+
+		local endpos = pos + dir * radius
+
+		debugoverlay.Line( startpos, endpos, 10, Color( 255, 0, 0, 255 ), true )
+
+		local trace = util.TraceLine( {
+			start = startpos,
+			endpos = endpos,
+			filter = { attacker, inflictor },
+			ignoreworld = true,
+		} )
+
+		if not IsValid( trace.Entity ) then continue end
+
+		if not HitEntities[ trace.Entity ] then
+			debugoverlay.Line( startpos, traceCenter.HitPos, 10, Color( 255, 0, 255, 255 ), true )
+
+			HitEntities[ trace.Entity ] = {
+				origin = traceCenter.HitPos,
+				numhits = 0,
+			}
+		end
+
+		numhits = numhits + 1
+
+		HitEntities[ trace.Entity ].numhits = HitEntities[ trace.Entity ].numhits + 1
+	end
+
+	if numhits <= 0 then return end
+
+	local damagefragmented = damage / numfragments
+
+	for ent, data in pairs( HitEntities ) do
+
+		local damageboost = 1
+		if traceCenter.Entity == ent then
+			damageboost = numfragments / numhits
+		end
+
+		local damage_fragmented = data.numhits * damagefragmented * damageboost
+
+		local dmginfo = DamageInfo()
+		dmginfo:SetAttacker( attacker )
+		dmginfo:SetInflictor( inflictor )
+		dmginfo:SetDamage( damage_fragmented )
+		dmginfo:SetDamageForce( forward * force )
+		dmginfo:SetDamagePosition( data.origin )
+		dmginfo:SetDamageType( DMG_BLAST )
+
+		ent:TakeDamageInfo( dmginfo )
+	end
+end
+
 function LVS:FixVelocity()
 	local tbl = physenv.GetPerformanceSettings()
 

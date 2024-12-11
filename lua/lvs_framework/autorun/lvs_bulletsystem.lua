@@ -206,29 +206,7 @@ function NewBullet:OnCollideFinal( trace )
 	local Attacker = (IsValid( self.Attacker ) and self.Attacker) or (IsValid( self.Entity ) and self.Entity) or game.GetWorld()
 	local Inflictor = (IsValid( self.Entity ) and self.Entity) or (IsValid( self.Attacker ) and self.Attacker) or game.GetWorld()
 
-	local dmginfo = DamageInfo()
-	dmginfo:SetAttacker( Attacker )
-	dmginfo:SetInflictor( Inflictor )
-	dmginfo:SetDamage( self.SplashDamage )
-	dmginfo:SetDamageType( self.SplashDamageType )
-	dmginfo:SetDamagePosition( trace.HitPos )
-	dmginfo:SetDamageForce( self.Dir * self.SplashDamageForce )
-
-	local BlastPos = trace.HitPos
-
-	if self.SplashDamageType == DMG_BLAST and IsValid( trace.Entity ) then
-		BlastPos = trace.Entity:GetPos()
-
-		if isfunction( trace.Entity.GetBase ) then
-			local Base = trace.Entity:GetBase()
-
-			if IsValid( Base ) and isentity( Base ) then
-				BlastPos = Base:GetPos()
-			end
-		end
-	end
-
-	util.BlastDamageInfo( dmginfo, BlastPos, self.SplashDamageRadius )
+	LVS:BlastDamage( trace.HitPos, self.Dir, Attacker, Inflictor, self.SplashDamage, self.SplashDamageType, self.SplashDamageRadius, self.SplashDamageForce )
 end
 
 function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
@@ -345,7 +323,7 @@ local function HandleBullets()
 		local traceEnd = bullet:GetPos()
 
 		if CLIENT then
-			debugoverlay.Line( traceStart, traceEnd, Color( 255, 255, 255 ), true )
+			--debugoverlay.Line( traceStart, traceEnd, Color( 255, 255, 255 ), true )
 
 			-- bullet flyby sounds
 			bullet:HandleFlybySound( EarPos )

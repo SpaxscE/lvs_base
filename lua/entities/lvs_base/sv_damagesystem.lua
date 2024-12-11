@@ -159,16 +159,6 @@ function ENT:CalcDamage( dmginfo )
 		end
 	end
 
-	if dmginfo:IsDamageType( DMG_BLAST ) then
-		local Inflictor = dmginfo:GetInflictor()
-
-		if IsValid( Inflictor ) and isfunction( Inflictor.GetEntityFilter ) then
-			for ents, _ in pairs( Inflictor:GetEntityFilter() ) do
-				if ents == self then return end
-			end
-		end
-	end
-
 	local IsFireDamage = dmginfo:IsDamageType( DMG_BURN )
 	local IsCollisionDamage = dmginfo:GetDamageType() == (DMG_CRUSH + DMG_VEHICLE)
 	local CriticalHit = false
