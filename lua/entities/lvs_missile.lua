@@ -239,6 +239,7 @@ if SERVER then
 	ENT.IgnoreCollisionGroup = {
 		[COLLISION_GROUP_NONE] = true,
 		[COLLISION_GROUP_WORLD] =  true,
+		[COLLISION_GROUP_INTERACTIVE_DEBRIS] = true,
 	}
 
 	function ENT:StartTouch( entity )
