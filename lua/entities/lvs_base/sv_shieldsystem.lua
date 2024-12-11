@@ -6,6 +6,7 @@ ENT.ShieldBlockableTypes = {
 	[2] = DMG_AIRBOAT,
 	[3] = DMG_BUCKSHOT,
 	[4] = DMG_SNIPER,
+	[5] = DMG_BLAST,
 }
 
 function ENT:CalcShieldDamage( dmginfo )
