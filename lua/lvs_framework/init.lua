@@ -76,11 +76,18 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 	dmginfo:SetAttacker( attacker )
 	dmginfo:SetInflictor( inflictor )
 	dmginfo:SetDamage( damage )
-	dmginfo:SetDamageType( DMG_SONIC )
+	dmginfo:SetDamageType( damagetype == DMG_BLAST and DMG_SONIC or damagetype )
+
+	if damagetype ~= DMG_BLAST then
+		dmginfo:SetDamagePosition( startpos )
+		dmginfo:SetDamageForce( forward * force )
+
+		util.BlastDamageInfo( dmginfo, startpos, radius )
+
+		return
+	end
 
 	util.BlastDamageInfo( dmginfo, startpos, radius )
-
-	if damagetype ~= DMG_BLAST then return end
 
 	local FragmentAngle = 10
 	local NumFragments = 16
