@@ -185,6 +185,11 @@ function NewBullet:OnCollide( trace )
 		self.Callback( Attacker, trace, dmginfo )
 	end
 
+	if trace.Entity:GetClass() == "func_breakable_surf" then
+		-- this will cause the entire thing to just fall apart
+		dmginfo:SetDamageType( DMG_BLAST )
+	end
+
 	trace.Entity:DispatchTraceAttack( dmginfo, trace )
 
 	self.LastDamageTarget = trace.Entity

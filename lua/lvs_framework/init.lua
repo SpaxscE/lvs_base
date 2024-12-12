@@ -70,6 +70,12 @@ end
 
 resource.AddWorkshop("2912816023")
 
+local ValveWierdBlastDamageClass = {
+	["npc_strider"] = true, -- takes 70 damage for each blast damage as constant value ...
+	["npc_combinegunship"] = true, -- takes 44 damage as constant value ...
+	["func_breakable_surf"] = true, -- this entity dont care about anything that isnt a trace attack or blast damage
+}
+
 function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damagetype, radius, force )
 
 	local dmginfo = DamageInfo()
@@ -148,6 +154,14 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 		local TotalDamage = ( ( NumHits * DamageBoost ) / NumFragments ) * damage
 
 		--debugoverlay.Cross( AverageOrigin, 50, 10, Color( 255, 0, 255 ) )
+
+		-- hack
+		if ValveWierdBlastDamageClass[ ent:GetClass() ] then
+
+			util.BlastDamage( inflictor, attacker, startpos, radius, damage )
+
+			continue
+		end
 
 		local dmginfo = DamageInfo()
 		dmginfo:SetAttacker( attacker )
