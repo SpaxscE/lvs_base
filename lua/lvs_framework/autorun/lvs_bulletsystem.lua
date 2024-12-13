@@ -236,7 +236,8 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 			filter = Filter,
 			mins = self.Mins,
 			maxs = self.Maxs,
-			mask = TraceMask
+			mask = TraceMask,
+			ignoreworld = true
 		} )
 
 		if traceLine.Entity == trace.Entity and trace.Hit and traceLine.Hit then
@@ -262,7 +263,7 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 		} )
 	end
 
-	if not traceLine.Hit or not traceHull.Hit then
+	if not traceLine.Hit then
 		return
 	end
 
