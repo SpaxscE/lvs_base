@@ -88,6 +88,16 @@ function ENT:GetMaxAmmo()
 	return CurWeapon.Ammo or -1
 end
 
+function ENT:GetClip()
+	local CurWeapon = self:GetActiveWeapon()
+
+	if not CurWeapon then return 0 end
+
+	local HeatIncrement = (CurWeapon.HeatRateUp or 0.2) * math.max(CurWeapon.Delay or 0, FrameTime())
+
+	return math.min( math.ceil( math.Round( (1 - self:GetNWHeat()) / HeatIncrement, 1 ) ), self:GetNWAmmo() )
+end
+
 if SERVER then
 	function ENT:WeaponRestoreAmmo()
 		local AmmoIsSet = false
@@ -494,7 +504,7 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 		local ShootDelay = math.max(Weapon.Delay or 0, FT)
 		local HeatIncrement = (Weapon.HeatRateUp or 0.2) * ShootDelay
 
-		local Clip = math.min( math.ceil( math.Round( (1 - Heat) / HeatIncrement, 1 ) ), Ammo )
+		local Clip = Base:GetClip()
 
 		if OverHeated then
 			Clip = 0
