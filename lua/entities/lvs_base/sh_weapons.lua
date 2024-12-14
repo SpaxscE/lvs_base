@@ -35,6 +35,7 @@ function ENT:AddWeapon( weaponData, PodID )
 
 		data.HeatRateUp = 1.00001 / (ShootDelay * Clip)
 		data.HeatRateDown = 1 / ReloadSpeed
+		data.OnReload = data.OnReload or default.OnReload
 	else
 		data.HeatRateUp = data.HeatRateUp or default.HeatRateUp
 		data.HeatRateDown = data.HeatRateDown or default.HeatRateDown
@@ -257,6 +258,8 @@ if SERVER then
 			if Weapon.HeatIsClip and not Weapon.Overheated and Weapon._CurHeat ~= 0 then
 				Weapon.Overheated = true
 				Weapon._CurHeat = 1
+
+				if Weapon.OnReload then Weapon.OnReload( self ) end
 			end
 
 			-- cool all inactive weapons down
@@ -278,6 +281,7 @@ if SERVER then
 			if CurHeat >= 1 then
 				self:SetOverheated( true )
 				ShouldFire = false
+				if CurWeapon.OnReload then CurWeapon.OnReload( self ) end
 			end
 		end
 

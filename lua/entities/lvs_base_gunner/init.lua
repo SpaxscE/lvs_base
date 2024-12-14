@@ -194,6 +194,13 @@ function ENT:WeaponsThink()
 
 		if IsActive then continue end
 
+		if Weapon.HeatIsClip and not Weapon.Overheated and Weapon._CurHeat ~= 0 then
+			Weapon.Overheated = true
+			Weapon._CurHeat = 1
+
+			if Weapon.OnReload then Weapon.OnReload( self ) end
+		end
+
 		-- cool all inactive weapons down
 		Weapon._CurHeat = Weapon._CurHeat and Weapon._CurHeat - math.min( Weapon._CurHeat, (Weapon.HeatRateDown or 0.25) * FT ) or 0
 	end
@@ -213,6 +220,7 @@ function ENT:WeaponsThink()
 		if CurHeat >= 1 then
 			self:SetOverheated( true )
 			ShouldFire = false
+			if CurWeapon.OnReload then CurWeapon.OnReload( self ) end
 		end
 	end
 
@@ -249,7 +257,18 @@ function ENT:WeaponsThink()
 			self:SetHeat( CurHeat - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 			self:SetNextAttack( T )
 		end
+
+		self._lvsNextActiveWeaponCoolDown = T + 0.25
 	else
+		if (self._lvsNextActiveWeaponCoolDown or 0) > T then return end
+
+		if CurWeapon.HeatIsClip and not CurWeapon.Overheated then
+
+			self:SetHeat( self:GetHeat() )
+
+			return
+		end
+
 		self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 	end
 end
@@ -301,7 +320,6 @@ function ENT:LVSFireBullet( data )
 	if not IsValid( Base ) then return end
 
 	data.Entity = Base
-
 	data.Velocity = data.Velocity + self:GetVelocity():Length()
 	data.SrcEntity = Base:WorldToLocal( data.Src )
 
