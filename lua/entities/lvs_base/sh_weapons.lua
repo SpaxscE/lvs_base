@@ -23,10 +23,23 @@ function ENT:AddWeapon( weaponData, PodID )
 
 	data.Icon = data.Icon or Material("lvs/weapons/bullet.png")
 	data.Ammo = data.Ammo or -1
-	data.Delay = data.Delay or 0
-	data.HeatIsClip = data.HeatIsClip == true
-	data.HeatRateUp = data.HeatRateUp or default.HeatRateUp
-	data.HeatRateDown = data.HeatRateDown or default.HeatRateDown
+	data.Delay = data.Delay or FrameTime()
+
+	if isnumber( data.Clip ) and data.Clip > 0 then
+		data.HeatIsClip = true
+
+		local ShootDelay = data.Delay
+
+		local Clip = data.Clip
+		local ReloadSpeed = data.ReloadSpeed or 2
+
+		data.HeatRateUp = 1.00001 / (ShootDelay * Clip)
+		data.HeatRateDown = 1 / ReloadSpeed
+	else
+		data.HeatRateUp = data.HeatRateUp or default.HeatRateUp
+		data.HeatRateDown = data.HeatRateDown or default.HeatRateDown
+	end
+
 	data.Attack = data.Attack or default.Attack
 	data.StartAttack = data.StartAttack or default.StartAttack
 	data.FinishAttack = data.FinishAttack or default.FinishAttack
@@ -236,9 +249,15 @@ if SERVER then
 	
 		for ID, Weapon in pairs( EntTable.WEAPONS[1] ) do
 			local IsActive = ID == SelectedID
+
 			if Weapon.OnThink then Weapon.OnThink( self, IsActive ) end
 
 			if IsActive then continue end
+
+			if Weapon.HeatIsClip and not Weapon.Overheated and Weapon._CurHeat ~= 0 then
+				Weapon.Overheated = true
+				Weapon._CurHeat = 1
+			end
 
 			-- cool all inactive weapons down
 			Weapon._CurHeat = Weapon._CurHeat and Weapon._CurHeat - math.min( Weapon._CurHeat, (Weapon.HeatRateDown or 0.25) * FT ) or 0
@@ -299,6 +318,13 @@ if SERVER then
 			EntTable._lvsNextActiveWeaponCoolDown = T + 0.25
 		else
 			if (EntTable._lvsNextActiveWeaponCoolDown or 0) > T then return end
+
+			if CurWeapon.HeatIsClip and not CurWeapon.Overheated then
+
+				self:SetHeat( self:GetHeat() )
+	
+				return
+			end
 
 			self:SetHeat( self:GetHeat() - math.min( self:GetHeat(), (CurWeapon.HeatRateDown or 0.25) * FT ) )
 		end
@@ -434,6 +460,7 @@ local function DrawCircle( X, Y, target_radius, heatvalue, overheated )
 end
 
 ENT.HeatMat = Material( "lvs/heat.png" )
+ENT.HeatIsClipMat = Material( "lvs/3d2dmats/refil.png" )
 
 local color_white = color_white
 local color_red = Color(255,0,0,255)
@@ -464,6 +491,22 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 		local HeatIncrement = (Weapon.HeatRateUp or 0.2) * ShootDelay
 
 		local Clip = math.min( math.ceil( math.Round( (1 - Heat) / HeatIncrement, 1 ) ), Ammo )
+
+		if OverHeated then
+			Clip = 0
+
+			local hX = X + w - h * 0.5
+			local hY = Y + h * 0.25 + h * 0.25
+	
+			surface.SetMaterial( self.HeatIsClipMat )
+			surface.SetDrawColor( 0, 0, 0, 200 )
+			surface.DrawTexturedRectRotated( hX + 3, hY + 1, h, h, 0 )
+			surface.SetDrawColor( 255, 0, 0, 255 )
+			surface.DrawTexturedRectRotated( hX + 1, hY - 1, h, h, 0 )
+
+			DrawCircle( hX, hY, h * 0.35, Heat )
+		end
+
 		Ammo = Ammo - Clip
 
 		local ColDyn = (Clip == 0 or OverHeated) and color_red or color_white
@@ -472,7 +515,7 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 
 		draw.DrawText( Clip, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, ColDyn, TEXT_ALIGN_LEFT )
 
-		local ColDyn2 = Ammo < Clip and color_red or color_white
+		local ColDyn2 = Ammo <= Weapon.Clip and color_red or color_white
 
 		X = X + math.max( (#string.Explode( "", Clip ) - 1) * 18, 0 )
 
