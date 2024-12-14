@@ -24,7 +24,9 @@ function ENT:AddWeapon( weaponData, PodID )
 	data.Icon = data.Icon or Material("lvs/weapons/bullet.png")
 	data.Ammo = data.Ammo or -1
 	data.Delay = data.Delay or 0
+	data.HeatIsClip = data.HeatIsClip == true
 	data.HeatRateUp = data.HeatRateUp or default.HeatRateUp
+	data.HeatRateDown = data.HeatRateDown or default.HeatRateDown
 	data.Attack = data.Attack or default.Attack
 	data.StartAttack = data.StartAttack or default.StartAttack
 	data.FinishAttack = data.FinishAttack or default.FinishAttack
@@ -433,15 +435,53 @@ end
 
 ENT.HeatMat = Material( "lvs/heat.png" )
 
+local color_white = color_white
+local color_red = Color(255,0,0,255)
+
 function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 	local Base = ply:lvsGetWeaponHandler()
 
 	if not IsValid( Base ) then return end
 
-	if not Base:HasWeapon( Base:GetSelectedWeapon() ) then return end
+	local ID = Base:GetSelectedWeapon()
 
+	if not Base:HasWeapon( ID ) then return end
+
+	local Weapon = Base:GetActiveWeapon()
 	local Heat = Base:GetNWHeat()
 	local OverHeated = Base:GetNWOverheated()
+	local Ammo = Base:GetNWAmmo()
+
+	if Weapon and Weapon.HeatIsClip then
+		local Pod = ply:GetVehicle()
+
+		if not IsValid( Pod ) then return end
+
+		local PodID = Base:GetPodIndex()
+
+		local FT = FrameTime()
+		local ShootDelay = math.max(Weapon.Delay or 0, FT)
+		local HeatIncrement = (Weapon.HeatRateUp or 0.2) * ShootDelay
+
+		local Clip = math.min( math.ceil( math.Round( (1 - Heat) / HeatIncrement, 1 ) ), Ammo )
+		Ammo = Ammo - Clip
+
+		local ColDyn = (Clip == 0 or OverHeated) and color_red or color_white
+
+		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, ColDyn, TEXT_ALIGN_RIGHT )
+
+		draw.DrawText( Clip, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, ColDyn, TEXT_ALIGN_LEFT )
+
+		local ColDyn2 = Ammo < Clip and color_red or color_white
+
+		X = X + math.max( (#string.Explode( "", Clip ) - 1) * 18, 0 )
+
+		draw.DrawText( "/", "LVS_FONT_HUD_LARGE", X + 96, Y + 30, ColDyn2, TEXT_ALIGN_LEFT )
+
+		draw.DrawText( Ammo, "LVS_FONT", X + 110, Y + 40, ColDyn2, TEXT_ALIGN_LEFT )
+
+		return
+	end
 
 	local hX = X + w - h * 0.5
 	local hY = Y + h * 0.25 + h * 0.25
@@ -464,7 +504,7 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 	if Base:GetMaxAmmo() <= 0 then return end
 
 	draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, color_white, TEXT_ALIGN_RIGHT )
-	draw.DrawText( Base:GetNWAmmo(), "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
+	draw.DrawText( Ammo, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, color_white, TEXT_ALIGN_LEFT )
 end
 
 function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
