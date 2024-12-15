@@ -244,7 +244,7 @@ function EFFECT:Explosion( pos , scale )
 	if not IsValid( emitter ) then return end
 
 	for i = 0, 40 do
-		local particle = emitter:Add( "particles/flamelet"..math.random(1,5), pos )
+		local particle = emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), pos )
 
 		if particle then
 			particle:SetVelocity( VectorRand() * 1500 * scale )
