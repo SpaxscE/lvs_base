@@ -211,6 +211,10 @@ function NewBullet:DoSplashDamage( trace )
 
 	LVS:BlastDamage( trace.HitPos, self.Dir, Attacker, Inflictor, self.SplashDamage, self.SplashDamageType, self.SplashDamageRadius, self.SplashDamageForce )
 
+	self.SplashDamage = nil
+	self.SplashDamageRadius = nil
+	self.SplashDamageEffect = nil
+
 	return true
 end
 
