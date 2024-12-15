@@ -138,24 +138,25 @@ function EFFECT:Init( data )
 	for i = 1,24 do
 		local particle = emitter:Add( self.SmokeMat[ math.random(1,#self.SmokeMat) ] , self.Pos )
 		
-		if particle then
-			local ang = i * 15
-			local X = math.cos( math.rad(ang) )
-			local Y = math.sin( math.rad(ang) )
+		if not particle then continue end
 
-			local Vel = Vector(X,Y,0) * math.Rand(1500,2000)
+		local ang = i * 15
+		local X = math.cos( math.rad(ang) )
+		local Y = math.sin( math.rad(ang) )
 
-			particle:SetVelocity( Vel * self.Scale )
-			particle:SetDieTime( math.Rand(1,3) )
-			particle:SetAirResistance( 600 ) 
-			particle:SetStartAlpha( 100 )
-			particle:SetStartSize( 40 * self.Scale )
-			particle:SetEndSize( 200 * self.Scale )
-			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
-			particle:SetGravity( Vector(0,0,60) * self.Scale )
-			particle:SetCollide( true )
-		end
+		local Vel = Vector(X,Y,0) * math.Rand(800,1200)
+		Vel:Rotate( self.Dir:Angle() + Angle(90,0,0) )
+
+		particle:SetVelocity( Vel * self.Scale )
+		particle:SetDieTime( math.Rand(1,3) )
+		particle:SetAirResistance( 600 ) 
+		particle:SetStartAlpha( 100 )
+		particle:SetStartSize( 40 * self.Scale )
+		particle:SetEndSize( 140 * self.Scale )
+		particle:SetRollDelta( math.Rand(-1,1) )
+		particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+		particle:SetGravity( Vector(0,0,60) * self.Scale )
+		particle:SetCollide( true )
 	end
 
 	for i = 0, 15 do
@@ -207,11 +208,11 @@ function EFFECT:Init( data )
 		particle:SetEndSize( size )
 		particle:SetStartSize( size )
 
-		particle:SetStartLength( 100 )
+		particle:SetStartLength( 400 * scale )
 		particle:SetEndLength( size )
 
 		particle:SetDieTime( math.Rand(0.1,0.2) )
-		particle:SetVelocity( (self.Dir * 2000 + VectorRand() * 1000) * scale )
+		particle:SetVelocity( (self.Dir * 4000 + VectorRand() * 2000) * scale )
 
 		particle:SetAirResistance( 0 )
 	end
