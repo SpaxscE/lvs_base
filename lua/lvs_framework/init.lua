@@ -76,7 +76,7 @@ local ValveWierdBlastDamageClass = {
 	["func_breakable_surf"] = true, -- this entity dont care about anything that isnt a trace attack or blast damage
 }
 
-function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damagetype, radius, force )
+function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype, radius, force )
 
 	local dmginfo = DamageInfo()
 	dmginfo:SetAttacker( attacker )
@@ -85,15 +85,15 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 	dmginfo:SetDamageType( damagetype == DMG_BLAST and DMG_SONIC or damagetype )
 
 	if damagetype ~= DMG_BLAST then
-		dmginfo:SetDamagePosition( startpos )
+		dmginfo:SetDamagePosition( pos )
 		dmginfo:SetDamageForce( forward * force )
 
-		util.BlastDamageInfo( dmginfo, startpos, radius )
+		util.BlastDamageInfo( dmginfo, pos, radius )
 
 		return
 	end
 
-	util.BlastDamageInfo( dmginfo, startpos, radius )
+	util.BlastDamageInfo( dmginfo, pos, radius )
 
 	local FragmentAngle = 10
 	local NumFragments = 16
@@ -101,19 +101,27 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 
 	local RegisteredHits = {}
 
+	local trace = util.TraceLine( {
+		start = pos,
+		endpos = pos - forward * radius,
+		filter = { attacker, inflictor },
+	} )
+
+	local startpos = trace.HitPos
+
 	for i = 1, NumFragments do
 		local ang = forward:Angle() + Angle( math.random(-FragmentAngle,FragmentAngle), math.random(-FragmentAngle,FragmentAngle), 0 )
 		local dir = ang:Forward()
 
-		local endpos = startpos + dir * radius
-
-		--debugoverlay.Line( startpos, endpos, 10, Color( 255, 0, 0, 255 ), true )
+		local endpos = pos + dir * radius
 
 		local trace = util.TraceLine( {
 			start = startpos,
 			endpos = endpos,
 			filter = { attacker, inflictor },
 		} )
+
+		debugoverlay.Line( startpos, trace.HitPos, 10, Color( 255, 0, 0, 255 ), true )
 
 		if not trace.Hit then
 			NumFragmentsMissed = NumFragmentsMissed + 1
@@ -157,7 +165,7 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 		-- hack
 		if ValveWierdBlastDamageClass[ ent:GetClass() ] then
 
-			util.BlastDamage( inflictor, attacker, startpos, radius, damage )
+			util.BlastDamage( inflictor, attacker, pos, radius, damage )
 
 			continue
 		end
