@@ -192,13 +192,11 @@ function NewBullet:OnCollide( trace )
 
 	trace.Entity:DispatchTraceAttack( dmginfo, trace )
 
-	self:DoSplashDamage( trace )
-
 	self.LastDamageTarget = trace.Entity
 end
 
 function NewBullet:DoSplashDamage( trace )
-	if not self.SplashDamage or not self.SplashDamageRadius then return end
+	if not self.SplashDamage or not self.SplashDamageRadius then return false end
 
 	if self.SplashDamageEffect ~= "" then
 		local effectdata = EffectData()
@@ -213,7 +211,7 @@ function NewBullet:DoSplashDamage( trace )
 
 	LVS:BlastDamage( trace.HitPos, self.Dir, Attacker, Inflictor, self.SplashDamage, self.SplashDamageType, self.SplashDamageRadius, self.SplashDamageForce )
 
-	self:Remove()
+	return true
 end
 
 function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
@@ -251,6 +249,10 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 			traceHull = trace
 
 			self:OnCollide( trace )
+
+			if self:DoSplashDamage( trace ) then
+				self:Remove()
+			end
 		else
 			traceHull = { Hit = false }
 		end
@@ -270,6 +272,8 @@ function NewBullet:HandleCollision( traceStart, traceEnd, Filter )
 	end
 
 	self:OnCollide( traceLine )
+
+	self:DoSplashDamage( traceLine )
 
 	self:Remove()
 

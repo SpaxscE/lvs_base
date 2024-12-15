@@ -75,7 +75,7 @@ function EFFECT:Init( data )
 		spark:SetEndAlpha( 0 )
 		spark:SetCollide( true )
 		spark:SetBounce( math.Rand(0,1) )
-		spark:SetColor( 255, 200, 150 )
+		spark:SetColor( 255, 255, 255 )
 		spark:SetGravity( Vector(0,0,-600) )
 		spark:SetEndLength(0)
 
