@@ -113,7 +113,6 @@ function LVS:BlastDamage( startpos, forward, attacker, inflictor, damage, damage
 			start = startpos,
 			endpos = endpos,
 			filter = { attacker, inflictor },
-			ignoreworld = true,
 		} )
 
 		if not trace.Hit then

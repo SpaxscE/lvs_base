@@ -202,11 +202,13 @@ function NewBullet:OnCollideFinal( trace )
 
 	if not self.SplashDamage or not self.SplashDamageRadius then return end
 
-	local effectdata = EffectData()
-	effectdata:SetOrigin( trace.HitPos )
-	effectdata:SetNormal( trace.HitWorld and trace.HitNormal or self.Dir )
-	effectdata:SetMagnitude( self.SplashDamageRadius / 250 )
-	util.Effect( self.SplashDamageEffect, effectdata )
+	if self.SplashDamageEffect ~= "" then
+		local effectdata = EffectData()
+		effectdata:SetOrigin( trace.HitPos )
+		effectdata:SetNormal( trace.HitWorld and trace.HitNormal or self.Dir )
+		effectdata:SetMagnitude( self.SplashDamageRadius / 250 )
+		util.Effect( self.SplashDamageEffect, effectdata )
+	end
 
 	local Attacker = (IsValid( self.Attacker ) and self.Attacker) or (IsValid( self.Entity ) and self.Entity) or game.GetWorld()
 	local Inflictor = (IsValid( self.Entity ) and self.Entity) or (IsValid( self.Attacker ) and self.Attacker) or game.GetWorld()
