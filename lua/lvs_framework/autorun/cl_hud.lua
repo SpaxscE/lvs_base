@@ -40,11 +40,26 @@ local function MakeFrame( id, X, Y, w, h, minw, minh, text )
 
 		if not LVS.HudEditors[ self.id ] then return end
 
-		LVS.HudEditors[ self.id ].w = self:GetWide()
-		LVS.HudEditors[ self.id ].h = self:GetTall()
+		local Width = self:GetWide()
+		local Height = self:GetTall()
 
-		LVS.HudEditors[ self.id ].X = math.min( self:GetX(), ScrW() - self:GetWide() )
-		LVS.HudEditors[ self.id ].Y = math.min( self:GetY(), ScrH() - self:GetTall() )
+		LVS.HudEditors[ self.id ].w = Width
+		LVS.HudEditors[ self.id ].h = Height
+
+		LVS.HudEditors[ self.id ].X = math.min( self:GetX(), ScrW() - Width )
+		LVS.HudEditors[ self.id ].Y = math.min( self:GetY(), ScrH() - Height )
+
+		if self:IsDragging() or input.IsMouseDown( MOUSE_LEFT ) then return end
+
+		local Ratio = LVS.HudEditors[ self.id ].DefaultHeight / LVS.HudEditors[ self.id ].DefaultWidth
+
+		if math.Round( Height / Width, 2 ) ~= math.Round( Ratio ,2 ) then
+			local NewHeight = Width * Ratio
+
+			self:SetHeight( NewHeight )
+
+			LVS.HudEditors[ self.id ].h = NewHeight
+		end
 	end
 
 	local DCheckbox = vgui.Create( "DCheckBoxLabel", Frame )
@@ -112,8 +127,8 @@ local function LoadEditors()
 
 		if not LVS.HudEditors[ ID ] or not size[1] or not size[2] or not pos[1] or not pos[2] then continue end
 
-		LVS.HudEditors[ ID ].w = size[1]
-		LVS.HudEditors[ ID ].h = size[2]
+		LVS.HudEditors[ ID ].w = math.max( LVS.HudEditors[ ID ].minw, size[1] )
+		LVS.HudEditors[ ID ].h = math.max( LVS.HudEditors[ ID ].minh, size[2] )
 		LVS.HudEditors[ ID ].X = math.min( pos[1] * ScrW(), ScrW() - size[1] )
 		LVS.HudEditors[ ID ].Y = math.min( pos[2] * ScrH(), ScrH() - size[2] )
 
