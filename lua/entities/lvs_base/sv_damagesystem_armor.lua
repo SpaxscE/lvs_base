@@ -48,7 +48,7 @@ function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
 
 			if DidDamage then
 				if dmginfo:IsDamageType( DMG_PREVENT_PHYSICS_FORCE ) then
-					dmginfo:ScaleDamage( 0.001 )
+					dmginfo:ScaleDamage( 0.05 )
 				end
 
 				local Attacker = dmginfo:GetAttacker() 
