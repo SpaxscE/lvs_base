@@ -295,7 +295,7 @@ function SWEP:PrimaryAttack()
 
 	if CLIENT then return end
 
-	Target:SetHP( math.min( HP + 7, MaxHP ) )
+	Target:SetHP( math.min( HP + 15, MaxHP ) )
 
 	if EngineMode and Target:GetDestroyed() then
 		Target:SetDestroyed( false )
