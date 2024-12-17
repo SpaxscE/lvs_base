@@ -71,6 +71,8 @@ function EFFECT:Init( data )
 	for i = 1, 60 * magnitude do
 		local spark = emitter:Add("effects/spark", pos + dir * 8)
 
+		if not spark then continue end
+
 		spark:SetStartAlpha( 255 )
 		spark:SetEndAlpha( 0 )
 		spark:SetCollide( true )
@@ -89,14 +91,17 @@ function EFFECT:Init( data )
 	end
 
 	local flash = emitter:Add( "effects/yellowflare",pos )
-	flash:SetPos( pos + dir * 15 )
-	flash:SetStartAlpha( 200 )
-	flash:SetEndAlpha( 0 )
-	flash:SetColor( 255,255,255 )
-	flash:SetEndSize( 0 )
-	flash:SetDieTime( 0.075 )
-	flash:SetStartSize( 300 * magnitude ^ 2 )
-	
+
+	if flash then
+		flash:SetPos( pos + dir * 15 )
+		flash:SetStartAlpha( 200 )
+		flash:SetEndAlpha( 0 )
+		flash:SetColor( 255,255,255 )
+		flash:SetEndSize( 0 )
+		flash:SetDieTime( 0.075 )
+		flash:SetStartSize( 300 * magnitude ^ 2 )
+	end
+
 	if self.SparkSurface[ surfaceName ] then
 		if IsValid( ent ) and ent.LVS then
 			if (90 - math.deg( math.acos( math.Clamp( -dir:Dot( bullet_dir ) ,-1,1) ) )) > 10 then
