@@ -152,17 +152,17 @@ if SERVER then
 		self:OnHealthChanged( dmginfo, CurHealth, NewHealth )
 		self:SetHP( NewHealth )
 
+		if NewHealth <= 0 and not self:GetDestroyed() then
+			self:SetDestroyed( true )
+			self:OnDestroyed( dmginfo )
+		end
+
 		local hit_decal = ents.Create( IsBlastDamage and "lvs_armor_explode" or "lvs_armor_penetrate" )
 		hit_decal:SetPos( trace.HitPos )
 		hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
 		hit_decal:Spawn()
 		hit_decal:Activate()
 		hit_decal:SetParent( parent )
-
-		if not self:GetDestroyed() then
-			self:SetDestroyed( true )
-			self:OnDestroyed( dmginfo )
-		end
 
 		return true
 	end
