@@ -527,6 +527,8 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 			DrawCircle( hX, hY, h * 0.35, Heat )
 		end
 
+		Ammo = Ammo - Clip
+
 		local ColDyn = (Clip == 0 or OverHeated) and color_red or color_white
 
 		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, ColDyn, TEXT_ALIGN_RIGHT )
