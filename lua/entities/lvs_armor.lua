@@ -64,14 +64,32 @@ if SERVER then
 
 		local base = self:GetBase()
 
-		local trace = util.TraceLine( {
-			start = pos - dir * 20,
-			endpos = pos + dir * 20,
-		} )
+		-- translate force value to armor penetration value is Force * 0.1
+		-- mm to inch is * 0.0393701
+		-- so correct value is * 0.00393701
+		local pLength = DamageForce * 0.00393701
 
+		local TraceData = {
+			start = pos - dir * pLength,
+			endpos = pos + dir * pLength,
+		}
+
+		local trace = util.TraceLine( TraceData )
+
+		-- parent stays the same
 		local parent = trace.Entity
 
+		-- only one extra iteration should be enough ...
 		if IsValid( trace.Entity ) and isfunction( trace.Entity.GetBase ) and trace.Entity:GetBase() == base then
+
+			TraceData.filter = trace.Entity
+
+			local FilteredTrace = util.TraceLine( TraceData )
+
+			if FilteredTrace.Hit then
+				trace = FilteredTrace
+			end
+
 			trace.Entity = base
 		end
 
