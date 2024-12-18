@@ -124,7 +124,13 @@ function ENT:GetClip()
 
 	local HeatIncrement = (CurWeapon.HeatRateUp or 0.2) * math.max(CurWeapon.Delay or 0, FrameTime())
 
-	return math.min( math.ceil( math.Round( (1 - self:GetNWHeat()) / HeatIncrement, 1 ) ), self:GetNWAmmo() )
+	local Ammo = self:GetNWAmmo()
+
+	if self:GetMaxAmmo() <= 0 and CurWeapon.Clip then
+		Ammo = CurWeapon.Clip
+	end
+
+	return math.min( math.ceil( math.Round( (1 - self:GetNWHeat()) / HeatIncrement, 1 ) ), Ammo )
 end
 
 function ENT:GetCrosshairFilterEnts()

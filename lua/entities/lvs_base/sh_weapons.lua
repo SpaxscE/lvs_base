@@ -95,7 +95,13 @@ function ENT:GetClip()
 
 	local HeatIncrement = (CurWeapon.HeatRateUp or 0.2) * math.max(CurWeapon.Delay or 0, FrameTime())
 
-	return math.min( math.ceil( math.Round( (1 - self:GetNWHeat()) / HeatIncrement, 1 ) ), self:GetNWAmmo() )
+	local Ammo = self:GetNWAmmo()
+
+	if self:GetMaxAmmo() <= 0 and CurWeapon.Clip then
+		Ammo = CurWeapon.Clip
+	end
+
+	return math.min( math.ceil( math.Round( (1 - self:GetNWHeat()) / HeatIncrement, 1 ) ), Ammo )
 end
 
 if SERVER then
@@ -521,13 +527,13 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 			DrawCircle( hX, hY, h * 0.35, Heat )
 		end
 
-		Ammo = Ammo - Clip
-
 		local ColDyn = (Clip == 0 or OverHeated) and color_red or color_white
 
 		draw.DrawText( "AMMO ", "LVS_FONT", X + 72, Y + 35, ColDyn, TEXT_ALIGN_RIGHT )
 
 		draw.DrawText( Clip, "LVS_FONT_HUD_LARGE", X + 72, Y + 20, ColDyn, TEXT_ALIGN_LEFT )
+
+		if Base:GetMaxAmmo() <= 0 then return end
 
 		local ColDyn2 = Ammo <= Weapon.Clip and color_red or color_white
 
