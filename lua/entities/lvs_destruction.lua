@@ -79,8 +79,10 @@ if SERVER then
 
 			timer.Simple( 4.5 + math.Rand(0,0.5), function()
 				if not IsValid( ent ) then return end
-				ent:SetRenderFX( kRenderFxFadeFast  ) 
-			end)
+
+				ent:SetRenderMode( RENDERMODE_TRANSCOLOR )
+				ent:SetRenderFX( kRenderFxFadeFast  )
+			end )
 		end
 	end
 
