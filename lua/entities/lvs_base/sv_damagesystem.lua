@@ -17,9 +17,10 @@ function ENT:AddDS( data )
 	data.ang = data.ang or Angle(0,0,0)
 	data.mins = data.mins or Vector(-1,-1,-1)
 	data.maxs = data.maxs or Vector(1,1,1)
+	data.entity = data.entity or self
 	data.Callback = data.Callback or function( tbl, ent, dmginfo ) end
 
-	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 50, 0, 50, 150 ) )
+	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, data.entity:LocalToWorldAngles( data.ang ), 5, Color( 50, 0, 50, 150 ) )
 
 	table.insert( self._dmgParts, data )
 end
@@ -31,9 +32,10 @@ function ENT:AddDSArmor( data )
 	data.ang = data.ang or Angle(0,0,0)
 	data.mins = data.mins or Vector(-1,-1,-1)
 	data.maxs = data.maxs or Vector(1,1,1)
+	data.entity = data.entity or self
 	data.Callback = data.Callback or function( tbl, ent, dmginfo ) end
 
-	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, self:LocalToWorldAngles( data.ang ), 5, Color( 0, 50, 50, 150 ) )
+	debugoverlay.BoxAngles( self:LocalToWorld( data.pos ), data.mins, data.maxs, data.entity:LocalToWorldAngles( data.ang ), 5, Color( 0, 50, 50, 150 ) )
 
 	table.insert( self._armorParts, data )
 end
@@ -51,10 +53,14 @@ function ENT:CalcComponentDamage( dmginfo )
 	local HitDistance
 
 	for index, part in ipairs( self._armorParts ) do
+		local target = part.entity
+
+		if not IsValid( target ) then continue end
+
 		local mins = part.mins
 		local maxs = part.maxs
-		local pos = self:LocalToWorld( part.pos )
-		local ang = self:LocalToWorldAngles( part.ang )
+		local pos = target:LocalToWorld( part.pos )
+		local ang = target:LocalToWorldAngles( part.ang )
 
 		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
@@ -75,10 +81,14 @@ function ENT:CalcComponentDamage( dmginfo )
 	local closestPartDS
 	local closestDistDS = Len * 2
 	for index, part in ipairs( self._dmgParts ) do
+		local target = part.entity
+
+		if not IsValid( target ) then continue end
+
 		local mins = part.mins
 		local maxs = part.maxs
-		local pos = self:LocalToWorld( part.pos )
-		local ang = self:LocalToWorldAngles( part.ang )
+		local pos = target:LocalToWorld( part.pos )
+		local ang = target:LocalToWorldAngles( part.ang )
 
 		local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( dmgPos, dmgPenetration, pos, ang, mins, maxs )
 
@@ -105,10 +115,14 @@ function ENT:CalcComponentDamage( dmginfo )
 
 	local Hit = false
 	for index, part in pairs( self._dmgParts ) do
+		local target = part.entity
+
+		if not IsValid( target ) then continue end
+
 		local mins = part.mins
 		local maxs = part.maxs
-		local pos = self:LocalToWorld( part.pos )
-		local ang = self:LocalToWorldAngles( part.ang )
+		local pos = target:LocalToWorld( part.pos )
+		local ang = target:LocalToWorldAngles( part.ang )
 
 		if part == closestPartDS then
 			Hit = true
@@ -118,10 +132,14 @@ function ENT:CalcComponentDamage( dmginfo )
 	end
 
 	for index, part in pairs( self._armorParts ) do
+		local target = part.entity
+
+		if not IsValid( target ) then continue end
+
 		local mins = part.mins
 		local maxs = part.maxs
-		local pos = self:LocalToWorld( part.pos )
-		local ang = self:LocalToWorldAngles( part.ang )
+		local pos = target:LocalToWorld( part.pos )
+		local ang = target:LocalToWorldAngles( part.ang )
 
 		if part == closestPart then
 			if not part:Callback( self, dmginfo ) then
@@ -135,10 +153,12 @@ function ENT:CalcComponentDamage( dmginfo )
 	if lastPartDS then
 		lastPartDS:Callback( self, dmginfo )
 
+		local target = lastPartDS.entity
+
 		local mins = lastPartDS.mins
 		local maxs = lastPartDS.maxs
-		local pos = self:LocalToWorld( lastPartDS.pos )
-		local ang = self:LocalToWorldAngles( lastPartDS.ang )
+		local pos = target:LocalToWorld( lastPartDS.pos )
+		local ang = target:LocalToWorldAngles( lastPartDS.ang )
 
 		debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 0, 0, 150 ) )
 
@@ -245,10 +265,14 @@ function ENT:FindDS( PosToCheck, RadiusAdd )
 
 	for _, tbl in ipairs( { self._armorParts, self._dmgParts } ) do
 		for index, part in ipairs( tbl ) do
+			local target = part.entity
+
+			if not IsValid( target ) then continue end
+
 			local mins = part.mins
 			local maxs = part.maxs
-			local pos = self:LocalToWorld( part.pos )
-			local ang = self:LocalToWorldAngles( part.ang )
+			local pos = target:LocalToWorld( part.pos )
+			local ang = target:LocalToWorldAngles( part.ang )
 
 			local HitPos, HitNormal, Fraction = util.IntersectRayWithOBB( PosToCheck, ToCenter * RadiusAdd, pos, ang, mins, maxs )
 
@@ -264,10 +288,11 @@ function ENT:FindDS( PosToCheck, RadiusAdd )
 	end
 
 	if closestPart then
+		local target = closestPart.entity
 		local mins = closestPart.mins
 		local maxs = closestPart.maxs
-		local pos = self:LocalToWorld( closestPart.pos )
-		local ang = self:LocalToWorldAngles( closestPart.ang )
+		local pos = target:LocalToWorld( closestPart.pos )
+		local ang = target:LocalToWorldAngles( closestPart.ang )
 		debugoverlay.BoxAngles( pos, mins, maxs, ang, 1, Color( 255, 255, 0, 150 ) )
 	end
 

@@ -60,22 +60,24 @@ function SWEP:FindClosest()
 	local ClosestDist = self.MaxRange
 	local ClosestPiece = NULL
 
-	for _, entity in pairs( lvsEnt:GetChildren() ) do
-		if entity:GetClass() ~= "lvs_armor" then continue end
+	for _, target in pairs( lvsEnt:GetCrosshairFilterEnts() ) do
+		for _, entity in pairs( target:GetChildren() ) do
+			if entity:GetClass() ~= "lvs_armor" then continue end
 
-		local boxOrigin = entity:GetPos()
-		local boxAngles = entity:GetAngles()
-		local boxMins = entity:GetMins()
-		local boxMaxs = entity:GetMaxs()
+			local boxOrigin = entity:GetPos()
+			local boxAngles = entity:GetAngles()
+			local boxMins = entity:GetMins()
+			local boxMaxs = entity:GetMaxs()
 
-		local HitPos, _, _ = util.IntersectRayWithOBB( ShootPos, AimVector * 1000, boxOrigin, boxAngles, boxMins, boxMaxs )
+			local HitPos, _, _ = util.IntersectRayWithOBB( ShootPos, AimVector * 1000, boxOrigin, boxAngles, boxMins, boxMaxs )
 
-		if isvector( HitPos ) then
-			local Dist = (ShootPos - HitPos):Length()
+			if isvector( HitPos ) then
+				local Dist = (ShootPos - HitPos):Length()
 
-			if Dist < ClosestDist then
-				ClosestDist = Dist
-				ClosestPiece = entity
+				if Dist < ClosestDist then
+					ClosestDist = Dist
+					ClosestPiece = entity
+				end
 			end
 		end
 	end

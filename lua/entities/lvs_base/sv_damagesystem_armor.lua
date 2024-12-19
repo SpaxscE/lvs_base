@@ -1,16 +1,18 @@
 
 ENT.DSArmorBulletPenetrationType = DMG_AIRBOAT + DMG_SNIPER
 
-function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
+function ENT:AddArmor( pos, ang, mins, maxs, health, minforce, target )
 	local Armor = ents.Create( "lvs_armor" )
 
 	if not IsValid( Armor ) then return end
 
-	Armor:SetPos( self:LocalToWorld( pos ) )
-	Armor:SetAngles( self:LocalToWorldAngles( ang ) )
+	if not target then target = self end
+
+	Armor:SetPos( target:LocalToWorld( pos ) )
+	Armor:SetAngles( target:LocalToWorldAngles( ang ) )
 	Armor:Spawn()
 	Armor:Activate()
-	Armor:SetParent( self )
+	Armor:SetParent( target )
 	Armor:SetBase( self )
 	Armor:SetMaxHP( health )
 	Armor:SetHP( health )
@@ -32,6 +34,7 @@ function ENT:AddArmor( pos, ang, mins, maxs, health, minforce )
 		ang = ang,
 		mins = mins,
 		maxs = maxs,
+		entity = target,
 		Callback = function( tbl, ent, dmginfo )
 			if not IsValid( Armor ) or not dmginfo:IsDamageType( self.DSArmorBulletPenetrationType + DMG_BLAST ) then return true end
 
