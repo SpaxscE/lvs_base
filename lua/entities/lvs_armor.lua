@@ -78,6 +78,8 @@ if SERVER then
 
 		-- parent stays the same
 		local parent = trace.Entity
+		local parentPos = trace.HitPos
+		local parentDir = trace.HitNormal
 
 		-- only one extra iteration should be enough ...
 		if IsValid( trace.Entity ) and isfunction( trace.Entity.GetBase ) and trace.Entity:GetBase() == base then
@@ -176,8 +178,8 @@ if SERVER then
 		end
 
 		local hit_decal = ents.Create( IsBlastDamage and "lvs_armor_explode" or "lvs_armor_penetrate" )
-		hit_decal:SetPos( trace.HitPos )
-		hit_decal:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
+		hit_decal:SetPos( parentPos )
+		hit_decal:SetAngles( parentDir:Angle() + Angle(90,0,0) )
 		hit_decal:Spawn()
 		hit_decal:Activate()
 		hit_decal:SetParent( parent )
