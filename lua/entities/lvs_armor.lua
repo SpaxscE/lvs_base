@@ -177,8 +177,8 @@ if SERVER then
 			self:OnDestroyed( dmginfo )
 		end
 
-		local hit_decal = ents.Create( IsBlastDamage and "lvs_armor_explode" or "lvs_armor_penetrate" )
-		hit_decal:SetPos( parentPos )
+		local hit_decal = ents.Create( "lvs_armor_penetrate" )
+		hit_decal:SetPos( parentPos + parentDir * 0.2 )
 		hit_decal:SetAngles( parentDir:Angle() + Angle(90,0,0) )
 		hit_decal:Spawn()
 		hit_decal:Activate()

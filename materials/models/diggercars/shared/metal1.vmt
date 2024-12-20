@@ -1,0 +1,25 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/shared/metal1"
+	"$bumpmap" "models/diggercars/shared/metal1_nm"	
+	"$alphatest" "1"
+	"$allowalphatocoverage" "1"
+	"$normalmapalphaenvmapmask" 1
+	"$halflambert" 1
+	"$phong" "1" 
+	"$phongboost" "15" 
+	"$phongfresnelranges" "[.3 .5 1]" 
+	"$phongexponent" 20
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.05 0.05 0.05]"
+	"$envmapfrensel" "1"
+	"$colorfix" "{255 255 255}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+
