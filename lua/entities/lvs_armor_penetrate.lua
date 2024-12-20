@@ -20,7 +20,6 @@ if SERVER then
 			return
 		end
 
-		self:SetModel("models/diggercars/shared/decal3.mdl")
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
 		self:DrawShadow( false )
@@ -46,7 +45,9 @@ if SERVER then
 	return
 end
 
-ENT.GlowMat = Material( "effects/lvs_base/impactglow_03" )
+ENT.GlowMat1 = Material( "particle/particle_ring_wave_8" )
+ENT.GlowMat2 = Material( "sprites/light_glow02_add" )
+ENT.DecalMat = Material( "particle/particle_noisesphere" )
 ENT.MatSmoke = {
 	"particle/smokesprites_0001",
 	"particle/smokesprites_0002",
@@ -71,6 +72,7 @@ local CountTotal = {}
 function ENT:Initialize()
 	CountTotal[ self:EntIndex() ] = true
 
+	self.RandomAng = math.random(0,360)
 	self.DieTime = CurTime() + self.LifeTime
 
 	local Pos = self:GetPos()
@@ -93,19 +95,19 @@ function ENT:Smoke()
 
 		local particle = self.emitter:Add( self.MatSmoke[math.random(1,#self.MatSmoke)], self:GetPos() )
 
-		if not particle then return end
-
-		particle:SetVelocity( self:GetUp() * 60 + VectorRand() * 30 )
-		particle:SetDieTime( math.Rand(1.5,2) )
-		particle:SetAirResistance( 100 ) 
-		particle:SetStartAlpha( 30 )
-		particle:SetEndAlpha( 0 )
-		particle:SetStartSize( 0 )
-		particle:SetEndSize( 60 )
-		particle:SetRollDelta( math.Rand( -1, 1 ) )
-		particle:SetColor( 50,50,50 )
-		particle:SetGravity( Vector( 0, 0, 200 ) )
-		particle:SetCollide( false )
+		if particle then
+			particle:SetVelocity( self:GetUp() * 60 + VectorRand() * 30 )
+			particle:SetDieTime( math.Rand(1.5,2) )
+			particle:SetAirResistance( 100 ) 
+			particle:SetStartAlpha( 30 )
+			particle:SetEndAlpha( 0 )
+			particle:SetStartSize( 0 )
+			particle:SetEndSize( 60 )
+			particle:SetRollDelta( math.Rand( -1, 1 ) )
+			particle:SetColor( 50,50,50 )
+			particle:SetGravity( Vector( 0, 0, 200 ) )
+			particle:SetCollide( false )
+		end
 	end
 end
 
@@ -121,22 +123,27 @@ function ENT:OnRemove()
 	self.emitter:Finish()
 end
 
-function ENT:Draw( flags )
-	self:DrawModel( flags )
-
+function ENT:Draw()
 	local Timed = 1 - (self.DieTime - CurTime()) / self.LifeTime
-	local Scale = math.max(math.max(math.min(2 - Timed * 2,1),0) - 0.8,0) / 0.2
+	local Scale = math.max(math.min(2 - Timed * 2,1),0)
 
-	cam.Start3D2D( self:GetPos() + self:GetAngles():Up() * 0.15, self:GetAngles(), 1 )
-		local A255 = 255 * (Scale ^ 2)
+	local Scale02 = math.max(Scale - 0.8,0) / 0.2
 
-		surface.SetDrawColor( A255, A255, A255, A255 )
+	cam.Start3D2D( self:GetPos() + self:GetAngles():Up(), self:GetAngles(), 1 )
+		surface.SetDrawColor( 255 * Scale02, (93 + 50 * Scale) * Scale02, (50 * Scale) * Scale02, (200 * Scale) * Scale02 )
 
-		surface.SetMaterial( self.GlowMat )
-		surface.DrawTexturedRectRotated( 0, 0, 7, 7 , 90 )
+		surface.SetMaterial( self.GlowMat1 )
+		surface.DrawTexturedRectRotated( 0, 0, 8 , 8 , self.RandomAng )
+
+		surface.SetMaterial( self.GlowMat2 )
+		surface.DrawTexturedRectRotated( 0, 0, 16 , 16 , self.RandomAng )
+
+		surface.SetDrawColor( 0, 0, 0, 255 )
+		surface.SetMaterial( self.DecalMat )
+		surface.DrawTexturedRectRotated( 0, 0, 16 , 16 , self.RandomAng )
 	cam.End3D2D()
 end
 
-function ENT:DrawTranslucent( flags )
-	self:Draw( flags )
+function ENT:DrawTranslucent()
+	self:Draw()
 end

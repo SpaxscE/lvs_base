@@ -79,7 +79,7 @@ function ENT:Smoke()
 
 	if (self.DieTime or 0) < T then return end
 
-	if not self.emitter then return end
+	if not IsValid( self.emitter ) then return end
 
 	if (self.NextFX or 0) < T then
 		self.NextFX = T + 0.02
