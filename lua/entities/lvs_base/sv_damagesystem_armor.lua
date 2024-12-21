@@ -85,7 +85,7 @@ end
 function ENT:OnArmorMaintenance()
 	local Repaired = false
 
-	for _, part in pairs( self:GetChildren() ) do
+	for _, part in pairs( self:GetCrosshairFilterEnts() ) do
 		if part:GetClass() ~= "lvs_armor" then continue end
 
 		part:OnRepaired()
