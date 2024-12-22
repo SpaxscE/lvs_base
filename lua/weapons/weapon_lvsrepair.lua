@@ -60,7 +60,13 @@ function SWEP:FindClosest()
 	local ClosestDist = self.MaxRange
 	local ClosestPiece = NULL
 
-	for _, target in pairs( lvsEnt:GetCrosshairFilterEnts() ) do
+	local tableEnts = lvsEnt:GetChildren()
+
+	if isfunction( lvsEnt.GetCrosshairFilterEnts ) then
+		tableEnts = lvsEnt:GetCrosshairFilterEnts()
+	end
+
+	for _, target in pairs( tableEnts ) do
 		for _, entity in pairs( target:GetChildren() ) do
 			if entity:GetClass() ~= "lvs_armor" then continue end
 
