@@ -22,13 +22,13 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 	local HasAI = self:GetAI()
 	local HasAIGunners = self:GetAIGunners()
 
-	local MySeat = ply:GetVehicle():GetNWInt( "pPodIndex", -1 )
+	local MySeat = ply:GetVehicle():lvsGetPodIndex()
 
 	local Passengers = {}
 	for _, player in pairs( player.GetAll() ) do
 		if player:lvsGetVehicle() == self then
 			local Pod = player:GetVehicle()
-			Passengers[ Pod:GetNWInt( "pPodIndex", -1 ) ] = player:GetName()
+			Passengers[ Pod:lvsGetPodIndex() ] = player:GetName()
 		end
 	end
 
@@ -98,7 +98,7 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 	for _, Pod in pairs( pSeats ) do
 		if not IsValid( Pod ) then continue end
 
-		local I = Pod:GetNWInt( "pPodIndex", -1 )
+		local I = Pod:lvsGetPodIndex()
 
 		if I <= 0 then continue end
 
