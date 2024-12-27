@@ -54,8 +54,6 @@ else
 		local Enable = net.ReadBool()
 		local Vehicle = net.ReadEntity()
 
-		if not IsValid( Vehicle ) then return end
-
 		if Enable then
 			hook.Run( "LVS.PlayerEnteredVehicle", LocalPlayer(), Vehicle )
 		else

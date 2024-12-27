@@ -122,6 +122,8 @@ if CLIENT then
 	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, veh )
 		hook.Add( "HUDShouldDraw", "!!!!lvs_hidehud", HUDShouldDrawLVS )
 
+		if not IsValid( veh ) then return end
+
 		local cvar = GetConVar( "lvs_mouseaim_type" )
 
 		if not cvar or cvar:GetInt() ~= 1 or not veh.GetVehicleType then return end
