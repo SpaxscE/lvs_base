@@ -184,6 +184,25 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = true
+
+		if istable( veh.BoneManipulate ) then
+			local ID = Pod:lvsGetPodIndex()
+			local BoneManipulate = veh.BoneManipulate[ ID ]
+
+			if BoneManipulate then
+				ply._lvsResetBonesOnExit = {}
+
+				for name, ang in pairs( BoneManipulate ) do
+					local bone = ply:LookupBone( name )
+
+					if not bone then continue end
+
+					ply:ManipulateBoneAngles( bone, ang )
+
+					table.insert( ply._lvsResetBonesOnExit, name )
+				end
+			end
+		end
 	end
 
 	if not Pod.HidePlayer then return end
@@ -201,6 +220,20 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = nil
+
+		if istable( ply._lvsResetBonesOnExit ) then
+			local ang = Angle(0,0,0)
+
+			for _, name in pairs( ply._lvsResetBonesOnExit ) do
+				local bone = ply:LookupBone( name )
+
+				if not bone then continue end
+
+				ply:ManipulateBoneAngles( bone, ang )
+			end
+
+			ply._lvsResetBonesOnExit = nil
+		end
 	end
 
 	if not Pod.HidePlayer then return end
