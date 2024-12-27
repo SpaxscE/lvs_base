@@ -107,6 +107,10 @@ end
 function ENT:CalcMainActivity( ply )
 end
 
+function ENT:GetPlayerBoneManipulation( ply, PodID )
+	return self.PlayerBoneManipulate[ PodID ] or {}
+end
+
 function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 	ply:SetPlaybackRate( 1 )
 

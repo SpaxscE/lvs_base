@@ -251,10 +251,79 @@ if CLIENT then
 		hook.Remove("PostDrawHUD", "!!!lvs_keyblocker" )
 	end )
 
+	local players_bonemanip = {}
+
+	local function StartBoneManip( id )
+		players_bonemanip[ id ] = true
+	end
+
+	local function StopBoneManip( id )
+		if not players_bonemanip[ id ] then return end
+
+		players_bonemanip[ id ] = nil
+
+		local ply = Entity( id )
+
+		if not IsValid( ply ) then return end
+
+		local angle_zero = Angle(0,0,0)
+
+		for i = 0, (ply:GetBoneCount() - 1) do
+			ply:ManipulateBoneAngles( i, angle_zero )
+		end
+	end
+
+	net.Receive( "lvs_bonemanip", function( len )
+		local entindex = net.ReadInt( 9 )
+		local enable = net.ReadBool()
+
+		if enable then
+			StartBoneManip( entindex )
+
+			return
+		end
+
+		StopBoneManip( entindex )
+	end )
+
+	hook.Add( "PrePlayerDraw", "!!!!!lvs_player_bonemanip", function( ply, flags )
+		if not players_bonemanip[ ply:EntIndex() ] then return end
+
+		local Pod = ply:GetVehicle()
+		local vehicle = ply:lvsGetVehicle()
+
+		if not IsValid( Pod ) or not IsValid( vehicle ) then return end
+
+		local BoneManipulate = vehicle:GetPlayerBoneManipulation( ply, Pod:lvsGetPodIndex() )
+
+		for name, ang in pairs( BoneManipulate ) do
+			local bone = ply:LookupBone( name )
+
+			if not bone then continue end
+
+			ply:ManipulateBoneAngles( bone, ang )
+		end
+	end )
+
 	return
 end
 
 util.AddNetworkString( "lvs_buildcontrols" )
+util.AddNetworkString( "lvs_bonemanip" )
+
+function meta:lvsStartBoneManip()
+	net.Start( "lvs_bonemanip" )
+		net.WriteInt( self:EntIndex(), 9 )
+		net.WriteBool( true )
+	net.Broadcast()
+end
+
+function meta:lvsStopBoneManip()
+	net.Start( "lvs_bonemanip" )
+		net.WriteInt( self:EntIndex(), 9 )
+		net.WriteBool( false )
+	net.Broadcast()
+end
 
 net.Receive( "lvs_buildcontrols", function( len, ply )
 	if not IsValid( ply ) then return end

@@ -187,23 +187,12 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 
 		ply._lvsIsInVehicle = true
 
-		if istable( veh.PlayerBoneManipulate ) then
-			local ID = Pod:lvsGetPodIndex()
-			local BoneManipulate = veh.PlayerBoneManipulate[ ID ]
+		local ID = Pod:lvsGetPodIndex()
+		local BoneManipulate = veh.PlayerBoneManipulate[ ID ]
 
-			if BoneManipulate then
-				ply._lvsResetBonesOnExit = {}
-
-				for name, ang in pairs( BoneManipulate ) do
-					local bone = ply:LookupBone( name )
-
-					if not bone then continue end
-
-					ply:ManipulateBoneAngles( bone, ang )
-
-					table.insert( ply._lvsResetBonesOnExit, name )
-				end
-			end
+		if BoneManipulate then
+			ply._lvsStopBoneManipOnExit = true
+			ply:lvsStartBoneManip()
 		end
 	end
 
@@ -223,18 +212,10 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 
 		ply._lvsIsInVehicle = nil
 
-		if istable( ply._lvsResetBonesOnExit ) then
-			local ang = Angle(0,0,0)
+		if ply._lvsStopBoneManipOnExit then
+			ply._lvsStopBoneManipOnExit = nil
 
-			for _, name in pairs( ply._lvsResetBonesOnExit ) do
-				local bone = ply:LookupBone( name )
-
-				if not bone then continue end
-
-				ply:ManipulateBoneAngles( bone, ang )
-			end
-
-			ply._lvsResetBonesOnExit = nil
+			ply:lvsStopBoneManip()
 		end
 	end
 
@@ -243,4 +224,12 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 	ply:SetNoDraw( false )
 
 	if pac then pac.TogglePartDrawing( ply, 1 ) end
+end )
+
+hook.Add( "PlayerDisconnected", "!!!!lvs_player_reset_bonemanip_client", function(ply)
+	if not ply._lvsStopBoneManipOnExit then return end
+
+	ply._lvsStopBoneManipOnExit = nil
+
+	ply:lvsStopBoneManip()
 end )
