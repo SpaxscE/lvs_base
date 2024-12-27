@@ -57,6 +57,7 @@ function ENT:Initialize()
 	self:SetUseType( SIMPLE_USE )
 	self:SetRenderMode( RENDERMODE_NORMAL )
 	self:AddFlags( FL_OBJECT )
+	self:AddEFlags( EFL_NO_PHYSCANNON_INTERACTION )
 
 	local PObj = self:GetPhysicsObject()
 
