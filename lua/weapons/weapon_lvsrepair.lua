@@ -34,7 +34,7 @@ function SWEP:GetLVS()
 
 	if not IsValid( ent ) then return NULL end
 
-	if ent.LVS then return ent end
+	if ent._lvsRepairToolLabel or ent.LVS then return ent end
 
 	if not ent.GetBase then return NULL end
 
@@ -206,6 +206,8 @@ if CLIENT then
 			local Pos = ply:GetEyeTrace().HitPos
 
 			if IsValid( lvsEnt ) and (Pos - ply:GetShootPos()):Length() < self.MaxRange and not ply:InVehicle() then
+				local Label = lvsEnt._lvsRepairToolLabel or "Frame"
+
 				if isfunction( lvsEnt.GetEngine ) then
 					local Engine = lvsEnt:GetEngine()
 
@@ -216,10 +218,10 @@ if CLIENT then
 					if IsValid( Engine ) and EngineMode then
 						DrawText( AimPos, "Engine\nHealth: "..math.Round(Engine:GetHP()).."/"..Engine:GetMaxHP(), ColorText )
 					else
-						DrawText( AimPos, "Frame\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
+						DrawText( AimPos, Label.."\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
 					end
 				else
-					DrawText( ply:GetEyeTrace().HitPos, "Frame\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
+					DrawText( ply:GetEyeTrace().HitPos, Label.."\nHealth: "..math.Round(lvsEnt:GetHP()).."/"..lvsEnt:GetMaxHP(), ColorText )
 				end
 			end
 
