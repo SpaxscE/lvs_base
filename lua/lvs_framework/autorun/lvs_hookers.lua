@@ -187,12 +187,14 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 
 		ply._lvsIsInVehicle = true
 
-		local ID = Pod:lvsGetPodIndex()
-		local BoneManipulate = veh.PlayerBoneManipulate[ ID ]
+		if istable( veh.PlayerBoneManipulate ) then
+			local ID = Pod:lvsGetPodIndex()
+			local BoneManipulate = veh.PlayerBoneManipulate[ ID ]
 
-		if BoneManipulate then
-			ply._lvsStopBoneManipOnExit = true
-			ply:lvsStartBoneManip()
+			if BoneManipulate then
+				ply._lvsStopBoneManipOnExit = true
+				ply:lvsStartBoneManip()
+			end
 		end
 	end
 
