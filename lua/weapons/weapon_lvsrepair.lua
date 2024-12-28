@@ -67,6 +67,8 @@ function SWEP:FindClosest()
 	end
 
 	for _, target in pairs( tableEnts ) do
+		if not IsValid( target ) then continue end
+
 		for _, entity in pairs( target:GetChildren() ) do
 			if entity:GetClass() ~= "lvs_armor" then continue end
 
