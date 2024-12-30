@@ -9,16 +9,6 @@ if CLIENT then
 
 		-- code below is bandaid fix for ent:GetNWInt taking up to 5 minutes to update on client...
 
-		local mat = self:GetMaterial()
-
-		-- material is more reliable than ent:GetNWInt... unless someone has changed it on client...
-		if string.StartsWith(mat, "podindexlvs") then
-
-			local id_by_material = tonumber( string.TrimLeft( mat, "podindexlvs" ) )
-
-			if id_by_material then return id_by_material end
-		end
-
 		local col = self:GetColor()
 		local id_by_color = col.r
 
@@ -174,7 +164,8 @@ function meta:lvsSetPodIndex( index )
 	-- garbage networking
 	self:SetNWInt( "pPodIndex", index )
 
+	self:SetMaterial( "null" )
+
 	-- more reliable networking, lol
-	self:SetMaterial( "podindexlvs"..index )
 	self:SetColor( Color( index, index, index, 0 ) )
 end
