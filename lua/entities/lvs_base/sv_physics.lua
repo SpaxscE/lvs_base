@@ -153,7 +153,7 @@ function ENT:PhysicsCollide( data, physobj )
 		effectdata:SetOrigin( data.HitPos )
 		util.Effect( "lvs_physics_impact", effectdata, true, true )
 
-		if VelDif > 700 then
+		if VelDif > 600 then
 			self:EmitSound( "lvs/physics/impact_hard.wav", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
 
 			if not self:IsPlayerHolding() then
