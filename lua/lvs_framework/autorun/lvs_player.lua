@@ -290,12 +290,7 @@ if CLIENT then
 		for EntID, _ in pairs( players_bonemanip ) do
 			local ply = Entity( EntID )
 
-			if not IsValid( ply ) or not ply:IsPlayer() then
-
-				players_bonemanip[ EntID ] = nil
-
-				continue
-			end
+			if not IsValid( ply ) or not ply:IsPlayer() then continue end
 
 			local Pod = ply:GetVehicle()
 			local vehicle = ply:lvsGetVehicle()
