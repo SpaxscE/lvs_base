@@ -286,7 +286,7 @@ if CLIENT then
 		StopBoneManip( entindex )
 	end )
 
-	hook.Add( "Think", "!!!!!lvs_player_bonemanip", function( ply, flags )
+	hook.Add( "Think", "!!!!!lvs_player_bonemanip", function()
 		for EntID, _ in pairs( players_bonemanip ) do
 			local ply = Entity( EntID )
 
