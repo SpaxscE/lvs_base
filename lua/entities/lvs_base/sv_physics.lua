@@ -138,29 +138,31 @@ function ENT:PhysicsCollide( data, physobj )
 
 			return
 		end
-
-		self:TakeCollisionDamage( data.OurOldVelocity:Length() - data.OurNewVelocity:Length(), HitEnt )
-
-		return
 	end
 
-	if data.Speed > 60 and data.DeltaTime > 0.2 then
-		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
+	local VelDif = (data.OurOldVelocity - data.OurNewVelocity):Length()
 
+	if VelDif  > 60 and data.DeltaTime > 0.2 then
 		self:CalcPDS( data )
 
 		local effectdata = EffectData()
 		effectdata:SetOrigin( data.HitPos )
+		effectdata:SetNormal( -data.HitNormal )
 		util.Effect( "lvs_physics_impact", effectdata, true, true )
 
-		if VelDif > 600 then
-			self:EmitSound( "lvs/physics/impact_hard.wav", 75, 95 + math.min(VelDif / 1000,1) * 10, math.min(VelDif / 800,1) )
+		if VelDif > 1000 then
+			local damage =  math.max( VelDif - 1000, 0 )
 
-			if not self:IsPlayerHolding() then
+			if not self:IsPlayerHolding() and damage > 0 then
+				self:EmitSound( "lvs/physics/impact_hard.wav", 85, 100 + math.random(-3,3), 1 )
 				self:TakeCollisionDamage( VelDif, HitEnt )
 			end
 		else
-			self:EmitSound( "lvs/physics/impact_soft"..math.random(1,5)..".wav", 75, 100, math.min(0.1 + VelDif / 700,1) )
+			if VelDif > 800 then
+				self:EmitSound( "lvs/physics/impact_hard"..math.random(1,3)..".wav", 75, 100 + math.random(-3,3), 1 )
+			else
+				self:EmitSound( "lvs/physics/impact_soft"..math.random(1,5)..".wav", 75, 100 + math.random(-6,6), math.min( VelDif / 600, 1 ) )
+			end
 		end
 	end
 end

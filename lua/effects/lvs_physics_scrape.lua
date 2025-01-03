@@ -60,7 +60,7 @@ function EFFECT:Init( data )
 	end
 
 	for i = 0, 3 do
-		local particle = emitter:Add( "sprites/rico1", Pos )
+		local particle = emitter:Add( "effects/spark", Pos )
 		
 		local vel = VectorRand() * 25 * (1 - Strength) + (VectorRand() * 100 + Dir * 150) * Strength
 		
@@ -70,14 +70,19 @@ function EFFECT:Init( data )
 			particle:SetDieTime( 2 )
 			particle:SetStartAlpha( math.Rand( 200, 255 ) )
 			particle:SetEndAlpha( 0 )
+
+			particle:SetStartLength( 4 )
+			particle:SetEndLength(0)
+
 			particle:SetStartSize( 2 )
-			particle:SetEndSize( 0.25 )
+			particle:SetEndSize( 0 )
+
 			particle:SetRoll( math.Rand(-100,100) )
 			particle:SetRollDelta( math.Rand(-100,100) )
 			particle:SetCollide( true )
 			particle:SetBounce( 0.5 )
 			particle:SetAirResistance( 0 )
-			particle:SetColor( 255, 200, 0 )
+			particle:SetColor( 255, 200, 50 )
 			particle:SetGravity( Vector(0,0,-600) )
 		end
 	end

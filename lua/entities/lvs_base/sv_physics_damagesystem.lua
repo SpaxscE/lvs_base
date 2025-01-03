@@ -219,7 +219,7 @@ function ENT:FindPDS( PosToCheck, RadiusAdd )
 end
 
 function ENT:CalcPDS( physdata )
-	local VelDif = math.abs( physdata.OurOldVelocity:Length() - physdata.OurNewVelocity:Length() )
+	local VelDif = (physdata.OurOldVelocity - physdata.OurNewVelocity):Length()
 
 	if VelDif < self.PDSDamageVelocity then return end
 
