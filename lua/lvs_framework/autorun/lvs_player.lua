@@ -286,22 +286,31 @@ if CLIENT then
 		StopBoneManip( entindex )
 	end )
 
-	hook.Add( "PrePlayerDraw", "!!!!!lvs_player_bonemanip", function( ply, flags )
-		if not players_bonemanip[ ply:EntIndex() ] then return end
+	hook.Add( "Think", "!!!!!lvs_player_bonemanip", function( ply, flags )
+		for EntID, _ in pairs( players_bonemanip ) do
+			local ply = Entity( EntID )
 
-		local Pod = ply:GetVehicle()
-		local vehicle = ply:lvsGetVehicle()
+			if not IsValid( ply ) or not ply:IsPlayer() then
 
-		if not IsValid( Pod ) or not IsValid( vehicle ) then return end
+				players_bonemanip[ EntID ] = nil
 
-		local BoneManipulate = vehicle:GetPlayerBoneManipulation( ply, Pod:lvsGetPodIndex() )
+				continue
+			end
 
-		for name, ang in pairs( BoneManipulate ) do
-			local bone = ply:LookupBone( name )
+			local Pod = ply:GetVehicle()
+			local vehicle = ply:lvsGetVehicle()
 
-			if not bone then continue end
+			if not IsValid( Pod ) or not IsValid( vehicle ) then return end
 
-			ply:ManipulateBoneAngles( bone, ang )
+			local BoneManipulate = vehicle:GetPlayerBoneManipulation( ply, Pod:lvsGetPodIndex() )
+
+			for name, ang in pairs( BoneManipulate ) do
+				local bone = ply:LookupBone( name )
+
+				if not bone then continue end
+
+				ply:ManipulateBoneAngles( bone, ang )
+			end
 		end
 	end )
 
