@@ -86,6 +86,8 @@ function ENT:OnArmorMaintenance()
 	local Repaired = false
 
 	for _, part in pairs( self:GetCrosshairFilterEnts() ) do
+		if not IsValid( part ) then continue end
+
 		if part:GetClass() ~= "lvs_armor" then continue end
 
 		part:OnRepaired()
