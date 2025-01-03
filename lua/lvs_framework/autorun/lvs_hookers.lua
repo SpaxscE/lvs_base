@@ -142,6 +142,44 @@ if CLIENT then
 		hook.Remove( "HUDShouldDraw", "!!!!lvs_hidehud" )
 	end )
 
+	hook.Add( "InitPostEntity", "!!!lvs_infmap_velocity_fixer", function()
+		if not InfMap then
+
+			hook.Remove( "InitPostEntity", "!!!lvs_infmap_velocity_fixer" )
+
+			return
+		end
+
+		local meta = FindMetaTable( "Entity" )
+
+		if not InfMapOriginalGetVelocity then
+			InfMapOriginalGetVelocity = meta.GetVelocity
+		end
+
+		function meta:GetVelocity()
+			local Velocity = InfMapOriginalGetVelocity( self )
+
+			local EntTable = self:GetTable()
+
+			if not EntTable.LVS and not EntTable._lvsRepairToolLabel then return Velocity end
+
+			local Speed = Velocity:LengthSqr()
+
+			local T = CurTime()
+
+			if Speed > 10 then
+				EntTable._infmapEntityVelocity = Velocity
+				EntTable._infmapEntityVelocityTime = T + 0.6
+			else
+				if (EntTable._infmapEntityVelocityTime or 0) > T then
+					return EntTable._infmapEntityVelocity or vector_origin
+				end
+			end
+
+			return Velocity
+		end
+	end )
+
 	return
 end
 
