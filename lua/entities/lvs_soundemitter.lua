@@ -78,7 +78,9 @@ function ENT:PlayOnce( pitch, volume )
 	local snd = self:GetSound()
 	local snd_int = self:GetSoundInterior()
 
-	if snd == snd_int then self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON ) return end
+	local TargetDSP = ply:lvsGetDSP()
+
+	if snd == snd_int then self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON, 0, TargetDSP ) return end
 
 	if IsValid( veh ) and veh == self:GetBase() and ply:GetViewEntity() == ply then
 		local pod = ply:GetVehicle()
@@ -90,10 +92,10 @@ function ENT:PlayOnce( pitch, volume )
 				self:EmitSound( snd_int, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
 			end
 		else
-			self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+			self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON, 0, TargetDSP )
 		end
 	else
-		self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON )
+		self:EmitSound( snd, self:GetSoundLevel(), pitch, volume, CHAN_WEAPON, 0, TargetDSP )
 	end
 end
 
@@ -116,6 +118,14 @@ function ENT:HandleSounds()
 	local ply = LocalPlayer()
 	local veh = ply:lvsGetVehicle()
 	local base = self:GetBase()
+
+	if self.snd then
+		local TargetDSP = ply:lvsGetDSP()
+
+		if self.snd:GetDSP() ~= TargetDSP then
+			self.snd:SetDSP( TargetDSP )
+		end
+	end
 
 	if self:GetDoppler() and IsValid( base ) then
 		local Doppler = base:CalcDoppler( ply )

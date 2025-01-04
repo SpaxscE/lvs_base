@@ -185,6 +185,13 @@ local function ClientSettings( Canvas )
 	CheckBox:SetText( "Enable HUD Editor" )
 	CheckBox:SetConVar("lvs_edit_hud") 
 
+	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
+	CheckBox:DockMargin( 16, 16, 4, 4 )
+	CheckBox:SetSize( FrameSizeX, 30 )
+	CheckBox:Dock( TOP )
+	CheckBox:SetText( "Interior Muffle SFX" )
+	CheckBox:SetConVar("lvs_dsp_effects")
+
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanelRight )
 	CheckBox:DockMargin( 16, 43, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )

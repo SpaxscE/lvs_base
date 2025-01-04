@@ -204,6 +204,22 @@ function meta:lvsSetInputDisabled( disable )
 end
 
 if CLIENT then
+	function meta:lvsGetDSP()
+		if not LVS.EnableDSPeffects then return 0 end
+
+		local veh = self:lvsGetVehicle()
+
+		if not IsValid( veh ) or not veh.EnableDSPEffects then return 0 end
+
+		local pod = self:GetVehicle()
+
+		if not IsValid( pod ) then return 0 end
+
+		local DSP = pod:GetThirdPersonMode() and 0 or 30
+
+		return DSP
+	end
+
 	function meta:lvsSetView( view )
 		self._lvsViewPos = view.origin or vector_origin
 		self._lvsViewAngles = view.angles or angle_zero

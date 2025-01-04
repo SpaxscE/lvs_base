@@ -60,6 +60,12 @@ cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue )
 	LVS.EngineVolume = math.Clamp( tonumber( newValue ), 0, 1 )
 end)
 
+local cvarDSP = CreateClientConVar( "lvs_dsp_effects", 1, true, false)
+LVS.EnableDSPeffects = cvarDSP and cvarDSP:GetBool() or true
+cvars.AddChangeCallback( "lvs_dsp_effects", function( convar, oldValue, newValue ) 
+	LVS.EnableDSPeffects = tonumber( newValue ) ~=0
+end)
+
 local cvarTrail = CreateClientConVar( "lvs_show_traileffects", 1, true, false)
 LVS.ShowTraileffects = cvarTrail and cvarTrail:GetBool() or true
 cvars.AddChangeCallback( "lvs_show_traileffects", function( convar, oldValue, newValue ) 
