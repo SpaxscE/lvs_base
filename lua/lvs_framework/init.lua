@@ -137,7 +137,36 @@ function LVS:BlastDamage( pos, forward, attacker, inflictor, damage, damagetype,
 
 		table.insert( RegisteredHits[ trace.Entity ], {
 			origin = trace.HitPos,
-			force = dir * force,
+			force = forward * force,
+		} )
+	end
+
+	local Hull = Vector(10,10,10)
+
+	for _, ent in ipairs( ents.FindInSphere( pos, radius ) ) do
+		if not ent.LVS or ent == inflictor or ent == attacker then continue end
+
+		local trace = util.TraceHull( {
+			start = pos,
+			endpos = ent:LocalToWorld( ent:OBBCenter() ),
+			mins = -Hull,
+			maxs = Hull,
+			whitelist = true,
+			ignoreworld = true,
+			filter = ent,
+		} )
+
+		debugoverlay.Line( pos, trace.HitPos, 10, Color( 255, 0, 0, 255 ), true )
+
+		NumFragments = NumFragments + 1
+
+		if not RegisteredHits[ ent ] then
+			RegisteredHits[ ent ] = {}
+		end
+
+		table.insert( RegisteredHits[ ent ], {
+			origin = trace.HitPos,
+			force = forward * force,
 		} )
 	end
 
