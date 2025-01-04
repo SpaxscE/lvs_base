@@ -203,7 +203,6 @@ function NewBullet:DoSplashDamage( trace )
 		effectdata:SetOrigin( trace.HitPos )
 		effectdata:SetNormal( trace.HitWorld and trace.HitNormal or self.Dir )
 		effectdata:SetMagnitude( self.SplashDamageRadius / 250 )
-		effectdata:SetScale( 1 )
 		util.Effect( self.SplashDamageEffect, effectdata )
 	end
 
