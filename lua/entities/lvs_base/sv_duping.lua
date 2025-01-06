@@ -53,3 +53,22 @@ function ENT:OnEntityCopyTableFinish( data )
 	data.Constraints = nil
 	data._children = nil
 end
+
+hook.Add("AdvDupe_FinishPasting", "!!lvs_vehicle_dupefinished_initialize", function( data, entry )
+	for _, v in pairs( data[ entry ].CreatedEntities ) do
+
+		if not IsValid( v ) or not isentity( v ) or not v.LVS then continue end
+
+		timer.Simple(1, function()
+			if not IsValid( v ) then return end
+
+			if v.SetlvsReady and not v:GetlvsReady() then
+				v:SetlvsReady( true )
+			end
+
+			if v.RebuildCrosshairFilterEnts then
+				v:RebuildCrosshairFilterEnts()
+			end
+		end)
+	end
+end )
