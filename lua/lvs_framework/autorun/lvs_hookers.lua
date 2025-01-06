@@ -234,6 +234,16 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 				ply:lvsStartBoneManip()
 			end
 		end
+
+		if LVS.FreezeTeams then
+			local nTeam = ply:lvsGetAITeam()
+
+			if veh:GetAITEAM() ~= nTeam then
+				veh:SetAITEAM( nTeam )
+
+				ply:PrintMessage( HUD_PRINTTALK, "[LVS] This Vehicle's AI-Team has been updated to: "..(LVS.TEAMS[ nTeam ] or "") )
+			end
+		end
 	end
 
 	if not Pod.HidePlayer then return end
