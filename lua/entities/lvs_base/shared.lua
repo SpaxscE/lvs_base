@@ -83,6 +83,8 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Float", "Shield" )
 	self:AddDT( "Float", "NWHeat" )
 
+	self:OnSetupDataTables()
+
 	if SERVER then
 		self:NetworkVarNotify( "AI", self.OnToggleAI )
 		self:NetworkVarNotify( "HP", self.PDSHealthValueChanged )
@@ -93,8 +95,6 @@ function ENT:CreateBaseDT()
 		self:SetShield( self.MaxShield )
 		self:SetSelectedWeapon( 1 )
 	end
-
-	self:OnSetupDataTables()
 end
 
 function ENT:SetupDataTables()
