@@ -298,7 +298,8 @@ function ENT:OnTakeDamage( dmginfo )
 	self:RemoveAllDecals()
 end
 
-function ENT:OnMaintenance()
+function ENT:OnMaintenance(entity)
+	hook.Run( "LVS.OnVehicleMaintenance", self, entity )
 end
 
 function ENT:UpdateTransmitState() 

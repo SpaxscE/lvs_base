@@ -89,8 +89,7 @@ if SERVER then
 			entity:EmitSound("items/ammo_pickup.wav")
 		end
 
-		entity:OnMaintenance()
-		hook.Run( "LVS_OnVehicleMaintenance", entity, self )
+		entity:OnMaintenance(self)
 	end
 
 	function ENT:StartTouch( entity )
