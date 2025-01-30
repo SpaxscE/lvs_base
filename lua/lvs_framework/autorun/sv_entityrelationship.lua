@@ -57,8 +57,14 @@ function LVS:SetVehicleRelationship( lvsVeh )
 end
 
 hook.Add( "LVS.UpdateRelationship", "!!!!lvsEntityRelationship", function( ent )
-	timer.Simple(0.1, function()
-		if not IsValid( ent ) then return end
+	local timerID = "LVS_Relationship_Timer_" .. tostring(ent)
+
+	timer.Create( timerID, 0.1, 0, function()
+		if not IsValid( ent ) then
+			-- Stop the timer if entity is invalid
+			timer.Remove( timerID )
+			return
+		end
 
 		if isfunction( ent.IsNPC ) and ent:IsNPC() then
 			LVS:SetNPCRelationship( ent )
@@ -66,4 +72,4 @@ hook.Add( "LVS.UpdateRelationship", "!!!!lvsEntityRelationship", function( ent )
 			LVS:SetVehicleRelationship( ent )
 		end
 	end)
-end )
+end)
