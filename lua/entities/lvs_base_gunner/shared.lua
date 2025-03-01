@@ -102,11 +102,11 @@ function ENT:GetActiveWeapon()
 
 	local Base = self:GetVehicle()
 
-	if not IsValid( Base ) then return {}, SelectedID end
+	if not IsValid( Base ) then return NULL, SelectedID end
 
 	local CurWeapon = Base.WEAPONS[ self:GetPodIndex() ][ SelectedID ]
 
-	return CurWeapon, SelectedID
+	return CurWeapon or NULL, SelectedID
 end
 
 function ENT:GetMaxAmmo()
