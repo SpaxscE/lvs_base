@@ -5,6 +5,7 @@ ENT.Type = "anim"
 ENT.ExplosionEffect = "lvs_explosion_bomb"
 
 ENT.lvsProjectile = true
+ENT.VJ_ID_Danger = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
