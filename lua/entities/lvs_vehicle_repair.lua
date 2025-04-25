@@ -25,7 +25,7 @@ if SERVER then
 	function ENT:OnTakeDamage( dmginfo )
 	end
 
-	function ENT:Initialize()	
+	function ENT:Initialize()
 		self:SetModel( "models/props_vehicles/generatortrailer01.mdl" )
 		self:PhysicsInit( SOLID_VPHYSICS )
 		self:DrawShadow( false )
@@ -58,7 +58,7 @@ if SERVER then
 			entity:EmitSound("items/ammo_pickup.wav")
 		end
 
-		entity:OnMaintenance()
+		entity:OnMaintenance(self)
 	end
 
 	function ENT:StartTouch( entity )
