@@ -1,6 +1,30 @@
 
 local meta = FindMetaTable( "Vehicle" )
 
+function meta:lvsGetVehicle()
+	if self.LVSchecked then
+
+		return self.LVSBaseEnt
+
+	else
+		local Parent = self:GetParent()
+
+		if not IsValid( Parent ) then return NULL end
+
+		if not Parent.LVS then
+			self.LVSchecked = LVS.MapDoneLoading
+			self.LVSBaseEnt = NULL
+
+			return NULL
+		end
+
+		self.LVSchecked = LVS.MapDoneLoading
+		self.LVSBaseEnt = Parent
+
+		return Parent
+	end
+end
+
 if CLIENT then
 	function meta:lvsGetPodIndex()
 		local id = self:GetNWInt( "pPodIndex", -1 )

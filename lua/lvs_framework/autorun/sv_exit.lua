@@ -4,9 +4,9 @@ hook.Add( "PlayerUse", "!!!LVS_FIX_RE_ENTER", function( ply, ent )
 end )
 
 hook.Add( "PlayerLeaveVehicle", "!!LVS_Exit", function( ply, Pod )
-	if not ply:IsPlayer() then return end
+	if not ply:IsPlayer() or not IsValid( Pod ) then return end
 
-	local Vehicle = ply:lvsGetVehicle()
+	local Vehicle = Pod:lvsGetVehicle()
 
 	if not IsValid( Vehicle ) then return end
 
