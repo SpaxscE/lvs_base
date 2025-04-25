@@ -1,4 +1,3 @@
-
 ENT.WEAPONS = {
 	[1] = {},
 }
@@ -77,7 +76,7 @@ function ENT:GetActiveWeapon()
 	local SelectedID = self:GetSelectedWeapon()
 	local CurWeapon = self.WEAPONS[1][ SelectedID ]
 
-	return CurWeapon, SelectedID
+	return CurWeapon or NULL, SelectedID
 end
 
 function ENT:GetMaxAmmo()
@@ -135,7 +134,7 @@ if SERVER then
 
 		return AmmoIsSet
 	end
-	
+
 	function ENT:WeaponsOnRemove()
 		for _, data in pairs( self.WEAPONS ) do
 			for ID, Weapon in pairs( data ) do
@@ -263,7 +262,7 @@ if SERVER then
 		local T = CurTime()
 		local FT = FrameTime()
 		local CurWeapon, SelectedID = self:GetActiveWeapon()
-	
+
 		for ID, Weapon in pairs( EntTable.WEAPONS[1] ) do
 			local IsActive = ID == SelectedID
 
@@ -342,7 +341,7 @@ if SERVER then
 			if CurWeapon.HeatIsClip and not CurWeapon.Overheated then
 
 				self:SetHeat( self:GetHeat() )
-	
+
 				return
 			end
 
@@ -412,14 +411,14 @@ function ENT:PrevWeapon()
 	net.SendToServer()
 end
 
-LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR", 
+LVS:AddHudEditor( "WeaponSwitcher", ScrW() - 210, ScrH() - 165,  200, 68, 200, 68, "WEAPON SELECTOR",
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 		if not vehicle.LVSHudPaintWeapons then return end
 		vehicle:LVSHudPaintWeapons( X, Y, W, H, ScrX, ScrY, ply )
 	end
 )
 
-LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO", 
+LVS:AddHudEditor( "WeaponInfo", ScrW() - 230, ScrH() - 85,  220, 75, 220, 75, "WEAPON INFO",
 	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
 		if not vehicle.LVSHudPaintWeaponInfo then return end
 
@@ -517,7 +516,7 @@ function ENT:LVSHudPaintWeaponInfo( X, Y, w, h, ScrX, ScrY, ply )
 
 			local hX = X + w - h * 0.5
 			local hY = Y + h * 0.25 + h * 0.25
-	
+
 			surface.SetMaterial( self.HeatIsClipMat )
 			surface.SetDrawColor( 0, 0, 0, 200 )
 			surface.DrawTexturedRectRotated( hX + 3, hY + 1, h, h, 0 )
@@ -644,7 +643,7 @@ function ENT:LVSHudPaintWeapons( X, Y, w, h, ScrX, ScrY, ply )
 		end
 
 		if isbool( EntTable.WEAPONS[PodID][ID].Icon ) then
-			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255) 
+			local col = IsSelected and Color(255,255,255,A255) or Color(0,0,0,A255)
 			self:DrawWeaponIcon( PodID, ID, xPos, yPos, SizeY * 2, SizeY, IsSelected, col )
 		else
 			surface.SetMaterial( self.WEAPONS[PodID][ID].Icon )
