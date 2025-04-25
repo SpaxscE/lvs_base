@@ -15,7 +15,7 @@ function meta:lvsGetVehicle()
 
 	else
 		local Parent = Pod:GetParent()
-		
+
 		if not IsValid( Parent ) then return NULL end
 
 		if not Parent.LVS then
