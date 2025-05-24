@@ -12,6 +12,15 @@ hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
 	end
 end )
 
+hook.Add( "PlayerDisconnected", "!!!lvs_player_disconnect", function( ply)
+	local veh = ply:lvsGetVehicle()
+	if not IsValid( veh ) then return end
+
+	if not veh.NoUnlockOnDisconnectIfEmpty and veh:GetLvsLockedStatus() and #veh:GetEveryone() < 1 then
+		veh:UnLock()
+	end
+end )
+
 local function SetDistance( vehicle, ply )
 	local iWheel = ply:GetCurrentCommand():GetMouseWheel()
 
@@ -48,7 +57,7 @@ hook.Add( "VehicleMove", "!!!!lvs_vehiclemove", function( ply, vehicle, mv )
 	end
 
 	if CLIENT and not IsFirstTimePredicted() then return end
-	
+
 	local KeyThirdPerson = ply:lvsKeyDown("THIRDPERSON")
 
 	if ply._lvsOldThirdPerson ~= KeyThirdPerson then
