@@ -10,7 +10,7 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= false
 
-ENT.RenderGroup = RENDERGROUP_BOTH 
+ENT.RenderGroup = RENDERGROUP_BOTH
 
 if SERVER then
 	function ENT:SpawnFunction( ply, tr, ClassName )
@@ -27,7 +27,7 @@ if SERVER then
 	function ENT:OnTakeDamage( dmginfo )
 	end
 
-	function ENT:Initialize()	
+	function ENT:Initialize()
 		self:SetModel( "models/balloons/hot_airballoon.mdl" )
 		self:PhysicsInit( SOLID_VPHYSICS )
 		self:DrawShadow( false )
@@ -35,7 +35,7 @@ if SERVER then
 		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 
 		local pObj = self:GetPhysicsObject()
-		
+
 		if not IsValid( pObj ) then
 			self:Remove()
 
@@ -44,7 +44,7 @@ if SERVER then
 			return
 		end
 
-		pObj:SetMass( 1000 ) 
+		pObj:SetMass( 1000 )
 		pObj:EnableMotion( true )
 		pObj:EnableDrag( false )
 
@@ -89,7 +89,7 @@ if SERVER then
 			entity:EmitSound("items/ammo_pickup.wav")
 		end
 
-		entity:OnMaintenance()
+		entity:OnMaintenance(self)
 	end
 
 	function ENT:StartTouch( entity )
