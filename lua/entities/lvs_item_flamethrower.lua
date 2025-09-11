@@ -10,11 +10,11 @@ ENT.Category = "[LVS]"
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
 
-ENT.Editable = false
-
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 0, "FlameVelocity" )
 	self:NetworkVar( "Bool", 0, "Active" )
+	self:NetworkVar( "String", 0, "TargetAttachment" )
+	self:NetworkVar( "Entity", 0, "Target" )
 
 	if SERVER then
 		self:SetFlameVelocity( 1000 )
@@ -22,15 +22,14 @@ function ENT:SetupDataTables()
 end
 
 if SERVER then
-	function ENT:SpawnFunction( ply, tr, ClassName )
-		if not tr.Hit then return end
+	function ENT:AttachTo( target, attachment )
+		if not IsValid( target ) or IsValid( self:GetTarget() ) then return end
 
-		local ent = ents.Create( ClassName )
-		ent:SetPos( tr.HitPos + tr.HitNormal * 5 )
-		ent:Spawn()
-		ent:Activate()
-
-		return ent
+		self:SetPos( target:GetPos() )
+		self:SetAngles( target:GetAngles() )
+		self:SetParent( target )
+		self:SetTarget( target )
+		self:SetTargetAttachment( attachment or "" )
 	end
 
 	function ENT:Enable()
@@ -51,12 +50,6 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/items/ar2_grenade.mdl")
-		self:PhysicsInit( SOLID_VPHYSICS )
-		self:SetMoveType( MOVETYPE_VPHYSICS )
-		self:SetSolid( SOLID_VPHYSICS )
-		self:SetUseType( SIMPLE_USE )
-		self:SetRenderMode( RENDERMODE_NORMAL )
 	end
 
 	return

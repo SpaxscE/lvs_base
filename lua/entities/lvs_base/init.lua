@@ -390,3 +390,14 @@ function ENT:AddSoundEmitter( pos, snd, snd_interior )
 
 	return Emitter
 end
+
+function ENT:AddFlameEmitter( target, attachment )
+	if not IsValid( target ) then return end
+
+	local FlameEmitter = ents.Create( "lvs_item_flamethrower" )
+	FlameEmitter:AttachTo( target, attachment )
+	FlameEmitter:Spawn()
+	FlameEmitter:Activate()
+
+	return FlameEmitter
+end

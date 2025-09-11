@@ -44,6 +44,27 @@ function EFFECT:AddParticle( particle )
 	end
 end
 
+function EFFECT:GetPosition()
+	local ent = self.Entity
+
+	if not IsValid( ent ) then return vector_origin, vector_origin end
+
+	local Pos = ent:GetPos()
+	local Dir = ent:GetForward()
+
+	local Target = ent:GetTarget()
+	local Attachment = ent:GetTargetAttachment()
+
+	if IsValid( Target ) and Attachment ~= "" then
+		local ID = Target:LookupAttachment( Attachment )
+		local Muzzle = Target:GetAttachment( ID )
+		Pos = Muzzle.Pos
+		Dir = Muzzle.Ang:Forward()
+	end
+
+	return Pos, Dir
+end
+
 function EFFECT:Think()
 	local ent = self.Entity
 	local emitter = self.Emitter
@@ -62,8 +83,7 @@ function EFFECT:Think()
 		if (self.nextDFX or 0) < T then
 			self.nextDFX = T + 0.01
 
-			local Pos = ent:GetPos()
-			local Dir = ent:GetForward()
+			local Pos, Dir = self:GetPosition()
 
 			self:MakeFlameStream( emitter, emitter3D, Pos, Dir )
 			self:MakeFlameMuzzle( emitter, emitter3D, Pos, Dir )
@@ -358,11 +378,11 @@ function EFFECT:Render()
 
 	if ent:GetActive() then
 		local Scale = 1
-		local Pos = ent:GetPos()
+		local Pos, Dir = self:GetPosition()
 
 		local scroll = -CurTime() * 5
 
-		local Up = ent:GetForward() + VectorRand() * 0.08
+		local Up = Dir + VectorRand() * 0.08
 
 		render.UpdateRefractTexture()
 		render.SetMaterial( HeatMat )
