@@ -1,7 +1,7 @@
 EFFECT.MatBeam = Material( "effects/lvs/ballturret_projectorbeam" )
 
 -- variables
-local LifeTime = 0.3
+local LifeTime = 1.4
 
 local StartSizeOuter = 16
 local StartSizeInner = 6
@@ -9,7 +9,7 @@ local StartSizeInner = 6
 local EndSizeOuter = 3
 local EndSizeInner = 1
 local DissipateExponentScale = 16
-local DissipateExponentAlpha = 2
+local DissipateExponentAlpha = 16
 
 function EFFECT:Init( data )
 	local pos  = data:GetOrigin()
@@ -37,6 +37,7 @@ function EFFECT:Render()
 	local bullet = LVS:GetBullet( self.ID )
 
 	if bullet then
+		self.StartPos = bullet.Entity:LocalToWorld( bullet.SrcEntity )
 		self.EndPos = bullet:GetPos()
 		self.BulletAlive = true
 		self.BulletFilter = bullet.Filter
@@ -57,6 +58,8 @@ function EFFECT:Render()
 	end
 
 	if not self.StartPos or not self.EndPos then return end
+
+	if bullet and bullet:GetLength() <= 0 then return end
 
 	-- math, dont change
 	local S = (self.DieTime - CurTime()) / self.LifeTime
