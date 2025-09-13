@@ -55,6 +55,7 @@ local Grav = Vector(0,0,-600)
 local Res = 0.05
 function ENT:FindTargets()
 	local Pos, Dir = self:GetPosition()
+	local ConeStart = Vector( Pos.x, Pos.y, Pos.z )
 
 	local FlameVel = self:GetFlameVelocity()
 
@@ -80,12 +81,34 @@ function ENT:FindTargets()
 
 		Pos = EndPos
 
+		debugoverlay.Line( StartPos, EndPos, 0.1 )
+
 		if trace.Hit then
 			break
 		end
 	end
 
-	return trace.HitPos
+	local ConeEnd = trace.HitPos
+	local ConeDistance = (ConeStart - ConeEnd):Length()
+
+	local Dir2 = (ConeEnd - ConeStart):GetNormalized()
+
+	local ConeForward = ((Dir + Dir2) * 0.5):GetNormalized()
+	local ConeAngle = math.deg( math.acos( math.Clamp( Dir:Dot( ConeForward ) ,-1,1) ) )
+
+	local targets = {
+		[1] = trace.Entity,
+	}
+
+	for _, ent in ipairs( ents.FindInCone( ConeStart, ConeForward, ConeDistance,  math.cos( math.rad( ConeAngle ) ) ) ) do
+		if ent == trace.Entity then continue end
+
+		table.insert( targets, ent )
+	end
+
+	for k, v in pairs( targets ) do
+		v:Ignite( 5 )
+	end
 end
 
 if SERVER then
@@ -213,9 +236,7 @@ if SERVER then
 	end
 
 	function ENT:HandleDamage()
-		--for _, ent in ipairs( self:FindTargets() ) do
-		--	ent:Ignite( 5 )
-		--end
+		self:FindTargets()
 	end
 
 	function ENT:Think()
