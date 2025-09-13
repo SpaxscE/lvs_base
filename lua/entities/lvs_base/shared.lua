@@ -85,6 +85,7 @@ function ENT:CreateBaseDT()
 	self:AddDT( "Float", "Shield" )
 	self:AddDT( "Float", "NWHeat" )
 
+	self:TurretSystemDT()
 	self:OnSetupDataTables()
 
 	if SERVER then
@@ -97,6 +98,9 @@ function ENT:CreateBaseDT()
 		self:SetShield( self.MaxShield )
 		self:SetSelectedWeapon( 1 )
 	end
+end
+
+function ENT:TurretSystemDT()
 end
 
 function ENT:SetupDataTables()

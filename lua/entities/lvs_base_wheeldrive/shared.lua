@@ -131,16 +131,12 @@ function ENT:SetupDataTables()
 
 	self:AddDT( "Vector", "AIAimVector" )
 
-	self:TurretSystemDT()
 	self:TrackSystemDT()
 
 	if SERVER then
 		self:SetMaxThrottle( 1 )
 		self:SetSirenMode( -1 )
 	end
-end
-
-function ENT:TurretSystemDT()
 end
 
 function ENT:TrackSystemDT()
