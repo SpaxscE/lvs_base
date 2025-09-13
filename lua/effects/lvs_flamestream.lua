@@ -376,7 +376,7 @@ function EFFECT:Render()
 
 	if not IsValid( ent ) then return end
 
-	if ent:GetActive() then
+	if ent:GetActive() and not self._KillSwitch then
 		local Scale = 1
 		local Pos, Dir = self:GetPosition()
 
