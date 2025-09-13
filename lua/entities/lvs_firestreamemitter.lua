@@ -57,15 +57,42 @@ if SERVER then
 	end
 
 	function ENT:Enable()
+		self._LastInput = true
+
 		if self:GetActive() then return end
+
+		self._MinTime = CurTime() + self:GetActiveDelay()
 
 		self:SetActive( true )
 		self:HandleActive()
+
+		local Delay = self:GetActiveDelay()
+
+		if self._LastFlameActive and self._LastFlameActive > (CurTime() - Delay) then return end
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
+			effectdata:SetEntity( self )
+			effectdata:SetMagnitude( Delay )
+		util.Effect( "lvs_flamestream_start", effectdata )
+
 		self:EmitSound("lvs/weapons/flame_start.wav")
 	end
 
 	function ENT:Disable()
+		self._LastInput = nil
+
 		if not self:GetActive() then return end
+
+		if self._MinTime and self._MinTime > CurTime() then
+			timer.Simple( self:GetActiveDelay() + 0.1, function()
+				if not IsValid( self ) or self._LastInput then return end
+
+				self:Disable()
+			end )
+
+			return
+		end
 
 		self:SetActive( false )
 		self:HandleActive()
@@ -110,6 +137,12 @@ if SERVER then
 
 		if not self._IsFlameActive then
 			self._IsFlameActive = true
+
+			local effectdata = EffectData()
+				effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
+				effectdata:SetEntity( self )
+				effectdata:SetMagnitude( Delay )
+			util.Effect( "lvs_flamestream_start", effectdata )
 
 			local effectdata = EffectData()
 				effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
