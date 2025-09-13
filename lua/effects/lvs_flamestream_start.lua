@@ -36,7 +36,7 @@ function EFFECT:Init( data )
 	local Pos, Dir = self:GetPosition()
 
 	for i = 1,10 do
-		self:MakeFlameStream( self.Emitter, Pos, Dir )
+		self:MakeFlameStream( self.Emitter, self.Entity, Pos, Dir )
 	end
 end
 
@@ -54,6 +54,9 @@ function EFFECT:GetPosition()
 	if IsValid( Target ) and Attachment ~= "" then
 		local ID = Target:LookupAttachment( Attachment )
 		local Muzzle = Target:GetAttachment( ID )
+
+		if not Muzzle then return vector_origin, vector_origin end
+
 		Pos = Muzzle.Pos
 		Dir = Muzzle.Ang:Forward()
 	end
@@ -61,26 +64,30 @@ function EFFECT:GetPosition()
 	return Pos, Dir
 end
 
-function EFFECT:MakeFlameStream( emitter, pos, dir )
-	local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
+function EFFECT:MakeFlameStream( emitter, ent, pos, dir )
+	local vel  = ent:GetTargetVelocity()
+	local Alpha = 100 - vel:Length() / 2
 
-	if not particle then return end
-
-	particle:SetVelocity( VectorRand() * 60 + dir * 200 )
-	particle:SetDieTime( math.Rand(0.8,1.2) )
-	particle:SetAirResistance( 400 ) 
-	particle:SetStartAlpha( 100 )
-	particle:SetStartSize( 2 )
-	particle:SetEndSize( 20 )
-	particle:SetRoll( math.Rand( -2, 2 ) )
-	particle:SetRollDelta( math.Rand( -2, 2 ) )
-	particle:SetColor( 0, 0, 0 )
-	particle:SetGravity( Vector( 0, 0, 100 ) )
-	particle:SetCollide( false )
+	if Alpha > 1 then
+		local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
+		if particle then
+			particle:SetVelocity( VectorRand() * 60 + dir * 200 )
+			particle:SetDieTime( math.Rand(0.8,1.2) )
+			particle:SetAirResistance( 400 ) 
+			particle:SetStartAlpha( Alpha )
+			particle:SetStartSize( 2 )
+			particle:SetEndSize( 20 )
+			particle:SetRoll( math.Rand( -2, 2 ) )
+			particle:SetRollDelta( math.Rand( -2, 2 ) )
+			particle:SetColor( 0, 0, 0 )
+			particle:SetGravity( Vector( 0, 0, 100 ) )
+			particle:SetCollide( false )
+		end
+	end
 
 	local particle = emitter:Add( "effects/lvs_base/fire", pos )
 	if particle then
-		particle:SetVelocity( VectorRand() * 60 + dir * math.Rand(100,200) )
+		particle:SetVelocity( VectorRand() * 60 + dir * math.Rand(100,200) + vel )
 		particle:SetDieTime( math.Rand(0.75,1.5) )
 		particle:SetAirResistance( 40 ) 
 		particle:SetStartAlpha( 255 )
@@ -96,7 +103,7 @@ function EFFECT:MakeFlameStream( emitter, pos, dir )
 	local particle = emitter:Add( "effects/lvs_base/fire", pos )
 
 	if particle then
-		particle:SetVelocity( dir * 70 )
+		particle:SetVelocity( dir * 70 + vel )
 		particle:SetDieTime( 0.2 )
 		particle:SetAirResistance( 0 ) 
 		particle:SetStartAlpha( 255 )
@@ -111,7 +118,7 @@ function EFFECT:MakeFlameStream( emitter, pos, dir )
 	local particle = emitter:Add( "effects/lvs_base/flamelet"..math.random(1,5), pos )
 	
 	if particle then
-		particle:SetVelocity( dir * 40 )
+		particle:SetVelocity( dir * 40 + vel )
 		particle:SetDieTime( 0.2 )
 		particle:SetAirResistance( 0 ) 
 		particle:SetStartAlpha( 255 )

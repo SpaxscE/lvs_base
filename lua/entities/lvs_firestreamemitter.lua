@@ -12,16 +12,90 @@ ENT.AdminSpawnable		= false
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 0, "FlameVelocity" )
+	self:NetworkVar( "Float", 1, "FlameLifeTime" )
+	self:NetworkVar( "Float", 2, "FlameSize" )
+
 	self:NetworkVar( "Bool", 0, "Active" )
 	self:NetworkVar( "String", 0, "TargetAttachment" )
 	self:NetworkVar( "Entity", 0, "Target" )
 
 	if SERVER then
+		self:SetFlameLifeTime( 1.5 )
 		self:SetFlameVelocity( 1000 )
+		self:SetFlameSize( 80 )
 	end
 end
 
+function ENT:GetTargetVelocity()
+	local Target = self:GetTarget()
+
+	if not IsValid( Target ) then return vector_origin end
+
+	return Target:GetVelocity()
+end
+
+function ENT:GetPosition()
+	local Pos = self:GetPos()
+	local Dir = self:GetForward()
+
+	local Target = self:GetTarget()
+	local Attachment = self:GetTargetAttachment()
+
+	if IsValid( Target ) and Attachment ~= "" then
+		local ID = Target:LookupAttachment( Attachment )
+		local Muzzle = Target:GetAttachment( ID )
+		Pos = Muzzle.Pos
+		Dir = Muzzle.Ang:Forward()
+	end
+
+	return Pos, Dir
+end
+
+local Grav = Vector(0,0,-600)
+local Res = 0.05
+function ENT:FindTargets()
+	local Pos, Dir = self:GetPosition()
+
+	local FlameVel = self:GetFlameVelocity()
+
+	local Vel = Dir * FlameVel
+
+	local trace
+	local Dist = 0
+	local MaxDist = FlameVel * self:GetFlameLifeTime()
+
+	while Dist < MaxDist do
+		Vel = Vel + Grav * Res
+
+		local StartPos = Pos
+		local EndPos = Pos + Vel * Res
+
+		Dist = Dist + (StartPos - EndPos):Length()
+
+		trace = util.TraceLine( {
+			start = StartPos,
+			endpos = EndPos,
+			filter =  self,
+		} )
+
+		Pos = EndPos
+
+		if trace.Hit then
+			break
+		end
+	end
+
+	return trace.HitPos
+end
+
 if SERVER then
+	ENT.FlameStartSound = "lvs/weapons/flame_start.wav"
+	ENT.FlameStopSound = "lvs/weapons/flame_end.wav"
+	ENT.FlameLoopSound = "lvs/weapons/flame_loop.wav"
+
+	function ENT:SetAttacker( ent ) self._attacker = ent end
+	function ENT:GetAttacker() return self._attacker or NULL end
+
 	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
 
@@ -31,16 +105,12 @@ if SERVER then
 			self._FilterEnts[ ent ] = true
 		end
 	end
-	function ENT:SetActiveDelay( num )
-		self._activationdelay = num
+	function ENT:GetEntityFilter()
+		return self._FilterEnts or {}
 	end
 
-	function ENT:SetDamage( num ) self._dmg = num end
-	function ENT:SetAttacker( ent ) self._attacker = ent end
-	function ENT:GetAttacker() return self._attacker or NULL end
-	function ENT:GetDamage() return (self._dmg or 2000) end
-		function ENT:GetEntityFilter()
-		return self._FilterEnts or {}
+	function ENT:SetActiveDelay( num )
+		self._activationdelay = num
 	end
 	function ENT:GetActiveDelay()
 		return (self._activationdelay or 0.5)
@@ -57,44 +127,22 @@ if SERVER then
 	end
 
 	function ENT:Enable()
-		self._LastInput = true
-
 		if self:GetActive() then return end
-
-		self._MinTime = CurTime() + self:GetActiveDelay()
 
 		self:SetActive( true )
 		self:HandleActive()
 
-		local Delay = self:GetActiveDelay()
-
-		if self._LastFlameActive and self._LastFlameActive > (CurTime() - Delay) then return end
-
 		local effectdata = EffectData()
 			effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
 			effectdata:SetEntity( self )
-			effectdata:SetMagnitude( Delay )
+			effectdata:SetMagnitude( self:GetActiveDelay() )
 		util.Effect( "lvs_flamestream_start", effectdata )
 
-		self:EmitSound("lvs/weapons/flame_start.wav")
+		self:EmitSound( self.FlameStartSound )
 	end
 
 	function ENT:Disable()
-		self._LastInput = nil
-
 		if not self:GetActive() then return end
-
-		local Delay = self:GetActiveDelay()
-
-		if self._MinTime and self._MinTime > CurTime() then
-			timer.Simple( Delay + 0.1, function()
-				if not IsValid( self ) or self._LastInput then return end
-
-				self:Disable()
-			end )
-
-			return
-		end
 
 		self:SetActive( false )
 		self:HandleActive()
@@ -102,10 +150,10 @@ if SERVER then
 		local effectdata = EffectData()
 			effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
 			effectdata:SetEntity( self )
-			effectdata:SetMagnitude( Delay )
+			effectdata:SetMagnitude( self:GetActiveDelay() )
 		util.Effect( "lvs_flamestream_finish", effectdata )
 
-		self:EmitSound("lvs/weapons/flame_end.wav")
+		self:EmitSound( self.FlameStopSound )
 
 		if not self._snd then return end
 
@@ -158,15 +206,25 @@ if SERVER then
 				effectdata:SetEntity( self )
 			util.Effect( "lvs_flamestream", effectdata )
 
-			self._snd = self:StartLoopingSound("lvs/weapons/flame_loop.wav")
+			self._snd = self:StartLoopingSound( self.FlameLoopSound )
 		end
 
 		self:NextThink( T )
 	end
 
+	function ENT:HandleDamage()
+		for _, ent in ipairs( self:FindTargets() ) do
+			ent:Ignite( 5 )
+		end
+	end
+
 	function ENT:Think()
 
 		self:HandleActive()
+
+		if self:GetActive() then
+			self:HandleDamage()
+		end
 
 		return true
 	end

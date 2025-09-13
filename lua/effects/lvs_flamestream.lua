@@ -58,6 +58,9 @@ function EFFECT:GetPosition()
 	if IsValid( Target ) and Attachment ~= "" then
 		local ID = Target:LookupAttachment( Attachment )
 		local Muzzle = Target:GetAttachment( ID )
+
+		if not Muzzle then return vector_origin, vector_origin end
+
 		Pos = Muzzle.Pos
 		Dir = Muzzle.Ang:Forward()
 	end
@@ -279,7 +282,7 @@ function EFFECT:MakeFlameStream( emitter, emitter3D, pos, dir )
 	local velDesired = ent:GetFlameVelocity()
 	local vel = dir * velDesired
 
-	local DieTime = math.Rand(0.75,1.5)
+	local DieTime = math.Rand( ent:GetFlameLifeTime() * 0.5, ent:GetFlameLifeTime() )
 
 	particle:SetVelocity( VectorRand() * 30 + vel )
 	particle:SetDieTime( DieTime )
@@ -288,7 +291,7 @@ function EFFECT:MakeFlameStream( emitter, emitter3D, pos, dir )
 	particle:SetEndLength( velDesired * 0.1 )
 	particle:SetStartLength( velDesired * 0.04 )
 	particle:SetStartSize( 2 )
-	particle:SetEndSize( 80 )
+	particle:SetEndSize( ent:GetFlameSize() )
 	particle:SetRollDelta( math.Rand(-5,5) )
 	particle:SetColor( 255, 255, 255 )
 	particle:SetGravity( Vector( 0, 0, -600 ) )

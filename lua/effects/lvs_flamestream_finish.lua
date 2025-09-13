@@ -48,6 +48,9 @@ function EFFECT:GetPosition()
 	if IsValid( Target ) and Attachment ~= "" then
 		local ID = Target:LookupAttachment( Attachment )
 		local Muzzle = Target:GetAttachment( ID )
+
+		if not Muzzle then return vector_origin, vector_origin end
+
 		Pos = Muzzle.Pos
 		Dir = Muzzle.Ang:Forward()
 	end
