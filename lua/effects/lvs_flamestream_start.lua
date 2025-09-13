@@ -62,6 +62,22 @@ function EFFECT:GetPosition()
 end
 
 function EFFECT:MakeFlameStream( emitter, pos, dir )
+	local particle = emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
+
+	if not particle then return end
+
+	particle:SetVelocity( VectorRand() * 60 + dir * 200 )
+	particle:SetDieTime( math.Rand(0.8,1.2) )
+	particle:SetAirResistance( 400 ) 
+	particle:SetStartAlpha( 100 )
+	particle:SetStartSize( 2 )
+	particle:SetEndSize( 20 )
+	particle:SetRoll( math.Rand( -2, 2 ) )
+	particle:SetRollDelta( math.Rand( -2, 2 ) )
+	particle:SetColor( 0, 0, 0 )
+	particle:SetGravity( Vector( 0, 0, 100 ) )
+	particle:SetCollide( false )
+
 	local particle = emitter:Add( "effects/lvs_base/fire", pos )
 	if particle then
 		particle:SetVelocity( VectorRand() * 60 + dir * math.Rand(100,200) )
@@ -115,9 +131,13 @@ function EFFECT:Think()
 	local T = CurTime()
 
 	if IsValid( ent ) and (self.DieTime or 0) > T then
-		local Pos, Dir = self:GetPosition()
+		if (self.nextDFX or 0) < T then
+			self.nextDFX = T + 0.01
 
-		self:SetRenderBoundsWS( Pos, Pos + Dir * 50000 )
+			local Pos, Dir = self:GetPosition()
+
+			self:SetRenderBoundsWS( Pos, Pos + Dir * 50000 )
+		end
 
 		return true
 	end
