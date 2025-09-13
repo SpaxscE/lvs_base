@@ -1,0 +1,36 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/sdkfz250/250_skin1"
+	"$bumpmap" "models/DiggerCars/shared/skin_nm"
+
+	"$detail" "models/diggercars/sdkfz250/panzerivg_detail_d"
+	"$detailscale" "10"
+	"$detailblendfactor" "2"
+	"$detailblendmode" "0"
+
+	"$nodecal" "1"
+	"$phong" "1" 
+	"$phongboost" "0.08" 
+	"$phongexponent" 3
+	"$phongfresnelranges" "[1 1 1]" 
+	"$colorfix" "{185 185 185}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
