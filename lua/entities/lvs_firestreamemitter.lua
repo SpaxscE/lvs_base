@@ -100,14 +100,14 @@ function ENT:FindTargets()
 		[1] = trace.Entity,
 	}
 
-	for _, ent in ipairs( ents.FindInCone( ConeStart, ConeForward, ConeDistance,  math.cos( math.rad( ConeAngle ) ) ) ) do
+	for _, ent in ipairs( ents.FindInCone( ConeStart, ConeForward, ConeDistance,  math.cos( math.rad( ConeAngle * 2 ) ) ) ) do
 		if ent == trace.Entity then continue end
 
 		table.insert( targets, ent )
 	end
 
 	for k, v in pairs( targets ) do
-		v:Ignite( 5 )
+		v:Ignite( 1 )
 	end
 end
 
