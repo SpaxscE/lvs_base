@@ -73,6 +73,7 @@ end
 function ENT:GetTurretArmor()
 	return self:GetNWTurretArmor()
 end
+
 function ENT:GetTurretEnabled()
 	if self:GetTurretDestroyed() then return false end
 

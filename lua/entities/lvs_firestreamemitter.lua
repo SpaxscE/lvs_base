@@ -213,9 +213,9 @@ if SERVER then
 	end
 
 	function ENT:HandleDamage()
-		for _, ent in ipairs( self:FindTargets() ) do
-			ent:Ignite( 5 )
-		end
+		--for _, ent in ipairs( self:FindTargets() ) do
+		--	ent:Ignite( 5 )
+		--end
 	end
 
 	function ENT:Think()

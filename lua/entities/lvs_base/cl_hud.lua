@@ -34,7 +34,68 @@ function ENT:LVSHudPaintVehicleIdentifier( X, Y, In_Col )
 	end
 end
 
+function ENT:LVSPreHudPaint( X, Y, ply )
+	return true
+end
+
+local zoom = 0
+local zoom_mat = Material( "vgui/zoom" )
+local zoom_switch = 0
+local zoom_blinder = 0
+local TargetZoom = 0
+
+ENT.ZoomInSound = "weapons/sniper/sniper_zoomin.wav"
+ENT.ZoomOutSound =  "weapons/sniper/sniper_zoomout.wav"
+
+function ENT:GetZoom()
+	return TargetZoom
+end
+
+function ENT:PaintZoom( X, Y, ply )
+	TargetZoom = ply:lvsKeyDown( "ZOOM" ) and 1 or 0
+
+	zoom = zoom + (TargetZoom - zoom) * RealFrameTime() * 10
+
+	if self.OpticsEnable then
+		if self:GetOpticsEnabled() then
+			if zoom_switch ~= TargetZoom then
+				zoom_switch = TargetZoom
+
+				zoom_blinder = 1
+
+				if TargetZoom == 1 then
+					surface.PlaySound( self.ZoomInSound )
+				else
+					surface.PlaySound( self.ZoomOutSound )
+				end
+			end
+
+			zoom_blinder = zoom_blinder - zoom_blinder * RealFrameTime() * 5
+
+			surface.SetDrawColor( Color(0,0,0,255 * zoom_blinder) )
+			surface.DrawRect( 0, 0, X, Y )
+
+			self.ZoomFov = self.OpticsFov
+		else
+			self.ZoomFov = nil
+		end
+	end
+
+	X = X * 0.5
+	Y = Y * 0.5
+
+	surface.SetDrawColor( Color(255,255,255,255 * zoom) )
+	surface.SetMaterial(zoom_mat ) 
+	surface.DrawTexturedRectRotated( X + X * 0.5, Y * 0.5, X, Y, 0 )
+	surface.DrawTexturedRectRotated( X + X * 0.5, Y + Y * 0.5, Y, X, 270 )
+	surface.DrawTexturedRectRotated( X * 0.5, Y * 0.5, Y, X, 90 )
+	surface.DrawTexturedRectRotated( X * 0.5, Y + Y * 0.5, X, Y, 180 )
+end
+
 function ENT:LVSHudPaint( X, Y, ply )
+	if not self:LVSPreHudPaint( X, Y, ply ) then return end
+
+	self:PaintZoom( X, Y, ply )
 end
 
 function ENT:HurtMarker( intensity )
@@ -165,38 +226,6 @@ function ENT:LVSPaintHitMarker( scr )
 	end
 end
 
-function ENT:PaintCrosshairCenter( Pos2D, Col )
-	if not Col then
-		Col = Color( 255, 255, 255, 255 )
-	end
-
-	local Alpha = Col.a / 255
-	local Shadow = Color( 0, 0, 0, 80 * Alpha )
-
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 4, Shadow )
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 5, Col )
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 6, Shadow )
-end
-
-function ENT:PaintCrosshairOuter( Pos2D, Col )
-	if not Col then
-		Col = Color( 255, 255, 255, 255 )
-	end
-
-	local Alpha = Col.a / 255
-	local Shadow = Color( 0, 0, 0, 80 * Alpha )
-
-	surface.DrawCircle( Pos2D.x,Pos2D.y, 17, Shadow )
-	surface.DrawCircle( Pos2D.x, Pos2D.y, 18, Col )
-
-	if LVS.AntiAliasingEnabled then
-		surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Color( Col.r, Col.g, Col.b, 150 * Alpha ) )
-		surface.DrawCircle( Pos2D.x, Pos2D.y, 20, Shadow )
-	else
-		surface.DrawCircle( Pos2D.x, Pos2D.y, 19, Shadow )
-	end
-end
-
 local Circles = {
 	[1] = {r = -1, col = Color(0,0,0,200)},
 	[2] = {r = 0, col = Color(255,255,255,200)},
@@ -221,43 +250,4 @@ function ENT:LVSDrawCircle( X, Y, target_radius, value )
 			surface.DrawLine( X - math.sin( math.rad( a ) ) * radius, Y + math.cos( math.rad( a ) ) * radius, X - math.sin( math.rad( a + segmentdist ) ) * radius, Y + math.cos( math.rad( a + segmentdist ) ) * radius )
 		end
 	end
-end
-
-function ENT:PaintCrosshairSquare( Pos2D, Col )
-	if not Col then
-		Col = Color( 255, 255, 255, 255 )
-	end
-
-	local X = Pos2D.x + 1
-	local Y = Pos2D.y + 1
-
-	local Size = 20
-
-	surface.SetDrawColor( 0, 0, 0, 80 )
-	surface.DrawLine( X - Size, Y + Size, X - Size * 0.5, Y + Size )
-	surface.DrawLine( X + Size, Y + Size, X + Size * 0.5, Y + Size )
-	surface.DrawLine( X - Size, Y + Size, X - Size, Y + Size * 0.5 )
-	surface.DrawLine( X - Size, Y - Size, X - Size, Y - Size * 0.5 )
-	surface.DrawLine( X + Size, Y + Size, X + Size, Y + Size * 0.5 )
-	surface.DrawLine( X + Size, Y - Size, X + Size, Y - Size * 0.5 )
-	surface.DrawLine( X - Size, Y - Size, X - Size * 0.5, Y - Size )
-	surface.DrawLine( X + Size, Y - Size, X + Size * 0.5, Y - Size )
-
-	if Col then
-		surface.SetDrawColor( Col.r, Col.g, Col.b, Col.a )
-	else
-		surface.SetDrawColor( 255, 255, 255, 255 )
-	end
-
-	X = Pos2D.x
-	Y = Pos2D.y
-
-	surface.DrawLine( X - Size, Y + Size, X - Size * 0.5, Y + Size )
-	surface.DrawLine( X + Size, Y + Size, X + Size * 0.5, Y + Size )
-	surface.DrawLine( X - Size, Y + Size, X - Size, Y + Size * 0.5 )
-	surface.DrawLine( X - Size, Y - Size, X - Size, Y - Size * 0.5 )
-	surface.DrawLine( X + Size, Y + Size, X + Size, Y + Size * 0.5 )
-	surface.DrawLine( X + Size, Y - Size, X + Size, Y - Size * 0.5 )
-	surface.DrawLine( X - Size, Y - Size, X - Size * 0.5, Y - Size )
-	surface.DrawLine( X + Size, Y - Size, X + Size * 0.5, Y - Size )
 end

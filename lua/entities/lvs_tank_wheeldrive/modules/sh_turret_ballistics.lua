@@ -83,9 +83,11 @@ if SERVER then
 	function ENT:CalcTurretAngles( EntTable )
 		local weapon = self:GetWeaponHandler( EntTable.TurretPodIndex )
 
+		if not IsValid( weapon ) then return angle_zero end
+
 		local UpZ = self:GetUp().z
 
-		if not IsValid( weapon ) or UpZ < EntTable.TurretBallisticsUpright then return self:WorldToLocalAngles( weapon:GetAimVector():Angle() ) end
+		if UpZ < EntTable.TurretBallisticsUpright then return self:WorldToLocalAngles( weapon:GetAimVector():Angle() ) end
 
 		local pod = weapon:GetDriverSeat()
 
@@ -196,12 +198,14 @@ else
 		
 		local BodyColor = EntTable.TurretColorMain
 
-		for _, wheel in pairs( self:GetWheels() ) do
-			if not wheel:GetDamaged() then continue end
+		if self.GetWheels then
+			for _, wheel in pairs( self:GetWheels() ) do
+				if not wheel:GetDamaged() then continue end
 
-			BodyColor = EntTable.TurretColorDamaged
+				BodyColor = EntTable.TurretColorDamaged
 
-			break
+				break
+			end
 		end
 
 		surface.SetDrawColor( BodyColor )
