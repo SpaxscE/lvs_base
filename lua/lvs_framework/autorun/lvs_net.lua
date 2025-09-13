@@ -3,6 +3,18 @@ if SERVER then
 	util.AddNetworkString( "lvs_player_request_filter" )
 	util.AddNetworkString( "lvs_player_enterexit" )
 	util.AddNetworkString( "lvs_toggle_mouseaim" )
+	util.AddNetworkString( "lvs_car_turnsignal" )
+	util.AddNetworkString( "lvs_car_break" )
+
+	net.Receive( "lvs_car_turnsignal", function( len, ply )
+		if not IsValid( ply ) then return end
+
+		local veh = ply:lvsGetVehicle()
+
+		if not IsValid( veh ) or veh:GetDriver() ~= ply then return end
+
+		veh:SetTurnMode( net.ReadInt( 4 ) )
+	end )
 
 	net.Receive( "lvs_toggle_mouseaim", function( length, ply )
 		ply:lvsBuildControls()
@@ -35,6 +47,14 @@ if SERVER then
 		net.Send( ply )
 	end)
 else
+	net.Receive("lvs_car_break", function( len )
+		local ent = net.ReadEntity()
+
+		if not IsValid( ent ) or not isfunction( ent.OnEngineStallBroken ) then return end
+
+		ent:OnEngineStallBroken()
+	end)
+
 	net.Receive( "lvs_player_request_filter", function( length )
 		local LVSent = net.ReadEntity()
 

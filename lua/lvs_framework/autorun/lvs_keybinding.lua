@@ -103,6 +103,321 @@ hook.Add( "LVS:Initialize", "!!11lvs_default_keys", function()
 	end
 end )
 
+hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
+	local KEYS = {
+		{
+			name = "CAR_THROTTLE",
+			category = "LVS-Car",
+			name_menu = "Throttle",
+			default = "+forward",
+			cmd = "lvs_car_throttle"
+		},
+		{
+			name = "CAR_THROTTLE_MOD",
+			category = "LVS-Car",
+			name_menu = "Throttle Modifier",
+			default = "+speed",
+			cmd = "lvs_car_speed"
+		},
+		{
+			name = "CAR_BRAKE",
+			category = "LVS-Car",
+			name_menu = "Brake",
+			default = "+back",
+			cmd = "lvs_car_brake"
+		},
+		{
+			name = "CAR_HANDBRAKE",
+			category = "LVS-Car",
+			name_menu = "Handbrake",
+			default = "+jump",
+			cmd = "lvs_car_handbrake"
+		},
+		{
+			name = "CAR_STEER_LEFT",
+			category = "LVS-Car",
+			name_menu = "Steer Left",
+			default = "+moveleft",
+			cmd = "lvs_car_turnleft"
+		},
+		{
+			name = "CAR_STEER_RIGHT",
+			category = "LVS-Car",
+			name_menu = "Steer Right",
+			default = "+moveright",
+			cmd = "lvs_car_turnright"
+		},
+		{
+			name = "CAR_LIGHTS_TOGGLE",
+			category = "LVS-Car",
+			name_menu = "Toggle Lights",
+			default = "phys_swap",
+			cmd = "lvs_car_toggle_lights"
+		},
+		{
+			name = "CAR_MENU",
+			category = "LVS-Car",
+			name_menu = "Open Signal Menu",
+			default = "+zoom",
+			cmd = "lvs_car_menu"
+		},
+		{
+			name = "CAR_SIREN",
+			category = "LVS-Car",
+			name_menu = "Open Siren Menu",
+			default = "phys_swap",
+			cmd = "lvs_car_siren"
+		},
+		{
+			name = "CAR_SWAP_AMMO",
+			category = "LVS-Car",
+			name_menu = "Change Ammo Type",
+			default = "+walk",
+			cmd = "lvs_car_swap_ammo"
+		},
+		{
+			name = "CAR_SHIFT_UP",
+			category = "LVS-Car",
+			name_menu = "Shift Up",
+			cmd = "lvs_car_shift_up"
+		},
+		{
+			name = "CAR_SHIFT_DN",
+			category = "LVS-Car",
+			name_menu = "Shift Down",
+			cmd = "lvs_car_shift_dn"
+		},
+	}
+
+	for _, v in pairs( KEYS ) do
+		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
+	end
+end )
+
+
+hook.Add( "LVS:Initialize", "[LVS] - Helicopter - Keys", function()
+	local KEYS = {
+		{
+			name = "+THRUST_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Throttle Increase",
+			default = "+forward",
+			cmd = "lvs_helicopter_throttle_up"
+		},
+		{
+			name = "-THRUST_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Throttle Decrease",
+			default = "+back",
+			cmd = "lvs_helicopter_throttle_down"
+		},
+		{
+			name = "+PITCH_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Pitch Up",
+			cmd = "lvs_helicopter_pitch_up"
+		},
+		{
+			name = "-PITCH_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Pitch Down",
+			cmd = "lvs_helicopter_pitch_down"
+		},
+		{
+			name = "-YAW_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Yaw Left [Roll in Direct Input]",
+			cmd = "lvs_helicopter_yaw_left"
+		},
+		{
+			name = "+YAW_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Yaw Right [Roll in Direct Input]",
+			cmd = "lvs_helicopter_yaw_right"
+		},
+		{
+			name = "-ROLL_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Roll Left [Yaw in Direct Input]",
+			default = "+moveleft",
+			cmd = "lvs_helicopter_roll_left"
+		},
+		{
+			name = "+ROLL_HELI",
+			category = "LVS-Helicopter",
+			name_menu = "Roll Right [Yaw in Direct Input]",
+			default = "+moveright",
+			cmd = "lvs_helicopter_roll_right"
+		},
+		{
+			name = "HELI_HOVER",
+			category = "LVS-Helicopter",
+			name_menu = "Hover",
+			default = "+speed",
+			cmd = "lvs_helicopter_hover"
+		},
+	}
+
+	for _, v in pairs( KEYS ) do
+		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
+	end
+end )
+
+hook.Add( "LVS:Initialize", "[LVS] - Planes - Keys", function()
+	local KEYS = {
+		{
+			name = "+THROTTLE",
+			category = "LVS-Plane",
+			name_menu = "Throttle Increase",
+			default = "+forward",
+			cmd = "lvs_plane_throttle_up"
+		},
+		{
+			name = "-THROTTLE",
+			category = "LVS-Plane",
+			name_menu = "Throttle Decrease",
+			default = "+back",
+			cmd = "lvs_plane_throttle_down"
+		},
+		{
+			name = "+PITCH",
+			category = "LVS-Plane",
+			name_menu = "Pitch Up",
+			default = "+speed",
+			cmd = "lvs_plane_pitch_up"
+		},
+		{
+			name = "-PITCH",
+			category = "LVS-Plane",
+			name_menu = "Pitch Down",
+			cmd = "lvs_plane_pitch_down"
+		},
+		{
+			name = "-YAW",
+			category = "LVS-Plane",
+			name_menu = "Yaw Left [Roll in Direct Input]",
+			cmd = "lvs_plane_yaw_left"
+		},
+		{
+			name = "+YAW",
+			category = "LVS-Plane",
+			name_menu = "Yaw Right [Roll in Direct Input]",
+			cmd = "lvs_plane_yaw_right"
+		},
+		{
+			name = "-ROLL",
+			category = "LVS-Plane",
+			name_menu = "Roll Left [Yaw in Direct Input]",
+			default = "+moveleft",
+			cmd = "lvs_plane_roll_left"
+		},
+		{
+			name = "+ROLL",
+			category = "LVS-Plane",
+			name_menu = "Roll Right [Yaw in Direct Input]",
+			default = "+moveright",
+			cmd = "lvs_plane_roll_right"
+		},
+	}
+
+	for _, v in pairs( KEYS ) do
+		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
+	end
+end )
+
+hook.Add( "LVS:Initialize", "[LVS] - Star Wars - Keys", function()
+	local KEYS = {
+		{
+			name = "+THRUST_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Thrust Increase",
+			default = "+forward",
+			cmd = "lvs_starfighter_throttle_up"
+		},
+		{
+			name = "-THRUST_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Thrust Decrease",
+			default = "+back",
+			cmd = "lvs_starfighter_throttle_down"
+		},
+		{
+			name = "+PITCH_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Pitch Up",
+			default = "+speed",
+			cmd = "lvs_starfighter_pitch_up"
+		},
+		{
+			name = "-PITCH_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Pitch Down",
+			cmd = "lvs_starfighter_pitch_down"
+		},
+		{
+			name = "-YAW_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Yaw Left [Roll in Direct Input]",
+			cmd = "lvs_starfighter_yaw_left"
+		},
+		{
+			name = "+YAW_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Yaw Right [Roll in Direct Input]",
+			cmd = "lvs_starfighter_yaw_right"
+		},
+		{
+			name = "-ROLL_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Roll Left [Yaw in Direct Input]",
+			default = "+moveleft",
+			cmd = "lvs_starfighter_roll_left"
+		},
+		{
+			name = "+ROLL_SF",
+			category = "LVS-Starfighter",
+			name_menu = "Roll Right [Yaw in Direct Input]",
+			default = "+moveright",
+			cmd = "lvs_starfighter_roll_right"
+		},
+		{
+			name = "+VTOL_Z_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Up",
+			cmd = "lvs_starfighter_vtol_up"
+		},
+		{
+			name = "-VTOL_Z_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Down",
+			cmd = "lvs_starfighter_vtol_dn"
+		},
+		{
+			name = "-VTOL_Y_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Right",
+			cmd = "lvs_starfighter_vtol_right"
+		},
+		{
+			name = "+VTOL_Y_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Left",
+			cmd = "lvs_starfighter_vtol_left"
+		},
+		{
+			name = "-VTOL_X_SF",
+			category = "LVS-Starfighter",
+			name_menu = "VTOL Reverse",
+			default = "+back",
+			cmd = "lvs_starfighter_vtol_reverse"
+		},
+	}
+
+	for _, v in pairs( KEYS ) do
+		LVS:AddKey( v.name, v.category, v.name_menu, v.cmd, v.default )
+	end
+end )
+
 if SERVER then return end
 
 concommand.Add( "lvs_mouseaim_toggle", function( ply, cmd, args )

@@ -401,3 +401,94 @@ function ENT:AddFlameEmitter( target, attachment )
 
 	return FlameEmitter
 end
+
+function ENT:AddAmmoRack( pos, fxpos, ang, mins, maxs, target )
+	local AmmoRack = ents.Create( "lvs_wheeldrive_ammorack" )
+
+	if not IsValid( AmmoRack ) then
+		self:Remove()
+
+		print("LVS: Failed to create fueltank entity. Vehicle terminated.")
+
+		return
+	end
+
+	if not target then target = self end
+
+	AmmoRack:SetPos( target:LocalToWorld( pos ) )
+	AmmoRack:SetAngles( target:GetAngles() )
+	AmmoRack:Spawn()
+	AmmoRack:Activate()
+	AmmoRack:SetParent( target )
+	AmmoRack:SetBase( self )
+	AmmoRack:SetEffectPosition( fxpos )
+
+	self:DeleteOnRemove( AmmoRack )
+
+	self:TransferCPPI( AmmoRack )
+
+	mins = mins or Vector(-30,-30,-30)
+	maxs = maxs or Vector(30,30,30)
+
+	debugoverlay.BoxAngles( target:LocalToWorld( pos ), mins, maxs, target:LocalToWorldAngles( ang ), 15, Color( 255, 0, 0, 255 ) )
+
+	self:AddDS( {
+		pos = pos,
+		ang = ang,
+		mins = mins,
+		maxs =  maxs,
+		entity = target,
+		Callback = function( tbl, ent, dmginfo )
+			if not IsValid( AmmoRack ) then return end
+
+			AmmoRack:TakeTransmittedDamage( dmginfo )
+
+			if AmmoRack:GetDestroyed() then return end
+
+			local OriginalDamage = dmginfo:GetDamage()
+
+			dmginfo:SetDamage( math.min( 2, OriginalDamage ) )
+		end
+	} )
+
+	return AmmoRack
+end
+
+function ENT:AddTrailerHitch( pos, hitchtype )
+	if not hitchtype then
+
+		hitchtype = LVS.HITCHTYPE_MALE
+
+	end
+
+	local TrailerHitch = ents.Create( "lvs_wheeldrive_trailerhitch" )
+
+	if not IsValid( TrailerHitch ) then
+		self:Remove()
+
+		print("LVS: Failed to create trailerhitch entity. Vehicle terminated.")
+
+		return
+	end
+
+	TrailerHitch:SetPos( self:LocalToWorld( pos ) )
+	TrailerHitch:SetAngles( self:GetAngles() )
+	TrailerHitch:Spawn()
+	TrailerHitch:Activate()
+	TrailerHitch:SetParent( self )
+	TrailerHitch:SetBase( self )
+	TrailerHitch:SetHitchType( hitchtype )
+
+	self:TransferCPPI( TrailerHitch )
+
+	return TrailerHitch
+end
+
+function ENT:OnCoupleChanged( targetVehicle, targetHitch, active )
+end
+
+function ENT:OnStartDrag( caller, activator )
+end
+
+function ENT:OnStopDrag( caller, activator )
+end

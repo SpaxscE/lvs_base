@@ -1,0 +1,5 @@
+VertexLitGeneric
+{
+	$baseTexture "models/props_equipment/gas_pump"
+	$bumpmap "models/props_equipment/gas_pump_normal"
+}

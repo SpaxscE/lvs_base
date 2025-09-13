@@ -98,7 +98,6 @@ sound.Add( {
 	}
 } )
 
-
 sound.Add( {
 	name = "LVS.EXPLOSION",
 	channel = CHAN_STATIC,
@@ -106,6 +105,42 @@ sound.Add( {
 	level = 115,
 	pitch = {95, 115},
 	sound = "lvs/explosion.wav"
+} )
+
+sound.Add( {
+	name = "LVS_MISSILE_FIRE",
+	channel = CHAN_WEAPON,
+	volume = 1.0,
+	level = 90,
+	sound = {
+		"^lvs/weapons/missile_1.wav",
+		"^lvs/weapons/missile_2.wav",
+		"^lvs/weapons/missile_3.wav",
+		"^lvs/weapons/missile_4.wav",
+	}
+} )
+
+sound.Add( {
+	name = "LVS_FIGHTERPLANE_CRASH",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 128,
+	sound = {
+		"lvs/vehicles/generic/figher_crash1.wav",
+		"lvs/vehicles/generic/figher_crash2.wav",
+	}
+} )
+
+sound.Add( {
+	name = "LVS_BOMBERPLANE_CRASH",
+	channel = CHAN_STATIC,
+	volume = 1.0,
+	level = 128,
+	sound = {
+		"lvs/vehicles/generic/bomber_crash1.wav",
+		"lvs/vehicles/generic/bomber_crash2.wav",
+		"lvs/vehicles/generic/bomber_crash3.wav",
+	}
 } )
 
 if CLIENT then

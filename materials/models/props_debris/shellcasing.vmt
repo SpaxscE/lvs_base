@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\props_debris\shellcasing"
+//	"$envmap" "models\props_debris\shellcasing_cube"
+	"$envmap" "env_cubemap"
+	"$basealphaenvmapmask" 1
+//	"$envmapcontrast" 0.1
+	"$envmapsaturation" 0.9
+	"$envmaptint" "{ 131 120 61}"
+
+}

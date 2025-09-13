@@ -1,0 +1,36 @@
+
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/shared/net_b"
+	"$bumpmap" "models/diggercars/shared/net_b_nm"	
+	
+	"$nocull" "1"
+	"$alphatest" "1"
+	"$allowalphatocoverage" "1"
+
+	"$halflambert" 1
+
+	"$phong" "1" 
+	"$phongboost" "5" 
+	"$phongfresnelranges" "[.3 .5 1]" 
+	"$phongexponent" 20
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.05 0.05 0.05]"
+	"$envmapfrensel" "1"
+	"$colorfix" "{255 255 255}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}
+
+
+
+
+
+
