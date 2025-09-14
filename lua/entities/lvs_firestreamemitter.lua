@@ -110,6 +110,10 @@ function ENT:FindTargets()
 				targets[ trace.Entity:EntIndex() ] = trace.HitPos
 			end
 
+			for _, ent in ipairs( ents.FindInSphere( trace.HitPos, FlameSize ) ) do
+				targets[ ent:EntIndex() ] = ent:GetPos()
+			end
+
 			break
 		end
 	end
@@ -121,6 +125,24 @@ if SERVER then
 	ENT.FlameStartSound = "lvs/weapons/flame_start.wav"
 	ENT.FlameStopSound = "lvs/weapons/flame_end.wav"
 	ENT.FlameLoopSound = "lvs/weapons/flame_loop.wav"
+
+	function ENT:SetFlameStartSound( snd )
+		if not isstring( snd ) then snd = "common/null.wav" end
+
+		self.FlameStartSound = snd
+	end
+
+	function ENT:SetFlameStopSound( snd )
+		if not isstring( snd ) then snd = "common/null.wav" end
+
+		self.FlameStopSound = snd
+	end
+
+	function ENT:SetFlameLoopSound( snd )
+		if not isstring( snd ) then snd = "common/null.wav" end
+
+		self.FlameLoopSound = snd
+	end
 
 	function ENT:SetDamage( num ) self._dmg = num end
 	function ENT:SetAttacker( ent ) self._attacker = ent end
@@ -156,6 +178,14 @@ if SERVER then
 		self:SetParent( target )
 		self:SetTarget( target )
 		self:SetTargetAttachment( attachment or "" )
+
+		if not target.GetCrosshairFilterEnts then return end
+
+		timer.Simple(1, function()
+			if not IsValid( self ) or not IsValid( target ) then return end
+
+			self:SetEntityFilter( target:GetCrosshairFilterEnts() )
+		end)
 	end
 
 	function ENT:Enable()
@@ -251,19 +281,26 @@ if SERVER then
 		if not IsValid( victim ) then return end
 
 		local attacker = self:GetAttacker()
+		local damage = self:GetDamage()
 
 		local dmg = DamageInfo()
-		dmg:SetDamage( self:GetDamage() * FrameTime() )
+		dmg:SetDamage( damage * FrameTime() )
 		dmg:SetAttacker( IsValid( attacker ) and attacker or game.GetWorld() )
 		dmg:SetInflictor( self:GetTarget() )
-		dmg:SetDamageType( DMG_BURN )
+		dmg:SetDamageType( DMG_BURN + DMG_PREVENT_PHYSICS_FORCE )
 		dmg:SetDamagePosition( pos or vector_origin )
 		victim:TakeDamageInfo( dmg )
 	end
 
 	function ENT:HandleDamage()
+		local filter = self:GetEntityFilter()
+
 		for entid, pos in pairs( self:FindTargets() ) do
-			self:SendDamage( Entity( entid ), pos )
+			local ent = Entity( entid )
+
+			if not IsValid( ent ) or filter[ ent ] then continue end
+
+			self:SendDamage( ent, pos )
 		end
 	end
 
