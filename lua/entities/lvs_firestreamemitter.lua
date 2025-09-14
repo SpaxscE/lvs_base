@@ -184,6 +184,9 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
+		self:SetMoveType( MOVETYPE_NONE )
+		self:SetSolid( SOLID_NONE )
+		self:DrawShadow( false )
 	end
 
 	function ENT:HandleActive()
