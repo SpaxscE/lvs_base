@@ -67,6 +67,8 @@ if SERVER then
 		self:DrawShadow( false )
 
 		self:SetDieTime( CurTime() + self:GetLifeTime() )
+
+		if self:WaterLevel() > 0 then self:Remove() end
 	end
 
 	function ENT:Think()
