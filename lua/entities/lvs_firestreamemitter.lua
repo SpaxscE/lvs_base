@@ -16,6 +16,8 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 2, "FlameSize" )
 
 	self:NetworkVar( "Bool", 0, "Active" )
+	self:NetworkVar( "Float", 3, "ActiveTime" )
+
 	self:NetworkVar( "String", 0, "TargetAttachment" )
 	self:NetworkVar( "Entity", 0, "Target" )
 
@@ -58,16 +60,17 @@ function ENT:FindTargets()
 
 	local FlameSize = self:GetFlameSize() * 2
 	local FlameVel = self:GetFlameVelocity()
+	local FlameLifeTime = self:GetFlameLifeTime()
 
 	local Vel = Dir * FlameVel
 
 	local trace
 	local Dist = 0
-	local MaxDist = FlameVel * self:GetFlameLifeTime()
+	local MaxDist = FlameVel * FlameLifeTime
 
 	local targets = {}
 
-	while Dist < MaxDist do
+	while Dist < (MaxDist * math.min( (CurTime() - self:GetActiveTime()) / FlameLifeTime, 1 )) do
 		Vel = Vel + Grav * Res
 
 		local StartPos = Pos
@@ -117,6 +120,8 @@ function ENT:FindTargets()
 			break
 		end
 	end
+
+	self.TraceResult = trace
 
 	return targets
 end
@@ -259,6 +264,7 @@ if SERVER then
 
 		if not self._IsFlameActive then
 			self._IsFlameActive = true
+			self:SetActiveTime( CurTime() )
 
 			local effectdata = EffectData()
 				effectdata:SetOrigin( self:LocalToWorld( self:OBBCenter() ) )
@@ -277,14 +283,16 @@ if SERVER then
 		self:NextThink( T )
 	end
 
-	function ENT:SendDamage( victim, pos )
+	function ENT:SendDamage( victim, pos, damage )
 		if not IsValid( victim ) then return end
 
+		if victim:IsPlayer() and victim:GetCollisionGroup() ~= COLLISION_GROUP_PLAYER then return end
+
 		local attacker = self:GetAttacker()
-		local damage = self:GetDamage()
+		if not damage then damage = self:GetDamage() * FrameTime() end
 
 		local dmg = DamageInfo()
-		dmg:SetDamage( damage * FrameTime() )
+		dmg:SetDamage( damage )
 		dmg:SetAttacker( IsValid( attacker ) and attacker or game.GetWorld() )
 		dmg:SetInflictor( self:GetTarget() )
 		dmg:SetDamageType( DMG_BURN + DMG_PREVENT_PHYSICS_FORCE )
@@ -293,6 +301,7 @@ if SERVER then
 	end
 
 	function ENT:HandleDamage()
+		local T = CurTime()
 		local filter = self:GetEntityFilter()
 
 		for entid, pos in pairs( self:FindTargets() ) do
@@ -301,6 +310,39 @@ if SERVER then
 			if not IsValid( ent ) or filter[ ent ] then continue end
 
 			self:SendDamage( ent, pos )
+		end
+
+		local trace = self.TraceResult
+
+		if not trace or not trace.Hit then return end
+
+		local LastPos = self._LastHitPos or vector_origin
+		local LastTime = self._LastHitTime or 0
+
+		local Dist = (LastPos - trace.HitPos):Length()
+
+		if Dist > self:GetFlameSize() * 0.4 then
+			self._LastHitPos = trace.HitPos
+			self._LastHitTime = T
+			self._HasSpawnedFire = nil
+		else
+			if (self._LastHitTime + 0.1) < T and not self._HasSpawnedFire then
+				self._HasSpawnedFire = true
+
+				local IsProp = trace.Entity:GetMoveType() == MOVETYPE_VPHYSICS
+
+				if not trace.HitWorld and not IsProp then return end
+
+				local fire = ents.Create("lvs_fire")
+				fire:SetPos( trace.HitPos )
+				fire:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
+				fire:SetEmitter( self )
+				if IsProp then
+					fire:SetParent( trace.Entity )
+				end
+				fire:Spawn()
+				fire:Activate()
+			end
 		end
 	end
 
