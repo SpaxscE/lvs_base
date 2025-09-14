@@ -544,9 +544,3 @@ function TOOL:Reload( trace )
 end
 
 list.Set( "lvs_wheels", "models/props_vehicles/tire001b_truck.mdl", {angle = Angle(0,0,0), radius = 24.8} )
-list.Set( "lvs_wheels", "models/diggercars/kubel/kubelwagen_wheel.mdl", {angle = Angle(0,0,0), radius = 13.47} )
-list.Set( "lvs_wheels", "models/diggercars/willys/wh.mdl", {angle = Angle(0,0,0), radius = 15.64} )
---list.Set( "lvs_wheels", "models/diggercars/dodge_charger/wh.mdl", {angle = Angle(0,0,0), radius = 12.03} )
---list.Set( "lvs_wheels", "models/diggercars/nissan_bluebird910/bluebird_wheel.mdl", {angle = Angle(0,0,0), radius = 11.97} )
---list.Set( "lvs_wheels", "models/diggercars/ferrari_365/f365_wheel.mdl", {angle = Angle(0,0,0), radius = 13.96} )
---list.Set( "lvs_wheels", "models/diggercars/alfa_montreal/monteral_wheel.mdl", {angle = Angle(0,0,0), radius = 12.77} )
