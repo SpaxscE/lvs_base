@@ -8,6 +8,7 @@ ENT.DoNotDuplicate = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
+	self:NetworkVar( "Float",0, "fxRadius" )
 end
 
 if SERVER then
@@ -27,6 +28,7 @@ if SERVER then
 	end
 
 	function ENT:Define( data )
+		self:SetfxRadius( data.radius )
 		self:PhysicsInitSphere( data.radius, "gmod_silent" )
 
 		local VectorNull = Vector(0,0,0)
@@ -133,7 +135,7 @@ function ENT:Think()
 	local effectdata = EffectData()
 		effectdata:SetOrigin( traceWater.HitPos )
 		effectdata:SetEntity( base )
-		effectdata:SetMagnitude( self:BoundingRadius() )
+		effectdata:SetMagnitude( self:GetfxRadius() )
 	util.Effect( "lvs_hover_water", effectdata )
 end
 
