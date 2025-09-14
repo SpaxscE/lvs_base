@@ -39,6 +39,28 @@ if SERVER then
 		return ent
 	end
 
+	function ENT:SetDamage( num ) self._dmg = num end
+	function ENT:SetAttacker( ent ) self._attacker = ent end
+
+	function ENT:GetAttacker() return self._attacker or NULL end
+	function ENT:GetDamage() return (self._dmg or 1) end
+
+	function ENT:SendDamage( victim, pos )
+		if not IsValid( victim ) then return end
+
+		if victim:IsPlayer() and victim:InVehicle() and victim:GetCollisionGroup() ~= COLLISION_GROUP_PLAYER then return end
+
+		local attacker = self:GetAttacker()
+
+		local dmg = DamageInfo()
+		dmg:SetDamage( self:GetDamage() )
+		dmg:SetAttacker( IsValid( attacker ) and attacker or game.GetWorld() )
+		dmg:SetInflictor( self )
+		dmg:SetDamageType( DMG_BURN + DMG_PREVENT_PHYSICS_FORCE )
+		dmg:SetDamagePosition( pos or vector_origin )
+		victim:TakeDamageInfo( dmg )
+	end
+
 	function ENT:Initialize()
 		self:SetMoveType( MOVETYPE_NONE )
 		self:SetSolid( SOLID_NONE )
@@ -61,28 +83,24 @@ if SERVER then
 		if (EntTable._NextDamage or 0) < T then
 			EntTable._NextDamage = T + 0.5
 
-			local Emitter = self:GetEmitter()
+			local Size = self:GetSize()
+			local startpos = self:LocalToWorld( Vector(0,0,1) )
+			local endpos = self:LocalToWorld( Vector(0,0,Size * 120) )
 
-			if IsValid( Emitter ) then
-				local Size = self:GetSize()
-				local startpos = self:LocalToWorld( Vector(0,0,1) )
-				local endpos = self:LocalToWorld( Vector(0,0,Size * 120) )
+			local maxs = Vector(80,80,0) * Size
+			local mins = Vector(-80,-80,0) * Size
 
-				local maxs = Vector(80,80,0) * Size
-				local mins = Vector(-80,-80,0) * Size
+			local trace = util.TraceHull( {
+				start = startpos,
+				endpos = endpos,
+				maxs = maxs,
+				mins = mins,
+				filter = self,
+			} )
 
-				local trace = util.TraceHull( {
-					start = startpos,
-					endpos = endpos,
-					maxs = maxs,
-					mins = mins,
-					filter = self,
-				} )
+			if not trace.Hit or not IsValid( trace.Entity ) then return true end
 
-				if not trace.Hit or not IsValid( trace.Entity ) then return true end
-
-				Emitter:SendDamage( trace.Entity, trace.HitPos, 1 )
-			end
+			self:SendDamage( trace.Entity, trace.HitPos, 1 )
 		end
 
 		return true

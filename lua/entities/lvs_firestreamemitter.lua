@@ -286,7 +286,7 @@ if SERVER then
 	function ENT:SendDamage( victim, pos, damage )
 		if not IsValid( victim ) then return end
 
-		if victim:IsPlayer() and victim:GetCollisionGroup() ~= COLLISION_GROUP_PLAYER then return end
+		if victim:IsPlayer() and victim:InVehicle() and victim:GetCollisionGroup() ~= COLLISION_GROUP_PLAYER then return end
 
 		local attacker = self:GetAttacker()
 		if not damage then damage = self:GetDamage() * FrameTime() end
@@ -337,6 +337,7 @@ if SERVER then
 				fire:SetPos( trace.HitPos )
 				fire:SetAngles( trace.HitNormal:Angle() + Angle(90,0,0) )
 				fire:SetEmitter( self )
+				fire:SetAttacker( self:GetAttacker() )
 				if IsProp then
 					fire:SetParent( trace.Entity )
 				end
