@@ -55,8 +55,8 @@ local Grav = Vector(0,0,-600)
 local Res = 0.05
 function ENT:FindTargets()
 	local Pos, Dir = self:GetPosition()
-	local ConeStart = Vector( Pos.x, Pos.y, Pos.z )
 
+	local FlameSize = self:GetFlameSize() * 2
 	local FlameVel = self:GetFlameVelocity()
 
 	local Vel = Dir * FlameVel
@@ -64,6 +64,8 @@ function ENT:FindTargets()
 	local trace
 	local Dist = 0
 	local MaxDist = FlameVel * self:GetFlameLifeTime()
+
+	local targets = {}
 
 	while Dist < MaxDist do
 		Vel = Vel + Grav * Res
@@ -73,42 +75,46 @@ function ENT:FindTargets()
 
 		Dist = Dist + (StartPos - EndPos):Length()
 
-		trace = util.TraceLine( {
+		local FlameRadius = FlameSize * (Dist / MaxDist)
+		local FlameHull = Vector( FlameRadius, FlameRadius, FlameRadius )
+
+		local traceData = {
 			start = StartPos,
 			endpos = EndPos,
+			mins = -FlameHull,
+			maxs = FlameHull,
 			filter =  self,
-		} )
+		}
+		trace = util.TraceLine( traceData )
+
+		--debugoverlay.Sphere( (StartPos + EndPos) * 0.5, FlameRadius, 0.05)
 
 		Pos = EndPos
 
-		debugoverlay.Line( StartPos, EndPos, 0.1 )
+		local traceFilter = { self }
+
+		for i = 1, 10 do
+			traceData.filter = traceFilter
+
+			local hullTrace = util.TraceHull( traceData )
+
+			if not hullTrace.Hit or not IsValid( hullTrace.Entity ) then break end
+
+			table.insert( traceFilter, hullTrace.Entity )
+
+			targets[ hullTrace.Entity:EntIndex() ] = hullTrace.HitPos
+		end
 
 		if trace.Hit then
+			if IsValid( trace.Entity ) then
+				targets[ trace.Entity:EntIndex() ] = trace.HitPos
+			end
+
 			break
 		end
 	end
 
-	local ConeEnd = trace.HitPos
-	local ConeDistance = (ConeStart - ConeEnd):Length()
-
-	local Dir2 = (ConeEnd - ConeStart):GetNormalized()
-
-	local ConeForward = ((Dir + Dir2) * 0.5):GetNormalized()
-	local ConeAngle = math.deg( math.acos( math.Clamp( Dir:Dot( ConeForward ) ,-1,1) ) )
-
-	local targets = {
-		[1] = trace.Entity,
-	}
-
-	for _, ent in ipairs( ents.FindInCone( ConeStart, ConeForward, ConeDistance,  math.cos( math.rad( ConeAngle * 2 ) ) ) ) do
-		if ent == trace.Entity then continue end
-
-		table.insert( targets, ent )
-	end
-
-	for k, v in pairs( targets ) do
-		v:Ignite( 1 )
-	end
+	return targets
 end
 
 if SERVER then
@@ -116,8 +122,11 @@ if SERVER then
 	ENT.FlameStopSound = "lvs/weapons/flame_end.wav"
 	ENT.FlameLoopSound = "lvs/weapons/flame_loop.wav"
 
+	function ENT:SetDamage( num ) self._dmg = num end
 	function ENT:SetAttacker( ent ) self._attacker = ent end
+
 	function ENT:GetAttacker() return self._attacker or NULL end
+	function ENT:GetDamage() return (self._dmg or 100) end
 
 	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
@@ -238,8 +247,24 @@ if SERVER then
 		self:NextThink( T )
 	end
 
+	function ENT:SendDamage( victim, pos )
+		if not IsValid( victim ) then return end
+
+		local attacker = self:GetAttacker()
+
+		local dmg = DamageInfo()
+		dmg:SetDamage( self:GetDamage() * FrameTime() )
+		dmg:SetAttacker( IsValid( attacker ) and attacker or game.GetWorld() )
+		dmg:SetInflictor( self:GetTarget() )
+		dmg:SetDamageType( DMG_BURN )
+		dmg:SetDamagePosition( pos or vector_origin )
+		victim:TakeDamageInfo( dmg )
+	end
+
 	function ENT:HandleDamage()
-		self:FindTargets()
+		for entid, pos in pairs( self:FindTargets() ) do
+			self:SendDamage( Entity( entid ), pos )
+		end
 	end
 
 	function ENT:Think()
