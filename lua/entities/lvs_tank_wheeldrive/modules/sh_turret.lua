@@ -13,10 +13,12 @@ ENT.TurretPitchMin = -15
 ENT.TurretPitchMax = 15
 ENT.TurretPitchMul = 1
 ENT.TurretPitchOffset = 0
+ENT.TurretPitchEnableCentering = true
 
 ENT.TurretYawPoseParameterName = "turret_yaw"
 ENT.TurretYawMul = 1
 ENT.TurretYawOffset = 0
+ENT.TurretYawEnableCentering = true
 
 ENT.TurretRateDestroyedMul = 0.25
 
@@ -329,8 +331,8 @@ function ENT:AimTurret()
 	end
 
 	if self:GetTurretForceCenter() then
-		AimAngles.p = EntTable.TurretPitchOffset
-		AimAngles.y = EntTable.TurretYawOffset
+		if EntTable.TurretPitchEnableCentering then AimAngles.p = EntTable.TurretPitchOffset end
+		if EntTable.TurretYawEnableCentering then AimAngles.y = EntTable.TurretYawOffset end
 	end
 
 	local Pitch = math.Clamp( math.ApproachAngle( self:GetTurretPitch(), AimAngles.p, AimRate ), EntTable.TurretPitchMin, EntTable.TurretPitchMax )
