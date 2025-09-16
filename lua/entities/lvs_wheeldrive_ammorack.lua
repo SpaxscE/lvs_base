@@ -76,6 +76,8 @@ if SERVER then
 	function ENT:OnTakeDamage( dmginfo )
 		if not dmginfo:IsDamageType( DMG_BURN ) then return end
 
+		dmginfo:ScaleDamage( 0.5 )
+
 		self:TakeTransmittedDamage( dmginfo )
 	end
 
