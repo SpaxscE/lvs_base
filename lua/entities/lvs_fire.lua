@@ -43,7 +43,7 @@ if SERVER then
 	function ENT:SetAttacker( ent ) self._attacker = ent end
 
 	function ENT:GetAttacker() return self._attacker or NULL end
-	function ENT:GetDamage() return (self._dmg or 1) end
+	function ENT:GetDamage() return (self._dmg or 3) end
 
 	function ENT:SendDamage( victim, pos )
 		if not IsValid( victim ) then return end

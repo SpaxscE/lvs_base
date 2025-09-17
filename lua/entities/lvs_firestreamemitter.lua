@@ -153,7 +153,7 @@ if SERVER then
 	function ENT:SetAttacker( ent ) self._attacker = ent end
 
 	function ENT:GetAttacker() return self._attacker or NULL end
-	function ENT:GetDamage() return (self._dmg or 100) end
+	function ENT:GetDamage() return (self._dmg or 75) end
 
 	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
