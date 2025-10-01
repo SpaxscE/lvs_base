@@ -1,6 +1,8 @@
 AddCSLuaFile( "shared.lua" )
+AddCSLuaFile( "sh_camera_eyetrace.lua" )
 AddCSLuaFile( "cl_init.lua" )
 include("shared.lua")
+include("sh_camera_eyetrace.lua")
 
 function ENT:ToggleGravity( PhysObj, Enable )
 	if PhysObj:IsGravityEnabled() ~= Enable then
