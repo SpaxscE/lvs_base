@@ -155,7 +155,94 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	return ForceAngle, vector_origin, simulate
 end
 
+function ENT:PhysicsSimulateFakePhysics( phys, deltatime )
+
+	if self:GetEngineActive() then phys:Wake() end
+
+	if self:IsPlayerHolding() then
+		self:SetWheelVelocity( 0 )
+
+		return vector_origin, vector_origin, SIM_NOTHING
+	end
+
+	self:SetWheelVelocity( phys:GetVelocity():Length() )
+
+	local ForceLinear = Vector(0,0,0)
+	local ForceAngle = Vector(0,0,0)
+
+	local Steer = self:GetSteer()
+
+	for id, wheel in pairs( self:GetWheels() ) do
+		local ID = wheel:GetAxle()
+
+		if not ID then continue end
+
+		local Axle = self:GetAxleData( ID )
+		local AxleAng = self:LocalToWorldAngles( Axle.ForwardAngle )
+
+		if wheel.CamberCasterToe then
+			AxleAng:RotateAroundAxis( AxleAng:Right(), wheel:GetCaster() )
+			AxleAng:RotateAroundAxis( AxleAng:Forward(), wheel:GetCamber() )
+			AxleAng:RotateAroundAxis( AxleAng:Up(), wheel:GetToe() )
+		end
+
+		if Axle.SteerType == LVS.WHEEL_STEER_REAR then
+			AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(Steer,-Axle.SteerAngle,Axle.SteerAngle) )
+		else
+			if Axle.SteerType == LVS.WHEEL_STEER_FRONT then
+				AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(-Steer,-Axle.SteerAngle,Axle.SteerAngle) )
+			end
+		end
+
+		local Forward = AxleAng:Forward()
+		local Right = AxleAng:Right()
+		local Up = AxleAng:Up()
+
+		local wheelPos = wheel:GetPos()
+		local wheelVel = phys:GetVelocityAtPoint( wheelPos )
+		local wheelRadius = wheel:GetRadius()
+
+		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1) ^ 2
+
+		local trace = util.TraceLine( {
+			start = wheelPos,
+			endpos = wheelPos - Up * wheelRadius * 2,
+			filter = self:GetCrosshairFilterEnts()
+		} )
+
+		if not trace.Hit then continue end
+
+		local Force = (trace.HitPos + Up * wheelRadius - wheelPos) * 50000 - Up * self:WorldToLocal( self:GetPos() + wheelVel ).z * 4000
+
+		local wForce, wAngForce = phys:CalculateVelocityOffset( Force, wheelPos )
+		local LForceLinear, LForceAngle = WorldToLocal( trace.HitPos + wForce, Angle(0,0,0), trace.HitPos, trace.HitNormal:Angle() )
+
+		debugoverlay.Cross( trace.HitPos, 15, 0.05 )
+		debugoverlay.Line( trace.HitPos, trace.HitPos + trace.HitNormal * LForceLinear.x, 0.05, Color(0,0,255) )
+
+		Force = -Right * math.Clamp( self:VectorSplitNormal( Right, wheelVel ) * 5000, -500000, 500000 )
+
+		local wSideForce, wAngSideForce = phys:CalculateVelocityOffset( Force, wheelPos )
+
+		debugoverlay.Line( trace.HitPos + trace.HitNormal, trace.HitPos + trace.HitNormal + Force, 0.05, Color(0,255,0) )
+
+		local X = 100
+		local Y = 100
+		local Z = 200
+
+		ForceAngle:Add( wAngForce + Vector(math.Clamp(wAngSideForce.x,-X,X),math.Clamp(wAngSideForce.y,-Y,Y),math.Clamp(wAngSideForce.z,-Z,Z) ) )
+		ForceLinear:Add( trace.HitNormal * LForceLinear.x + wSideForce )
+		ForceLinear:Add( Forward * self:GetEngineTorque() * self:GetThrottle() * deltatime )
+	end
+
+	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
+end
+
 function ENT:PhysicsSimulate( phys, deltatime )
+
+	if not self.WheelPhysicsEnabled then
+		return self:PhysicsSimulateFakePhysics( phys, deltatime )
+	end
 
 	if self:GetEngineActive() then phys:Wake() end
 

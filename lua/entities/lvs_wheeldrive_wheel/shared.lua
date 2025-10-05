@@ -39,6 +39,10 @@ function ENT:SetupDataTables()
 	end
 end
 
+function ENT:IsParented()
+	return IsValid( self:GetParent() )
+end
+
 function ENT:GetDamaged()
 	return self:GetNWDamaged()
 end

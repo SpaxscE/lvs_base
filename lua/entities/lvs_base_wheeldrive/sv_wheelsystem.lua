@@ -104,6 +104,21 @@ function ENT:AddWheel( data )
 	self:DeleteOnRemove( Wheel )
 	self:TransferCPPI( Wheel )
 
+	if isnumber( self._WheelSkin ) then Wheel:SetSkin( self._WheelSkin ) end
+
+	if IsColor( self._WheelColor ) then Wheel:SetColor( self._WheelColor ) end
+
+	debugoverlay.Line( self:GetPos(), self:LocalToWorld( data.pos ), 5, Color(150,150,150), true )
+
+	table.insert( self._WheelEnts, Wheel )
+
+	if not self.WheelPhysicsEnabled then
+		Wheel:SetParent( self )
+		Wheel:SetLocalAngles( Angle(0,-90,0) )
+
+		return Wheel
+	end
+
 	local PhysObj = Wheel:GetPhysicsObject()
 
 	if not IsValid( PhysObj ) then
@@ -121,10 +136,6 @@ function ENT:AddWheel( data )
 
 	local nocollide_constraint = constraint.NoCollide(self,Wheel,0,0)
 	nocollide_constraint.DoNotDuplicate = true
-
-	debugoverlay.Line( self:GetPos(), self:LocalToWorld( data.pos ), 5, Color(150,150,150), true )
-
-	table.insert( self._WheelEnts, Wheel )
 
 	local Master = self:CreateSteerMaster( Wheel )
 
@@ -167,10 +178,6 @@ function ENT:AddWheel( data )
 
 		PhysObj:EnableMotion( true )
 	end )
-
-	if isnumber( self._WheelSkin ) then Wheel:SetSkin( self._WheelSkin ) end
-
-	if IsColor( self._WheelColor ) then Wheel:SetColor( self._WheelColor ) end
 
 	return Wheel
 end
@@ -257,6 +264,8 @@ function ENT:DefineAxle( data )
 			debugoverlay.Line( P1, P2, 5, Color( 150, 150, 150 ), true )
 		end
 
+		if not self.WheelPhysicsEnabled then continue end
+
 		-- nocollide them with each other
 		for i = id, #data.Wheels do
 			local Ent = data.Wheels[ i ]
@@ -271,6 +280,8 @@ function ENT:DefineAxle( data )
 end
 
 function ENT:CreateSuspension( Wheel, CenterPos, DirectionAngle, data )
+	if not self.WheelPhysicsEnabled then return end
+
 	if not IsValid( Wheel ) or not IsEntity( Wheel ) then return end
 
 	local height = data.Height
