@@ -163,7 +163,7 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	local ForceLinear = Vector(0,0,0)
 
 	for id, wheel in pairs( self:GetWheels() ) do
-		if wheel:IsHandbrakeActive() then continue end
+		if wheel:IsHandbrakeActive() or not wheel:PhysicsOnGround() then continue end
 
 		local AxleAng = wheel:GetDirectionAngle()
 	
@@ -174,14 +174,6 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 		local wheelPos = wheel:GetPos()
 		local wheelVel = phys:GetVelocityAtPoint( wheelPos )
 		local wheelRadius = wheel:GetRadius()
-
-		local trace = util.TraceLine( {
-			start = wheelPos,
-			endpos = wheelPos - Up * wheelRadius * 1.1,
-			filter = self:GetCrosshairFilterEnts()
-		} )
-
-		if not trace.Hit then continue end
 
 		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1) ^ 2
 
@@ -237,9 +229,8 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 	local EntTable = self:GetTable()
 	local WheelTable = ent:GetTable()
-	local EngineActive = self:GetEngineActive()
 
-	if not EngineActive then
+	if not self:GetEngineActive() then
 		if (WheelTable._lvsNextThink or 0) > T then
 			return vector_origin, vector_origin, SIM_NOTHING
 		else
@@ -253,11 +244,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 	if ent:IsHandbrakeActive() then
 		if WheelTable.SetRPM then
-			if EngineActive then
-				ent:SetRPM( ent:VelToRPM( ent:GetVelocity():Length() ) * 3 )
-			else
-				ent:SetRPM( 0 )
-			end
+			ent:SetRPM( 0 )
 		end
 
 		return vector_origin, vector_origin, SIM_NOTHING

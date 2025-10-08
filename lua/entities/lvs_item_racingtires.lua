@@ -43,17 +43,33 @@ if SERVER then
 
 		local ply = self:GetCreator()
 
-		if ent:GetRacingTires() then
-			ent:EmitSound("physics/rubber/rubber_tire_impact_hard2.wav")
+		ent:EmitSound("npc/dog/dog_servo6.wav")
 
+		if ent:GetRacingTires() then
 			if IsValid( ply ) then
 				ply:ChatPrint( "Racing Tires Mounted" )
 			end
-		else
-			ent:EmitSound("physics/rubber/rubber_tire_strain2.wav")
 
+			for _, wheel in pairs( ent:GetWheels() ) do
+				if not IsValid( wheel ) then continue end
+
+				local effectdata = EffectData()
+				effectdata:SetOrigin( wheel:GetPos() )
+				effectdata:SetEntity( wheel )
+				util.Effect( "lvs_upgrade", effectdata )
+			end
+		else
 			if IsValid( ply ) then
 				ply:ChatPrint( "Racing Tires Removed" )
+			end
+
+			for _, wheel in pairs( ent:GetWheels() ) do
+				if not IsValid( wheel ) then continue end
+
+				local effectdata = EffectData()
+				effectdata:SetOrigin( wheel:GetPos() )
+				effectdata:SetEntity( wheel )
+				util.Effect( "lvs_downgrade", effectdata )
 			end
 		end
 

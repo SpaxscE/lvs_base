@@ -180,47 +180,47 @@ function ENT:CalcWheelSounds( Base, trace, traceWater )
 		end
 	end
 
-	if RPM > 50 then
-		if traceWater.Hit then
-			Base:DoTireSound( "roll_wet" )
+	if not Base:GetEngineActive() and RPM < 50 then return end
+
+	if traceWater.Hit then
+		Base:DoTireSound( "roll_wet" )
+
+		return
+	end
+
+	local surface = self.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] and "_dirt" or ""
+	local snd_type = (self:GetSlip() > 500) and "skid" or "roll"
+
+	if Base:GetRacingTires() and surface == "" then surface = "_racing" end
+
+	if (istable( StormFox ) or istable( StormFox2 )) and surface ~= "_dirt" then
+		local Rain = false
+
+		if StormFox then
+			Rain = StormFox.IsRaining()
+		end
+
+		if StormFox2 then
+			Rain = StormFox2.Weather:IsRaining()
+		end
+
+		if Rain then
+			local effectdata = EffectData()
+				effectdata:SetOrigin( trace.HitPos )
+				effectdata:SetEntity( Base )
+				effectdata:SetMagnitude( self:BoundingRadius() )
+				effectdata:SetFlags( 1 )
+			util.Effect( "lvs_physics_wheelwatersplash", effectdata )
+
+			Base:DoTireSound( snd_type.."_wet" )
 
 			return
 		end
-
-		local surface = self.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] and "_dirt" or ""
-		local snd_type = (self:GetSlip() > 500) and "skid" or "roll"
-
-		if Base:GetRacingTires() and surface == "" then surface = "_racing" end
-
-		if (istable( StormFox ) or istable( StormFox2 )) and surface ~= "_dirt" then
-			local Rain = false
-
-			if StormFox then
-				Rain = StormFox.IsRaining()
-			end
-
-			if StormFox2 then
-				Rain = StormFox2.Weather:IsRaining()
-			end
-
-			if Rain then
-				local effectdata = EffectData()
-					effectdata:SetOrigin( trace.HitPos )
-					effectdata:SetEntity( Base )
-					effectdata:SetMagnitude( self:BoundingRadius() )
-					effectdata:SetFlags( 1 )
-				util.Effect( "lvs_physics_wheelwatersplash", effectdata )
-
-				Base:DoTireSound( snd_type.."_wet" )
-
-				return
-			end
-		end
-
-		if snd_type == "roll" and not self:GetWheelChainMode() and self:GetHP() ~= self:GetMaxHP() then
-			surface = "_damaged"
-		end
-
-		Base:DoTireSound( snd_type..surface )
 	end
+
+	if snd_type == "roll" and not self:GetWheelChainMode() and self:GetHP() ~= self:GetMaxHP() then
+		surface = "_damaged"
+	end
+
+	Base:DoTireSound( snd_type..surface )
 end

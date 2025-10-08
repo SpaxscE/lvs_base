@@ -200,6 +200,8 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 
 	local MaxRPM = self.EngineMaxRPM + 3000
 
+	local Ang = startAngleTach + (endAngleTach - startAngleTach) * (CurRPM / MaxRPM)
+
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( self:GetBakedTachMaterial( MaxRPM ) )
 	surface.DrawTexturedRect( X, Y, w, w )
@@ -208,8 +210,6 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 	local CenterY = Y + w * 0.5
 
 	local T = CurTime()
-
-	local Ang = startAngleTach + (endAngleTach - startAngleTach) * (CurRPM / MaxRPM)
 
 	local AngX = math.cos( math.rad( Ang ) )
 	local AngY = math.sin( math.rad( Ang ) )

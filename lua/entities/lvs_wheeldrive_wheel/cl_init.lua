@@ -99,8 +99,13 @@ function ENT:CalcWheelSlip()
 	local rpmTheoretical = self:VelToRPM( VelLength )
 	local rpm = math.abs( self:GetRPM() )
 
-	self._WheelSlip = math.max( rpm - rpmTheoretical - 80, 0 ) ^ 2 + math.max( math.abs( Base:VectorSplitNormal( self:GetForward(), Vel * 4 ) ) - VelLength, 0 )
-	self._WheelSkid = VelLength + self._WheelSlip
+	if rpm == 0 then
+		self._WheelSlip = rpmTheoretical + VelLength * 4
+		self._WheelSkid = self._WheelSlip
+	else
+		self._WheelSlip = math.max( rpm - rpmTheoretical - 80, 0 ) ^ 2 + math.max( math.abs( Base:VectorSplitNormal( self:GetForward(), Vel * 4 ) ) - VelLength, 0 )
+		self._WheelSkid = VelLength + self._WheelSlip
+	end
 end
 
 function ENT:GetSlip()
