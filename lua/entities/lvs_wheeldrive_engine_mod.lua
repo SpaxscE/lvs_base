@@ -36,6 +36,7 @@ if SERVER then
 		ent:Spawn()
 		ent:Activate()
 		ent.PlaySound = true
+		ent:SetEngineTorque( 15 )
 
 		return ent
 	end

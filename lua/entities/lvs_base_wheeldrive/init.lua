@@ -153,12 +153,18 @@ end
 
 function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 
+	if not self:GetRacingTires() then
+		return ForceAngle, vector_origin, simulate
+	end
+
 	local EntTable = self:GetTable()
 
 	local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplier
 	local ForceLinear = Vector(0,0,0)
 
 	for id, wheel in pairs( self:GetWheels() ) do
+		if wheel:IsHandbrakeActive() then continue end
+
 		local AxleAng = wheel:GetDirectionAngle()
 	
 		local Forward = AxleAng:Forward()
@@ -177,9 +183,9 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 
 		if not trace.Hit then continue end
 
-		local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
+		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1) ^ 2
 
-		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1)
+		local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
 
 		Force = -Right * self:VectorSplitNormal( Right, wheelVel ) * WheelSideForce * Slip
 		local wSideForce, wAngSideForce = phys:CalculateVelocityOffset( Force, wheelPos )
@@ -393,6 +399,10 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 	end
 
 	local ForceLinear = -self:GetUp() * EntTable.WheelDownForce * TorqueFactor
+
+	if not self:GetRacingTires() then
+		ForceLinear = ForceLinear - Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier
+	end
 
 	return ForceAngle * forceMul, ForceLinear * forceMul, SIM_GLOBAL_ACCELERATION
 end

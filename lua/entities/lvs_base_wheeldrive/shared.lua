@@ -121,6 +121,7 @@ function ENT:SetupDataTables()
 	self:AddDT( "Bool", "NWHandBrake" )
 
 	self:AddDT( "Bool", "RacingHud" )
+	self:AddDT( "Bool", "RacingTires" )
 	self:AddDT( "Bool", "Backfire" )
 
 	self:AddDT( "Entity", "Engine" )
