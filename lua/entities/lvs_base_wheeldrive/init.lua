@@ -152,7 +152,43 @@ function ENT:AlignView( ply )
 end
 
 function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
-	return ForceAngle, vector_origin, simulate
+
+	local EntTable = self:GetTable()
+
+	local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplier
+	local ForceLinear = Vector(0,0,0)
+
+	for id, wheel in pairs( self:GetWheels() ) do
+		local AxleAng = wheel:GetDirectionAngle()
+	
+		local Forward = AxleAng:Forward()
+		local Right = AxleAng:Right()
+		local Up = AxleAng:Up()
+
+		local wheelPos = wheel:GetPos()
+		local wheelVel = phys:GetVelocityAtPoint( wheelPos )
+		local wheelRadius = wheel:GetRadius()
+
+		local trace = util.TraceLine( {
+			start = wheelPos,
+			endpos = wheelPos - Up * wheelRadius * 1.1,
+			filter = self:GetCrosshairFilterEnts()
+		} )
+
+		if not trace.Hit then continue end
+
+		local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
+
+		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1)
+
+		Force = -Right * self:VectorSplitNormal( Right, wheelVel ) * WheelSideForce * Slip
+		local wSideForce, wAngSideForce = phys:CalculateVelocityOffset( Force, wheelPos )
+
+		ForceAngle:Add( Vector(0,0,wAngSideForce.z) )
+		ForceLinear:Add( wSideForce )
+	end
+
+	return ForceAngle, ForceLinear, simulate
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
@@ -356,7 +392,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
 	end
 
-	local ForceLinear = -self:GetUp() * EntTable.WheelDownForce * TorqueFactor - Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier
+	local ForceLinear = -self:GetUp() * EntTable.WheelDownForce * TorqueFactor
 
 	return ForceAngle * forceMul, ForceLinear * forceMul, SIM_GLOBAL_ACCELERATION
 end
