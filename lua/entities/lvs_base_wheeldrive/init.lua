@@ -175,7 +175,7 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 		local wheelVel = phys:GetVelocityAtPoint( wheelPos )
 		local wheelRadius = wheel:GetRadius()
 
-		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1) ^ 2
+		local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1)
 
 		local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
 
