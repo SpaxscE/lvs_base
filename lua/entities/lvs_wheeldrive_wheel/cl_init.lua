@@ -59,65 +59,8 @@ function ENT:DrawWheelBroken( flags )
 	self:SetBonePosition( 0, pos , ang )
 end
 
-function ENT:DrawParentedWheel( flags )
-	local base = self:GetBase()
-
-	if not IsValid( base ) or not LVS.MapDoneLoading then
-		self:DrawModel( flags )
-
-		return
-	end
-
-	local Up = base:GetUp()
-	local WheelRadius = self:GetRadius()
-	local MaxTravel = self:GetSuspensionTravel()
-
-	-- Alternative method, tuning wheels... Workaround for diggers wheel pack. Flickers for some people... it is what it is
-	if self:GetBoneCount() > 1 then
-		local startpos = self:GetPos()
-
-		local trace = util.TraceLine( {
-			start = startpos,
-			endpos = startpos - Up * MaxTravel,
-			filter = base:GetCrosshairFilterEnts()
-		} )
-
-		self:SetRenderOrigin( trace.HitPos + Up * WheelRadius )
-		self:DrawWheel( flags )
-		self:SetRenderOrigin()
-
-		return
-	end
-
-	-- bone position method... more reliable and works on infmap, but doesnt work on diggers wheel pack
-
-	self:SetupBones()
-
-	local startpos, ang = self:GetBonePosition( 0 )
-
-	if not startpos then self:DrawModel( flags ) return end
-
-	local trace = util.TraceLine( {
-		start = startpos,
-		endpos = startpos - Up * MaxTravel,
-		filter = base:GetCrosshairFilterEnts()
-	} )
-
-	self:SetBonePosition( 0, trace.HitPos + Up * WheelRadius, ang )
-
-	self:DrawWheel( flags )
-
-	self:SetBonePosition( 0, startpos , ang )
-end
-
 function ENT:Draw( flags )
 	if self:GetHideModel() then return end
-
-	if self:IsParented() then
-		self:DrawParentedWheel( flags )
-
-		return
-	end
 
 	if self:GetNWDamaged() then
 

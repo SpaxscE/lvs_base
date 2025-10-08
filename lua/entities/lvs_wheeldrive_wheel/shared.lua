@@ -21,8 +21,6 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 6, "HP" )
 	self:NetworkVar( "Float", 7, "MaxHP" )
 
-	self:NetworkVar( "Float", 8, "SuspensionTravel" )
-
 	self:NetworkVar( "Angle", 0, "AlignmentAngle" )
 
 	self:NetworkVar( "Entity", 0, "Base" )
@@ -39,10 +37,6 @@ function ENT:SetupDataTables()
 
 		self:NetworkVarNotify( "HP", self.HealthValueChanged )
 	end
-end
-
-function ENT:IsParented()
-	return IsValid( self:GetParent() )
 end
 
 function ENT:GetDamaged()

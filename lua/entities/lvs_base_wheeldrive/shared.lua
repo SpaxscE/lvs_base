@@ -15,7 +15,6 @@ ENT.MaxHealthFuelTank = 10
 
 ENT.MaxVelocity = 1400
 ENT.MaxVelocityReverse = 700
-ENT.AutoReverseVelocity = 50
 
 ENT.EngineCurve = 0.65
 ENT.EngineCurveBoostLow = 1
@@ -59,7 +58,6 @@ ENT.PhysicsDampingSpeed = 4000
 ENT.PhysicsDampingForward = true
 ENT.PhysicsDampingReverse = false
 
-ENT.WheelPhysicsEnabled = true
 ENT.WheelPhysicsMass = 100
 ENT.WheelPhysicsInertia = Vector(10,8,10)
 ENT.WheelPhysicsTireHeight = 4
@@ -78,8 +76,13 @@ ENT.WheelPhysicsMaterials = {
 	[11] = "jalopytire", -- 1.337
 	[12] = "phx_tire_normal", --  3
 }
+
+ENT.AutoReverseVelocity = 50
+
 ENT.WheelBrakeLockupRPM = 20
+
 ENT.WheelBrakeForce = 400
+
 ENT.WheelSideForce = 800
 ENT.WheelDownForce = 500
 

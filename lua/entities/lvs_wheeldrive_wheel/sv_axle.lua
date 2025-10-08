@@ -10,36 +10,7 @@ function ENT:GetMaster()
 end
 
 function ENT:GetDirectionAngle()
-	if not IsValid( self._Master ) then
-		local base = self:GetBase()
-
-		if not IsValid( base ) then return angle_zero end
-
-		local Steer = base:GetSteer()
-
-		local ID = self:GetAxle()
-
-		if not ID then return angle_zero end
-
-		local Axle = base:GetAxleData( ID )
-		local AxleAng = base:LocalToWorldAngles( Axle.ForwardAngle )
-
-		if self.CamberCasterToe then
-			AxleAng:RotateAroundAxis( AxleAng:Right(), self:GetCaster() )
-			AxleAng:RotateAroundAxis( AxleAng:Forward(), self:GetCamber() )
-			AxleAng:RotateAroundAxis( AxleAng:Up(), self:GetToe() )
-		end
-
-		if Axle.SteerType == LVS.WHEEL_STEER_REAR then
-			AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(Steer,-Axle.SteerAngle,Axle.SteerAngle) )
-		else
-			if Axle.SteerType == LVS.WHEEL_STEER_FRONT then
-				AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(-Steer,-Axle.SteerAngle,Axle.SteerAngle) )
-			end
-		end
-
-		return AxleAng
-	end
+	if not IsValid( self._Master ) then return angle_zero end
 
 	return self._Master:GetAngles()
 end
