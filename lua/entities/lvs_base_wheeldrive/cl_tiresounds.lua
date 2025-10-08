@@ -6,6 +6,7 @@ ENT.TireSoundTypes = {
 	["roll_wet"] = "lvs/vehicles/generic/wheel_roll_wet.wav",
 	["roll_damaged"] = "lvs/wheel_damaged_loop.wav",
 	["skid"] = "lvs/vehicles/generic/wheel_skid.wav",
+	["skid_racing"] = "lvs/vehicles/generic/wheel_skid_racing.wav",
 	["skid_dirt"] = "lvs/vehicles/generic/wheel_skid_dirt.wav",
 	["skid_wet"] = "lvs/vehicles/generic/wheel_skid_wet.wav",
 	["tire_damage_layer"] = "lvs/wheel_destroyed_loop.wav",

@@ -190,6 +190,8 @@ function ENT:CalcWheelSounds( Base, trace, traceWater )
 		local surface = self.DustEffectSurfaces[ util.GetSurfacePropName( trace.SurfaceProps ) ] and "_dirt" or ""
 		local snd_type = (self:GetSlip() > 500) and "skid" or "roll"
 
+		if Base:GetRacingTires() and surface == "" then surface = "_racing" end
+
 		if (istable( StormFox ) or istable( StormFox2 )) and surface ~= "_dirt" then
 			local Rain = false
 

@@ -11,6 +11,7 @@ ENT._UseTargetAllowed = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
+	self:NetworkVar( "Entity",1, "LinkedSeat" )
 
 	self:NetworkVar( "Bool",0, "Active" )
 
@@ -101,11 +102,7 @@ if SERVER then
 			return
 		end
 
-		self._LinkedSeat = ent
-	end
-
-	function ENT:GetLinkedSeat()
-		return self._LinkedSeat
+		self:SetLinkedSeat( ent )
 	end
 
 	function ENT:Initialize()	
@@ -249,12 +246,14 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if IsValid( self._LinkedSeat ) then
-			local Driver = self._LinkedSeat:GetDriver()
+		local LinkedSeat = self:GetLinkedSeat()
+
+		if IsValid( LinkedSeat ) then
+			local Driver = LinkedSeat:GetDriver()
 	
 			if self._Driver ~= Driver then
 			
-				self:OnDriverChanged( self._Driver, Driver, self._LinkedSeat )
+				self:OnDriverChanged( self._Driver, Driver, LinkedSeat )
 
 				self._Driver = Driver
 			end
@@ -315,14 +314,75 @@ local LVS = LVS
 ENT.ColorSelect = Color(127,255,127,150)
 ENT.ColorNormal = Color(255,0,0,150)
 ENT.ColorTransBlack = Color(0,0,0,150)
+ENT.ColorBlack = Color(75,75,75,255)
 ENT.OutlineThickness = Vector(0.5,0.5,0.5)
+
+local function DrawText( pos, text, align, col )
+	if not align then align = TEXT_ALIGN_CENTER end
+
+	cam.Start2D()
+		local data2D = pos:ToScreen()
+
+		if not data2D.visible then return end
+
+		local font = "TargetIDSmall"
+
+		local x = data2D.x
+		local y = data2D.y
+
+		draw.DrawText( text, font, x + 1, y + 1, Color( 0, 0, 0, 120 ), align )
+		draw.DrawText( text, font, x + 2, y + 2, Color( 0, 0, 0, 50 ), align )
+		draw.DrawText( text, font, x, y, col or color_white, align )
+	cam.End2D()
+end
 
 function ENT:DrawTranslucent()
 	local ply = LocalPlayer()
 
-	if not IsValid( ply ) or ply:InVehicle() or not ply:KeyDown( IN_SPEED ) then return end
+	if not IsValid( ply ) or ply:InVehicle() then return end
 
+	local KeySprint = ply:KeyDown( IN_SPEED )
 	local InRange = self:InRange( ply, self.UseRange )
+
+	if LVS.ShowDoorInfo and InRange then
+		local pos = (self:LocalToWorld( self:GetMins() ) + self:LocalToWorld( self:GetMaxs() )) * 0.5
+
+		local NameKeyUse = "["..(input.LookupBinding( "+walk" ) or "+walk is not bound to a key").."]"
+		local NameKeySprint = "["..(input.LookupBinding( "+speed" ) or "+speed is not bound to a key").."]"
+
+		local boxOrigin = self:GetPos()
+		local boxAngles = self:GetAngles()
+		local boxMins = self:GetMins()
+		local boxMaxs = self:GetMaxs()
+
+		if self:IsOpen() then
+			local LinkedSeat = self:GetLinkedSeat()
+
+			if IsValid( LinkedSeat ) then
+				if not KeySprint then
+					render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, self.ColorBlack )
+					render.DrawWireframeBox( LinkedSeat:GetPos(), LinkedSeat:GetAngles(), LinkedSeat:OBBMins(), LinkedSeat:OBBMaxs(), color_white )
+
+					DrawText( pos, NameKeyUse.." \n".."Enter ", TEXT_ALIGN_RIGHT )
+					DrawText( pos, " "..NameKeySprint.."\n".." Close", TEXT_ALIGN_LEFT, self.ColorBlack )
+				else
+					render.DrawWireframeBox( LinkedSeat:GetPos(), LinkedSeat:GetAngles(), LinkedSeat:OBBMins(), LinkedSeat:OBBMaxs(), self.ColorBlack )
+					render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
+
+					DrawText( pos, NameKeySprint.." \n".."Enter ", TEXT_ALIGN_RIGHT, self.ColorBlack )
+					DrawText( pos, " "..NameKeyUse.."\n".." Close", TEXT_ALIGN_LEFT )
+				end
+			else
+				DrawText( pos, NameKeyUse.."\n".."Close", TEXT_ALIGN_CENTER )
+				render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
+			end
+		else
+			DrawText( pos, NameKeyUse.."\n".."Open", TEXT_ALIGN_CENTER )
+			render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
+		end
+	end
+
+	if not KeySprint then return end
 
 	if InRange then
 		local EntTable = self:GetTable()

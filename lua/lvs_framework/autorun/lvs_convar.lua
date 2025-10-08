@@ -54,6 +54,12 @@ CreateClientConVar( "lvs_return_delta", 2, true, true)
 
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
+local cvarDoorInfo = CreateClientConVar( "lvs_show_doorinfo", 1, true, false)
+LVS.ShowDoorInfo = cvarDoorInfo and cvarDoorInfo:GetBool() or true
+cvars.AddChangeCallback( "lvs_show_doorinfo", function( convar, oldValue, newValue ) 
+	LVS.ShowDoorInfo = tonumber( newValue ) ~=0
+end)
+
 local cvarVolume = CreateClientConVar( "lvs_volume", 0.5, true, false)
 LVS.EngineVolume = cvarVolume and cvarVolume:GetFloat() or 0.5
 cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue ) 

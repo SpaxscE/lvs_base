@@ -237,8 +237,9 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 	local EntTable = self:GetTable()
 	local WheelTable = ent:GetTable()
+	local EngineActive = self:GetEngineActive()
 
-	if not self:GetEngineActive() then
+	if not EngineActive then
 		if (WheelTable._lvsNextThink or 0) > T then
 			return vector_origin, vector_origin, SIM_NOTHING
 		else
@@ -246,11 +247,21 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		end
 	end
 
-	if not self:AlignWheel( ent ) or ent:IsHandbrakeActive() then if WheelTable.SetRPM then ent:SetRPM( 0 ) end return vector_origin, vector_origin, SIM_NOTHING end
-
-	if self:IsDestroyed() then self:EnableHandbrake() return vector_origin, vector_origin, SIM_NOTHING end
+	if not self:AlignWheel( ent ) or self:IsDestroyed() then self:EnableHandbrake() return vector_origin, vector_origin, SIM_NOTHING end
 
 	if (WheelTable._lvsNextSimulate or 0) > T then return vector_origin, vector_origin, SIM_NOTHING end
+
+	if ent:IsHandbrakeActive() then
+		if WheelTable.SetRPM then
+			if EngineActive then
+				ent:SetRPM( ent:VelToRPM( ent:GetVelocity():Length() ) * 3 )
+			else
+				ent:SetRPM( 0 )
+			end
+		end
+
+		return vector_origin, vector_origin, SIM_NOTHING
+	end
 
 	local RotationAxis = ent:GetRotationAxis()
 
