@@ -205,3 +205,7 @@ end
 function ENT:AddTuningExhaust()
 	self:SetBackfire( true )
 end
+
+function ENT:AddRacingTires()
+	self:SetRacingTires( true )
+end
