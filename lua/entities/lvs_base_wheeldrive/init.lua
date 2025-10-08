@@ -195,7 +195,7 @@ function ENT:PhysicsSimulateFakePhysics( phys, deltatime )
 
 		local trace = util.TraceLine( {
 			start = wheelPos,
-			endpos = wheelPos - Up * wheelRadius * 2,
+			endpos = wheelPos - Up * wheel:GetSuspensionTravel(),
 			filter = self:GetCrosshairFilterEnts()
 		} )
 
@@ -203,7 +203,8 @@ function ENT:PhysicsSimulateFakePhysics( phys, deltatime )
 
 		local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
 		local curRPM = wheel:VelToRPM( ForwardVel )
-		--wheel:SetRPM( curRPM )
+
+		wheel:SetRPM( curRPM )
 
 		local Force = (trace.HitPos + Up * wheelRadius - wheelPos) * 50000 - Up * self:WorldToLocal( self:GetPos() + wheelVel ).z * 4000
 		local wForce, wAngForce = phys:CalculateVelocityOffset( Force, wheelPos )

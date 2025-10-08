@@ -226,9 +226,17 @@ function ENT:DefineAxle( data )
 
 		AxleCenter = AxleCenter + Wheel:GetPos()
 
-		if not Wheel.SetAxle then continue end
+		if Wheel.SetAxle then
+			Wheel:SetAxle( self._WheelAxleID )
+		end
 
-		Wheel:SetAxle( self._WheelAxleID )
+		if not Wheel.IsParented or not Wheel:IsParented() then continue end
+
+		if Wheel.SetSuspensionTravel then
+			Wheel:SetSuspensionTravel( Wheel:GetRadius() + data.Suspension.MaxTravel )
+		end
+
+		Wheel:SetLocalPos( Wheel:GetLocalPos() + Vector(0,0,-data.Suspension.Height * 0.5) )
 	end
 	AxleCenter = AxleCenter / #data.Wheels
 
