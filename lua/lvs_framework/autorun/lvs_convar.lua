@@ -55,7 +55,7 @@ CreateClientConVar( "lvs_return_delta", 2, true, true)
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
 local cvarDoorInfo = CreateClientConVar( "lvs_show_doorinfo", 1, true, false)
-LVS.ShowDoorInfo = cvarDoorInfo and cvarDoorInfo:GetBool() or true
+LVS.ShowDoorInfo = cvarDoorInfo and cvarDoorInfo:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_doorinfo", function( convar, oldValue, newValue ) 
 	LVS.ShowDoorInfo = tonumber( newValue ) ~=0
 end)
@@ -67,25 +67,25 @@ cvars.AddChangeCallback( "lvs_volume", function( convar, oldValue, newValue )
 end)
 
 local cvarTrail = CreateClientConVar( "lvs_show_traileffects", 1, true, false)
-LVS.ShowTraileffects = cvarTrail and cvarTrail:GetBool() or true
+LVS.ShowTraileffects = cvarTrail and cvarTrail:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_traileffects", function( convar, oldValue, newValue ) 
 	LVS.ShowTraileffects = tonumber( newValue ) ~=0
 end)
 
 local cvarEffects = CreateClientConVar( "lvs_show_effects", 1, true, false)
-LVS.ShowEffects = cvarEffects and cvarEffects:GetBool() or true
+LVS.ShowEffects = cvarEffects and cvarEffects:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_effects", function( convar, oldValue, newValue ) 
 	LVS.ShowEffects = tonumber( newValue ) ~=0
 end)
 
 local cvarPhysEffects = CreateClientConVar( "lvs_show_physicseffects", 1, true, false)
-LVS.ShowPhysicsEffects = cvarPhysEffects and cvarPhysEffects:GetBool() or true
+LVS.ShowPhysicsEffects = cvarPhysEffects and cvarPhysEffects:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_physicseffects", function( convar, oldValue, newValue ) 
 	LVS.ShowPhysicsEffects = tonumber( newValue ) ~=0
 end)
 
 local cvarShowIdent = CreateClientConVar( "lvs_show_identifier", 1, true, false)
-LVS.ShowIdent = cvarShowIdent and cvarShowIdent:GetBool() or true
+LVS.ShowIdent = cvarShowIdent and cvarShowIdent:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_identifier", function( convar, oldValue, newValue ) 
 	LVS.ShowIdent = tonumber( newValue ) ~=0
 end)
@@ -103,7 +103,7 @@ cvars.AddChangeCallback( "mat_antialias", function( convar, oldValue, newValue )
 end)
 
 local cvarBulletSFX = CreateClientConVar( "lvs_bullet_nearmiss", 1, true, false)
-LVS.EnableBulletNearmiss = cvarBulletSFX and cvarBulletSFX:GetBool() or true
+LVS.EnableBulletNearmiss = cvarBulletSFX and cvarBulletSFX:GetBool() or false
 cvars.AddChangeCallback( "lvs_bullet_nearmiss", function( convar, oldValue, newValue ) 
 	LVS.EnableBulletNearmiss = tonumber( newValue ) ~=0
 end)
