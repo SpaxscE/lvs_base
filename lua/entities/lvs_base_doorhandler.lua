@@ -336,6 +336,44 @@ local function DrawText( pos, text, align, col )
 	cam.End2D()
 end
 
+local function bezier(p0, p1, p2, p3, t)
+	local e = p0 + t * (p1 - p0)
+	local f = p1 + t * (p2 - p1)
+	local g = p2 + t * (p3 - p2)
+
+	local h = e + t * (f - e)
+	local i = f + t * (g - f)
+
+	local p = h + t * (i - h)
+
+	return p
+end
+
+local function DrawBezier( startpos, midpos, endpos )
+	local ply = 
+
+	cam.Start2D()
+		local p0 = LocalPlayer():GetPos()
+		local p1 = startpos
+		local p2 = midpos
+		local p3 = endpos
+
+		local oldpos = p0:ToScreen()
+
+		local num = 100
+		for i = 0, num do
+			local newpos = bezier(p0,p1,p2,p3, i / num):ToScreen()
+
+			surface.SetDrawColor( 255, 255, 255, math.abs( math.cos( -CurTime() * 5 + i * 0.05 ) ) * 255 )
+
+			surface.DrawLine( oldpos.x, oldpos.y, newpos.x, newpos.y )
+
+			oldpos = newpos
+		end
+
+	cam.End2D()
+end
+
 function ENT:DrawTranslucent()
 	local ply = LocalPlayer()
 
@@ -360,25 +398,18 @@ function ENT:DrawTranslucent()
 
 			if IsValid( LinkedSeat ) then
 				if not KeySprint then
-					render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, self.ColorBlack )
-					render.DrawWireframeBox( LinkedSeat:GetPos(), LinkedSeat:GetAngles(), LinkedSeat:OBBMins(), LinkedSeat:OBBMaxs(), color_white )
-
-					DrawText( pos, NameKeyUse.." \n".."Enter ", TEXT_ALIGN_RIGHT )
-					DrawText( pos, " "..NameKeySprint.."\n".." Close", TEXT_ALIGN_LEFT, self.ColorBlack )
+					DrawText( LinkedSeat:LocalToWorld( LinkedSeat:OBBCenter() ), NameKeyUse.." \n".."Enter ", TEXT_ALIGN_CENTER )
+					DrawText( pos, " "..NameKeySprint.."\n".." Close", TEXT_ALIGN_CENTER, self.ColorBlack )
+					DrawBezier( Vector(pos.x,pos.y,self:LocalToWorld( Vector(0,0,self:GetMaxs().z) ).z), Vector(pos.x,pos.y,self:LocalToWorld( Vector(0,0,self:GetMins().z) ).z), LinkedSeat:LocalToWorld( LinkedSeat:OBBCenter() - Vector(0,0,5) ) )
 				else
-					render.DrawWireframeBox( LinkedSeat:GetPos(), LinkedSeat:GetAngles(), LinkedSeat:OBBMins(), LinkedSeat:OBBMaxs(), self.ColorBlack )
-					render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
-
-					DrawText( pos, NameKeySprint.." \n".."Enter ", TEXT_ALIGN_RIGHT, self.ColorBlack )
-					DrawText( pos, " "..NameKeyUse.."\n".." Close", TEXT_ALIGN_LEFT )
+					DrawText( LinkedSeat:LocalToWorld( LinkedSeat:OBBCenter() ), NameKeySprint.." \n".."Enter ", TEXT_ALIGN_CENTER, self.ColorBlack )
+					DrawText( pos, " "..NameKeyUse.."\n".." Close", TEXT_ALIGN_CENTER )
 				end
 			else
 				DrawText( pos, NameKeyUse.."\n".."Close", TEXT_ALIGN_CENTER )
-				render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
 			end
 		else
 			DrawText( pos, NameKeyUse.."\n".."Open", TEXT_ALIGN_CENTER )
-			render.DrawWireframeBox( boxOrigin, boxAngles, boxMins, boxMaxs, color_white )
 		end
 	end
 
