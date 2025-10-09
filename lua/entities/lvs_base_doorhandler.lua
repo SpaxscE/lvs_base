@@ -385,7 +385,7 @@ function ENT:DrawTranslucent()
 	if LVS.ShowDoorInfo and InRange then
 		local pos = (self:LocalToWorld( self:GetMins() ) + self:LocalToWorld( self:GetMaxs() )) * 0.5
 
-		local NameKeyUse = "["..(input.LookupBinding( "+walk" ) or "+walk is not bound to a key").."]"
+		local NameKeyUse = "["..(input.LookupBinding( "+use" ) or "+use is not bound to a key").."]"
 		local NameKeySprint = "["..(input.LookupBinding( "+speed" ) or "+speed is not bound to a key").."]"
 
 		local boxOrigin = self:GetPos()
