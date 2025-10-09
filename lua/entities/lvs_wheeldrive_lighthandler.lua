@@ -282,9 +282,7 @@ function ENT:ClearProjectedTextures()
 end
 
 local function DistanceMul( ent )
-	local ply = LocalPlayer()
-
-	local dist = (ply:GetPos() - ent:GetPos()):LengthSqr() / (ply:InVehicle() and 500000 or 10000000)
+	local dist = (LocalPlayer():GetPos() - ent:GetPos()):LengthSqr() / 500000
 
 	return math.max( 1 - dist, 0 )
 end
