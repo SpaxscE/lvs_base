@@ -32,8 +32,14 @@ function ENT:CalcSteer( ply )
 
 		local DriftAngle = self:AngleBetweenNormal( Forward, VelNormal )
 
-		if DriftAngle < EntTable.FastSteerDeactivationDriftAngle then
-			MaxSteer = math.min( MaxSteer, EntTable.FastSteerAngleClamp )
+		if self:GetRacingTires() then
+			if math.abs( self:GetSteer() ) < EntTable.FastSteerAngleClamp then
+				MaxSteer = math.min( MaxSteer, EntTable.FastSteerAngleClamp )
+			end
+		else
+			if DriftAngle < EntTable.FastSteerDeactivationDriftAngle then
+				MaxSteer = math.min( MaxSteer, EntTable.FastSteerAngleClamp )
+			end
 		end
 
 		if not KeyLeft and not KeyRight then
@@ -48,7 +54,7 @@ function ENT:CalcSteer( ply )
 		end
 	end
 
-	self:SteerTo( TargetValue, MaxSteer  )
+	self:SteerTo( TargetValue, MaxSteer )
 end
 
 function ENT:IsLegalInput()
