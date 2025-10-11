@@ -264,8 +264,8 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 	end
 
 	local kmh = math.Round( (EntTable._refreshVel or 0) * 0.09144,0)
-	draw.DrawText( "km/h ", "LVS_FONT", X + w * 0.75, Y + w * 0.55, color_white, TEXT_ALIGN_LEFT )
-	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + w * 0.75 - 5, Y + w * 0.55, color_white, TEXT_ALIGN_RIGHT )
+	draw.DrawText( "km/h ", "LVS_FONT", X + w * 0.81, Y + w * 0.6, color_white, TEXT_ALIGN_LEFT )
+	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + w * 0.81 - 5, Y + w * 0.6, color_white, TEXT_ALIGN_RIGHT )
 
 	surface.SetDrawColor( 0, 0, 0, 200 )
 
@@ -281,21 +281,58 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 
 	surface.DrawRect( X + w * 0.3 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
 	surface.DrawRect( X + w * 0.3 + 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	surface.DrawRect( X + w * 0.3 - 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+
+	draw.DrawText( "b", "LVS_FONT_PANEL", X + w * 0.3 - 7, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "c", "LVS_FONT_PANEL", X + w * 0.3 + 3, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "t", "LVS_FONT_PANEL", X + w * 0.3 + 13, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+
 	if UsesFuel then
 		surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1, barlength + 2, 7 )
 
 		local col = LVS.FUELTYPES[ FuelTank:GetFuelType() ].color
 		surface.SetDrawColor( Color(col.r,col.g,col.b,255) )
 		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5, barlength * FuelTank:GetFuel() ^ 2, 5 )
+
+		draw.DrawText( "fuel", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 - 5, Color(255,150,0,255), TEXT_ALIGN_LEFT )
 	end
+
+	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 10, barlength + 2, 7 )
+	surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 20, barlength + 2, 7 )
+
+	surface.SetDrawColor( 80, 80, 80, 255 )
+	surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 10, barlength * math.min(EntTable._smValueoil or 0,1), 5 )
+
+	draw.DrawText( "oil pressure", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT )
+	draw.DrawText( "coolant temp", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 15, Color(0, 0, 255, 255), TEXT_ALIGN_LEFT )
+	
+	surface.SetDrawColor( 0, 127, 255, 255 )
+	surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 20, barlength * math.min(EntTable._smValuetemp or 0,1), 5 )
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 
-	local thrlength = barlength * self:GetThrottle()
-	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
+	local throttle = self:GetThrottle()
+	local clutch = (EntTable._smValueclutch or 0)
+	local brake = self:GetBrake()
 
-	local brlength = barlength * self:GetBrake()
-	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
+	local cllength = barlength * clutch
+	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - cllength, 5, cllength )
+
+	local brlength = barlength * brake
+	surface.DrawRect( X + w * 0.3 - 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
+
+	local engine = self:GetEngine()
+	if IsValid( engine ) then
+		local ClutchActive = engine:GetClutch()
+
+		if ClutchActive then
+			throttle = math.max( throttle - clutch, 0 )
+		end
+	end
+
+	local thrlength = barlength * throttle
+	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
 
 	Ring:SetX( X + w * 0.5 )
 	Ring:SetY( Y + w * 0.5 )
