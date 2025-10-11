@@ -74,7 +74,7 @@ function ENT:GetEngineTorque()
 		local RatioIdeal = math.min( Ratio, preRatio )
 
 		if preRatio <= 0.05 and Vel < PitchValue and Gear > 1 then
-			self:StallEngine()
+			self:SetNWGear( 1 )
 		end
 
 		return math.deg( self.EngineTorque ) * RatioIdeal

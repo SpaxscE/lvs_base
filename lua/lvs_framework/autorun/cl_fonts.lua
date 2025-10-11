@@ -39,3 +39,6 @@ THE_FONT.size = 40
 THE_FONT.weight = 2000
 THE_FONT.shadow = true
 surface.CreateFont( "LVS_FONT_HUD_LARGE", THE_FONT )
+
+THE_FONT.size = 80
+surface.CreateFont( "LVS_FONT_HUD_HUMONGOUS", THE_FONT )

@@ -36,6 +36,12 @@ local endAngleSpeedo = 375
 local startAngleTach = 165
 local endAngleTach = 360
 
+local Ring = circles.New( CIRCLE_OUTLINED, 300, 0, 0, 60 )
+Ring:SetMaterial( true )
+
+local Circle = circles.New( CIRCLE_OUTLINED, 300, 0, 0, 60 )
+Circle:SetMaterial( true )
+
 local RingOuter = circles.New( CIRCLE_OUTLINED, 645, 0, 0, 35 )
 RingOuter:SetX( Center )
 RingOuter:SetY( Center )
@@ -45,6 +51,16 @@ local RingInner = circles.New( CIRCLE_OUTLINED, 640, 0, 0, 25 )
 RingInner:SetX( Center )
 RingInner:SetY( Center )
 RingInner:SetMaterial( true )
+
+local RingFrame = circles.New( CIRCLE_OUTLINED, 390, 0, 0, 10 )
+RingFrame:SetX( Center )
+RingFrame:SetY( Center )
+RingFrame:SetMaterial( true )
+
+local RingFrameOuter = circles.New( CIRCLE_OUTLINED, 395, 0, 0, 20 )
+RingFrameOuter:SetX( Center )
+RingFrameOuter:SetY( Center )
+RingFrameOuter:SetMaterial( true )
 
 local RingOuterRedline = circles.New( CIRCLE_OUTLINED, 645, 0, 0, 20 )
 RingOuterRedline:SetX( Center )
@@ -90,6 +106,10 @@ function ENT:GetBakedTachMaterial( MaxRPM )
 		RingOuterRedline:SetStartAngle( AngleRedline )
 		RingOuterRedline:SetEndAngle( endAngleTach )
 		RingOuterRedline()
+
+		RingFrameOuter:SetStartAngle( startAngleTach )
+		RingFrameOuter:SetEndAngle( endAngleTach )
+		RingFrameOuter()
 
 		surface.SetDrawColor( color_white )
 
@@ -156,6 +176,10 @@ function ENT:GetBakedTachMaterial( MaxRPM )
 		RingInner:SetEndAngle( AngleRedline )
 		RingInner()
 
+		RingFrame:SetStartAngle( startAngleTach )
+		RingFrame:SetEndAngle( endAngleTach )
+		RingFrame()
+
 		surface.SetDrawColor( Color(255,0,0,255) )
 
 		RingInnerRedline:SetStartAngle( AngleRedline )
@@ -178,8 +202,8 @@ function ENT:GetBakedTachMaterial( MaxRPM )
 end
 
 local TachNeedleColor = Color(255,0,0,255)
-local TachNeedleRadiusInner = 15
-local TachNeedleRadiusOuter = 130
+local TachNeedleRadiusInner = 90
+local TachNeedleRadiusOuter = 145
 local TachNeedleBlurTime = 0.1
 local TachNeedles = {}
 local CurRPM = 0
@@ -198,9 +222,88 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 
 	CurRPM = CurRPM + Delta
 
-	local MaxRPM = self.EngineMaxRPM + 3000
+	local EntTable = self:GetTable()
+
+	local MaxRPM = EntTable.EngineMaxRPM + 3000
 
 	local Ang = startAngleTach + (endAngleTach - startAngleTach) * (CurRPM / MaxRPM)
+
+	local T = CurTime()
+
+	local FuelTank = self:GetFuelTank()
+
+	local UsesFuel = IsValid( FuelTank )
+
+	if self:GetEngineActive() then
+		local Gear = self:GetGear()
+
+		local printGear = Gear
+
+		if Gear == -1 then
+			printGear = self:GetReverse() and "R" or "D"
+		else
+			if self:GetReverse() then
+				printGear = "-"..Gear
+			end
+		end
+
+		draw.DrawText( printGear, "LVS_FONT_HUD_HUMONGOUS", X + w * 0.5, Y + w * 0.25, color_white, TEXT_ALIGN_CENTER )
+	else
+		surface.SetMaterial( EntTable.IconEngine )
+		if UsesFuel and FuelTank:GetFuel() <= 0 then
+			surface.SetMaterial( EntTable.IconFuel )
+		end
+
+		surface.SetDrawColor( Color(255,0,0, math.abs( math.cos( T * 5 ) ) * 255 ) )
+		surface.DrawTexturedRectRotated( X + w * 0.5 + 2, Y + w * 0.35 - 1, w * 0.15, w * 0.15, 0 )
+	end
+
+	if (EntTable._nextRefreshVel or 0) < T then
+		EntTable._nextRefreshVel = T + 0.1
+		EntTable._refreshVel = self:GetVelocity():Length()
+	end
+
+	local kmh = math.Round( (EntTable._refreshVel or 0) * 0.09144,0)
+	draw.DrawText( "km/h ", "LVS_FONT", X + w * 0.75, Y + w * 0.55, color_white, TEXT_ALIGN_LEFT )
+	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + w * 0.75 - 5, Y + w * 0.55, color_white, TEXT_ALIGN_RIGHT )
+
+	surface.SetDrawColor( 0, 0, 0, 200 )
+
+	Circle:SetX( X + w * 0.5 )
+	Circle:SetY( Y + w * 0.5 )
+	Circle:SetRadius( w * 0.49 )
+	Circle:SetOutlineWidth( w * 0.19 )
+	Circle:SetStartAngle( startAngleTach )
+	Circle:SetEndAngle( endAngleTach )
+	Circle()
+
+	local barlength = w * 0.2
+
+	surface.DrawRect( X + w * 0.3 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	surface.DrawRect( X + w * 0.3 + 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	if UsesFuel then
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1, barlength + 2, 7 )
+
+		local col = LVS.FUELTYPES[ FuelTank:GetFuelType() ].color
+		surface.SetDrawColor( Color(col.r,col.g,col.b,255) )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5, barlength * FuelTank:GetFuel() ^ 2, 5 )
+	end
+
+	surface.SetDrawColor( 255, 255, 255, 255 )
+
+	local thrlength = barlength * self:GetThrottle()
+	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
+
+	local brlength = barlength * self:GetBrake()
+	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
+
+	Ring:SetX( X + w * 0.5 )
+	Ring:SetY( Y + w * 0.5 )
+	Ring:SetRadius( w * 0.49 )
+	Ring:SetOutlineWidth( w * 0.04 )
+	Ring:SetStartAngle( startAngleTach )
+	Ring:SetEndAngle( math.min( Ang, endAngleTach ) )
+	Ring()
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( self:GetBakedTachMaterial( MaxRPM ) )

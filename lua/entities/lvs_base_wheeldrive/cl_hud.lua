@@ -11,6 +11,8 @@ local oldReverse = false
 local oldGear = -1
 
 function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
+	if self:GetRacingHud() then return end
+
 	local EntTable = self:GetTable()
 
 	local T = CurTime()
