@@ -346,7 +346,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 				ForceAngle:Add( RotationAxis * Torque )
 			else
-				ForceAngle:Add( RotationAxis * (self.wheelEngineForce or 0) * TorqueFactor )
+				ForceAngle:Add( RotationAxis * (EntTable.wheelEngineForce or 0) * TorqueFactor )
 			end
 		end
 	end
