@@ -334,13 +334,23 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 	local thrlength = barlength * throttle
 	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
 
+	local TachRange = endAngleTach - startAngleTach
+	local AngleRedline = startAngleTach + (TachRange / MaxRPM) * EntTable.EngineMaxRPM
+
 	Ring:SetX( X + w * 0.5 )
 	Ring:SetY( Y + w * 0.5 )
 	Ring:SetRadius( w * 0.49 )
 	Ring:SetOutlineWidth( w * 0.04 )
 	Ring:SetStartAngle( startAngleTach )
-	Ring:SetEndAngle( math.min( Ang, endAngleTach ) )
+	Ring:SetEndAngle( math.min( Ang, AngleRedline ) )
 	Ring()
+
+	if Ang > AngleRedline then
+		surface.SetDrawColor( 255, 0, 0, 255 )
+		Ring:SetStartAngle( AngleRedline )
+		Ring:SetEndAngle( math.min( Ang, endAngleTach ) )
+		Ring()
+	end
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( self:GetBakedTachMaterial( MaxRPM ) )
