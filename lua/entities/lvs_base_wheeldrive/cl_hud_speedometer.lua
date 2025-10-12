@@ -283,7 +283,7 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 
 		local col = LVS.FUELTYPES[ FuelTank:GetFuelType() ].color
 		surface.SetDrawColor( Color(col.r,col.g,col.b,255) )
-		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5, barlength * FuelTank:GetFuel() ^ 2, 5 )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5, barlength * FuelTank:GetFuel(), 5 )
 
 		draw.DrawText( "fuel", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 - 5, Color(255,150,0,255), TEXT_ALIGN_LEFT )
 	end
