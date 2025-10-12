@@ -73,6 +73,19 @@ function ENT:GetEngineTorque()
 
 		local RatioIdeal = math.min( Ratio, preRatio )
 
+		if Gear < NumGears and Ratio < 0.5 then
+			local engine = self:GetEngine()
+
+			if IsValid( engine ) then
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage( 1 )
+				dmginfo:SetAttacker( self )
+				dmginfo:SetInflictor( self )
+				dmginfo:SetDamageType( DMG_DIRECT )
+				engine:TakeTransmittedDamage( dmginfo )
+			end
+		end
+
 		if preRatio <= 0.05 and Vel < PitchValue and Gear > 1 then
 			self:SetNWGear( 1 )
 		end

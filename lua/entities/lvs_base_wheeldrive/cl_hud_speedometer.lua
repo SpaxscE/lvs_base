@@ -39,7 +39,9 @@ local endAngleTach = 360
 local Ring = circles.New( CIRCLE_OUTLINED, 300, 0, 0, 60 )
 Ring:SetMaterial( true )
 
-local Circle = circles.New( CIRCLE_OUTLINED, 300, 0, 0, 60 )
+local Circle = circles.New( CIRCLE_OUTLINED, 625, 0, 0, 230 )
+Circle:SetX( Center )
+Circle:SetY( Center )
 Circle:SetMaterial( true )
 
 local RingOuter = circles.New( CIRCLE_OUTLINED, 645, 0, 0, 35 )
@@ -96,6 +98,12 @@ function ENT:GetBakedTachMaterial( MaxRPM )
 	cam.Start2D()
 		render.ClearDepth()
 		render.Clear( 0, 0, 0, 0 )
+
+		surface.SetDrawColor( Color( 0, 0, 0, 150 ) )
+
+		Circle:SetStartAngle( startAngleTach )
+		Circle:SetEndAngle( endAngleTach )
+		Circle()
 
 		surface.SetDrawColor( Color( 0, 0, 0, 200 ) )
 
@@ -267,27 +275,10 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 	draw.DrawText( "km/h ", "LVS_FONT", X + w * 0.81, Y + w * 0.6, color_white, TEXT_ALIGN_LEFT )
 	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + w * 0.81 - 5, Y + w * 0.6, color_white, TEXT_ALIGN_RIGHT )
 
-	surface.SetDrawColor( 0, 0, 0, 200 )
-
-	Circle:SetX( X + w * 0.5 )
-	Circle:SetY( Y + w * 0.5 )
-	Circle:SetRadius( w * 0.49 )
-	Circle:SetOutlineWidth( w * 0.19 )
-	Circle:SetStartAngle( startAngleTach )
-	Circle:SetEndAngle( endAngleTach )
-	Circle()
-
+	-- fuel, oil, coolant
 	local barlength = w * 0.2
-
-	surface.DrawRect( X + w * 0.3 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
-	surface.DrawRect( X + w * 0.3 + 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
-	surface.DrawRect( X + w * 0.3 - 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
-
-	draw.DrawText( "b", "LVS_FONT_PANEL", X + w * 0.3 - 7, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
-	draw.DrawText( "c", "LVS_FONT_PANEL", X + w * 0.3 + 3, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
-	draw.DrawText( "t", "LVS_FONT_PANEL", X + w * 0.3 + 13, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
-
 	if UsesFuel then
+		surface.SetDrawColor( 0, 0, 0, 200 )
 		surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1, barlength + 2, 7 )
 
 		local col = LVS.FUELTYPES[ FuelTank:GetFuelType() ].color
@@ -296,47 +287,58 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 
 		draw.DrawText( "fuel", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 - 5, Color(255,150,0,255), TEXT_ALIGN_LEFT )
 	end
+	if EntTable._smValueoil then
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 10, barlength + 2, 7 )
 
-	surface.SetDrawColor( 0, 0, 0, 200 )
-	surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 10, barlength + 2, 7 )
-	surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 20, barlength + 2, 7 )
+		surface.SetDrawColor( 80, 80, 80, 255 )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 10, barlength * math.min(EntTable._smValueoil,1), 5 )
+		draw.DrawText( "oil pressure", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT )
+	end
+	if EntTable._smValuetemp then
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5 - 1, Y + w * 0.5 - 1 + 20, barlength + 2, 7 )
 
-	surface.SetDrawColor( 80, 80, 80, 255 )
-	surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 10, barlength * math.min(EntTable._smValueoil or 0,1), 5 )
+		surface.SetDrawColor( 0, 127, 255, 255 )
+		surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 20, barlength * math.min(EntTable._smValuetemp,1), 5 )
+		draw.DrawText( "coolant temp", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 15, Color(0, 0, 255, 255), TEXT_ALIGN_LEFT )
+	end
 
-	draw.DrawText( "oil pressure", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 5, Color(0, 0, 0, 255), TEXT_ALIGN_LEFT )
-	draw.DrawText( "coolant temp", "LVS_FONT_PANEL", X + w * 0.5 + barlength * 0.5 + 5, Y + w * 0.5 + 15, Color(0, 0, 255, 255), TEXT_ALIGN_LEFT )
 	
-	surface.SetDrawColor( 0, 127, 255, 255 )
-	surface.DrawRect( X + w * 0.5 - barlength * 0.5, Y + w * 0.5 + 20, barlength * math.min(EntTable._smValuetemp or 0,1), 5 )
-
-	surface.SetDrawColor( 255, 255, 255, 255 )
-
+	-- brake, clutch, throttle bar
 	local throttle = self:GetThrottle()
-	local clutch = (EntTable._smValueclutch or 0)
+	local clutch = EntTable._smValueclutch
 	local brake = self:GetBrake()
-
-	local cllength = barlength * clutch
-	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - cllength, 5, cllength )
-
-	local brlength = barlength * brake
-	surface.DrawRect( X + w * 0.3 - 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
-
 	local engine = self:GetEngine()
 	if IsValid( engine ) then
 		local ClutchActive = engine:GetClutch()
+
+		if not clutch then
+			clutch = ClutchActive and 1 or 0
+		end
 
 		if ClutchActive then
 			throttle = math.max( throttle - clutch, 0 )
 		end
 	end
-
+	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.DrawRect( X + w * 0.3 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	surface.DrawRect( X + w * 0.3 + 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	surface.DrawRect( X + w * 0.3 - 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
+	surface.SetDrawColor( 255, 255, 255, 255 )
+	local cllength = barlength * clutch
+	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - cllength, 5, cllength )
+	local brlength = barlength * brake
+	surface.DrawRect( X + w * 0.3 - 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
 	local thrlength = barlength * throttle
 	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
+	draw.DrawText( "b", "LVS_FONT_PANEL", X + w * 0.3 - 7, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "c", "LVS_FONT_PANEL", X + w * 0.3 + 3, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "t", "LVS_FONT_PANEL", X + w * 0.3 + 13, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+
 
 	local TachRange = endAngleTach - startAngleTach
 	local AngleRedline = startAngleTach + (TachRange / MaxRPM) * EntTable.EngineMaxRPM
-
 	Ring:SetX( X + w * 0.5 )
 	Ring:SetY( Y + w * 0.5 )
 	Ring:SetRadius( w * 0.49 )

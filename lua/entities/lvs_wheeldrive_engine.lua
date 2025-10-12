@@ -110,7 +110,6 @@ if SERVER then
 	function ENT:OnTakeDamage( dmginfo )
 	end
 
-
 	function ENT:UpdateTransmitState() 
 		return TRANSMIT_ALWAYS
 	end
