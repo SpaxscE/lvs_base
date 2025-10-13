@@ -255,7 +255,7 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 			end
 		end
 
-		draw.DrawText( printGear, "LVS_FONT_HUD_HUMONGOUS", X + w * 0.5, Y + w * 0.25, color_white, TEXT_ALIGN_CENTER )
+		draw.DrawText( printGear, "LVS_FONT_HUD_HUMONGOUS", X + w * 0.5, Y + w * 0.23, color_white, TEXT_ALIGN_CENTER )
 	else
 		surface.SetMaterial( EntTable.IconEngine )
 		if UsesFuel and FuelTank:GetFuel() <= 0 then
@@ -327,13 +327,13 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 	surface.DrawRect( X + w * 0.3 - 10 - 1, Y + w * 0.4 - 1, 7, barlength + 2 )
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	local cllength = barlength * clutch
-	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - cllength, 5, cllength )
+	surface.DrawRect( X + w * 0.3 - 10, Y + w * 0.4 + barlength - cllength, 5, cllength )
 	local brlength = barlength * brake
-	surface.DrawRect( X + w * 0.3 - 10, Y + w * 0.4 + barlength - brlength, 5, brlength )
+	surface.DrawRect( X + w * 0.3, Y + w * 0.4 + barlength - brlength, 5, brlength )
 	local thrlength = barlength * throttle
 	surface.DrawRect( X + w * 0.3 + 10, Y + w * 0.4 + barlength - thrlength, 5, thrlength )
-	draw.DrawText( "b", "LVS_FONT_PANEL", X + w * 0.3 - 7, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
-	draw.DrawText( "c", "LVS_FONT_PANEL", X + w * 0.3 + 3, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "c", "LVS_FONT_PANEL", X + w * 0.3 - 7, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
+	draw.DrawText( "b", "LVS_FONT_PANEL", X + w * 0.3 + 3, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
 	draw.DrawText( "t", "LVS_FONT_PANEL", X + w * 0.3 + 13, Y + w * 0.4 + barlength, color_white, TEXT_ALIGN_CENTER )
 
 
