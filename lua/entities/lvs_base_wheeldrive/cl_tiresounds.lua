@@ -2,6 +2,7 @@
 ENT.TireSoundFade = 0.15
 ENT.TireSoundTypes = {
 	["roll"] = "lvs/vehicles/generic/wheel_roll.wav",
+	["roll_racing"] = "lvs/vehicles/generic/wheel_roll.wav",
 	["roll_dirt"] = "lvs/vehicles/generic/wheel_roll_dirt.wav",
 	["roll_wet"] = "lvs/vehicles/generic/wheel_roll_wet.wav",
 	["roll_damaged"] = "lvs/wheel_damaged_loop.wav",
