@@ -189,6 +189,10 @@ function ENT:FindPDS( PosToCheck, RadiusAdd )
 		RadiusAdd = 1
 	end
 
+	if InfMap then
+		PosToCheck = InfMap.unlocalize_vector( PosToCheck, self.CHUNK_OFFSET )
+	end
+
 	local Parts = {}
 
 	debugoverlay.Cross( PosToCheck, 50, 4, Color( 255, 255, 0 ) )
