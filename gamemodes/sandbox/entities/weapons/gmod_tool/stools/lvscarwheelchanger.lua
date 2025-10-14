@@ -575,4 +575,4 @@ function TOOL:Reload( trace )
 	return true
 end
 
-list.Set( "lvs_wheels", "models/props_vehicles/tire001b_truck.mdl", {angle = Angle(0,0,0), radius = 24.8} )
+list.Set( "lvs_wheels", "models/props_vehicles/carparts_wheel01a.mdl", {angle = Angle(0,90,0), radius = 16} )

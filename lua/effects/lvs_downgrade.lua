@@ -17,6 +17,7 @@ function EFFECT:Init( data )
 		self.Model:SetLocalPos( Vector( 0, 0, 0 ) )
 		self.Model:SetLocalAngles( Angle( 0, 0, 0 ) )
 		self.Model:AddEffects( EF_BONEMERGE )
+		self.Model:SetModelScale( self.Ent:GetModelScale() )
 	end
 end
 
