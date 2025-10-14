@@ -494,6 +494,18 @@ function TOOL:LeftClick( trace )
 
 	self:SetData( trace.Entity )
 
+	if CLIENT then return true end
+
+	local ent = trace.Entity
+
+	timer.Simple(0, function()
+		if not IsValid( ent ) then return end
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_upgrade", effectdata )
+	end)
+
 	return true
 end
 
@@ -501,6 +513,18 @@ function TOOL:RightClick( trace )
 	if not self:IsValidTarget( trace.Entity ) then return false end
 
 	self:GetData( trace.Entity )
+
+	if CLIENT then return true end
+
+	local ent = trace.Entity
+
+	timer.Simple(0, function()
+		if not IsValid( ent ) then return end
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_update", effectdata )
+	end)
 
 	return true
 end
@@ -511,6 +535,14 @@ function TOOL:Reload( trace )
 	if not self:IsValidTarget( ent ) then return false end
 
 	if CLIENT then return true end
+
+	timer.Simple(0, function()
+		if not IsValid( ent ) then return end
+		local effectdata = EffectData()
+		effectdata:SetOrigin( ent:GetPos() )
+		effectdata:SetEntity( ent )
+		util.Effect( "lvs_downgrade", effectdata )
+	end)
 
 	local camber = math.Round( self:GetClientNumber("camber",0) , 2 )
 	local caster = math.Round( self:GetClientNumber("caster",0) , 2 )
