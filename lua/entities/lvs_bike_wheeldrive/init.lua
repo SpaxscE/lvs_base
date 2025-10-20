@@ -37,6 +37,8 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	if ShouldIdle then
 		Steer = self:GetEngineActive() and EntTable.LeanAngleIdle or EntTable.LeanAnglePark
 		VelL.x = EntTable.MaxVelocity
+	else
+		ForceAngle.y = (math.Clamp( VelL.x * self:GetBrake() * EntTable.PhysicsRollMul, -EntTable.WheelBrakeForce, EntTable.WheelBrakeForce ) - self:GetThrottle() * self:GetEngineTorque() * 0.025) * EntTable.PhysicsPitchInvertForceMul
 	end
 
 	local Mul = (self:GetUp().z > 0.5 and 1 or 0) * 50 * (math.min( math.abs( VelL.x ) / EntTable.PhysicsWheelGyroSpeed, 1 ) ^ 2) * EntTable.PhysicsWheelGyroMul

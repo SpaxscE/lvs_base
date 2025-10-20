@@ -24,6 +24,8 @@ ENT.PhysicsInertia = Vector(400,400,200)
 
 ENT.ForceAngleMultiplier = 0.5
 
+ENT.PhysicsPitchInvertForceMul = 1
+
 ENT.PhysicsDampingSpeed = 500
 ENT.PhysicsDampingForward = true
 ENT.PhysicsDampingReverse = false
@@ -37,7 +39,7 @@ ENT.WheelPhysicsMass = 250
 ENT.WheelPhysicsInertia = Vector(5,4,5)
 
 ENT.WheelSideForce = 800
-ENT.WheelDownForce = 1000
+ENT.WheelDownForce = 200
 
 ENT.KickStarter = true
 ENT.KickStarterSound = "lvs/vehicles/bmw_r75/moped_crank.wav"
