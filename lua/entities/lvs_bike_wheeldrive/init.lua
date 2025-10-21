@@ -44,10 +44,38 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	local Mul = (self:GetUp().z > 0.5 and 1 or 0) * 50 * (math.min( math.abs( VelL.x ) / EntTable.PhysicsWheelGyroSpeed, 1 ) ^ 2) * EntTable.PhysicsWheelGyroMul
 	local Diff = (Steer - self:GetAngles().r)
 
+	local ForceLinear = Vector(0,0,0)
 	ForceAngle.x = (Diff * 2.5 * EntTable.PhysicsRollMul - phys:GetAngleVelocity().x * EntTable.PhysicsDampingRollMul) * Mul
 
 	if ShouldIdle and math.abs( Diff ) > 1 then
 		simulate = SIM_GLOBAL_ACCELERATION
+	end
+
+	if self:GetRacingTires() then
+		local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplier
+		for id, wheel in pairs( self:GetWheels() ) do
+			if wheel:IsHandbrakeActive() or not wheel:PhysicsOnGround() then continue end
+
+			local AxleAng = wheel:GetDirectionAngle()
+		
+			local Forward = AxleAng:Forward()
+			local Right = AxleAng:Right()
+			local Up = AxleAng:Up()
+
+			local wheelPos = wheel:GetPos()
+			local wheelVel = phys:GetVelocityAtPoint( wheelPos )
+			local wheelRadius = wheel:GetRadius()
+
+			local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1)
+
+			local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
+
+			Force = -Right * self:VectorSplitNormal( Right, wheelVel ) * WheelSideForce * Slip
+			local wSideForce, wAngSideForce = phys:CalculateVelocityOffset( Force, wheelPos )
+
+			ForceAngle:Add( Vector(0,0,wAngSideForce.z) )
+			ForceLinear:Add( wSideForce )
+		end
 	end
 
 	return ForceAngle, vector_origin, simulate
