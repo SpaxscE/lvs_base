@@ -38,7 +38,9 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 		Steer = self:GetEngineActive() and EntTable.LeanAngleIdle or EntTable.LeanAnglePark
 		VelL.x = EntTable.MaxVelocity
 	else
-		ForceAngle.y = (math.Clamp( VelL.x * self:GetBrake() * EntTable.PhysicsRollMul, -EntTable.WheelBrakeForce, EntTable.WheelBrakeForce ) - self:GetThrottle() * self:GetEngineTorque() * 0.025) * EntTable.PhysicsPitchInvertForceMul
+		local SpeedMul = math.Clamp( 1 - VelL.x / EntTable.MaxVelocity, 0, 1 ) ^ 2
+
+		ForceAngle.y = (math.Clamp( VelL.x * self:GetBrake() * EntTable.PhysicsRollMul, -EntTable.WheelBrakeForce, EntTable.WheelBrakeForce ) - self:GetThrottle() * self:GetEngineTorque() * 0.025 * SpeedMul) * EntTable.PhysicsPitchInvertForceMul
 	end
 
 	local Mul = (self:GetUp().z > 0.5 and 1 or 0) * 50 * (math.min( math.abs( VelL.x ) / EntTable.PhysicsWheelGyroSpeed, 1 ) ^ 2) * EntTable.PhysicsWheelGyroMul
@@ -66,14 +68,12 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 			local wheelVel = phys:GetVelocityAtPoint( wheelPos )
 			local wheelRadius = wheel:GetRadius()
 
-			local Slip = math.Clamp(1 - self:AngleBetweenNormal( Forward, wheelVel:GetNormalized() ) / 90,0,1)
-
 			local ForwardVel = self:VectorSplitNormal( Forward, wheelVel )
 
-			Force = -Right * self:VectorSplitNormal( Right, wheelVel ) * WheelSideForce * Slip
+			Force = -Right * self:VectorSplitNormal( Right, wheelVel ) * WheelSideForce
 			local wSideForce, wAngSideForce = phys:CalculateVelocityOffset( Force, wheelPos )
 
-			ForceAngle:Add( Vector(0,0,wAngSideForce.z) )
+			ForceAngle:Add( wAngSideForce )
 			ForceLinear:Add( wSideForce )
 		end
 	end
