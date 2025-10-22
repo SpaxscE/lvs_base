@@ -40,7 +40,7 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	else
 		local SpeedMul = math.Clamp( 1 - VelL.x / EntTable.MaxVelocity, 0, 1 ) ^ 2
 
-		ForceAngle.y = (math.Clamp( VelL.x * self:GetBrake() * EntTable.PhysicsRollMul, -EntTable.WheelBrakeForce, EntTable.WheelBrakeForce ) - self:GetThrottle() * self:GetEngineTorque() * 0.025 * SpeedMul) * EntTable.PhysicsPitchInvertForceMul
+		ForceAngle.y = (math.Clamp( VelL.x * self:GetBrake() * EntTable.PhysicsRollMul, -EntTable.WheelBrakeForce, EntTable.WheelBrakeForce ) - self:GetThrottle() * self:GetEngineTorque() * 0.1 * SpeedMul) * EntTable.PhysicsPitchInvertForceMul
 	end
 
 	local Mul = (self:GetUp().z > 0.5 and 1 or 0) * 50 * (math.min( math.abs( VelL.x ) / EntTable.PhysicsWheelGyroSpeed, 1 ) ^ 2) * EntTable.PhysicsWheelGyroMul
@@ -53,10 +53,10 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 		simulate = SIM_GLOBAL_ACCELERATION
 	end
 
-	if self:GetRacingTires() then
+	if self:GetRacingTires() and self:WheelsOnGround() then
 		local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplier
 		for id, wheel in pairs( self:GetWheels() ) do
-			if wheel:IsHandbrakeActive() or not wheel:PhysicsOnGround() then continue end
+			if wheel:IsHandbrakeActive() then continue end
 
 			local AxleAng = wheel:GetDirectionAngle()
 		

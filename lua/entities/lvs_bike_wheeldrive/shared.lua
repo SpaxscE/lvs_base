@@ -24,7 +24,7 @@ ENT.PhysicsInertia = Vector(400,400,200)
 
 ENT.ForceAngleMultiplier = 0.5
 
-ENT.PhysicsPitchInvertForceMul = 1
+ENT.PhysicsPitchInvertForceMul = 0.5
 
 ENT.PhysicsDampingSpeed = 500
 ENT.PhysicsDampingForward = true
