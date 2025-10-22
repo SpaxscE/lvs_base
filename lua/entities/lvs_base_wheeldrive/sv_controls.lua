@@ -32,7 +32,7 @@ function ENT:CalcSteer( ply )
 
 		local DriftAngle = self:AngleBetweenNormal( Forward, VelNormal )
 
-		if self:GetRacingTires() then
+		if self:GetRacingTires() or self:GetBrake() >= 1 then
 			if math.abs( self:GetSteer() ) < EntTable.FastSteerAngleClamp then
 				MaxSteer = math.min( MaxSteer, EntTable.FastSteerAngleClamp )
 			end
