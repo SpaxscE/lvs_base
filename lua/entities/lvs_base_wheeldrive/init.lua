@@ -538,6 +538,6 @@ function ENT:ApproachTargetAngle( TargetAngle )
 	local LocalAngSteer = (self:AngleBetweenNormal( View, ang:Right() ) - 90) / self.MouseSteerAngle
 
 	local Steer = (math.min( math.abs( LocalAngSteer ), 1 ) ^ self.MouseSteerExponent * self:Sign( LocalAngSteer ))
-PrintChat( Steer )
+
 	self:SteerTo( Reversed and Steer or -Steer, self:GetMaxSteerAngle() )
 end
