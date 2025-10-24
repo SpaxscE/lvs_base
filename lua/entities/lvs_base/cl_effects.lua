@@ -117,3 +117,26 @@ function ENT:StopEmitter()
 		self.Emitter:Finish()
 	end
 end
+
+function ENT:GetParticleEmitter3D( Pos )
+	local EntTable = self:GetTable()
+
+	local T = CurTime()
+
+	if IsValid( EntTable.Emitter3D ) and (EntTable.EmitterTime3D or 0) > T then
+		return EntTable.Emitter3D
+	end
+
+	self:StopEmitter3D()
+
+	EntTable.Emitter3D = ParticleEmitter( Pos, true )
+	EntTable.EmitterTime3D = T + 2
+
+	return EntTable.Emitter3D
+end
+
+function ENT:StopEmitter3D()
+	if IsValid( self.Emitter3D ) then
+		self.Emitter3D:Finish()
+	end
+end

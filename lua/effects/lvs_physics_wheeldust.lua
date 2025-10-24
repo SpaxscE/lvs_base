@@ -23,6 +23,59 @@ EFFECT.DustMat = {
 	"effects/lvs_base/particle_debris_02",
 }
 
+local SmokeMat = EFFECT.SmokeMat
+local function MakeDustParticle( emitter, emitter3D, pos, vel, r, g, b )
+	local particle = emitter:Add( SmokeMat[ math.random(1,#SmokeMat) ], pos )
+
+	if not particle then return end
+
+	particle:SetVelocity( vel )
+	particle:SetDieTime( 0.4 )
+	particle:SetAirResistance( 0 ) 
+	particle:SetStartAlpha( 255 )
+	particle:SetStartSize( 20 )
+	particle:SetEndSize( 30 )
+	particle:SetRollDelta( math.Rand(-6,6) )
+	particle:SetColor( r, g, b )
+	particle:SetGravity( Vector(0,0,-600) )
+	particle:SetCollide( false )
+	particle:SetNextThink( CurTime() )
+	particle:SetThinkFunction( function( p )
+		if not IsValid( emitter3D ) then return end
+
+		p:SetNextThink( CurTime() + 0.05 )
+
+		local pos = p:GetPos()
+		local vel = p:GetVelocity()
+
+		local traceData = {
+			start = pos,
+			endpos = pos + Vector(0,0,vel.z) * 0.06,
+			mask = MASK_SOLID_BRUSHONLY,
+		}
+
+		local trace = util.TraceLine( traceData )
+
+		if not trace.Hit then return end
+
+		p:SetEndSize( 0 )
+		p:SetDieTime( 0 )
+
+		local pHit = emitter3D:Add( SmokeMat[ math.random(1,#SmokeMat) ], trace.HitPos + trace.HitNormal )
+		pHit:SetStartSize( 15 )
+		pHit:SetEndSize( 15 )
+		pHit:SetDieTime( math.Rand(5,6) )
+		pHit:SetStartAlpha( 50 )
+		pHit:SetEndAlpha( 0 )
+		pHit:SetColor( p:GetColor() )
+
+		local Ang = trace.HitNormal:Angle()
+		Ang:RotateAroundAxis( trace.HitNormal, math.Rand(-180,180) )
+
+		pHit:SetAngles( Ang )
+	end )
+end
+
 function EFFECT:Init( data )
 	local pos = data:GetOrigin()
 	local ent = data:GetEntity()
@@ -31,10 +84,14 @@ function EFFECT:Init( data )
 
 	local dir = data:GetNormal()
 	local scale = data:GetMagnitude()
-
+	local speed = ent:GetVelocity():LengthSqr()
+	local tooSlow = speed < 30000
+	local tooFast = speed > 400000
 	local underwater = data:GetFlags() == 1
 
-	local emitter = ent:GetParticleEmitter( ent:GetPos() )
+	local start = ent:GetPos()
+	local emitter = ent:GetParticleEmitter( start )
+	local emitter3D = ent:GetParticleEmitter3D( start )
 
 	local VecCol = render.GetLightColor( pos + dir ) * 0.5
 
@@ -46,21 +103,23 @@ function EFFECT:Init( data )
 
 	local DieTime = math.Rand(0.8,1.6)
 
-	for i = 1, 5 do
-		local particle = emitter:Add( self.DustMat[ math.random(1,#self.DustMat) ] , pos )
+	if not tooSlow then
+		for i = 1, 5 do
+			local particle = emitter:Add( self.DustMat[ math.random(1,#self.DustMat) ] , pos )
 
-		if not particle then continue end
+			if not particle then continue end
 
-		particle:SetVelocity( (dir * 50 * i + VectorRand() * 25) * scale )
-		particle:SetDieTime( (i / 8) * DieTime )
-		particle:SetAirResistance( 10 ) 
-		particle:SetStartAlpha( 255 )
-		particle:SetStartSize( 10 * scale )
-		particle:SetEndSize( 20 * i * scale )
-		particle:SetRollDelta( math.Rand(-1,1) )
-		particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
-		particle:SetGravity( Vector(0,0,-600) * scale )
-		particle:SetCollide( false )
+			particle:SetVelocity( (dir * 50 * i + VectorRand() * 25) * scale )
+			particle:SetDieTime( (i / 8) * DieTime )
+			particle:SetAirResistance( 10 ) 
+			particle:SetStartAlpha( 255 )
+			particle:SetStartSize( 10 * scale )
+			particle:SetEndSize( 20 * i * scale )
+			particle:SetRollDelta( math.Rand(-1,1) )
+			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+			particle:SetGravity( Vector(0,0,-600) * scale )
+			particle:SetCollide( false )
+		end
 	end
 
 	for i = 1, 5 do
@@ -78,6 +137,37 @@ function EFFECT:Init( data )
 		particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
 		particle:SetGravity( Vector(0,0,-600) * scale )
 		particle:SetCollide( false )
+
+		if underwater or tooFast then continue end
+
+		particle:SetNextThink( CurTime() )
+		particle:SetThinkFunction( function( p )
+			if not IsValid( ent ) or not IsValid( emitter ) or not IsValid( emitter3D ) then return end
+
+			p:SetNextThink( CurTime() + 0.05 )
+
+			local pos = p:GetPos()
+			local vel = p:GetVelocity()
+			local dir = vel:GetNormalized()
+			local speed = vel:Length()
+
+			local traceData = {
+				start = pos,
+				endpos = pos + dir * speed * 0.06,
+				whitelist = true,
+				filter =  ent,
+			}
+			local trace = util.TraceLine( traceData )
+
+			if not trace.Hit then return end
+
+			if tooSlow then
+				p:SetEndSize( 0 )
+				p:SetDieTime( 0 )
+			end
+
+			MakeDustParticle( emitter, emitter3D, trace.HitPos - trace.HitNormal * 10, trace.HitNormal * 20 + VectorRand() * 40, p:GetColor() )
+		end )
 	end
 end
 

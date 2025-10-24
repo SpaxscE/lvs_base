@@ -10,6 +10,28 @@ ENT.TippingForceMul = 1
 ENT.LeanAngleIdle = -10
 ENT.LeanAnglePark = -10
 
+function ENT:ApproachTargetAngle( TargetAngle )
+	local pod = self:GetDriverSeat()
+
+	if not IsValid( pod ) then return end
+
+	local ang = self:GetAngles()
+
+	local Forward = ang:Right()
+	local View = pod:WorldToLocalAngles( TargetAngle ):Forward()
+
+	local Reversed = false
+	if self:AngleBetweenNormal( View, ang:Forward() ) < 90 then
+		Reversed = self:GetReverse()
+	end
+
+	local LocalAngSteer = (self:AngleBetweenNormal( View, ang:Right() ) - 90) / self.MouseSteerAngle
+
+	local Steer = (math.min( math.abs( LocalAngSteer ), 1 ) ^ self.MouseSteerExponent * self:Sign( LocalAngSteer ))
+
+	self:SteerTo( Reversed and Steer or -Steer, self:GetMaxSteerAngle() )
+end
+
 function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 	local EntTable = self:GetTable()
 

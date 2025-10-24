@@ -139,6 +139,7 @@ end
 
 function ENT:OnRemove()
 	self:StopEmitter()
+	self:StopEmitter3D()
 	self:StopWindSounds()
 	self:StopFlyBy()
 	self:StopDeathSound()
