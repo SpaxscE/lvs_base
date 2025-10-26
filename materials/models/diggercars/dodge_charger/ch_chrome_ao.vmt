@@ -1,0 +1,43 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/dodge_charger/ch_chrome_ao"
+	"$bumpmap" "models/diggercars/dodge_charger/ch_chrome_nm"	
+
+	"$normalmapalphaenvmapmask" 1
+	"$halflambert" 1
+
+	"$phong" "1" 
+	"$phongboost" "5" 
+	"$phongfresnelranges" "[.3 .5 1]" 
+	"$phongexponent" 20
+	"$envmap" "env_cubemap"
+	"$envmapfrensel" "1"
+	"$colorfix" "{55 55 55}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
