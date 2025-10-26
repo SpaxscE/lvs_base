@@ -92,7 +92,15 @@ function ENT:RunAI()
 		GotoPos = (Front.HitPos + FrontLeft.HitPos + FrontRight.HitPos + FrontLeft1.HitPos + FrontRight1.HitPos + FrontLeft2.HitPos + FrontRight2.HitPos) / 7
 
 		if not self:GetEngineActive() then
-			self:StartEngine()
+			local Engine = self:GetEngine()
+
+			if IsValid( Engine ) then
+				if not Engine:GetDestroyed() then
+					self:StartEngine()
+				end
+			else
+				self:StartEngine()
+			end
 		end
 
 		if self:GetReverse() then
