@@ -323,9 +323,9 @@ local function ServerSettings( Canvas )
 	end
 
 	local slider = vgui.Create( "DNumSlider", Canvas )
-	slider:DockMargin( 16, 32, 16, 4 )
+	slider:DockMargin( 16, 16, 16, 4 )
 	slider:Dock( TOP )
-	slider:SetText( "Fuel tank size multiplier" )
+	slider:SetText("Fuel tank size multiplier\n(Respawn the vehicle in order to take effect)")
 	slider:SetMin( 0 )
 	slider:SetMax( 10 )
 	slider:SetDecimals( 2 )
