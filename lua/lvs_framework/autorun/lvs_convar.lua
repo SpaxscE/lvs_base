@@ -31,7 +31,7 @@ cvars.AddChangeCallback( "lvs_ai_ignorenpcs", function( convar, oldValue, newVal
 end)
 
 LVS.cVar_FuelScale = CreateConVar( "lvs_fuelscale", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"Fuel tank size multiplier" )
-LVS.FuelScale = LVS.cVar_FuelScale and LVS.cVar_FuelScale:GetFloat()
+LVS.FuelScale = LVS.cVar_FuelScale and LVS.cVar_FuelScale:GetFloat() or 1
 cvars.AddChangeCallback( "lvs_fuelscale", function( convar, oldValue, newValue ) 
 	LVS.FuelScale = tonumber( newValue )
 end )
