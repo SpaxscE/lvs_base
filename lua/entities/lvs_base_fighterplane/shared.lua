@@ -20,6 +20,9 @@ ENT.TurnRatePitch = 1
 ENT.TurnRateYaw = 1
 ENT.TurnRateRoll = 1
 
+ENT.GravityTurnRatePitch = 1
+ENT.GravityTurnRateYaw = 1
+
 ENT.ForceLinearMultiplier = 1
 
 ENT.ForceAngleMultiplier = 1

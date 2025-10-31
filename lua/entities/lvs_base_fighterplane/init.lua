@@ -114,8 +114,8 @@ function ENT:CalcAero( phys, deltatime, EntTable )
 		GravMul = WorldGravity / 600
 	end
 
-	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul
-	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul
+	local GravityPitch = math.abs( PitchPull ) ^ 1.25 * self:Sign( PitchPull ) * GravMul * EntTable.GravityTurnRatePitch
+	local GravityYaw = math.abs( YawPull ) ^ 1.25 * self:Sign( YawPull ) * GravMul * EntTable.GravityTurnRateYaw
 
 	local StallMul = math.min( (-math.min(Vel.z + EntTable.StallVelocity,0) / 100) * EntTable.StallForceMultiplier, EntTable.StallForceMax )
 
