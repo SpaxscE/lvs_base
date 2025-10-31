@@ -8,7 +8,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",1, "DoorHandler" )
 
 	self:NetworkVar( "Float",0, "Fuel" )
-	self:NetworkVar( "Float",1, "Size" )
+	self:NetworkVar( "Float",1, "NWSize" )
 	self:NetworkVar( "Float",2, "HP" )
 	self:NetworkVar( "Float",3, "MaxHP" )
 
@@ -22,6 +22,14 @@ function ENT:SetupDataTables()
 		self:SetFuel( 1 )
 		self:NetworkVarNotify( "Fuel", self.OnFuelChanged )
 	end
+end
+
+function ENT:SetSize( num )
+	self:SetNWSize( num )
+end
+
+function ENT:GetSize()
+	return self:GetNWSize() * LVS.FuelScale
 end
 
 if SERVER then
