@@ -118,17 +118,6 @@ function ENT:GetPlayerBoneManipulation( ply, PodID )
 end
 
 function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
-
-	if ply:GetAllowWeaponsInVehicle() then
-		local pod = ply:GetVehicle()
-		local AimAngles = ply:GetAimVector():Angle()
-
-		local Ang = pod:WorldToLocalAngles( AimAngles )
-
-		ply:SetPoseParameter( "aim_pitch", Ang.p )
-		ply:SetPoseParameter( "aim_yaw", Ang.y - 90 )
-	end
-
 	ply:SetPlaybackRate( 1 )
 
 	if CLIENT then
