@@ -322,6 +322,21 @@ local function ServerSettings( Canvas )
 		net.SendToServer()
 	end
 
+	local slider = vgui.Create( "DNumSlider", Canvas )
+	slider:DockMargin( 16, 16, 16, 4 )
+	slider:Dock( TOP )
+	slider:SetText("Fuel tank size multiplier\n(Respawn the vehicle in order to take effect)")
+	slider:SetMin( 0 )
+	slider:SetMax( 10 )
+	slider:SetDecimals( 2 )
+	slider:SetConVar( "lvs_fuelscale" )
+	function slider:OnValueChanged( val )
+		net.Start("lvs_admin_setconvar")
+			net.WriteString("lvs_fuelscale")
+			net.WriteString( tostring( val ) )
+		net.SendToServer()
+	end
+
 	local CheckBox = vgui.Create( "DCheckBoxLabel", Canvas )
 	CheckBox:DockMargin( 16, 16, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )

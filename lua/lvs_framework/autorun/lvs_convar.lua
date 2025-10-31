@@ -6,6 +6,12 @@ cvars.AddChangeCallback( "lvs_freeze_teams", function( convar, oldValue, newValu
 	LVS.FreezeTeams = tonumber( newValue ) ~=0
 end, "lvs_freezeteams_callback" )
 
+LVS.cVar_FuelScale = CreateConVar( "lvs_fuelscale", "1", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"Fuel tank size multiplier" )
+LVS.FuelScale = LVS.cVar_FuelScale and LVS.cVar_FuelScale:GetFloat()
+cvars.AddChangeCallback( "lvs_fuelscale", function( convar, oldValue, newValue ) 
+	LVS.FuelScale = tonumber( newValue )
+end, "lvs_fuelscale_callback" )
+
 LVS.cVar_TeamPassenger = CreateConVar( "lvs_teampassenger", "0", {FCVAR_REPLICATED , FCVAR_ARCHIVE},"only allow players of matching ai-team to enter the vehicle? 1 = team only, 0 = everyone can enter" )
 LVS.TeamPassenger = LVS.cVar_TeamPassenger and LVS.cVar_TeamPassenger:GetBool() or false
 cvars.AddChangeCallback( "lvs_teampassenger", function( convar, oldValue, newValue ) 

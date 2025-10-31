@@ -42,7 +42,7 @@ function ENT:GetFuelType()
 end
 
 function ENT:GetSize()
-	return self.FuelAmount
+	return (self.FuelAmount * LVS.FuelScale)
 end
 
 function ENT:GetFuelType()
