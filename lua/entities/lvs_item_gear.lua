@@ -15,7 +15,7 @@ ENT.Editable = true
 ENT.PhysicsSounds = true
 
 function ENT:SetupDataTables()
-	self:NetworkVar( "Float",0, "MaxSpeed", { KeyName = "maxspeed", Edit = { type = "Float", order = 1,min = 0, max = 1000, category = "Upgrade Settings"} } )
+	self:NetworkVar( "Float",0, "MaxSpeed", { KeyName = "maxspeed", Edit = { type = "Float", order = 1,min = 1, max = 1000, category = "Upgrade Settings"} } )
 
 	if SERVER then
 

@@ -49,7 +49,7 @@ net.Receive( "lvs_maxvelocity_updater", function( len, ply )
 end )
 
 function ENT:ChangeVelocity( new )
-	new = math.min( new, physenv.GetPerformanceSettings().MaxVelocity )
+	new = math.Clamp( new, 1, physenv.GetPerformanceSettings().MaxVelocity )
 
 	self.MaxVelocity = new
 
