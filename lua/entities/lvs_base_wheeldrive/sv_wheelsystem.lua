@@ -146,13 +146,10 @@ function ENT:AddWheel( data )
 		B4.DoNotDuplicate = true
 	end
 
-	if expectedMaxRPM > 2150 then
-		local possibleMaxVelocity = (2150 * (math.pi * (Wheel:GetRadius() * 2))) / 60
+	local VelocityWheelSpazz = (2000 * (math.pi * (Wheel:GetRadius() * 2))) / 60
 
-		self.MaxVelocity = math.min( self.MaxVelocity, possibleMaxVelocity )
-		self.MaxVelocityReverse = math.min( self.MaxVelocityReverse, possibleMaxVelocity )
-
-		print("[LVS] - peripheral speed out of range! clamping!" )
+	if not self.MaxVelocityWheelSpazz or self.MaxVelocityWheelSpazz > VelocityWheelSpazz then
+		self.MaxVelocityWheelSpazz = VelocityWheelSpazz
 	end
 
 	Wheel:SetMaster( Master )

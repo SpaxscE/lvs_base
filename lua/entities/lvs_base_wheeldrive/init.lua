@@ -272,6 +272,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 	ent:SetRPM( curRPM )
 
 	local ForceAngle = vector_origin
+	local ForceLinear = Vector(0,0,0)
 
 	local TorqueFactor = ent:GetTorqueFactor()
 
@@ -335,15 +336,29 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 			local TorqueBoost = BoostStart - (math.min( math.max( math.abs( curRPM ) - BoostRPM, 0 ), BoostRPM) / BoostRPM) * BoostMul
 
-			local curVelocity = self:VectorSplitNormal( ent:GetDirectionAngle():Forward(),  phys:GetVelocity() )
+			local Forward = ent:GetDirectionAngle():Forward()
 
-			if targetVelocity >= 0 then
-				if curVelocity < targetVelocity then
-					ForceAngle = RotationAxis * Torque * TorqueBoost
+			local curVelocity = self:VectorSplitNormal( Forward,  phys:GetVelocity() )
+
+			if self:IsFakePhysicsEnabled() and TorqueBoost == 1 and ent:PhysicsOnGround() then
+				if targetVelocity >= 0 then
+					if curVelocity < targetVelocity then
+						ForceLinear:Add( Forward * Torque )
+					end
+				else
+					if curVelocity > targetVelocity then
+						ForceLinear:Add( Forward * Torque )
+					end
 				end
 			else
-				if curVelocity > targetVelocity then
-					ForceAngle = RotationAxis * Torque * TorqueBoost
+				if targetVelocity >= 0 then
+					if curVelocity < targetVelocity then
+						ForceAngle = RotationAxis * Torque * TorqueBoost
+					end
+				else
+					if curVelocity > targetVelocity then
+						ForceAngle = RotationAxis * Torque * TorqueBoost
+					end
 				end
 			end
 
@@ -365,7 +380,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		end
 	end
 
-	if not self:StabilityAssist() or not self:WheelsOnGround() then return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION end
+	if not self:StabilityAssist() or not self:WheelsOnGround() then return ForceAngle * forceMul, ForceLinear, SIM_GLOBAL_ACCELERATION end
 
 	local Vel = phys:GetVelocity()
 
@@ -384,22 +399,24 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		if VelY > VelX * 0.1 then
 			if VelX > EntTable.FastSteerActiveVelocity then
 				if VelY < VelX * 0.6 then
-					return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+					return ForceAngle * forceMul, ForceLinear, SIM_GLOBAL_ACCELERATION
 				end
 			else
-				return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+				return ForceAngle * forceMul, ForceLinear, SIM_GLOBAL_ACCELERATION
 			end
 		end
 	end
 
+	ForceLinear:Div( forceMul )
+
 	if IsBraking and not IsBrakingWheel then
-		return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+		return ForceAngle * forceMul, ForceLinear, SIM_GLOBAL_ACCELERATION
 	end
 
-	local ForceLinear = -self:GetUp() * EntTable.WheelDownForce * TorqueFactor
+	ForceLinear:Add( -self:GetUp() * EntTable.WheelDownForce * TorqueFactor )
 
 	if not self:GetRacingTires() then
-		ForceLinear = ForceLinear - Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier
+		ForceLinear:Add( -Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier )
 	end
 
 	return ForceAngle * forceMul, ForceLinear * forceMul, SIM_GLOBAL_ACCELERATION
@@ -540,4 +557,12 @@ function ENT:ApproachTargetAngle( TargetAngle )
 	local Steer = (math.min( math.abs( LocalAngSteer ), 1 ) ^ self.MouseSteerExponent * self:Sign( LocalAngSteer ))
 
 	self:SteerTo( Reversed and Steer or -Steer, self:GetMaxSteerAngle() )
+end
+
+function ENT:IsFakePhysicsEnabled()
+	local EntTable = self:GetTable()
+
+	if not EntTable.MaxVelocityWheelSpazz then return false end
+
+	return math.max( EntTable.MaxVelocity, EntTable.MaxVelocityReverse ) > EntTable.MaxVelocityWheelSpazz
 end
