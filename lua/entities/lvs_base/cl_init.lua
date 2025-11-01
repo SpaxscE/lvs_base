@@ -1,11 +1,12 @@
 include("shared.lua")
-include( "sh_weapons.lua" )
-include( "cl_effects.lua" )
-include( "cl_hud.lua" )
-include( "cl_optics.lua" )
-include( "cl_seatswitcher.lua" )
-include( "cl_trailsystem.lua" )
-include( "cl_boneposeparemeter.lua" )
+include("sh_weapons.lua")
+include("sh_velocity_changer.lua")
+include("cl_effects.lua")
+include("cl_hud.lua")
+include("cl_optics.lua")
+include("cl_seatswitcher.lua")
+include("cl_trailsystem.lua")
+include("cl_boneposeparemeter.lua")
 
 local Zoom = 0
 

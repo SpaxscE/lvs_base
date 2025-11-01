@@ -6,6 +6,7 @@ ENT.PrintName = "Supercharger"
 ENT.Author = "Luna"
 ENT.Information = "Luna's Vehicle Script"
 ENT.Category = "[LVS]"
+ENT.Information = "Edit Properties to change Torque and Power Curve"
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= false

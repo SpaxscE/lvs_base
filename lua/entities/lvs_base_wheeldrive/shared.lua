@@ -110,7 +110,6 @@ function ENT:SetupDataTables()
 	self:AddDT( "Float", "Brake" )
 
 	self:AddDT( "Float", "NWMaxSteer" )
-	self:AddDT( "Float", "NWMaxVelocity" )
 	self:AddDT( "Float", "WheelVelocity" )
 
 	self:AddDT( "Int", "NWGear" )
@@ -135,7 +134,6 @@ function ENT:SetupDataTables()
 	self:TrackSystemDT()
 
 	if SERVER then
-		self:SetNWMaxVelocity( self.MaxVelocity )
 		self:SetMaxThrottle( 1 )
 		self:SetSirenMode( -1 )
 	end
