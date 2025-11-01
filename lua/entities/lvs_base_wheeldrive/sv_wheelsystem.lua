@@ -147,11 +147,21 @@ function ENT:AddWheel( data )
 		local B4 = constraint.AdvBallsocket( Master,Wheel,0,0,vector_origin,vector_origin,0,0,-180,-Lock,-Lock,180,Lock,Lock,0,0,0,1,1)
 		B4.DoNotDuplicate = true
 
-		MaxRPM = 2000
+		MaxRPM = 2150
 	end
 
-	local VelocityWheelSpazz = (MaxRPM * (math.pi * (Wheel:GetRadius() * 2))) / 60
+	local circumference = math.pi * (Wheel:GetRadius() * 2)
 
+	if expectedMaxRPM > 2150 then
+		local possibleMaxVelocity = (2150 * circumference) / 60
+
+		self:ChangeVelocity( math.min( self.MaxVelocity, possibleMaxVelocity ) )
+		self.MaxVelocityReverse = math.min( self.MaxVelocityReverse, possibleMaxVelocity )
+
+		print("[LVS] - peripheral speed out of range! clamping!" )
+	end
+
+	local VelocityWheelSpazz = (MaxRPM * circumference) / 60
 	if not self.MaxVelocityWheelSpazz or self.MaxVelocityWheelSpazz > VelocityWheelSpazz then
 		self.MaxVelocityWheelSpazz = VelocityWheelSpazz
 	end
