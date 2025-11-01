@@ -114,6 +114,7 @@ if CLIENT then
 		["CHudHealth"] = true,
 		["CHudBattery"] = true,
 		["CHudAmmo"] = true,
+		["CHudSecondaryAmmo"] = true,
 	}
 	local function HUDShouldDrawLVS( name )
 		if hide[ name ] then return false end

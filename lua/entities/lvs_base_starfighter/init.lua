@@ -172,10 +172,10 @@ function ENT:OnSkyCollide( data, PhysObj )
 end
 
 function ENT:PhysicsSimulate( phys, deltatime )
-	if self:GetEngineActive() then phys:Wake() end
-
-	if not self:GetEngineActive() then
-		return Vector(0,0,0), Vector(0,0,0), SIM_NOTHING
+	if self:GetEngineActive() then
+		phys:Wake()
+	else
+		return vector_origin, vector_origin, SIM_NOTHING
 	end
 
 	local EntTable = self:GetTable()
