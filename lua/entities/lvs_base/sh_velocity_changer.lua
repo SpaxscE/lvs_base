@@ -43,6 +43,8 @@ net.Receive( "lvs_maxvelocity_updater", function( len, ply )
 		UpdatedVehicles[ id ] = nil
 	end
 
+	if #TableSend == 0 then return end
+
 	net.Start( "lvs_maxvelocity_updater" )
 		net.WriteTable( TableSend )
 	net.Send( ply )
