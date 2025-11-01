@@ -49,7 +49,9 @@ net.Receive( "lvs_maxvelocity_updater", function( len, ply )
 end )
 
 function ENT:ChangeVelocity( new )
-	self.MaxVelocity = math.min( new, physenv.GetPerformanceSettings().MaxVelocity )
+	new = math.min( new, physenv.GetPerformanceSettings().MaxVelocity )
+
+	self.MaxVelocity = new
 
 	timer.Simple(0, function()
 		if not IsValid( self ) then return end
