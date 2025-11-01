@@ -343,11 +343,11 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 			if self:IsFakePhysicsEnabled() and TorqueBoost == 1 and ent:PhysicsOnGround() then
 				if targetVelocity >= 0 then
 					if curVelocity < targetVelocity then
-						ForceLinear:Add( Forward * Torque )
+						ForceLinear = Forward * Torque
 					end
 				else
 					if curVelocity > targetVelocity then
-						ForceLinear:Add( Forward * Torque )
+						ForceLinear = Forward * Torque
 					end
 				end
 			else
@@ -375,7 +375,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 				Torque = powerCurve * engineTorque * TorqueFactor * Throttle * 2 * EntTable.PivotSteerTorqueMul
 
-				ForceLinear = vector_origin
+				ForceLinear = Vector(0,0,0)
 				ForceAngle = RotationAxis * Torque
 			end
 		end
