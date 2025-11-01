@@ -49,13 +49,17 @@ net.Receive( "lvs_maxvelocity_updater", function( len, ply )
 end )
 
 function ENT:ChangeVelocity( new )
-	self.MaxVelocity = new
+	self.MaxVelocity = math.min( new, physenv.GetPerformanceSettings().MaxVelocity )
 
-	local data = { ent = self, vel = new }
+	timer.Simple(0, function()
+		if not IsValid( self ) then return end
 
-	table.insert( UpdatedVehicles, data )
+		local data = { ent = self, vel = new }
 
-	net.Start( "lvs_maxvelocity_updater" )
-		net.WriteTable( {data} )
-	net.Broadcast()
+		table.insert( UpdatedVehicles, data )
+
+		net.Start( "lvs_maxvelocity_updater" )
+			net.WriteTable( {data} )
+		net.Broadcast()
+	end)
 end

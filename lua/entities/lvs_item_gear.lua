@@ -67,7 +67,7 @@ if SERVER then
 
 		if not IsValid( ent ) or not ent.LVS or not ent.MaxVelocity or not isfunction( ent.ChangeVelocity ) then return end
 
-		local MaxVelocity = math.min( self:GetMaxSpeed() * (1 / 0.09144), physenv.GetPerformanceSettings().MaxVelocity )
+		local MaxVelocity = self:GetMaxSpeed() * (1 / 0.09144)
 
 		local ply = self:GetCreator()
 
@@ -87,10 +87,6 @@ if SERVER then
 			util.Effect( "lvs_downgrade", effectdata )
 		end
 
-		if IsValid( ply ) then
-			ply:ChatPrint( "New Max Velocity: "..MaxVelocity )
-		end
-	
 		ent:ChangeVelocity( MaxVelocity )
 
 		duplicator.StoreEntityModifier( ent, "lvsSaveVelocity", { MaxVelocity = MaxVelocity } )
