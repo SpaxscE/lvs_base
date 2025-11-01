@@ -84,7 +84,7 @@ function ENT:AddWheel( data )
 
 	Wheel:lvsMakeSpherical( data.radius or -1 )
 
-	Wheel:SetWidth( data.width or 3 )
+	Wheel:SetWidth( data.width or 4 )
 
 	Wheel:SetCamber( data.camber or 0 )
 	Wheel:SetCaster( data.caster or 0 )

@@ -1,0 +1,8 @@
+"UnlitGeneric"
+ {
+ 	"$basetexture" "sprites/lvs/skidmark"
+ 	"$model" 		1
+ 	"$translucent" 	1
+ 	"$vertexalpha" 	1
+ 	"$vertexcolor" 	1
+ }

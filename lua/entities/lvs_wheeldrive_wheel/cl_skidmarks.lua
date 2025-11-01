@@ -1,4 +1,5 @@
 
+ENT.SkidmarkMaterial = Material("sprites/lvs/skidmark")
 ENT.SkidmarkMaterialDamaged = Material("sprites/lvs/skidmark_damaged")
 
 ENT.SkidmarkTraceAdd = Vector(0,0,10)
@@ -145,7 +146,7 @@ function ENT:RenderSkidMarks()
 		if skidmark.damaged then
 			render.SetMaterial( self.SkidmarkMaterialDamaged )
 		else
-			render.SetColorMaterial()
+			render.SetMaterial( self.SkidmarkMaterial )
 		end
 
 		for markID, data in pairs( skidmark.positions ) do
