@@ -10,6 +10,8 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= false
 
+ENT.PhysicsSounds = true
+
 if SERVER then
 	function ENT:SpawnFunction( ply, tr, ClassName )
 		if not tr.Hit then return end

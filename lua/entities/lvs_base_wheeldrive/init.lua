@@ -21,6 +21,7 @@ include("sv_damage.lua")
 include("sv_pivotsteer.lua")
 include("sv_manualtransmission.lua")
 include("sv_engine.lua")
+include("sv_hydraulics.lua")
 include("sh_camera_eyetrace.lua")
 
 ENT.DriverActiveSound = "common/null.wav"

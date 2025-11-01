@@ -266,6 +266,8 @@ function ENT:StartCommand( ply, cmd )
 		return
 	end
 
+	self:UpdateHydraulics( ply, cmd )
+
 	if ply:lvsMouseAim() then
 		if ply:lvsKeyDown( "FREELOOK" ) or ply:lvsKeyDown( "CAR_STEER_LEFT" ) or ply:lvsKeyDown( "CAR_STEER_RIGHT" ) then
 			self:CalcSteer( ply )

@@ -17,6 +17,8 @@ ENT.FuelType = LVS.FUELTYPE_PETROL
 ENT.lvsGasStationFillSpeed = 0.05
 ENT.lvsGasStationRefillMe = true
 
+ENT.PhysicsSounds = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Bool", 0, "Active" )
 	self:NetworkVar( "Float", 0, "Fuel" )

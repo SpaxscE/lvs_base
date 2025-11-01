@@ -175,6 +175,41 @@ hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 			default = "+walk",
 			cmd = "lvs_car_swap_ammo"
 		},
+				{
+			name = "CAR_HYDRAULIC",
+			category = "LVS-Car",
+			name_menu = "Hydraulic",
+			default = KEY_PAD_5,
+			cmd = "lvs_hydraulic"
+		},
+		{
+			name = "CAR_HYDRAULIC_FRONT",
+			category = "LVS-Car",
+			name_menu = "Hydraulic Front",
+			default = KEY_PAD_8,
+			cmd = "lvs_hydraulic_front"
+		},
+		{
+			name = "CAR_HYDRAULIC_REAR",
+			category = "LVS-Car",
+			name_menu = "Hydraulic Rear",
+			default = KEY_PAD_2,
+			cmd = "lvs_hydraulic_rear"
+		},
+		{
+			name = "CAR_HYDRAULIC_LEFT",
+			category = "LVS-Car",
+			name_menu = "Hydraulic Left",
+			default = KEY_PAD_4,
+			cmd = "lvs_hydraulic_left"
+		},
+		{
+			name = "CAR_HYDRAULIC_RIGHT",
+			category = "LVS-Car",
+			name_menu = "Hydraulic Right",
+			default = KEY_PAD_6,
+			cmd = "lvs_hydraulic_right"
+		},
 		{
 			name = "CAR_SHIFT_UP",
 			category = "LVS-Car",

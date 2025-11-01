@@ -11,10 +11,13 @@ ENT.AdminOnly		= false
 
 ENT.Editable = true
 
+ENT.PhysicsSounds = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float",0, "MaxSpeed", { KeyName = "maxspeed", Edit = { type = "Float", order = 1,min = 0, max = 1000, category = "Upgrade Settings"} } )
 
 	if SERVER then
+
 		self:SetMaxSpeed( 300 )
 	end
 end
@@ -47,11 +50,22 @@ if SERVER then
 
 		local ent = data.HitEntity
 
-		if not IsValid( ent ) or not ent.LVS then return end
+		if not IsValid( ent ) or not ent.LVS or not isfunction( ent.SetNWMaxVelocity ) then return end
 
 		local MaxVelocity = math.min( self:GetMaxSpeed() * (1 / 0.09144), physenv.GetPerformanceSettings().MaxVelocity )
 
-		PrintChat( self:GetMaxSpeed() )
+		if ent:GetNWMaxVelocity() < MaxVelocity then
+			ent:EmitSound("ambient/machines/spinup.wav")
+		else
+			ent:EmitSound("ambient/machines/spindown.wav")
+		end
+
+		ent:SetNWMaxVelocity( MaxVelocity )
+
+		local ply = self:GetCreator()
+		if IsValid( ply ) then
+			ply:ChatPrint( "New Max Velocity: "..MaxVelocity )
+		end
 
 		self.MarkForRemove = true
 

@@ -6,6 +6,8 @@ ENT._LVS = true
 
 ENT.Editable = true
 
+ENT.PhysicsSounds = true
+
 function ENT:SetupDataTables()
 	self:NetworkVar( "Entity",0, "Base" )
 
