@@ -35,6 +35,20 @@ if SERVER then
 		return ent
 	end
 
+	local function SaveVelocity( ply, ent, data )
+		if not duplicator or not duplicator.StoreEntityModifier then return end
+
+		if not IsValid( ent ) or not isfunction( ent.ChangeVelocity ) then return end
+
+		ent:ChangeVelocity( data.MaxVelocity )
+
+		duplicator.StoreEntityModifier( ent, "lvsSaveVelocity", data )
+	end
+
+	if duplicator and duplicator.RegisterEntityModifier then
+		duplicator.RegisterEntityModifier( "lvsSaveVelocity", SaveVelocity )
+	end
+
 	function ENT:Initialize()	
 		self:SetModel( "models/props_wasteland/gear01.mdl" )
 		self:PhysicsInit( SOLID_VPHYSICS )
@@ -78,6 +92,8 @@ if SERVER then
 		end
 	
 		ent:ChangeVelocity( MaxVelocity )
+
+		duplicator.StoreEntityModifier( ent, "lvsSaveVelocity", { MaxVelocity = MaxVelocity } )
 
 		self.MarkForRemove = true
 
