@@ -22,6 +22,7 @@ ENT.EngineSplashEndSize = 200
 ENT.EngineSplashVelocity = 500
 ENT.EngineSplashVelocityRandomAdd = 200
 ENT.EngineSplashThrowAngle = 0
+ENT.EngineSplashDistance = 100
 
 ENT.DeleteOnExplode = true
 

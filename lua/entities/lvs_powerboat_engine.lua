@@ -247,7 +247,7 @@ function ENT:EngineFX( vehicle )
 	EntTable.nextPropFX = T + math.max(0.2 - throttle,0.05)
 
 	local startpos = self:GetPos()
-	local endpos = self:LocalToWorld( Vector(0,0,-100) )
+	local endpos = self:LocalToWorld( Vector(0,0,-EntTable.EngineSplashDistance) )
 
 	local traceWater = util.TraceLine( {
 		start = startpos,
