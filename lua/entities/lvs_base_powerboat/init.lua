@@ -100,7 +100,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
 	local Thrust = self:GetThrust()
-	local Steer = self:GetSteer() * math.Clamp( math.abs( self:GetThrustStrenght() ) + math.min(math.abs( VelL.x ) / EntTable.MaxVelocity, 1 ), 0, 1 )
+	local Steer = self:GetSteer() * math.Clamp( math.abs( self:GetThrustStrenght() ) + math.min(math.abs( VelL.x ) / math.min( EntTable.MaxVelocity, EntTable.MaxVelocityReverse ), 1 ), 0, 1 )
 
 	local Brake = self:GetBrake()
 
@@ -112,7 +112,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local Yaw = - AngVel.z + Steer * EntTable.TurnForceYaw
 	local Roll = - AngVel.x * 5 - Steer * EntTable.TurnForceRoll
 
-	ForceLinear:Add( self:GetForward() * Thrust + self:GetRight() * VelL.y * 0.5 )
+	ForceLinear:Add( self:GetForward() * Thrust + self:GetRight() * VelL.y )
 	ForceAngle:Add( Vector(Roll,Pitch,Yaw) )
 
 	local FloatExp = math.max( self:GetUp().z, 0 ) ^ EntTable.FloatExponent
