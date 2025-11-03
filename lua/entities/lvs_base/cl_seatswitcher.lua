@@ -102,6 +102,8 @@ function ENT:LVSHudPaintSeatSwitcher( X, Y, w, h, ScrX, ScrY, ply )
 
 		if I <= 0 then continue end
 
+		if not Hide and I > 10 then continue end
+
 		if I == MySeat then
 			draw.RoundedBox(5, X + xPos - xHider, yPos + I * 30, 35 + HiderOffset, 25, Color(LVS.ThemeColor.r, LVS.ThemeColor.g, LVS.ThemeColor.b,100 + 50 * ply.smHider) )
 		else

@@ -44,7 +44,21 @@ hook.Add( "PlayerButtonDown", "!!!lvsSeatSwitcherButtonDown", function( ply, but
 		end
 	else
 		for _, Pod in pairs( vehicle:GetPassengerSeats() ) do
-			if not IsValid( Pod ) or Pod:GetNWInt( "pPodIndex", 3 ) ~= LVS.pSwitchKeys[ button ] or IsValid( Pod:GetDriver() ) then continue end
+			if not IsValid( Pod ) or Pod:GetNWInt( "pPodIndex", 3 ) ~= LVS.pSwitchKeys[ button ] then continue end
+
+			local Driver = Pod:GetDriver()
+
+			if IsValid( Driver ) then
+				if Driver == ply then
+					for _, DoorHandler in ipairs( vehicle:GetDoorHandlers() ) do
+						if DoorHandler:GetLinkedSeat() ~= Pod or not DoorHandler:IsOpen() then continue end
+
+						DoorHandler:Close( ply )
+					end
+				end
+
+				continue
+			end
 
 			if hook.Run( "LVS.OnPlayerRequestSeatSwitch", ply, vehicle, CurPod, Pod ) == false then continue end
 
