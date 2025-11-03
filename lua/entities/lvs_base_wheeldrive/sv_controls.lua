@@ -73,9 +73,13 @@ end
 function ENT:LerpThrottle( Throttle )
 	if not self:GetEngineActive() then self:SetThrottle( 0 ) return end
 
-	local Rate = FrameTime() * self.ThrottleRate
+	local FT = FrameTime()
+
+	local RateUp = self.ThrottleRate * FT
+	local RateDn = 3.5 * FT
+
 	local Cur = self:GetThrottle()
-	local New = Cur + math.Clamp(Throttle - Cur,-Rate,Rate)
+	local New = Cur + math.Clamp(Throttle - Cur,-RateDn,RateUp)
 
 	self:SetThrottle( New )
 end
