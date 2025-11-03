@@ -402,6 +402,10 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 
 				if vehicle:GetlvsLockedStatus() then continue end
 
+				local T = CurTime()
+
+				if (ply._lvsNextExit or 0) > T then continue end
+
 				ply:ExitVehicle()
 			end
 		end

@@ -223,6 +223,14 @@ function ENT:Use( ply )
 		return
 	end
 
+	if ply:GetMoveType() == MOVETYPE_NOCLIP then
+		ply._lvsNextExit = CurTime() + 0.5
+
+		self:SetPassenger( ply )
+
+		return
+	end
+
 	if ply:KeyDown( IN_SPEED ) then return end
 
 	local Handler = self:GetDoorHandler( ply )
