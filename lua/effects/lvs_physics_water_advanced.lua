@@ -43,7 +43,7 @@ function EFFECT:Init( data )
 	local SwapSides = math.abs( Ent:GetSteer() ) > 0.9
 	local Res = math.max( math.Round( (Target:GetPos() - Pos):LengthSqr() / 2500000, 0 ), 5 )
 
-	for i = -90, 90, Res do
+	for i = -135, 135, Res do
 		local Dir = Angle(0,MoveAng.y+i,0):Forward()
 
 		local StartPos = Pos + Dir * Len
@@ -74,7 +74,7 @@ function EFFECT:Init( data )
 		local pfxMul = math.Clamp( pfxVel.z / 250, 1, 2 )
 
 		particle:SetVelocity( pfxVel )
-		particle:SetDieTime( (math.Rand(0.3,0.6) + math.Rand(0.1,0.2) * invmul) * pfxMul )
+		particle:SetDieTime( (math.Rand(0.6,1) + math.Rand(0.2,0.4) * invmul) * pfxMul )
 		particle:SetAirResistance( 60 ) 
 		particle:SetStartAlpha( ((pfxMul / 2) ^ 2) * 255 )
 		particle:SetEndAlpha( 0 )
@@ -112,6 +112,47 @@ function EFFECT:Init( data )
 					end
 				end
 			end
+
+			if not ShouldPlaySound then return end
+
+			local emitter3D = Ent:GetParticleEmitter3D( Ent:GetPos() )
+
+			if not IsValid( emitter3D ) then return end
+
+			local particle = emitter3D:Add("effects/splashwake1", startpos )
+
+			if not particle then return end
+
+			local scale = math.Rand(0.5,2)
+			local size = p:GetEndSize()
+			local vsize = Vector(size,size,size)
+
+			particle:SetStartSize( size * scale * 0.5 )
+			particle:SetEndSize( size * scale )
+			particle:SetDieTime( math.Rand(0.5,1) )
+			particle:SetStartAlpha( 255 )
+			particle:SetEndAlpha( 0 )
+			particle:SetPos( startpos )
+			particle:SetAngles( Angle(-90,math.Rand(-180,180),0) )
+			particle:SetNextThink( CurTime() )
+			particle:SetThinkFunction( function( pfx )
+
+				local startpos = pfx:GetPos()
+				local endpos = startpos - Vector(0,0,100)
+
+				local trace = util.TraceHull( {
+					start = startpos,
+					endpos = endpos,
+					filter = Ent,
+					whitelist = true,
+					mins = -vsize,
+					maxs = vsize,
+				} )
+
+				if trace.Hit then pfx:SetDieTime( 0 ) return end
+
+				pfx:SetNextThink( CurTime() )
+			end )
 		end )
 	end
 end

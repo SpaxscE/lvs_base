@@ -54,7 +54,7 @@ end
 function ENT:Initialize()
 	self:SetModel( self.MDL )
 
-	self:PhysicsInit( SOLID_VPHYSICS )
+	self:PhysicsInit( SOLID_VPHYSICS, self.MassCenterOverride )
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 	self:SetUseType( SIMPLE_USE )
