@@ -120,7 +120,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	ForceLinear:Mul( FloatExp )
 	ForceAngle:Mul( FloatExp )
 
-	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
+	return self:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, SIM_GLOBAL_ACCELERATION )
+end
+
+function ENT:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, simulate )
+	return ForceAngle, ForceLinear, simulate
 end
 
 function ENT:ApproachTargetAngle( TargetAngle )

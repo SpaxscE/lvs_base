@@ -181,5 +181,9 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local ForceLinear = (Aero * 10000 * EntTable.ForceLinearMultiplier + Vector(Thrust,0,0)) * deltatime
 	local ForceAngle = (Torque * 25 * EntTable.ForceAngleMultiplier - phys:GetAngleVelocity() * 1.5 * EntTable.ForceAngleDampingMultiplier) * deltatime * 250
 
-	return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
+	return self:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, SIM_LOCAL_ACCELERATION )
+end
+
+function ENT:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, simulate )
+	return ForceAngle, ForceLinear, simulate
 end

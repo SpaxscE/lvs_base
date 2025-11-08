@@ -138,7 +138,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		ForceAngle.z = (EntTable._SteerOverrideMove * math.max( self:GetThrust() * 2, 1 ) * 100 - phys:GetAngleVelocity().z) * Mul
 	end
 
-	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
+	return self:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, SIM_GLOBAL_ACCELERATION )
+end
+
+function ENT:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, simulate )
+	return ForceAngle, ForceLinear, simulate
 end
 
 function ENT:ApproachThrust( New, Delta )

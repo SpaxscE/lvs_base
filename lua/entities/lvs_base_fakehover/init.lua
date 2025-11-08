@@ -63,9 +63,11 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local ForceLinear = ((Vector( MoveX, MoveY, 0 ) - Vector(VelL.x,VelL.y,0)) * self.ForceLinearMultiplier) * OnGroundMul * deltatime * 500
 	local ForceAngle = (Vector(0,0,Steer) * self.ForceAngleMultiplier * 2 - phys:GetAngleVelocity() * self.ForceAngleDampingMultiplier) * OnGroundMul * deltatime * 600 
 
-	local SIMULATE = self:GetDisabled() and SIM_NOTHING or SIM_LOCAL_ACCELERATION
+	return self:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, self:GetDisabled() and SIM_NOTHING or SIM_LOCAL_ACCELERATION )
+end
 
-	return ForceAngle, ForceLinear, SIMULATE
+function ENT:PhysicsSimulateOverride( ForceAngle, ForceLinear, phys, deltatime, simulate )
+	return ForceAngle, ForceLinear, simulate
 end
 
 function ENT:IsEngineStartAllowed()
