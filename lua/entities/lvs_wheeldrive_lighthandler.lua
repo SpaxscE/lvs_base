@@ -461,13 +461,13 @@ function ENT:CalcTypeActivators( base )
 
 	if Left[ TurnMode ] then
 		if main >= 0.5 then
-			self:LerpActivator( "main+brake+turnleft", main * 0.75 + turnleft * 1.25, Rate )
+			self:LerpActivator( "main+brake+turnleft", main + turnleft * 2, Rate )
 		else
 			self:LerpActivator( "main+brake+turnleft", turnleft, Rate )
 		end
 	else
 		if main >= 0.5 then
-			self:LerpActivator( "main+brake+turnleft", main * 0.75 + brake * 1.25, Rate )
+			self:LerpActivator( "main+brake+turnleft", main + brake * 2, Rate )
 		else
 			self:LerpActivator( "main+brake+turnleft", brake, Rate )
 		end
@@ -475,27 +475,27 @@ function ENT:CalcTypeActivators( base )
 
 	if Right[ TurnMode ] then
 		if main >= 0.5 then
-			self:LerpActivator( "main+brake+turnright", main * 0.75 + turnright * 1.25, Rate )
+			self:LerpActivator( "main+brake+turnright", main + turnright * 2, Rate )
 		else
 			self:LerpActivator( "main+brake+turnright", turnright, Rate )
 		end
 	else
 		if main >= 0.5 then
-			self:LerpActivator( "main+brake+turnright", main * 0.75 + brake * 1.25, Rate )
+			self:LerpActivator( "main+brake+turnright", main + brake * 2, Rate )
 		else
 			self:LerpActivator( "main+brake+turnright", brake, Rate )
 		end
 	end
 
 	if main >= 0.5 then
-		self:LerpActivator( "main+brake", main * 0.75 + brake * 1.25, Rate )
+		self:LerpActivator( "main+brake", main + brake * 2, Rate )
 	else
 		self:LerpActivator( "main+brake", brake, Rate )
 	end
 
-	self:LerpActivator( "main+high", main * 0.75 + high * 1.25, Rate )
+	self:LerpActivator( "main+high", main + high * 2, Rate )
 
-	self:LerpActivator( "main+fog", main * 0.75 + fog * 1.25, Rate )
+	self:LerpActivator( "main+fog", main + fog * 2, Rate )
 
 	self:LerpActivator( "high", high, Rate )
 
