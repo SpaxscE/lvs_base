@@ -264,6 +264,11 @@ function ENT:EngineFX( vehicle )
 
 	if not IsValid( emitter ) then return end
 
+	local VecCol = render.GetLightColor( pos ) * 0.5
+	VecCol.r = math.min( VecCol.r + 0.5, 1 ) * 255
+	VecCol.g = math.min( VecCol.g + 0.5, 1 ) * 255
+	VecCol.b = math.min( VecCol.b + 0.5, 1 ) * 255
+
 	local particle = emitter:Add( "effects/splash4", pos )
 
 	local dir = self:LocalToWorldAngles( Angle(EntTable.EngineSplashThrowAngle,180 - vehicle:GetSteer() * 30,0) ):Forward()
@@ -279,7 +284,7 @@ function ENT:EngineFX( vehicle )
 	particle:SetEndSize( EntTable.EngineSplashEndSize * throttle )
 
 	particle:SetRoll( math.Rand(-5,5) )
-	particle:SetColor(255,255,255)
+	particle:SetColor(VecCol.r,VecCol.g,VecCol.b)
 	particle:SetGravity( Vector(0,0,-600) )
 	particle:SetCollide( false )
 	particle:SetNextThink( T )
@@ -315,5 +320,6 @@ function ENT:EngineFX( vehicle )
 		particle:SetEndAlpha( 0 )
 		particle:SetPos( startpos )
 		particle:SetAngles( Angle(-90,math.Rand(-180,180),0) )
+		particle:SetColor(VecCol.r,VecCol.g,VecCol.b)
 	end )
 end

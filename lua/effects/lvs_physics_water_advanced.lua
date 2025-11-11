@@ -20,6 +20,11 @@ function EFFECT:Init( data )
 
 	local T = CurTime()
 
+	local VecCol = render.GetLightColor( Pos ) * 0.5
+	VecCol.r = math.min( VecCol.r + 0.5, 1 ) * 255
+	VecCol.g = math.min( VecCol.g + 0.5, 1 ) * 255
+	VecCol.b = math.min( VecCol.b + 0.5, 1 ) * 255
+
 	local mul = math.min(Speed * 0.005,1)
 	local invmul = 1 - mul
 
@@ -82,7 +87,7 @@ function EFFECT:Init( data )
 		particle:SetEndSize( 15 + math.Rand(10,20) * mul * pfxMul )
 		particle:SetRoll( math.Rand(-1,1) * math.Rand(50,150) )
 		particle:SetRollDelta( math.Rand(-1,1) * pfxMul * mul * 0.5 )
-		particle:SetColor( 255,255,255 )
+		particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
 		particle:SetGravity( Vector( 0, 0, -600 ) - Vel * math.abs( i * 0.15 ) / 65 )
 		particle:SetCollide( false )
 		particle:SetNextThink( T )
@@ -134,6 +139,7 @@ function EFFECT:Init( data )
 			particle:SetEndAlpha( 0 )
 			particle:SetPos( startpos )
 			particle:SetAngles( Angle(-90,math.Rand(-180,180),0) )
+			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
 			particle:SetNextThink( CurTime() )
 			particle:SetThinkFunction( function( pfx )
 
