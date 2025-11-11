@@ -16,14 +16,14 @@ function EFFECT:Init( data )
 
 	if Speed < 50 then return end
 
+	local Steer = math.abs( Ent:GetSteer() )
+
 	local ShouldPlaySound = false
 
 	local T = CurTime()
 
-	local VecCol = render.GetLightColor( Pos ) * 0.5
-	VecCol.r = math.min( VecCol.r + 0.5, 1 ) * 255
-	VecCol.g = math.min( VecCol.g + 0.5, 1 ) * 255
-	VecCol.b = math.min( VecCol.b + 0.5, 1 ) * 255
+	local LightColor = render.GetLightColor( Pos )
+	local VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
 
 	local mul = math.min(Speed * 0.005,1)
 	local invmul = 1 - mul
@@ -64,7 +64,7 @@ function EFFECT:Init( data )
 
 		if not trace.Hit then continue end
 
-		local fxPos = Ent:WorldToLocal( trace.HitPos )
+		local fxPos = Ent:WorldToLocal( trace.HitPos + trace.HitNormal * 2 )
 		if SwapSides then fxPos.y = -fxPos.y end
 		fxPos = Ent:LocalToWorld( fxPos )
 
@@ -72,14 +72,14 @@ function EFFECT:Init( data )
 
 		if not particle then continue end
 
-		local pfxVel = Ent:WorldToLocal( EntPos + Dir * Speed * 0.75 + trace.HitNormal * Speed * 0.25 + Vector(0,0,50) )
+		local pfxVel = Ent:WorldToLocal( EntPos + Dir * Speed * 0.5 + trace.HitNormal * Speed * 0.25 )
 		if SwapSides then pfxVel.y = -pfxVel.y end
 		pfxVel = Ent:LocalToWorld( pfxVel ) - EntPos
 
 		local pfxMul = math.Clamp( pfxVel.z / 250, 1, 2 )
 
 		particle:SetVelocity( pfxVel )
-		particle:SetDieTime( (math.Rand(0.6,1) + math.Rand(0.2,0.4) * invmul) * pfxMul )
+		particle:SetDieTime( (math.Rand(0.8,0.8) + math.Rand(0.2,0.4) * invmul) * pfxMul )
 		particle:SetAirResistance( 60 ) 
 		particle:SetStartAlpha( ((pfxMul / 2) ^ 2) * 255 )
 		particle:SetEndAlpha( 0 )
@@ -87,8 +87,8 @@ function EFFECT:Init( data )
 		particle:SetEndSize( 15 + math.Rand(10,20) * mul * pfxMul )
 		particle:SetRoll( math.Rand(-1,1) * math.Rand(50,150) )
 		particle:SetRollDelta( math.Rand(-1,1) * pfxMul * mul * 0.5 )
-		particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
-		particle:SetGravity( Vector( 0, 0, -600 ) - Vel * math.abs( i * 0.15 ) / 65 )
+		particle:SetColor(VecCol.r,VecCol.g,VecCol.b)
+		particle:SetGravity( Vector( 0, 0, -600 * math.Rand(1,1 + Steer * 3) ) - Vel * math.abs( i * 0.15 ) / 65 )
 		particle:SetCollide( false )
 		particle:SetNextThink( T )
 		particle:SetThinkFunction( function( p )
@@ -139,7 +139,7 @@ function EFFECT:Init( data )
 			particle:SetEndAlpha( 0 )
 			particle:SetPos( startpos )
 			particle:SetAngles( Angle(-90,math.Rand(-180,180),0) )
-			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
+			particle:SetColor(VecCol.r,VecCol.g,VecCol.b)
 			particle:SetNextThink( CurTime() )
 			particle:SetThinkFunction( function( pfx )
 

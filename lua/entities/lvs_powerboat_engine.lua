@@ -11,7 +11,13 @@ ENT._LVS = true
 
 ENT.RenderGroup = RENDERGROUP_BOTH 
 
-if SERVER then return end
+if SERVER then
+	function ENT:Think()
+		return false
+	end
+
+	return
+end
 
 ENT._oldEnActive = false
 ENT._ActiveSounds = {}
@@ -264,10 +270,8 @@ function ENT:EngineFX( vehicle )
 
 	if not IsValid( emitter ) then return end
 
-	local VecCol = render.GetLightColor( pos ) * 0.5
-	VecCol.r = math.min( VecCol.r + 0.5, 1 ) * 255
-	VecCol.g = math.min( VecCol.g + 0.5, 1 ) * 255
-	VecCol.b = math.min( VecCol.b + 0.5, 1 ) * 255
+	local LightColor = render.GetLightColor( pos )
+	local VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
 
 	local particle = emitter:Add( "effects/splash4", pos )
 

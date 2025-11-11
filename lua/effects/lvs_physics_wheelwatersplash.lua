@@ -24,7 +24,8 @@ function EFFECT:Init( data )
 		}
 	end
 
-	self.VecCol = (render.GetLightColor( Pos ) * 0.25 + Vector(0.75,0.75,0.75)) * 255
+	local LightColor = render.GetLightColor( Pos )
+	self.VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
 
 	local emitter = Ent:GetParticleEmitter( Ent:GetPos() )
 	local Vel = Ent:GetVelocity():Length()

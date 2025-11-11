@@ -8,18 +8,13 @@ function EFFECT:Init( data )
 	self.LifeTime = math.Rand(1.5,3)
 	self.DieTime = CurTime() + self.LifeTime
 
-	local VecCol = render.GetLightColor( Pos ) * 0.5
-	VecCol.r = math.min( VecCol.r + 0.5, 1 ) * 255
-	VecCol.g = math.min( VecCol.g + 0.5, 1 ) * 255
-	VecCol.b = math.min( VecCol.b + 0.5, 1 ) * 255
+	local LightColor = render.GetLightColor( Pos )
+	self.VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
 
 	self.Splash = {
 		Pos = Pos,
 		Mat = Material("effects/splashwake1"),
 		RandomAng = math.random(0,360),
-		ColorR = VecCol.r,
-		ColorG = VecCol.g,
-		ColorB = VecCol.b,
 	}
 
 	local emitter = Ent:GetParticleEmitter( Ent:GetPos() )
@@ -35,7 +30,7 @@ function EFFECT:Init( data )
 			particle:SetStartSize( 50 )
 			particle:SetEndSize( 100 )
 			particle:SetRoll( math.Rand(-1,1) * 100 )
-			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
+			particle:SetColor(self.VecCol.r,self.VecCol.g,self.VecCol.b)
 			particle:SetGravity( Vector( 0, 0, -600 ) )
 			particle:SetCollide( false )
 		end
@@ -58,7 +53,7 @@ function EFFECT:Render()
 
 		cam.Start3D2D( self.Splash.Pos + Vector(0,0,1), Angle(0,0,0), 1 )
 			surface.SetMaterial( self.Splash.Mat )
-			surface.SetDrawColor( self.Splash.ColorR, self.Splash.ColorG, self.Splash.ColorB, Alpha )
+			surface.SetDrawColor( self.VecCol.r, self.VecCol.g, self.VecCol.b, Alpha )
 			surface.DrawTexturedRectRotated( 0, 0, S , S, self.Splash.RandomAng )
 		cam.End3D2D()
 	end

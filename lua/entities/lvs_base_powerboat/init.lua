@@ -79,9 +79,18 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	traceData.mask = MASK_WATER
 	local traceWater = util.TraceLine( traceData )
 
-	local BuoyancyForce = math.min( math.max( traceWater.HitPos.z - pos.z + EntTable.FloatHeight, 0 ), 10 )
+	local EngineInWater = traceWater.Hit
+	local Engine = self:GetEngine()
+	if IsValid( Engine ) then
+		traceData.start = Engine:GetPos()
+		traceData.endpos = Engine:LocalToWorld( Vector(0,0,-EntTable.EngineSplashDistance) )
 
-	if not traceWater.Hit or BuoyancyForce == 0 then return vector_origin, vector_origin, SIM_NOTHING end
+		EngineInWater = util.TraceLine( traceData ).Hit
+	end
+
+	if not EngineInWater then return vector_origin, vector_origin, SIM_NOTHING end
+
+	local BuoyancyForce = math.min( math.max( traceWater.HitPos.z - pos.z + EntTable.FloatHeight, 0 ), 10 )
 
 	local Grav = physenv.GetGravity()
 	local Vel = phys:GetVelocity()
@@ -100,7 +109,10 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local VelL = self:WorldToLocal( self:GetPos() + Vel )
 
 	local Thrust = self:GetThrust()
-	local Steer = self:GetSteer() * math.Clamp( math.abs( self:GetThrustStrenght() ) + math.min(math.abs( VelL.x ) / math.min( EntTable.MaxVelocity, EntTable.MaxVelocityReverse ), 1 ), 0, 1 )
+	local ThrustStrength = math.abs( self:GetThrustStrenght() )
+
+	local SteerInput = self:GetSteer()
+	local Steer = SteerInput * math.Clamp( ThrustStrength + math.min(math.abs( VelL.x ) / math.min( EntTable.MaxVelocity, EntTable.MaxVelocityReverse ), 1 ), 0, 1 )
 
 	local Brake = self:GetBrake()
 
@@ -109,8 +121,12 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	end
 
 	local Pitch = -(math.max( math.cos( CurTime() * EntTable.FloatWaveFrequency + self:EntIndex() * 1337 ), 0 ) * VelL.x * 0.25 * EntTable.FloatWaveIntensity + Thrust * 0.25 * math.Clamp( VelL.x / EntTable.MaxVelocity,0,1) * EntTable.FloatThrottleIntensity)
-	local Yaw = - AngVel.z + Steer * EntTable.TurnForceYaw
+	local Yaw = Steer * EntTable.TurnForceYaw
 	local Roll = - AngVel.x * 5 - Steer * EntTable.TurnForceRoll
+
+	if math.abs( SteerInput ) < 1 and BuoyancyForce > 0 and not self:IsPlayerHolding() then
+		Yaw = Yaw - AngVel.z * math.max( ((1 - math.abs( SteerInput )) ^ 2) * 100 - 100 * ThrustStrength, 1 )
+	end
 
 	ForceLinear:Add( self:GetForward() * Thrust + self:GetRight() * VelL.y )
 	ForceAngle:Add( Vector(Roll,Pitch,Yaw) )
