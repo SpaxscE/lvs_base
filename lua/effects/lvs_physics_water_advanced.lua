@@ -23,7 +23,10 @@ function EFFECT:Init( data )
 	local T = CurTime()
 
 	local LightColor = render.GetLightColor( Pos )
-	local VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
+	local VecCol = Vector(1,1.2,1.4) * (0.06 + (0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b)) * 1000
+	VecCol.x = math.min( VecCol.x, 255 )
+	VecCol.y = math.min( VecCol.y, 255 )
+	VecCol.z = math.min( VecCol.z, 255 )
 
 	local mul = math.min(Speed * 0.005,1)
 	local invmul = 1 - mul

@@ -271,7 +271,10 @@ function ENT:EngineFX( vehicle )
 	if not IsValid( emitter ) then return end
 
 	local LightColor = render.GetLightColor( pos )
-	local VecCol = Vector(0.8,0.9,1) * math.min(0.25 + (((0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b))) * 2, 1 ) * 255
+	local VecCol = Vector(1,1.2,1.4) * (0.06 + (0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b)) * 1000
+	VecCol.x = math.min( VecCol.x, 255 )
+	VecCol.y = math.min( VecCol.y, 255 )
+	VecCol.z = math.min( VecCol.z, 255 )
 
 	local particle = emitter:Add( "effects/splash4", pos )
 

@@ -93,12 +93,16 @@ function EFFECT:Init( data )
 	local emitter = ent:GetParticleEmitter( start )
 	local emitter3D = ent:GetParticleEmitter3D( start )
 
-	local VecCol = render.GetLightColor( pos + dir ) * 0.5
+	local VecCol
+	local LightColor = render.GetLightColor( pos + dir )
 
 	if underwater then
-		VecCol = (VecCol * 0.25 + Vector(0.75,0.75,0.75)) * 255
+		VecCol = Vector(1,1.2,1.4) * (0.06 + (0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b)) * 1000
+		VecCol.x = math.min( VecCol.x, 255 )
+		VecCol.y = math.min( VecCol.y, 255 )
+		VecCol.z = math.min( VecCol.z, 255 )
 	else
-		VecCol = (VecCol + Vector(0.3,0.25,0.15)) * 255
+		VecCol = (LightColor * 0.5 + Vector(0.3,0.25,0.15)) * 255
 	end
 
 	local DieTime = math.Rand(0.8,1.6)
