@@ -53,7 +53,7 @@ function ENT:LockRotation( TimedLock )
 
 	self._OriginalMass = Mass
 
-	PhysObj:SetMass( Mass * 1.5 )
+	PhysObj:SetMass( Mass * 2 )
 end
 
 function ENT:ReleaseRotation()
