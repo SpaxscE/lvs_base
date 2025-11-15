@@ -343,7 +343,6 @@ function ENT:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
 
 				Torque = powerCurve * engineTorque * TorqueFactor * Throttle * 2 * EntTable.PivotSteerTorqueMul
 
-				ForceLinear = Vector(0,0,0)
 				ForceAngle = RotationAxis * Torque
 			end
 		end
