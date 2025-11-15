@@ -320,25 +320,13 @@ function ENT:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
 
 			local curVelocity = self:VectorSplitNormal( Forward,  phys:GetVelocity() )
 
-			if self:IsFakePhysicsEnabled() and TorqueBoost == 1 and ent:PhysicsOnGround() then
-				if targetVelocity >= 0 then
-					if curVelocity < targetVelocity then
-						ForceLinear = Forward * Torque
-					end
-				else
-					if curVelocity > targetVelocity then
-						ForceLinear = Forward * Torque
-					end
+			if targetVelocity >= 0 then
+				if curVelocity < targetVelocity then
+					ForceAngle = RotationAxis * Torque * TorqueBoost
 				end
 			else
-				if targetVelocity >= 0 then
-					if curVelocity < targetVelocity then
-						ForceAngle = RotationAxis * Torque * TorqueBoost
-					end
-				else
-					if curVelocity > targetVelocity then
-						ForceAngle = RotationAxis * Torque * TorqueBoost
-					end
+				if curVelocity > targetVelocity then
+					ForceAngle = RotationAxis * Torque * TorqueBoost
 				end
 			end
 
@@ -387,8 +375,6 @@ function ENT:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
 			end
 		end
 	end
-
-	ForceLinear:Div( 4.5 ) -- trust me bro, its 4.5!!
 
 	if IsBraking and not IsBrakingWheel then
 		return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
@@ -538,12 +524,4 @@ function ENT:ApproachTargetAngle( TargetAngle )
 	local Steer = (math.min( math.abs( LocalAngSteer ), 1 ) ^ self.MouseSteerExponent * self:Sign( LocalAngSteer ))
 
 	self:SteerTo( Reversed and Steer or -Steer, self:GetMaxSteerAngle() )
-end
-
-function ENT:IsFakePhysicsEnabled()
-	local EntTable = self:GetTable()
-
-	if not EntTable.MaxVelocityWheelSpazz then return false end
-
-	return math.max( EntTable.MaxVelocity, EntTable.MaxVelocityReverse ) > EntTable.MaxVelocityWheelSpazz
 end
