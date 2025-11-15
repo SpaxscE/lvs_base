@@ -234,7 +234,7 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	local T = CurTime()
 
 	if (WheelTable._NextSimulate or 0) < T or not WheelTable.Simulate then
-		WheelTable._NextSimulate = T + ((self:PivotSteer() or self:GetBrake() > 0) and 0.02 or 0.2)
+		WheelTable._NextSimulate = T + ((self:PivotSteer() or self:GetBrake() > 0) and EntTable.WheelTickIntervalBraking or EntTable.WheelTickInterval)
 
 		WheelTable.Force, WheelTable.ForceAng, WheelTable.Simulate = self:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
 	end
