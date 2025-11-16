@@ -50,11 +50,12 @@ function ENT:CalcTracks()
 
 	if (EntTable._NextCalcTracks or 0) < T then
 		local ply = LocalPlayer()
-		if IsValid( ply ) then
-			local ViewEnt = ply:GetViewEntity()
-			if IsValid( ViewEnt ) then
-				ply = ViewEnt
-			end
+
+		if not IsValid( ply ) then return end
+
+		local ViewEnt = ply:GetViewEntity()
+		if IsValid( ViewEnt ) then
+			ply = ViewEnt
 		end
 
 		local Delay = math.min( (self:GetPos() - ply:GetPos()):LengthSqr() * 0.00000005, 1 )
@@ -108,6 +109,8 @@ function ENT:CalcTracks()
 			end
 		end
 	end
+
+	if not EntTable._TrackPoseParameters then return end
 
 	for name, data in pairs( EntTable._TrackPoseParameters ) do
 		if data.IsBonePP then
