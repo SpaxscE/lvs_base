@@ -94,15 +94,41 @@ function ENT:DoWheelChainEffects( Base, trace )
 end
 
 function ENT:CalcWheelEffects()
-	local T = CurTime()
-
-	if (self._NextFx or 0) > T then return end
-
 	local Base = self:GetBase()
 
 	if not IsValid( Base ) then return end
 
-	self._NextFx = T + (Base:GetAI() and 0.1 or 0.05)
+	local T = CurTime()
+	local EntTable = self:GetTable()
+
+	if (EntTable._NextWheelSound or 0) < T then
+		EntTable._NextWheelSound = T + 0.05
+
+		if EntTable._fxDelay ~= 1 and EntTable.TraceResult and EntTable.TraceResultWater then
+			self:CalcWheelSounds( Base, EntTable.TraceResult, EntTable.TraceResultWater )
+		end
+	end
+
+	if (EntTable._NextFx or 0) > T then return end
+
+	local ply = LocalPlayer()
+
+	if not IsValid( ply ) then return end
+
+	local ViewEnt = ply:GetViewEntity()
+	if IsValid( ViewEnt ) then
+		ply = ViewEnt
+	end
+
+	local Delay = 0.05
+
+	if self:GetWidth() <= 0 then
+		EntTable._fxDelay = math.min( Delay + (self:GetPos() - ply:GetPos()):LengthSqr() * 0.00000005, 1 )
+	else
+		EntTable._fxDelay = math.min( Delay + (self:GetPos() - ply:GetPos()):LengthSqr() * 0.000000001, 1 )
+	end
+
+	EntTable._NextFx = T + EntTable._fxDelay
 
 	local Radius = Base:GetWheelUp() * (self:GetRadius() + 1)
 
@@ -125,7 +151,8 @@ function ENT:CalcWheelEffects()
 		mask = MASK_WATER,
 	} )
 
-	self:CalcWheelSounds( Base, trace, traceWater )
+	EntTable.TraceResult = trace
+	EntTable.TraceResultWater = traceWater
 
 	if traceWater.Hit and trace.HitPos.z < traceWater.HitPos.z then 
 		if math.abs( self:GetRPM() ) > 25 then
@@ -137,7 +164,7 @@ function ENT:CalcWheelEffects()
 		end
 	end
 
-	if self:GetSlip() < 500 then self:StopWheelEffects() return end
+	if self:GetSlip() < 500 or EntTable._fxDelay > 0.1 then self:StopWheelEffects() return end
 
 	self:StartWheelEffects( Base, trace, traceWater )
 end
