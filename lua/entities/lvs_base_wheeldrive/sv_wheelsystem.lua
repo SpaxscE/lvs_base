@@ -138,16 +138,12 @@ function ENT:AddWheel( data )
 
 	local expectedMaxRPM = math.max( self.MaxVelocity, self.MaxVelocityReverse ) * 60 / math.pi / (Wheel:GetRadius() * 2)
 
-	local MaxRPM = 800
-
 	if expectedMaxRPM > 800 then
 		local B3 = constraint.AdvBallsocket( Wheel,Master,0,0,vector_origin,vector_origin,0,0,-180,Lock,Lock,180,-Lock,-Lock,0,0,0,1,1)
 		B3.DoNotDuplicate = true
 
 		local B4 = constraint.AdvBallsocket( Master,Wheel,0,0,vector_origin,vector_origin,0,0,-180,-Lock,-Lock,180,Lock,Lock,0,0,0,1,1)
 		B4.DoNotDuplicate = true
-
-		MaxRPM = 2150
 	end
 
 	if expectedMaxRPM > 2150 then
