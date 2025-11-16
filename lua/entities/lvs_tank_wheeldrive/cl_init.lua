@@ -46,44 +46,76 @@ function ENT:CalcTracks()
 
 	EntTable._ResetSubMaterials = true
 
-	local TrackHull = EntTable.TrackHull * (math.max( WorldUp:Dot( self:GetUp() ), 0 ) ^ 2)
+	local T = CurTime()
 
-	for _, data in pairs( EntTable.TrackData ) do
-		if not istable( data.Attachment ) or not istable( data.PoseParameter ) then continue end
-		if not isstring( data.PoseParameter.name ) then continue end
+	if (EntTable._NextCalcTracks or 0) < T then
+		local ply = LocalPlayer()
+		if IsValid( ply ) then
+			local ViewEnt = ply:GetViewEntity()
+			if IsValid( ViewEnt ) then
+				ply = ViewEnt
+			end
+		end
 
-		local att = self:GetAttachment( self:LookupAttachment( data.Attachment.name ) )
+		local Delay = math.min( (self:GetPos() - ply:GetPos()):LengthSqr() * 0.00000005, 1 )
 
-		if not att then continue end
+		EntTable._NextCalcTracks = T + Delay
 
-		local traceLength = data.Attachment.traceLength or 100
-		local toGroundDistance = data.Attachment.toGroundDistance or 20
+		local Mul = math.max( Delay / RealFrameTime(), 1 )
 
-		local trace = util.TraceHull( {
-			start = att.Pos,
-			endpos = att.Pos - self:GetUp() * traceLength,
-			filter = self:GetCrosshairFilterEnts(),
-			mins = -TrackHull,
-			maxs = TrackHull,
-		} )
+		local TrackHull = EntTable.TrackHull * (math.max( WorldUp:Dot( self:GetUp() ), 0 ) ^ 2)
 
-		local Rate = data.PoseParameter.lerpSpeed or 25
-		local Dist = (att.Pos - trace.HitPos):Length() + EntTable.TrackHull.z - toGroundDistance
+		EntTable._TrackPoseParameters = {}
 
-		local RangeMul = data.PoseParameter.rangeMultiplier or 1
+		for _, data in pairs( EntTable.TrackData ) do
+			if not istable( data.Attachment ) or not istable( data.PoseParameter ) then continue end
+			if not isstring( data.PoseParameter.name ) then continue end
 
-		if data.IsBonePP == nil then
-			data.IsBonePP = string.StartsWith( data.PoseParameter.name, "!" )
+			local att = self:GetAttachment( self:LookupAttachment( data.Attachment.name ) )
+
+			if not att then continue end
+
+			local traceLength = data.Attachment.traceLength or 100
+			local toGroundDistance = data.Attachment.toGroundDistance or 20
+
+			local trace = util.TraceHull( {
+				start = att.Pos,
+				endpos = att.Pos - self:GetUp() * traceLength,
+				filter = self:GetCrosshairFilterEnts(),
+				mins = -TrackHull,
+				maxs = TrackHull,
+			} )
+
+			local Rate = data.PoseParameter.lerpSpeed or 25
+			local Dist = (att.Pos - trace.HitPos):Length() + EntTable.TrackHull.z - toGroundDistance
+
+			local RangeMul = data.PoseParameter.rangeMultiplier or 1
+
+			if data.IsBonePP == nil then
+				data.IsBonePP = string.StartsWith( data.PoseParameter.name, "!" )
+
+				continue
+
+			end
+
+			EntTable._TrackPoseParameters[ data.PoseParameter.name ] = {}
+			EntTable._TrackPoseParameters[ data.PoseParameter.name ].IsBonePP = data.IsBonePP
+
+			if data.IsBonePP then
+				EntTable._TrackPoseParameters[ data.PoseParameter.name ].Pose = math.Clamp( self:QuickLerp( data.PoseParameter.name, Dist * RangeMul, Rate * Mul ) / (data.PoseParameter.range or 10), 0 , 1 )
+			else
+				EntTable._TrackPoseParameters[ data.PoseParameter.name ].Pose = self:QuickLerp( data.PoseParameter.name, Dist * RangeMul, Rate * Mul )
+			end
+		end
+	end
+
+	for name, data in pairs( EntTable._TrackPoseParameters ) do
+		if data.IsBonePP then
+			self:SetBonePoseParameter( name, data.Pose )
 
 			continue
-			
 		end
-
-		if data.IsBonePP then
-			self:SetBonePoseParameter( data.PoseParameter.name, math.Clamp( self:QuickLerp( data.PoseParameter.name, Dist * RangeMul, Rate ) / (data.PoseParameter.range or 10), 0 , 1 ) )
-		else
-			self:SetPoseParameter( data.PoseParameter.name, self:QuickLerp( data.PoseParameter.name, Dist * RangeMul, Rate ) )
-		end
+		self:SetPoseParameter( name, data.Pose )
 	end
 
 	self:CalcTrackScrollTexture()
