@@ -12,6 +12,9 @@ ENT.AdminSpawnable		= false
 ENT.MaxHealthEngine = 400
 ENT.MaxHealthFuelTank = 100
 
+ENT.WheelTickInterval = 0.2
+ENT.WheelTickIntervalBraking = 0.02
+
 function ENT:TrackSystemDT()
 	self:AddDT( "Entity", "TrackDriveWheelLeft" )
 	self:AddDT( "Entity", "TrackDriveWheelRight" )
