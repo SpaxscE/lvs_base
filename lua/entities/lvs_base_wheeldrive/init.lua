@@ -218,30 +218,10 @@ function ENT:PhysicsSimulate( phys, deltatime )
 		return self:PhysicsSimulateOverride( ForceAngle, phys, deltatime, SIM_GLOBAL_ACCELERATION )
 	end
 
-	return self:SimulateRotatingWheel( ent, phys, deltatime )
-end
-
-local deltatimeMin = 1 / 30
-local deltatimeNew = 1 / 15
-
-function ENT:SimulateRotatingWheel( ent, phys, deltatime )
-	local T = CurTime()
-	local tickdelta = engine.TickInterval()
-
-	local EntTable = self:GetTable()
-	local WheelTable = ent:GetTable()
-
-	if not self:GetEngineActive() then
-		if (WheelTable._lvsNextThink or 0) > T then
-			return vector_origin, vector_origin, SIM_NOTHING
-		else
-			WheelTable._lvsNextThink = T + 0.05
-		end
-	end
-
 	if not self:AlignWheel( ent ) or self:IsDestroyed() then self:EnableHandbrake() return vector_origin, vector_origin, SIM_NOTHING end
 
-	if (WheelTable._lvsNextSimulate or 0) > T then return vector_origin, vector_origin, SIM_NOTHING end
+	local WheelTable = ent:GetTable()
+	local EntTable = self:GetTable()
 
 	if ent:IsHandbrakeActive() then
 		if WheelTable.SetRPM then
@@ -251,28 +231,28 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		return vector_origin, vector_origin, SIM_NOTHING
 	end
 
+	local T = CurTime()
+
+	if (WheelTable._NextSimulate or 0) < T or not WheelTable.Simulate then
+		WheelTable._NextSimulate = T + ((self:PivotSteer() or self:GetBrake() > 0) and EntTable.WheelTickIntervalBraking or EntTable.WheelTickInterval)
+
+		WheelTable.Force, WheelTable.ForceAng, WheelTable.Simulate = self:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
+	end
+
+	return WheelTable.Force, WheelTable.ForceAng, WheelTable.Simulate
+end
+
+function ENT:SimulateRotatingWheel( ent, EntTable, WheelTable, phys, deltatime )
 	local RotationAxis = ent:GetRotationAxis()
 
 	local curRPM = self:VectorSplitNormal( RotationAxis,  phys:GetAngleVelocity() ) / 6
 
-	local forceMul = 1
-
 	local Throttle = self:GetThrottle()
-
-	if tickdelta < deltatimeMin and not (Throttle > 0 and math.abs( curRPM ) < 50) then
-		WheelTable._lvsNextSimulate = T + deltatimeNew - tickdelta * 0.5
-
-		local Tick1 = 1 / deltatime
-		local Tick2 = 1 / deltatimeNew
-
-		forceMul = Tick1 / Tick2
-	else
-		WheelTable._lvsNextSimulate = T - 1
-	end
 
 	ent:SetRPM( curRPM )
 
 	local ForceAngle = vector_origin
+	local ForceLinear = Vector(0,0,0)
 
 	local TorqueFactor = ent:GetTorqueFactor()
 
@@ -336,7 +316,9 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 
 			local TorqueBoost = BoostStart - (math.min( math.max( math.abs( curRPM ) - BoostRPM, 0 ), BoostRPM) / BoostRPM) * BoostMul
 
-			local curVelocity = self:VectorSplitNormal( ent:GetDirectionAngle():Forward(),  phys:GetVelocity() )
+			local Forward = ent:GetDirectionAngle():Forward()
+
+			local curVelocity = self:VectorSplitNormal( Forward,  phys:GetVelocity() )
 
 			if targetVelocity >= 0 then
 				if curVelocity < targetVelocity then
@@ -366,7 +348,7 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		end
 	end
 
-	if not self:StabilityAssist() or not self:WheelsOnGround() then return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION end
+	if not self:StabilityAssist() or not self:WheelsOnGround() then return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION end
 
 	local Vel = phys:GetVelocity()
 
@@ -385,25 +367,25 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 		if VelY > VelX * 0.1 then
 			if VelX > EntTable.FastSteerActiveVelocity then
 				if VelY < VelX * 0.6 then
-					return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+					return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 				end
 			else
-				return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+				return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 			end
 		end
 	end
 
 	if IsBraking and not IsBrakingWheel then
-		return ForceAngle * forceMul, vector_origin, SIM_GLOBAL_ACCELERATION
+		return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 	end
 
-	local ForceLinear = -self:GetUp() * EntTable.WheelDownForce * TorqueFactor
+	ForceLinear:Add( -self:GetUp() * EntTable.WheelDownForce * TorqueFactor )
 
 	if not self:GetRacingTires() then
-		ForceLinear = ForceLinear - Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier
+		ForceLinear:Add( -Right * math.Clamp(Fy * 5 * math.min( math.abs( Fx ) / 500, 1 ),-EntTable.WheelSideForce,EntTable.WheelSideForce) * EntTable.ForceLinearMultiplier )
 	end
 
-	return ForceAngle * forceMul, ForceLinear * forceMul, SIM_GLOBAL_ACCELERATION
+	return ForceAngle, ForceLinear, SIM_GLOBAL_ACCELERATION
 end
 
 function ENT:SteerTo( TargetValue, MaxSteer )

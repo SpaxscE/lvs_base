@@ -58,6 +58,9 @@ ENT.PhysicsDampingSpeed = 4000
 ENT.PhysicsDampingForward = true
 ENT.PhysicsDampingReverse = false
 
+ENT.WheelTickInterval = 0.2
+ENT.WheelTickIntervalBraking = 0.02
+
 ENT.WheelPhysicsMass = 100
 ENT.WheelPhysicsInertia = Vector(10,8,10)
 ENT.WheelPhysicsTireHeight = 4
