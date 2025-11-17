@@ -103,7 +103,7 @@ function ENT:CalcWheelSlip()
 		self._WheelSlip = rpmTheoretical + VelLength * 4
 		self._WheelSkid = self._WheelSlip
 	else
-		self._WheelSlip = math.max( rpm - rpmTheoretical - 80, 0 ) ^ 2 + math.max( math.abs( Base:VectorSplitNormal( self:GetForward(), Vel * 4 ) ) - VelLength, 0 )
+		self._WheelSlip = math.max( rpm - rpmTheoretical - 10, 0 ) ^ 2 + math.max( math.abs( Base:VectorSplitNormal( self:GetForward(), Vel * 4 ) ) - VelLength, 0 )
 		self._WheelSkid = VelLength + self._WheelSlip
 	end
 end

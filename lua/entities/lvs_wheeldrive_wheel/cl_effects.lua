@@ -138,18 +138,17 @@ function ENT:CalcWheelEffects()
 	local StartPos = Pos + Radius
 	local EndPos = Pos - Radius
 
-	local trace = util.TraceLine( {
+	local traceData = {
 		start = StartPos,
 		endpos = EndPos,
 		filter = Base:GetCrosshairFilterEnts(),
-	} )
+	}
 
-	local traceWater = util.TraceLine( {
-		start = StartPos,
-		endpos = EndPos,
-		filter = Base:GetCrosshairFilterEnts(),
-		mask = MASK_WATER,
-	} )
+	local trace = util.TraceLine( traceData )
+
+	traceData.mask = MASK_WATER
+
+	local traceWater = util.TraceLine( traceData )
 
 	EntTable.TraceResult = trace
 	EntTable.TraceResultWater = traceWater
@@ -171,15 +170,6 @@ end
 
 function ENT:CalcWheelSounds( Base, trace, traceWater )
 	if not trace.Hit then return end
-
-	-- rejoin requires this
-	if trace.Entity == self then
-		if istable( Base.CrosshairFilterEnts ) and #Base.CrosshairFilterEnts > 1 then
-			Base.CrosshairFilterEnts = nil
-		end
-
-		return
-	end
 
 	local RPM = math.abs( self:GetRPM() )
 
