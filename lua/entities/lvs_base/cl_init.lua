@@ -189,10 +189,14 @@ function ENT:GetCrosshairFilterEnts()
 	if not istable( self.CrosshairFilterEnts ) then
 		self.CrosshairFilterEnts = {self}
 
-		-- lets ask the server to build the filter for us because it has access to constraint.GetAllConstrainedEntities() 
-		net.Start( "lvs_player_request_filter" )
-			net.WriteEntity( self )
-		net.SendToServer()
+		timer.Simple(1, function()
+			if not IsValid( self ) then return end
+
+			-- lets ask the server to build the filter for us because it has access to constraint.GetAllConstrainedEntities() 
+			net.Start( "lvs_player_request_filter" )
+				net.WriteEntity( self )
+			net.SendToServer()
+		end)
 	end
 
 	return self.CrosshairFilterEnts
