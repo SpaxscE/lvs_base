@@ -184,7 +184,7 @@ function ENT:CalcDoppler( Ent )
 end
 
 function ENT:GetCrosshairFilterEnts()
-	if not self:IsInitialized() then return { self } end -- wait for the server to be ready
+	if not self:IsInitialized() or not LVS.MapDoneLoading then return { self } end -- wait for the server to be ready
 
 	if not istable( self.CrosshairFilterEnts ) then
 		self.CrosshairFilterEnts = {self}
