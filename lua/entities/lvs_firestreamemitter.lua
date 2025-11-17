@@ -286,6 +286,8 @@ if SERVER then
 	function ENT:SendDamage( victim, pos, damage )
 		if not IsValid( victim ) then return end
 
+		if victim:GetClass() == "prop_vehicle_prisoner_pod" then return end
+
 		if victim:IsPlayer() and victim:InVehicle() and victim:GetCollisionGroup() ~= COLLISION_GROUP_PLAYER then return end
 
 		local attacker = self:GetAttacker()
