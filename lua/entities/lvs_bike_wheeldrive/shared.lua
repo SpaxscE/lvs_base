@@ -50,6 +50,9 @@ ENT.KickStarterMinDelay = 0.5
 
 ENT.FastSteerAngleClamp = 15
 
+ENT.WheelTickInterval = 0
+ENT.WheelTickIntervalBraking = 0
+
 function ENT:ShouldPutFootDown()
 	return self:GetNWHandBrake() or self:GetVelocity():Length() < 20
 end
