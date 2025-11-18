@@ -160,7 +160,7 @@ function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
 
 	local EntTable = self:GetTable()
 
-	local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplier
+	local WheelSideForce = EntTable.WheelSideForce * EntTable.ForceLinearMultiplierRacingTires
 	local ForceLinear = Vector(0,0,0)
 
 	for id, wheel in pairs( self:GetWheels() ) do
