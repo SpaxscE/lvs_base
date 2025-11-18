@@ -44,6 +44,9 @@ end
 function ENT:CreateBaseDT()
 	local InitWeaponsSuccess, ErrorMsg = pcall( function() self:InitWeapons() end )
 
+	--prevent people from manually calling it in on onspawn
+	self.InitWeapons = nil
+
 	if not InitWeaponsSuccess then
 		ErrorNoHalt( "\n[ERROR] "..ErrorMsg.."\n\n" )
 	end

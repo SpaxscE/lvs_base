@@ -50,7 +50,7 @@ ENT.KickStarterMinDelay = 0.5
 
 ENT.FastSteerAngleClamp = 15
 
-ENT.WheelTickInterval = 0.05
+ENT.WheelTickInterval = 0.06
 ENT.WheelTickIntervalBraking = 0.02
 
 function ENT:ShouldPutFootDown()
