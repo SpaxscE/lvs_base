@@ -106,6 +106,13 @@ end )
 hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 	local KEYS = {
 		{
+			name = "CAR_HORN",
+			category = "LVS-Car",
+			name_menu = "Horn",
+			default = MOUSE_LEFT,
+			cmd = "lvs_car_horn"
+		},
+		{
 			name = "CAR_THROTTLE",
 			category = "LVS-Car",
 			name_menu = "Throttle",
