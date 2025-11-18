@@ -107,7 +107,7 @@ function ENT:PostInitialize( PObj )
 
 	BaseClass.PostInitialize( self, PObj )
 
-	if isstring( self.HornSound ) and isvector( self.HornPos ) then
+	if isstring( self.HornSound ) and isvector( self.HornPos ) and #self.WEAPONS[1] == 0 then
 		if IsValid( self.HornSND ) then self.HornSND:Remove() end
 
 		self.HornSND = self:AddSoundEmitter( self.HornPos or vector_origin, self.HornSound, self.HornSoundInterior )
