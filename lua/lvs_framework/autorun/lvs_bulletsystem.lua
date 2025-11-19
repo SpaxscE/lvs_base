@@ -354,8 +354,64 @@ end
 
 local vector_one = Vector(1,1,1)
 
+local TracerIndex = 0
+local TracerToIndex = {}
+local IndexToTracer = {}
+if CLIENT then
+	hook.Add( "InitPostEntity", "lvs_bullet_sync", function()
+		net.Start( "lvs_bullet_tracer_lookup" )
+		net.SendToServer()
+
+		hook.Remove( "InitPostEntity", "lvs_bullet_sync" )
+	end )
+
+	net.Receive( "lvs_bullet_tracer_lookup", function( length )
+		local index = net.ReadInt( 32 )
+		local name = net.ReadString()
+
+		TracerToIndex[ name ] = index
+		IndexToTracer[ index ] = name
+	end)
+else
+	function LVS:AddTracer( name )
+		if TracerToIndex[ name ] then return TracerToIndex[ name ] end
+
+		TracerIndex = TracerIndex + 1
+
+		net.Start( "lvs_bullet_tracer_lookup" )
+			net.WriteInt( TracerIndex, 32 )
+			net.WriteString( name )
+		net.Broadcast()
+
+		TracerToIndex[ name ] = TracerIndex
+		IndexToTracer[ TracerIndex ] = name
+
+		return TracerIndex
+	end
+
+	net.Receive( "lvs_bullet_tracer_lookup", function( length, ply )
+		if ply._lvsAlreadyAskedForTracers then return end
+
+		ply._lvsAlreadyAskedForTracers = true
+
+		if TracerIndex == 0 then return end
+
+		for index, name in ipairs( IndexToTracer ) do
+			timer.Simple( index / 60, function()
+				if not IsValid( ply ) then return end
+
+				net.Start( "lvs_bullet_tracer_lookup" )
+					net.WriteInt( index, 32 )
+					net.WriteString( name )
+				net.Send( ply )
+			end )
+		end
+	end)
+end
+
 if SERVER then
 	util.AddNetworkString( "lvs_fire_bullet" )
+	util.AddNetworkString( "lvs_bullet_tracer_lookup" )
 	util.AddNetworkString( "lvs_remove_bullet" )
 
 	hook.Add( "Tick", "!!!!lvs_bullet_handler", function( ply, ent ) -- from what i understand, think can "skip" on lag, while tick still simulates all steps
@@ -379,7 +435,8 @@ if SERVER then
 
 		setmetatable( bullet, NewBullet )
 
-		bullet.TracerName = data.TracerName or "lvs_tracer_orange"
+		bullet.TracerName = LVS:AddTracer( data.TracerName or "lvs_tracer_orange" )
+
 		bullet.Src = data.Src or vector_origin
 		bullet.Dir = (data.Dir + VectorRand() * (data.Spread or vector_origin) * 0.5):GetNormalized()
 		bullet.StartDir = bullet.Dir
@@ -392,7 +449,7 @@ if SERVER then
 		bullet.HullSize = data.HullSize or 5
 		bullet.Mins = -vector_one * bullet.HullSize
 		bullet.Maxs = vector_one * bullet.HullSize
-		bullet.Velocity = data.Velocity or 2500
+		bullet.Velocity = math.Round( data.Velocity or 2500, 0 )
 		bullet.Attacker = IsValid( data.Attacker ) and data.Attacker or (IsValid( data.Entity ) and data.Entity or game.GetWorld())
 		bullet.Damage = data.Damage or 10
 		bullet.Entity = data.Entity
@@ -421,7 +478,7 @@ if SERVER then
 
 				net.Start( "lvs_fire_bullet", true )
 					net.WriteInt( Index, 13 )
-					net.WriteString( bullet.TracerName )
+					net.WriteInt( bullet.TracerName, 9 )
 					net.WriteFloat( NewPos.x )
 					net.WriteFloat( NewPos.y )
 					net.WriteFloat( NewPos.z )
@@ -429,17 +486,15 @@ if SERVER then
 					net.WriteFloat( bullet.StartTime )
 					net.WriteFloat( bullet.HullSize )
 					net.WriteEntity( bullet.Entity )
-					net.WriteFloat( bullet.SrcEntity.x )
-					net.WriteFloat( bullet.SrcEntity.y )
-					net.WriteFloat( bullet.SrcEntity.z )
-					net.WriteFloat( bullet.Velocity )
+					net.WriteVector( bullet.SrcEntity )
+					net.WriteInt( bullet.Velocity, 19 )
 					net.WriteBool( bullet.EnableBallistics )
 				net.Send( ply )
 			end
 		else
 			net.Start( "lvs_fire_bullet", true )
 				net.WriteInt( Index, 13 )
-				net.WriteString( bullet.TracerName )
+				net.WriteInt( bullet.TracerName, 9 )
 				net.WriteFloat( bullet.Src.x )
 				net.WriteFloat( bullet.Src.y )
 				net.WriteFloat( bullet.Src.z )
@@ -447,10 +502,8 @@ if SERVER then
 				net.WriteFloat( bullet.StartTime )
 				net.WriteFloat( bullet.HullSize )
 				net.WriteEntity( bullet.Entity )
-				net.WriteFloat( bullet.SrcEntity.x )
-				net.WriteFloat( bullet.SrcEntity.y )
-				net.WriteFloat( bullet.SrcEntity.z )
-				net.WriteFloat( bullet.Velocity )
+				net.WriteVector( bullet.SrcEntity )
+				net.WriteInt( bullet.Velocity, 19 )
 				net.WriteBool( bullet.EnableBallistics )
 			net.SendPVS( bullet.Src )
 		end
@@ -472,7 +525,7 @@ else
 
 		setmetatable( bullet, NewBullet )
 
-		bullet.TracerName = net.ReadString()
+		bullet.TracerName = IndexToTracer[ net.ReadInt( 9 ) ]
 		bullet.Src = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Dir = net.ReadAngle():Forward()
 		bullet.StartDir = bullet.Dir
@@ -486,13 +539,13 @@ else
 		else
 			bullet.Filter = bullet.Entity
 		end
-		bullet.SrcEntity = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
+		bullet.SrcEntity = net.ReadVector()
 
 		if bullet.SrcEntity == vector_origin then
 			bullet.SrcEntity = nil
 		end
 
-		bullet.Velocity = net.ReadFloat()
+		bullet.Velocity = net.ReadInt( 19 )
 
 		bullet.EnableBallistics = net.ReadBool()
 
@@ -510,6 +563,8 @@ else
 
 		bullet.bulletindex = Index
 		LVS._ActiveBullets[ Index ] = bullet
+
+		if not bullet.TracerName then return end
 
 		local effectdata = EffectData()
 		effectdata:SetOrigin( bullet.Src )
