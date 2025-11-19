@@ -526,7 +526,7 @@ else
 
 		setmetatable( bullet, NewBullet )
 
-		bullet.TracerName = IndexToTracer[ net.ReadInt( 9 ) ]
+		bullet.TracerName = IndexToTracer[ net.ReadInt( 9 ) ] or "lvs_tracer_orange"
 		bullet.Src = Vector(net.ReadFloat(),net.ReadFloat(),net.ReadFloat())
 		bullet.Dir = net.ReadAngle():Forward()
 		bullet.StartDir = bullet.Dir
@@ -564,8 +564,6 @@ else
 
 		bullet.bulletindex = Index
 		LVS._ActiveBullets[ Index ] = bullet
-
-		if not bullet.TracerName then return end
 
 		local effectdata = EffectData()
 		effectdata:SetOrigin( bullet.Src )
