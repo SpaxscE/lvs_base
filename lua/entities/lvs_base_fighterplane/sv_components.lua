@@ -1,3 +1,27 @@
+function ENT:AddThruster( pos )
+	local Thruster = ents.Create( "lvs_fighterplane_thruster" )
+
+	if not IsValid( Thruster ) then
+		self:Remove()
+
+		print("LVS: Failed to create thruster entity. Vehicle terminated.")
+
+		return
+	end
+
+	Thruster:SetPos( self:LocalToWorld( pos ) )
+	Thruster:SetAngles( self:GetAngles() )
+	Thruster:Spawn()
+	Thruster:Activate()
+	Thruster:SetParent( self )
+	Thruster:SetBase( self )
+
+	self:DeleteOnRemove( Thruster )
+
+	self:TransferCPPI( Thruster )
+
+	return Thruster
+end
 
 function ENT:AddEngine( pos )
 	local Engine = ents.Create( "lvs_fighterplane_engine" )
