@@ -389,6 +389,8 @@ else
 		return TracerIndex
 	end
 
+	util.AddNetworkString( "lvs_bullet_tracer_lookup" )
+
 	net.Receive( "lvs_bullet_tracer_lookup", function( length, ply )
 		if ply._lvsAlreadyAskedForTracers then return end
 
@@ -411,7 +413,6 @@ end
 
 if SERVER then
 	util.AddNetworkString( "lvs_fire_bullet" )
-	util.AddNetworkString( "lvs_bullet_tracer_lookup" )
 	util.AddNetworkString( "lvs_remove_bullet" )
 
 	hook.Add( "Tick", "!!!!lvs_bullet_handler", function( ply, ent ) -- from what i understand, think can "skip" on lag, while tick still simulates all steps
