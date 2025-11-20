@@ -197,15 +197,6 @@ function ENT:DefineAxle( data )
 
 	if not self.ForwardAngle then self.ForwardAngle = data.Axle.ForwardAngle end
 
-	self._WheelAxleData[ self._WheelAxleID ] = {
-		ForwardAngle = data.Axle.ForwardAngle,
-		SteerType = data.Axle.SteerType,
-		SteerAngle = data.Axle.SteerAngle,
-		TorqueFactor = data.Axle.TorqueFactor,
-		BrakeFactor = data.Axle.BrakeFactor,
-		UseHandbrake = data.Axle.UseHandbrake,
-	}
-
 	data.Suspension.Height = data.Suspension.Height or 20
 	data.Suspension.MaxTravel = data.Suspension.MaxTravel or data.Suspension.Height
 	data.Suspension.ControlArmLength = data.Suspension.ControlArmLength or 25
@@ -231,6 +222,16 @@ function ENT:DefineAxle( data )
 	debugoverlay.Text( AxleCenter + self:LocalToWorldAngles( data.Axle.ForwardAngle ):Forward() * 25, "Axle "..self._WheelAxleID.." Forward", 5, true )
 
 	data.Axle.CenterPos = self:WorldToLocal( AxleCenter )
+
+	self._WheelAxleData[ self._WheelAxleID ] = {
+		ForwardAngle = data.Axle.ForwardAngle,
+		AxleCenter = data.Axle.CenterPos,
+		SteerType = data.Axle.SteerType,
+		SteerAngle = data.Axle.SteerAngle,
+		TorqueFactor = data.Axle.TorqueFactor,
+		BrakeFactor = data.Axle.BrakeFactor,
+		UseHandbrake = data.Axle.UseHandbrake,
+	}
 
 	for id, Wheel in ipairs( data.Wheels ) do
 		local Elastic = self:CreateSuspension( Wheel, AxleCenter, self:LocalToWorldAngles( data.Axle.ForwardAngle ), data.Suspension )
@@ -364,7 +365,7 @@ function ENT:AlignWheel( Wheel )
 
 			Master.ForwardAngle = Axle.ForwardAngle or angle_zero
 			Master.SteerAngle = Axle.SteerAngle or 0
-			Master.SteerType = Axle.SteerType or 2
+			Master.SteerType = Axle.SteerType or LVS.WHEEL_STEER_NONE
 
 			Master.lvsValidAxleData = true
 		end
@@ -380,12 +381,14 @@ function ENT:AlignWheel( Wheel )
 		AxleAng:RotateAroundAxis( AxleAng:Up(), Wheel:GetToe() )
 	end
 
-	if Master.SteerType == LVS.WHEEL_STEER_REAR then
-		AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(Steer,-Master.SteerAngle,Master.SteerAngle) )
+	local SteerType = Master.SteerType
+
+	if SteerType <= LVS.WHEEL_STEER_NONE then Master:SetAngles( AxleAng ) return true end
+
+	if SteerType == LVS.WHEEL_STEER_ACKERMANN then
+		--AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(LVS.WHEEL_STEER_FRONT and -Steer or Steer,-Master.SteerAngle,Master.SteerAngle) )
 	else
-		if Master.SteerType == LVS.WHEEL_STEER_FRONT then
-			AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(-Steer,-Master.SteerAngle,Master.SteerAngle) )
-		end
+		AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp((SteerType == LVS.WHEEL_STEER_FRONT) and -Steer or Steer,-Master.SteerAngle,Master.SteerAngle) )
 	end
 
 	Master:SetAngles( AxleAng )
