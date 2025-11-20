@@ -23,6 +23,7 @@ ENT.EngineIdleRPM = 1000
 ENT.EngineMaxRPM = 6000
 
 ENT.ThrottleRate = 3.5
+ENT.BrakeRate = 3.5
 
 ENT.ForceLinearMultiplier = 1
 ENT.ForceLinearMultiplierRacingTires = 1.15

@@ -85,9 +85,13 @@ function ENT:LerpThrottle( Throttle )
 end
 
 function ENT:LerpBrake( Brake )
-	local Rate = FrameTime() * 3.5
+	local FT = FrameTime()
+
+	local RateUp = self.BrakeRate * FT
+	local RateDn = 3.5 * FT
+
 	local Cur = self:GetBrake()
-	local New = Cur + math.Clamp(Brake - Cur,-Rate,Rate)
+	local New = Cur + math.Clamp(Brake - Cur,-RateDn,RateUp)
 
 	self:SetBrake( New )
 end
