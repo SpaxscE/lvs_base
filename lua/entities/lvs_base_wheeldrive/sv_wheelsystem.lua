@@ -409,14 +409,9 @@ function ENT:AlignWheel( Wheel )
 	if SteerType <= LVS.WHEEL_STEER_NONE then Master:SetAngles( AxleAng ) return true end
 
 	if SteerType == LVS.WHEEL_STEER_ACKERMANN then
-		local EntTable = self:GetTable()
-
-		local P1 = Wheel:GetPos() + Master:GetAngles():Right() * 5000
-		local P2 = Wheel:GetPos() - Master:GetAngles():Right() * 5000
-
-		debugoverlay.Line( P1, P2, 0.05 )
-
 		if Steer ~= 0 then
+			local EntTable = self:GetTable()
+
 			local AxleCenter = self:LocalToWorld( Master.AxleCenter )
 			local RotCenter = self:LocalToWorld( EntTable._AckermannCenter  )
 			local RotPoint = self:LocalToWorld( EntTable._AckermannCenter + Master.ForwardAngle:Right() * (EntTable._AckermannDist / math.tan( math.rad( Steer ) )) )
