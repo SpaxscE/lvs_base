@@ -31,7 +31,7 @@ function ENT:SetupDataTables()
 	self:TurretSystemDT()
 	self:TrackSystemDT()
 end
-
+	
 function ENT:GetVehicleType()
 	return "LBaseTrailer"
 end
@@ -44,6 +44,14 @@ end
 
 function ENT:GetGear()
 	return -1
+end
+
+function ENT:GetWheelVelocity()
+	return self:GetVelocity():Length()
+end
+
+function ENT:GetRacingTires()
+	return false
 end
 
 function ENT:IsManualTransmission()

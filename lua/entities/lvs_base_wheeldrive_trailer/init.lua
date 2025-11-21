@@ -27,6 +27,10 @@ function ENT:OnTick()
 	LightsHandler:SetFogActive( InputLightsHandler:GetFogActive() )
 end
 
+function ENT:PhysicsSimulateOverride( ForceAngle, phys, deltatime, simulate )
+	return ForceAngle, vector_origin, simulate
+end
+
 function ENT:PhysicsSimulate( phys, deltatime )
 	local ent = phys:GetEntity()
 
@@ -35,13 +39,19 @@ function ENT:PhysicsSimulate( phys, deltatime )
 
 		local ForceAngle = Vector(0,0, math.deg( -phys:GetAngleVelocity().z ) * math.min( phys:GetVelocity():Length() / self.PhysicsDampingSpeed, 1 ) * self.ForceAngleMultiplier )
 
-		return ForceAngle, vector_origin, SIM_GLOBAL_ACCELERATION
+		return self:PhysicsSimulateOverride( ForceAngle, phys, deltatime, SIM_GLOBAL_ACCELERATION )
 	end
 
 	return self:SimulateRotatingWheel( ent, phys, deltatime )
 end
 
 function ENT:SimulateRotatingWheel( ent, phys, deltatime )
+	local RotationAxis = ent:GetRotationAxis()
+
+	local curRPM = self:VectorSplitNormal( RotationAxis,  phys:GetAngleVelocity() ) / 6
+
+	ent:SetRPM( curRPM )
+
 	if not self:AlignWheel( ent ) or ent:IsHandbrakeActive() then
 
 		local HandBrake = self:GetNWHandBrake()
@@ -50,6 +60,8 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 			if not ent:IsRotationLocked() then
 				ent:LockRotation()
 			end
+
+			ent:SetRPM( 0 )
 		else
 			if ent:IsRotationLocked() then
 				ent:ReleaseRotation()
@@ -60,10 +72,6 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 	end
 
 	if self:GetBrake() > 0 and not ent:IsRotationLocked() then
-		local RotationAxis = ent:GetRotationAxis()
-
-		local curRPM = self:VectorSplitNormal( RotationAxis,  phys:GetAngleVelocity() ) / 6
-
 		local ForwardVel = self:VectorSplitNormal( ent:GetDirectionAngle():Forward(),  phys:GetVelocity() )
 
 		local targetRPM = ent:VelToRPM( ForwardVel ) * 0.5
