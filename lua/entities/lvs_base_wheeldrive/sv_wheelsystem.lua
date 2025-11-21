@@ -363,11 +363,34 @@ function ENT:AlignWheel( Wheel )
 		if ID then
 			local Axle = self:GetAxleData( ID )
 
+			Master.AxleCenter = Axle.AxleCenter
 			Master.ForwardAngle = Axle.ForwardAngle or angle_zero
 			Master.SteerAngle = Axle.SteerAngle or 0
 			Master.SteerType = Axle.SteerType or LVS.WHEEL_STEER_NONE
 
 			Master.lvsValidAxleData = true
+
+			if Axle.SteerType == LVS.WHEEL_STEER_ACKERMANN then
+				if not self._AckermannCenter then
+					local AxleCenter = vector_origin
+					local NumAxles = 0
+
+					for _, data in pairs( self._WheelAxleData ) do
+						if data.SteerType and data.SteerType ~= LVS.WHEEL_STEER_NONE then continue end
+
+						AxleCenter = AxleCenter + data.AxleCenter
+						NumAxles = NumAxles + 1
+					end
+
+					self._AckermannCenter = AxleCenter / NumAxles
+				end
+
+				local Dist = (self._AckermannCenter - Axle.AxleCenter):Length()
+
+				if not self._AckermannDist or Dist > self._AckermannDist then
+					self._AckermannDist = Dist
+				end
+			end
 		end
 
 		return false
@@ -386,7 +409,27 @@ function ENT:AlignWheel( Wheel )
 	if SteerType <= LVS.WHEEL_STEER_NONE then Master:SetAngles( AxleAng ) return true end
 
 	if SteerType == LVS.WHEEL_STEER_ACKERMANN then
-		--AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp(LVS.WHEEL_STEER_FRONT and -Steer or Steer,-Master.SteerAngle,Master.SteerAngle) )
+		local EntTable = self:GetTable()
+
+		local P1 = Wheel:GetPos() + Master:GetAngles():Right() * 5000
+		local P2 = Wheel:GetPos() - Master:GetAngles():Right() * 5000
+
+		debugoverlay.Line( P1, P2, 0.05 )
+
+		if Steer ~= 0 then
+			local AxleCenter = self:LocalToWorld( Master.AxleCenter )
+			local RotCenter = self:LocalToWorld( EntTable._AckermannCenter  )
+			local RotPoint = self:LocalToWorld( EntTable._AckermannCenter + Master.ForwardAngle:Right() * (EntTable._AckermannDist / math.tan( math.rad( Steer ) )) )
+
+			local A = (AxleCenter - RotCenter):Length()
+			local C = (Wheel:GetPos() - RotPoint):Length()
+
+			local Invert = ((self:VectorSplitNormal( Master.ForwardAngle:Forward(), Master.AxleCenter - EntTable._AckermannCenter ) < 0) and -1 or 1) * self:Sign( -Steer )
+
+			local Ang = (90 - math.deg( math.acos( A / C ) )) * Invert
+
+			AxleAng:RotateAroundAxis( AxleAng:Up(), Ang )
+		end
 	else
 		AxleAng:RotateAroundAxis( AxleAng:Up(), math.Clamp((SteerType == LVS.WHEEL_STEER_FRONT) and -Steer or Steer,-Master.SteerAngle,Master.SteerAngle) )
 	end
