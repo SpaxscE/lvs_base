@@ -24,18 +24,8 @@ function ENT:CreateSubMaterial( SubMaterialID, name )
 	return CreateMaterial( name, "VertexLitGeneric", util.KeyValuesToTable( string_data ) )
 end
 
-function ENT:QuickLerp( name, target, rate )
-	name =  "_smValue"..name
-
-	if not self[ name ] then self[ name ] = 0 end
-
-	self[ name ] = self[ name ] + (target - self[ name ]) * math.min( RealFrameTime() * (rate or 10), 1 )
-
-	return self[ name ]
-end
-
 function ENT:CalcPoseParameters()
-	local steer = self:GetSteer() /  self:GetMaxSteerAngle()
+	local steer = self:GetSteer() / self:GetMaxSteerAngle()
 
 	local kmh = math.Round( self:GetVelocity():Length() * 0.09144, 0 )
 
@@ -63,7 +53,7 @@ function ENT:CalcPoseParameters()
 	if IsValid( engine ) then
 		rpm = self:QuickLerp( "rpm", engine:GetRPM() )
 		gear = engine:GetGear()
-		oil = self:QuickLerp( "oil", engineActive and math.min( 0.2 + (rpm / self.EngineMaxRPM) * 1.25, 1 ) or 0, 0.1 ) ^ 2
+		oil = self:QuickLerp( "oil", engineActive and math.min( 0.2 + (rpm / self.EngineMaxRPM) * 1.25 - (math.max( rpm - self.EngineMaxRPM, 0 ) / 2000), 1 ) or 0, 2 ) ^ 2
 
 		local ClutchActive = engine:GetClutch()
 
