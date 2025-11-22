@@ -57,9 +57,10 @@ function ENT:ShutDownEngine()
 end
 
 function ENT:GetEngineTorque()
+	local EntTable = self:GetTable()
+
 	if self:IsManualTransmission() then
 		local Gear = self:GetGear()
-		local EntTable = self:GetTable()
 
 		local NumGears = Reverse and EntTable.TransGearsReverse or EntTable.TransGears
 		local MaxVelocity = Reverse and EntTable.MaxVelocityReverse or EntTable.MaxVelocity
@@ -93,5 +94,40 @@ function ENT:GetEngineTorque()
 		return math.deg( self.EngineTorque ) * RatioIdeal
 	end
 
-	return math.deg( self.EngineTorque )
+	local T = CurTime()
+
+	if EntTable.TransShiftSpeed > 0.5 and (EntTable._OldTorqueHoldGear or 0) < T then
+		local Reverse = self:GetReverse()
+		local vehVel = self:GetVelocity():Length()
+		local wheelVel = self:GetWheelVelocity()
+
+		local NumGears = EntTable.TransGears
+		local MaxGear = Reverse and EntTable.TransGearsReverse or NumGears
+
+		local PitchValue = EntTable.MaxVelocity / NumGears
+
+		local DesiredGear = 1
+
+		local VelocityGeared = vehVel
+
+		while (VelocityGeared > PitchValue) and DesiredGear< NumGears do
+			VelocityGeared = VelocityGeared - PitchValue
+
+			DesiredGear = DesiredGear + 1
+		end
+
+		if EntTable._OldTorqueShiftGear ~= DesiredGear then
+			EntTable._OldTorqueShiftGear = DesiredGear
+
+			if self:GetThrottle() ~= 0 then
+				EntTable._TorqueShiftDelayTime = T + EntTable.TransShiftSpeed
+			end
+
+			EntTable._OldTorqueHoldGear = T + EntTable.TransShiftSpeed + EntTable._TorqueShiftDelayTime + EntTable.TransMinGearHoldTime
+		end
+	end
+
+	if (EntTable._TorqueShiftDelayTime or 0) > T then return math.deg( EntTable.EngineTorque ) * 0.5 end
+
+	return math.deg( EntTable.EngineTorque )
 end
