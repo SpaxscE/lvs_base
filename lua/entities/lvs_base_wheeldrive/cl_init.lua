@@ -51,9 +51,11 @@ function ENT:CalcPoseParameters()
 	local temperature = 0
 
 	if IsValid( engine ) then
+		local EngineHealthFraction = engine:GetHP() / engine:GetMaxHP()
+
 		rpm = self:QuickLerp( "rpm", engine:GetRPM() )
 		gear = engine:GetGear()
-		oil = self:QuickLerp( "oil", engineActive and math.min( 0.2 + (rpm / self.EngineMaxRPM) * 1.25 - (math.max( rpm - self.EngineMaxRPM, 0 ) / 2000), 1 ) or 0, 2 ) ^ 2
+		oil = self:QuickLerp( "oil", engineActive and math.min( (EngineHealthFraction ^ 2) * 0.2 + (rpm / self.EngineMaxRPM) * 1.25 - (math.max( rpm - self.EngineMaxRPM, 0 ) / 2000) * 1.6, 1 ) or 0, 2 ) ^ 2
 
 		local ClutchActive = engine:GetClutch()
 
@@ -63,7 +65,7 @@ function ENT:CalcPoseParameters()
 			throttle = math.max( throttle - clutch, 0 )
 		end
 
-		temperature = self:QuickLerp( "temp", self:QuickLerp( "base_temp", engineActive and 0.5 or 0, 0.025 + throttle * 0.1 ) + (1 - engine:GetHP() / engine:GetMaxHP()) ^ 2 * 1.25, 0.5 )
+		temperature = self:QuickLerp( "temp", self:QuickLerp( "base_temp", engineActive and 0.5 or 0, 0.025 + throttle * 0.1 ) + (1 - EngineHealthFraction) ^ 2 * 1.25, 0.5 )
 	else
 		temperature = self:QuickLerp( "temp", self:QuickLerp( "base_temp", engineActive and 0.5 or 0, 0.025 + throttle * 0.1 ) + (1 - self:GetHP() / self:GetMaxHP()) ^ 2 * 1.25, 0.5 )
 	end
