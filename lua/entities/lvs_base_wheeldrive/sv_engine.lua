@@ -131,7 +131,7 @@ function ENT:GetEngineTorque()
 		end
 	end
 
-	if (EntTable._TorqueShiftDelayTime or 0) > T then return math.deg( EntTable.EngineTorque ) * 0.5 end
+	if (EntTable._TorqueShiftDelayTime or 0) > T then return math.deg( EntTable.EngineTorque ) * EntTable.TransShiftTorqueFactor end
 
 	return math.deg( EntTable.EngineTorque )
 end
