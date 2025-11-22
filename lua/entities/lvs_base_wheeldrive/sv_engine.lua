@@ -59,6 +59,8 @@ end
 function ENT:GetEngineTorque()
 	local EntTable = self:GetTable()
 
+	local T = CurTime()
+
 	if self:IsManualTransmission() then
 		local Gear = self:GetGear()
 
@@ -91,10 +93,20 @@ function ENT:GetEngineTorque()
 			self:SetNWGear( 1 )
 		end
 
+		if EntTable.TransShiftSpeed > 0.5 then
+			if EntTable._OldTorqueShiftGear ~= Gear then
+				EntTable._OldTorqueShiftGear = Gear
+
+				if self:GetThrottle() ~= 0 then
+					EntTable._TorqueShiftDelayTime = T + EntTable.TransShiftSpeed
+				end
+			end
+		end
+
+		if (EntTable._TorqueShiftDelayTime or 0) > T then return math.deg( EntTable.EngineTorque ) * RatioIdeal * EntTable.TransShiftTorqueFactor end
+
 		return math.deg( self.EngineTorque ) * RatioIdeal
 	end
-
-	local T = CurTime()
 
 	if EntTable.TransShiftSpeed > 0.5 and (EntTable._OldTorqueHoldGear or 0) < T then
 		local Reverse = self:GetReverse()
