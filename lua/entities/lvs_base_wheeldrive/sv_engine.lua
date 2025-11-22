@@ -132,13 +132,13 @@ function ENT:GetEngineTorque()
 			if not EntTable._OldTorqueShiftGear then
 				EntTable._OldTorqueShiftGear = DesiredGear
 			else
-				EntTable._OldTorqueShiftGear = DesiredGear
-
-				if self:GetThrottle() ~= 0 then
+				if (EntTable._OldTorqueShiftGear or 0) < DesiredGear then
 					EntTable._TorqueShiftDelayTime = T + EntTable.TransShiftSpeed
 				end
 
 				EntTable._OldTorqueHoldGear = T + EntTable.TransShiftSpeed + EntTable.TransMinGearHoldTime
+
+				EntTable._OldTorqueShiftGear = DesiredGear
 			end
 		end
 	end
