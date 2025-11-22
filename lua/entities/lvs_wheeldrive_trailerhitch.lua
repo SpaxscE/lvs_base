@@ -212,6 +212,7 @@ if SERVER then
 
 		if IsValid( base ) then
 			base:OnCoupleChanged( TargetBase, self.HitchTarget, false )
+			TargetBase:OnCoupleChanged( self:GetBase(), self, false )
 		end
 
 		self.HitchConstraint:Remove()
@@ -256,6 +257,7 @@ if SERVER then
 		local targetBase = target:GetBase()
 
 		base:OnCoupleChanged( targetBase, target, true )
+		targetBase:OnCoupleChanged( self:GetBase(), self, true )
 
 		self.PosEnt:SetSolid( SOLID_NONE )
 
