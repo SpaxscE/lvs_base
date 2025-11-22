@@ -16,7 +16,7 @@ function ENT:DoExhaustFX( Magnitude )
 			effectdata:SetNormal( self:LocalToWorldAngles( data.ang ):Forward() )
 			effectdata:SetMagnitude( Magnitude )
 			effectdata:SetEntity( self )
-		util.Effect( "lvs_exhaust", effectdata )
+		util.Effect( data.effect or "lvs_exhaust", effectdata )
 	end
 end
 
