@@ -64,9 +64,9 @@ function EFFECT:Init( data )
 	local invert = (1 - Dir.z) / 2
 
 	particle:SetVelocity( Vel + Dir * (100 + math.min( 800 * Scale, 300)) + VectorRand() * 50 * Scale + (Ent:GetVelocity() * 0.5 + Vector(0,0,Scale * 100)) * invert )
-	particle:SetDieTime( math.max((1.4 - temp) - Ent:GetVelocity():LengthSqr() * 0.0001,0.2) + Scale * math.Rand(0.8,1.2) * invert )
+	particle:SetDieTime( math.max((1.4 - temp) - Ent:GetVelocity():LengthSqr() * 0.0001,0.2) + Scale * math.Rand(0.8,1.2) )
 	particle:SetAirResistance( 400 ) 
-	particle:SetStartAlpha( 100 - 50 * temp + Scale * 100 )
+	particle:SetStartAlpha( 100 - 50 * temp + Scale * 150 )
 	particle:SetStartSize( 2 + (throttle + Scale) * 4 )
 	particle:SetEndSize( 10 + 35 * (throttle + Scale) )
 	particle:SetRoll( math.Rand( -1, 1 ) )
