@@ -210,6 +210,12 @@ list.Set( "ContentCategoryIcons", "[LVS] - Cars - Civilian", "icon16/lvs_civilia
 list.Set( "ContentCategoryIcons", "[LVS] - Cars - Military", "icon16/lvs_military.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Cars - Pack", "icon16/lvs_cars_pack.png" )
 
+list.Set( "ContentCategoryIcons", "[LVS] - Trucks - Pack", "icon16/lvs_trucks.png" )
+
+list.Set( "ContentCategoryIcons", "[LVS] - Rig", "icon16/lvs_trucks.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Rig - Trucks", "icon16/lvs_trucks.png" )
+list.Set( "ContentCategoryIcons", "[LVS] - Rig - Trailers", "icon16/lvs_trucktrailers.png" )
+
 list.Set( "ContentCategoryIcons", "[LVS] - Helicopters", "icon16/lvs_helicopters.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Helicopters - Combine", "icon16/lvs_combine.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Helicopters - Resistance", "icon16/lvs_resistance.png" )
