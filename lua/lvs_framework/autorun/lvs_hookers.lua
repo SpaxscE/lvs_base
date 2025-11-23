@@ -6,9 +6,23 @@ hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
 
 	if SERVER then return end
 
+	local Defaults = {
+		["lvs_mouseaim_type_tank"] = 0,
+		["lvs_mouseaim_type_car"] = 0,
+		["lvs_mouseaim_type_repulsorlift"] = 1,
+		["lvs_mouseaim_type_helicopter"] = 1,
+		["lvs_mouseaim_type_plane"] = 1,
+		["lvs_mouseaim_type_walker"] = 0,
+		["lvs_mouseaim_type_starfighter"] = 1,
+		["lvs_mouseaim_type_fakehover"] = 0,
+	}
+
 	-- this needs to be here to make sure all sents are registered
 	for _, vehicletype in ipairs( LVS:GetVehicleTypes() ) do
-		CreateClientConVar( "lvs_mouseaim_type_"..vehicletype, 0, true, false)
+		local name = "lvs_mouseaim_type_"..vehicletype
+		local default = Defaults[ name ] or 0
+
+		CreateClientConVar( name, default, true, false)
 	end
 end )
 
