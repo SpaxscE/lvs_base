@@ -12,6 +12,24 @@ function ENT:DisableManualTransmission()
 	return false
 end
 
+DEFINE_BASECLASS( "lvs_base_wheeldrive" )
+
+function ENT:HandleActive()
+	local Pod = self:GetDriverSeat()
+
+	if IsValid( Pod ) then
+		BaseClass.SetupDataTables( self )
+
+		return
+	end
+
+	local InputTarget = self:GetInputTarget()
+
+	if not IsValid( InputTarget ) then self:SetActive( false ) return end
+
+	self:SetActive( InputTarget:GetActive() )
+end
+
 function ENT:OnTick()
 	local InputTarget = self:GetInputTarget()
 
