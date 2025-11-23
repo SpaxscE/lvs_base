@@ -18,7 +18,7 @@ function ENT:HandleActive()
 	local Pod = self:GetDriverSeat()
 
 	if IsValid( Pod ) then
-		BaseClass.SetupDataTables( self )
+		BaseClass.HandleActive( self )
 
 		return
 	end
