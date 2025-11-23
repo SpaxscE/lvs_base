@@ -143,6 +143,28 @@ sound.Add( {
 	}
 } )
 
+sound.Add( {
+	name = "LVS.Brake.Release",
+	channel = CHAN_STATIC,
+	level = 75,
+	volume = 1,
+	sound = {
+		"lvs/vehicles/generic/pneumatic_brake_release_01.wav",
+		"lvs/vehicles/generic/pneumatic_brake_release_02.wav",
+		"lvs/vehicles/generic/pneumatic_brake_release_03.wav",
+		"lvs/vehicles/generic/pneumatic_brake_release_04.wav",
+	}
+} )
+
+sound.Add( {
+	name = "LVS.Brake.Apply",
+	channel = CHAN_STATIC,
+	level = 75,
+	volume = 1,
+	sound = "lvs/vehicles/generic/pneumatic_brake_pull.wav",
+} )
+
+
 if CLIENT then
 	local SoundList = {}
 
