@@ -98,12 +98,12 @@ function EFFECT:Init( data )
 
 	if underwater then
 		VecCol = Vector(1,1.2,1.4) * (0.06 + (0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b)) * 1000
-		VecCol.x = math.min( VecCol.x, 255 )
-		VecCol.y = math.min( VecCol.y, 255 )
-		VecCol.z = math.min( VecCol.z, 255 )
 	else
-		VecCol = (LightColor * 0.5 + Vector(0.3,0.25,0.15)) * 255
+		VecCol = Vector(0.3,0.25,0.15) * (0.1 + (0.2126 * LightColor.r) + (0.7152 * LightColor.g) + (0.0722 * LightColor.b)) * 1000
 	end
+	VecCol.x = math.min( VecCol.x, 255 )
+	VecCol.y = math.min( VecCol.y, 255 )
+	VecCol.z = math.min( VecCol.z, 255 )
 
 	local DieTime = math.Rand(0.8,1.6)
 
@@ -120,7 +120,7 @@ function EFFECT:Init( data )
 			particle:SetStartSize( 10 * scale )
 			particle:SetEndSize( 20 * i * scale )
 			particle:SetRollDelta( math.Rand(-1,1) )
-			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+			particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
 			particle:SetGravity( Vector(0,0,-600) * scale )
 			particle:SetCollide( false )
 		end
@@ -138,7 +138,7 @@ function EFFECT:Init( data )
 		particle:SetStartSize( 10 * scale )
 		particle:SetEndSize( 20 * i * scale )
 		particle:SetRollDelta( math.Rand(-1,1) )
-		particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
+		particle:SetColor( VecCol.r, VecCol.g, VecCol.b )
 		particle:SetGravity( Vector(0,0,-600) * scale )
 		particle:SetCollide( false )
 
