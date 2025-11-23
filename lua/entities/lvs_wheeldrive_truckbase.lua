@@ -15,11 +15,18 @@ ENT.AdminSpawnable		= false
 ENT.WheelBrakeApplySound = "LVS.Brake.Apply"
 ENT.WheelBrakeReleaseSound = "LVS.Brake.Release"
 
+ENT.EngineIgnitionTime = 0
+ENT.EngineStartStopVolume = 1.0
+ENT.EngineStartSound = "common/null.wav"
+ENT.EngineStopSound = "common/null.wav"
+
 ENT.TransShiftSound = "common/null.wav"
 
 if CLIENT then
 	function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 		BaseClass.LVSHudPaintInfoText( self, X, Y, W, H, ScrX, ScrY, ply )
+
+		if ply ~= self:GetDriver() then return end
 
 		local Throttle = self:GetThrottle()
 		local MaxThrottle = self:GetMaxThrottle()
@@ -54,6 +61,38 @@ if CLIENT then
 	end
 
 	return
+end
+
+function ENT:UpdateReverseSound()
+	local EntTable = self:GetTable()
+
+	local ReverseSoundHandler = EntTable._ReverseSoundHandler
+
+	if not IsValid( ReverseSoundHandler ) then return end
+
+	local IsActive = ReverseSoundHandler:GetActive()
+	local ShouldActive = self:GetActive() and self:GetReverse()
+
+	if ShouldActive then
+		if self:GetVelocity():LengthSqr() < 250 and self:GetThrottle() == 0 then
+			ShouldActive = false
+		end
+	end
+
+	if IsActive == ShouldActive then return end
+
+	ReverseSoundHandler:SetActive( ShouldActive )
+end
+
+function ENT:AddReverseSound( pos, snd, snd_interior )
+	if IsValid( self._ReverseSoundHandler ) then return end
+
+	if not snd then snd = "lvs/vehicles/generic/reverse_warning_beep.wav" end
+
+	self._ReverseSoundHandler = self:AddSoundEmitter( pos, snd, snd_interior )
+	self._ReverseSoundHandler:SetSoundLevel( 65 )
+
+	return self._ReverseSoundHandler
 end
 
 function ENT:LerpBrake( Brake )
@@ -121,5 +160,64 @@ function ENT:OnHandbrakeActiveChanged( Active )
 			self._AllowReleaseSound = nil
 			self:EmitSound( self.WheelBrakeReleaseSound, 75, math.random(90,110), 1 )
 		end
+	end
+end
+
+function ENT:HandleStart()
+	self:UpdateReverseSound()
+
+	BaseClass.HandleStart( self )
+
+	local Engine = self:GetEngine()
+
+	if not IsValid( Engine ) then return end
+
+	local EntTable = self:GetTable()
+
+	local ShouldStart = EntTable.DoEngineStart == true
+
+	local T = CurTime()
+
+	if EntTable.OldShouldStart ~= ShouldStart then
+		EntTable.OldShouldStart = ShouldStart
+
+		if ShouldStart then
+			EntTable.EngineStartTime = T + EntTable.EngineIgnitionTime
+
+			Engine:EmitSound( self.EngineStartSound, 75, 100, self.EngineStartStopVolume )
+		else
+			if self:GetEngineActive() then
+				self:StopEngine()
+
+				EntTable.EngineStartTime = nil
+
+				Engine:EmitSound( self.EngineStopSound, 75, 100, self.EngineStartStopVolume )
+			end
+		end
+	end
+
+	if not EntTable.EngineStartTime or EntTable.EngineStartTime > T then return end
+
+	EntTable.EngineStartTime = nil
+
+	if self:GetEngineActive() then return end
+
+	self:StartEngine()
+end
+
+function ENT:ToggleEngine()
+	local Engine = self:GetEngine()
+
+	if not IsValid( Engine ) or Engine:GetDestroyed() then
+
+		BaseClass.ToggleEngine( self )
+
+		return
+	end
+
+	if self:GetEngineActive() then
+		self.DoEngineStart = false
+	else
+		self.DoEngineStart = true
 	end
 end

@@ -17,11 +17,13 @@ if CLIENT then
 	function ENT:QuickLerp( name, target, rate )
 		name =  "_smValue"..name
 
-		if not self[ name ] then self[ name ] = 0 end
+		local EntTable = self:GetTable()
 
-		self[ name ] = self[ name ] + (target - self[ name ]) * math.min( RealFrameTime() * (rate or 10), 1 )
+		if not EntTable[ name ] then EntTable[ name ] = 0 end
 
-		return self[ name ]
+		EntTable[ name ] = EntTable[ name ] + (target - EntTable[ name ]) * math.min( RealFrameTime() * (rate or 10), 1 )
+
+		return EntTable[ name ]
 	end
 
 	return
