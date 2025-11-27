@@ -32,7 +32,7 @@ if SERVER then
 	
 		local effectdata = EffectData()
 			effectdata:SetOrigin( fxPos )
-		util.Effect( "lvs_explosion", effectdata )
+		util.Effect( "lvs_explosion", effectdata, true, true )
 
 		self.GibModels = istable( self.GibModels ) and self.GibModels or gibs
 

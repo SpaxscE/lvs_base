@@ -279,7 +279,7 @@ if SERVER then
 
 		local effectdata = EffectData()
 			effectdata:SetOrigin( Pos )
-		util.Effect( self.ExplosionEffect, effectdata )
+		util.Effect( self.ExplosionEffect, effectdata, true, true )
 
 		local attacker = self:GetAttacker()
 
