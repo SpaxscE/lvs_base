@@ -224,18 +224,6 @@ function ENT:HandleStart()
 			EntTable.EngineStartTime = T + EntTable.EngineIgnitionTime
 
 			Engine:EmitSound( self.EngineStartSound, 75, 100, self.EngineStartStopVolume )
-		else
-			if self:GetEngineActive() then
-				self:StopEngine()
-
-				EntTable.EngineStartTime = nil
-
-				Engine:EmitSound( self.EngineStopSound, 75, 100, self.EngineStartStopVolume )
-			end
-		end
-	else
-		if not self:GetEngineActive() and ShouldStart then
-			EntTable.DoEngineStart = nil
 		end
 	end
 
@@ -259,8 +247,23 @@ function ENT:ToggleEngine()
 	end
 
 	if self:GetEngineActive() then
-		self.DoEngineStart = false
+		self:StopEngine()
 	else
 		self.DoEngineStart = true
 	end
+end
+
+function ENT:StopEngine()
+	BaseClass.StopEngine( self )
+
+	self.EngineStartTime = nil
+
+	self.DoEngineStart = false
+	self.OldShouldStart = false
+
+	local Engine = self:GetEngine()
+
+	if not IsValid( Engine ) then return end
+
+	Engine:EmitSound( self.EngineStopSound, 75, 100, self.EngineStartStopVolume )
 end
