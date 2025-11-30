@@ -96,7 +96,7 @@ function ENT:GetEngineTorque()
 		if EntTable.TransShiftSpeed > 0.5 then
 			if EntTable._OldTorqueShiftGear ~= Gear then
 				if (EntTable._OldTorqueShiftGear or 0) < Gear then
-					EntTable._TorqueShiftDelayTime = T + math.max( EntTable.TransShiftSpeed - 0.5, 0 )
+					EntTable._TorqueShiftDelayTime = T + EntTable.TransShiftSpeed * 0.5
 				end
 
 				EntTable._OldTorqueShiftGear = Gear
