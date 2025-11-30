@@ -110,6 +110,8 @@ function ENT:PostInitialize( PObj )
 		ent:WeaponsFinish()
 
 		for _, pod in pairs( ent:GetPassengerSeats() ) do
+			if not IsValid( pod ) then continue end
+
 			local weapon = pod:lvsGetWeapon()
 
 			if not IsValid( weapon ) or not weapon._activeWeapon then continue end
