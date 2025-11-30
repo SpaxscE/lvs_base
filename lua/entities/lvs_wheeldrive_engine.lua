@@ -329,14 +329,8 @@ function ENT:HandleEngineSounds( vehicle )
 
 	local RatioPitch = math.max(Vel - (CurrentGear - 1) * PitchValue,0)
 
-	if (not IsManualTransmission or IsHandBraking) then
+	if (not IsManualTransmission or IsHandBraking or vehicle.EngineRevLimited) then
 		RatioPitch = math.min( PitchValue, RatioPitch )
-	else
-		if vehicle.EngineRevLimited then
-			local LimiterMax = (vehicle.EngineMaxRPM + 3000) / vehicle.EngineMaxRPM
-
-			RatioPitch = math.min( PitchValue * LimiterMax, RatioPitch )
-		end
 	end
 
 	local preRatio = math.Clamp(Vel / (PitchValue * (CurrentGear - 1)),0,1)
