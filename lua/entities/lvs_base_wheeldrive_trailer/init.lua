@@ -113,6 +113,9 @@ function ENT:SimulateRotatingWheel( ent, phys, deltatime )
 end
 
 function ENT:OnCoupleChanged( targetVehicle, targetHitch, active )
+
+	if not IsValid( targetHitch ) or targetHitch:GetHitchType() == LVS.HITCHTYPE_MALE then return end
+
 	if active then
 		self:OnCoupled( targetVehicle, targetHitch )
 
