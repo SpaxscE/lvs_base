@@ -79,7 +79,7 @@ function ENT:GetEngineTorque()
 		if Gear < NumGears and Ratio < 0.5 then
 			local engine = self:GetEngine()
 
-			if IsValid( engine ) and Ratio < 0.5 * self:GetThrottle() then
+			if IsValid( engine ) and Ratio < (EntTable.EngineRevLimited and 0 or (0.5 * self:GetThrottle())) then
 				local dmginfo = DamageInfo()
 				dmginfo:SetDamage( 1 )
 				dmginfo:SetAttacker( self )

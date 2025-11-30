@@ -15,6 +15,7 @@ ENT.AdminSpawnable		= false
 ENT.WheelBrakeApplySound = "LVS.Brake.Apply"
 ENT.WheelBrakeReleaseSound = "LVS.Brake.Release"
 
+ENT.EngineRevLimited = true
 ENT.EngineIgnitionTime = 0
 ENT.EngineStartStopVolume = 1.0
 ENT.EngineStartSound = "common/null.wav"
