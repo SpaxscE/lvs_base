@@ -212,6 +212,10 @@ function ENT:HandleStart()
 
 	local EntTable = self:GetTable()
 
+	if Engine:GetDestroyed() then
+		EntTable.DoEngineStart = nil
+	end
+
 	local ShouldStart = EntTable.DoEngineStart == true
 
 	local T = CurTime()
