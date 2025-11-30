@@ -36,6 +36,31 @@ if CLIENT then
 		["tire_damage_layer"] = "lvs/wheel_destroyed_loop.wav",
 	}
 
+	function ENT:TireSoundThink()
+		for snd, _ in pairs( self.TireSoundTypes ) do
+			local T = self:GetTireSoundTime( snd )
+
+			if T > 0 then
+				local speed = self:GetVelocity():Length()
+
+				local sound = self:StartTireSound( snd )
+
+				if string.StartsWith( snd, "skid" ) or snd == "tire_damage_layer" then
+					local vel = speed
+					speed = math.max( math.abs( self:GetWheelVelocity() ) - vel, 0 ) * 5 + vel
+				end
+
+				local volume = math.min(speed / 400,1) ^ 2 * T
+				local pitch = 100 + math.Clamp((speed - 50) / 20,0,155)
+
+				sound:ChangeVolume( volume, 0 )
+				sound:ChangePitch( pitch )
+			else
+				self:StopTireSound( snd )
+			end
+		end
+	end
+
 	function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 		BaseClass.LVSHudPaintInfoText( self, X, Y, W, H, ScrX, ScrY, ply )
 
