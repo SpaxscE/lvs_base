@@ -213,10 +213,6 @@ function ENT:HandleStart()
 
 	local EntTable = self:GetTable()
 
-	if Engine:GetDestroyed() then
-		EntTable.DoEngineStart = nil
-	end
-
 	local ShouldStart = EntTable.DoEngineStart == true
 
 	local T = CurTime()
@@ -236,6 +232,10 @@ function ENT:HandleStart()
 
 				Engine:EmitSound( self.EngineStopSound, 75, 100, self.EngineStartStopVolume )
 			end
+		end
+	else
+		if not self:GetEngineActive() and ShouldStart then
+			EntTable.DoEngineStart = nil
 		end
 	end
 
