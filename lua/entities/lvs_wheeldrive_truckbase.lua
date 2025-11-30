@@ -175,11 +175,13 @@ function ENT:OnCoupleChanged( targetVehicle, targetHitch, active )
 end
 
 function ENT:GetEngineTorque()
-	local TargetValue = 1
+	local EntTable = self:GetTable()
 
-	if not self:IsManualTransmission() then
-		TargetValue = self.HitchIsHooked and 1 or math.min( 0.5 + math.max( (self:GetVelocity():Length() / self.MaxVelocity) ^ 2 - 0.5, 0 ), 1 )
-	end
+	local MaxVelocity = EntTable.MaxVelocity
+	local Velocity = self:GetVelocity():Length()
+	local Geared = (MaxVelocity / EntTable.TransGears) * 0.5
+
+	local TargetValue = EntTable.HitchIsHooked and 1 or math.min( math.max( 1 - (math.max( Velocity - Geared, 0 ) / Geared) , 0.5 ) + math.max( (Velocity / MaxVelocity) ^ 2 - 0.5, 0 ), 1 )
 
 	if TargetValue ~= self:GetMaxThrottle() then
 		self:SetMaxThrottle( TargetValue )
