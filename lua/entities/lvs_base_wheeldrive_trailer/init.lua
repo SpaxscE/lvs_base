@@ -114,7 +114,7 @@ end
 
 function ENT:OnCoupleChanged( targetVehicle, targetHitch, active )
 
-	if not IsValid( targetHitch ) or targetHitch:GetHitchType() == LVS.HITCHTYPE_MALE then return end
+	if IsValid( targetHitch ) and targetHitch:GetHitchType() == LVS.HITCHTYPE_FEMALE then return end
 
 	if active then
 		self:OnCoupled( targetVehicle, targetHitch )
