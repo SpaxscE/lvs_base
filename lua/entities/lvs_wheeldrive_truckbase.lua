@@ -23,6 +23,19 @@ ENT.EngineStopSound = "common/null.wav"
 ENT.TransShiftSound = "common/null.wav"
 
 if CLIENT then
+	ENT.TireSoundTypes = {
+		["roll"] = "lvs/vehicles/generic/heavywheel_roll.wav",
+		["roll_racing"] = "lvs/vehicles/generic/wheel_roll.wav",
+		["roll_dirt"] = "lvs/vehicles/generic/heavywheel_roll_dirt.wav",
+		["roll_wet"] = "lvs/vehicles/generic/heavywheel_roll_wet.wav",
+		["roll_damaged"] = "lvs/wheel_damaged_loop.wav",
+		["skid"] = "lvs/vehicles/generic/heavywheel_skid.wav",
+		["skid_racing"] = "lvs/vehicles/generic/wheel_skid_racing.wav",
+		["skid_dirt"] = "lvs/vehicles/generic/heavywheel_skid_dirt.wav",
+		["skid_wet"] = "lvs/vehicles/generic/wheel_skid_wet.wav",
+		["tire_damage_layer"] = "lvs/wheel_destroyed_loop.wav",
+	}
+
 	function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 		BaseClass.LVSHudPaintInfoText( self, X, Y, W, H, ScrX, ScrY, ply )
 
