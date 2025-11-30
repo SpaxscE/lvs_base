@@ -129,6 +129,21 @@ function ENT:PostInitialize( PObj )
 
 	SetMinimumAngularVelocityTo( 24000 )
 
+	local IllumPosition = util.GetModelInfo( self:GetModel() )["IllumPosition"]
+
+	if isvector( IllumPosition ) then
+		local lightOrigin = ents.Create( "lvs_wheeldrive_lightorigin" )
+		lightOrigin:SetPos( self:LocalToWorld( IllumPosition ) )
+		lightOrigin:Spawn()
+		lightOrigin:SetParent( self )
+
+		for _, wheel in pairs( self:GetWheels() ) do
+			if not IsValid( wheel ) then continue end
+
+			wheel:SetLightingOriginEntity( lightOrigin )
+		end
+	end
+
 	self:EnableHandbrake()
 end
 
