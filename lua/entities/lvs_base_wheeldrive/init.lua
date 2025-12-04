@@ -129,14 +129,13 @@ function ENT:PostInitialize( PObj )
 
 	SetMinimumAngularVelocityTo( 24000 )
 
-	-- need to wait for main branch to update. The old fix is broken now on beta branch
-	--[[
-	for _, wheel in pairs( self:GetWheels() ) do
-		if not IsValid( wheel ) then continue end
+	if BRANCH == "dev" or BRANCH == "x86-64" then
+		for _, wheel in pairs( self:GetWheels() ) do
+			if not IsValid( wheel ) then continue end
 
-		wheel:SetLightingOriginEntity( self )
+			wheel:SetLightingOriginEntity( self )
+		end
 	end
-	]]
 
 	self:EnableHandbrake()
 end
