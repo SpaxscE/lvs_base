@@ -108,10 +108,9 @@ function ENT:DestroyTire()
 	self:EmitSound("lvs/wheel_pop"..math.random(1,4)..".ogg")
 
 	local effectdata = EffectData()
-	effectdata:SetOrigin( self:GetPos() )
-	effectdata:SetEntity( base )
-	effectdata:SetNormal( Vector(0,0,1) )
-	util.Effect( "lvs_physics_wheelsmoke", effectdata, true, true )
+		effectdata:SetOrigin( self:GetPos() )
+		effectdata:SetEntity( self )
+	util.Effect( "lvs_tire_blow", effectdata, true, true )
 
 	self._RestoreBodyGroups = {}
 
