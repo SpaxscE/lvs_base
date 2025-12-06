@@ -1,5 +1,6 @@
 
 ENT.Base = "lvs_base_wheeldrive"
+DEFINE_BASECLASS( "lvs_base_wheeldrive" )
 
 ENT.PrintName = "[LVS] Wheeldrive Trailer"
 ENT.Author = "Luna"
@@ -20,6 +21,12 @@ ENT.AllowTurbo = false
 ENT.PhysicsDampingSpeed = 1000
 ENT.PhysicsDampingForward = true
 ENT.PhysicsDampingReverse = true
+
+function ENT:AddDT( type, name, data )
+	if name == "EngineActive" then return end
+
+	BaseClass.AddDT( self, type, name, data )
+end
 
 function ENT:SetupDataTables()
 	self:CreateBaseDT()
@@ -62,6 +69,17 @@ function ENT:SetThrottle()
 end
 
 function ENT:SetReverse()
+end
+
+function ENT:SetEngineActive()
+end
+
+function ENT:GetEngineActive()
+	local InputTarget = self:GetInputTarget()
+
+	if not IsValid( InputTarget ) or not InputTarget.GetEngineActive then return false end
+
+	return InputTarget:GetEngineActive()
 end
 
 function ENT:GetEngine()
