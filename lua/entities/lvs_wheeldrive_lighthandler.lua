@@ -199,7 +199,7 @@ end
 function ENT:CreateSubMaterial( SubMaterialID, name )
 	local base = self:GetBase()
 
-	if not IsValid( base ) or not SubMaterialID then return end
+	if not IsValid( base ) or not isnumber( SubMaterialID ) then return end
 
 	local mat = base:GetMaterials()[ SubMaterialID + 1 ]
 
