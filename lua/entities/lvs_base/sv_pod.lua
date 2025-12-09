@@ -98,8 +98,6 @@ function ENT:SetPassenger( ply )
 						hook.Run( "LVS.OnPlayerCannotDrive", ply, self )
 					end
 				end
-			else
-				self:EmitSound( "doors/default_locked.wav" )
 			end
 		end
 	end
