@@ -52,6 +52,21 @@ LVS.FUELTYPES = {
 	},
 }
 
+LVS.SPEEDUNITS = {
+	["u/s"] = {
+		name = "u/s",
+		value = 1,
+	},
+	["mph"] = {
+		name = "mph",
+		value = 0.0568182,
+	},
+	["km/h"] = {
+		name = "km/h",
+		value = 0.09144,
+	},
+}
+
 LVS.WEAPONS = {
 	["DEFAULT"] = {
 		Icon = Material("lvs/weapons/bullet.png"),
@@ -441,6 +456,20 @@ function LVS:GetVehicleTypes()
 	end
 
 	return VehicleTypes
+end
+
+if CLIENT then
+	function LVS:GetUnitValue( number )
+		if not LVS.SPEEDUNITS[ LVS.SpeedUnit ] then return number end
+
+		return (number * LVS.SPEEDUNITS[ LVS.SpeedUnit ].value)
+	end
+
+	function LVS:GetUnitName()
+		if not LVS.SPEEDUNITS[ LVS.SpeedUnit ] then return "u/s" end
+
+		return LVS.SPEEDUNITS[ LVS.SpeedUnit ].name
+	end
 end
 
 AddCSLuaFile("lvs_framework/init.lua")

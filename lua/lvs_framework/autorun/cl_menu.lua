@@ -160,6 +160,22 @@ local function ClientSettings( Canvas )
 	slider:SetDecimals( 2 )
 	slider:SetConVar( "lvs_volume" )
 
+	local DLabel = vgui.Create("DLabel", LeftPanel )
+	DLabel:SetPos( 16, 72 )
+	DLabel:SetSize( 60, 20 )
+	DLabel:SetText( "Speed Unit" )
+
+	local DComboBox = vgui.Create( "DComboBox", LeftPanel )
+	DComboBox:SetPos( 130, 72 )
+	DComboBox:SetSize( 160, 20 )
+	DComboBox:SetValue( LVS.SpeedUnit )
+	for unit, _ in pairs( LVS.SPEEDUNITS ) do
+		DComboBox:AddChoice( unit )
+	end
+	DComboBox.OnSelect = function( self, index, value )
+		RunConsoleCommand("lvs_speedunit", value)
+	end
+
 	local CheckBox = vgui.Create( "DCheckBoxLabel", RightPanel )
 	CheckBox:DockMargin( 16, 43, 4, 4 )
 	CheckBox:SetSize( FrameSizeX, 30 )

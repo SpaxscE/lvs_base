@@ -60,6 +60,12 @@ CreateClientConVar( "lvs_return_delta", 2, true, true)
 
 LVS.cvarCamFocus = CreateClientConVar( "lvs_camerafocus", 0, true, false)
 
+local cvarSpeedUnit = CreateClientConVar( "lvs_speedunit",  "km/h", true, false)
+LVS.SpeedUnit = cvarSpeedUnit and cvarSpeedUnit:GetString() or "km/h"
+cvars.AddChangeCallback( "lvs_speedunit", function( convar, oldValue, newValue ) 
+	LVS.SpeedUnit = newValue
+end)
+
 local cvarDoorInfo = CreateClientConVar( "lvs_show_doorinfo", 1, true, false)
 LVS.ShowDoorInfo = cvarDoorInfo and cvarDoorInfo:GetBool() or false
 cvars.AddChangeCallback( "lvs_show_doorinfo", function( convar, oldValue, newValue ) 

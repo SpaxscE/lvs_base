@@ -271,9 +271,9 @@ function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
 		EntTable._refreshVel = self:GetVelocity():Length()
 	end
 
-	local kmh = math.Round( (EntTable._refreshVel or 0) * 0.09144,0)
-	draw.DrawText( "km/h ", "LVS_FONT", X + w * 0.81, Y + w * 0.6, color_white, TEXT_ALIGN_LEFT )
-	draw.DrawText( kmh, "LVS_FONT_HUD_LARGE", X + w * 0.81 - 5, Y + w * 0.6, color_white, TEXT_ALIGN_RIGHT )
+	local speed = math.Round( LVS:GetUnitValue( EntTable._refreshVel or 0 ) , 0 )
+	draw.DrawText( LVS:GetUnitName().." ", "LVS_FONT", X + w * 0.81, Y + w * 0.6, color_white, TEXT_ALIGN_LEFT )
+	draw.DrawText( speed, "LVS_FONT_HUD_LARGE", X + w * 0.81 - 5, Y + w * 0.6, color_white, TEXT_ALIGN_RIGHT )
 
 	-- fuel, oil, coolant
 	local barlength = w * 0.2
