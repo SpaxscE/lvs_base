@@ -58,23 +58,11 @@ function ENT:StartSkidmark( pos )
 end
 
 function ENT:FinishSkidmark()
-	local EntTable = self:GetTable()
+	if not self._SkidMarkID then return end
 
-	if not EntTable._SkidMarkID then return end
+	self._activeSkidMarks[ self._SkidMarkID ].active = false
 
-	self._activeSkidMarks[ EntTable._SkidMarkID ].active = false
-
-	if self:GetVelocity():LengthSqr() < 50000 then
-		local Num = #EntTable._activeSkidMarks[ EntTable._SkidMarkID ].positions
-
-		for i = 0, 9 do
-			if not EntTable._activeSkidMarks[ EntTable._SkidMarkID ].positions[ Num - i ] then break end
-
-			EntTable._activeSkidMarks[ self._SkidMarkID ].positions[ Num - i ].alpha = EntTable._activeSkidMarks[ self._SkidMarkID ].positions[ Num - i ].alpha * ((1 + i) / 10)
-		end
-	end
-
-	EntTable._SkidMarkID = nil
+	self._SkidMarkID = nil
 end
 
 function ENT:RemoveSkidmark( id )
