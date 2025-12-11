@@ -28,7 +28,7 @@ if CLIENT then
 		["roll"] = "lvs/vehicles/generic/heavywheel_roll.wav",
 		["roll_racing"] = "lvs/vehicles/generic/wheel_roll.wav",
 		["roll_dirt"] = "lvs/vehicles/generic/heavywheel_roll_dirt.wav",
-		["roll_wet"] = "lvs/vehicles/generic/heavywheel_roll_wet.wav",
+		["roll_wet"] = "lvs/vehicles/generic/wheel_roll_wet.wav",
 		["roll_damaged"] = "lvs/wheel_damaged_loop.wav",
 		["skid"] = "lvs/vehicles/generic/heavywheel_skid.wav",
 		["skid_racing"] = "lvs/vehicles/generic/wheel_skid_racing.wav",
