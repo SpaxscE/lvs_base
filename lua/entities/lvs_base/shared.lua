@@ -25,6 +25,8 @@ ENT.MaxHealth = 100
 ENT.MaxShield = 0
 
 ENT.SpawnNormalOffset = 15
+ENT.SpawnAngleOffset = 0
+
 ENT.HitGroundLength = 10
 
 ENT.lvsDisableZoom = true

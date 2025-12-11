@@ -204,6 +204,8 @@ list.Set( "ContentCategoryIcons", "[LVS] - Artillery", "icon16/lvs_artillery.png
 list.Set( "ContentCategoryIcons", "[LVS] - Boats", "icon16/lvs_boats.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Boats - Civilian", "icon16/lvs_civilian.png" )
 
+list.Set( "ContentCategoryIcons", "[LVS] - Racers", "icon16/lvs_racers.png" )
+
 list.Set( "ContentCategoryIcons", "[LVS] - Cars", "icon16/lvs_cars.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Cars - Armored", "icon16/lvs_armor.png" )
 list.Set( "ContentCategoryIcons", "[LVS] - Cars - Civilian", "icon16/lvs_civilian.png" )
