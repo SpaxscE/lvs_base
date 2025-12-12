@@ -25,13 +25,15 @@ if SERVER then
 		PObj:EnableDrag( false )
 
 		self:SetNotSolid( true )
-		self:SetColor( Color( 255, 255, 255, 0 ) ) 
-		self:SetRenderMode( RENDERMODE_TRANSALPHA )
-		self:DrawShadow( false )
+		self:SetNoDraw( true )
 	end
 
 	function ENT:Think()
 		return false
+	end
+
+	function ENT:UpdateTransmitState() 
+		return TRANSMIT_NEVER
 	end
 
 	return

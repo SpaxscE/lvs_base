@@ -1,3 +1,6 @@
+hook.Add( "PhysgunPickup", "!!!!lvs_physgun_pickup", function( ply, ent )
+	if ent._lvsNoPhysgunInteraction then return false end
+end )
 
 hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
 	timer.Simple(1, function()

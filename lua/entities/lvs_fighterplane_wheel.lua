@@ -5,6 +5,7 @@ ENT.Type            = "anim"
 ENT.Spawnable       = false
 ENT.AdminSpawnable  = false
 ENT.DoNotDuplicate = true
+ENT._lvsNoPhysgunInteraction = true
 
 if SERVER then
 	function ENT:Initialize()	
@@ -44,7 +45,7 @@ if SERVER then
 	end
 
 	function ENT:GetBrakeForce()
-		return (self._BrakeForce or 25)
+		return (self._BrakeForce or 50)
 	end
 
 	function ENT:Define( data )
@@ -96,6 +97,10 @@ if SERVER then
 		if not IsValid( base ) then return end
 
 		base:TakeDamageInfo( dmginfo )
+	end
+
+	function ENT:UpdateTransmitState() 
+		return TRANSMIT_NEVER
 	end
 
 	return
