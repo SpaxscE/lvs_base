@@ -131,7 +131,7 @@ if CLIENT then
 		cam.Start2D()
 			local data2D = pos:ToScreen()
 
-			if not data2D.visible then return end
+			if not data2D.visible then cam.End2D() return end
 
 			local font = "TargetIDSmall"
 

@@ -323,7 +323,7 @@ local function DrawText( pos, text, align, col )
 	cam.Start2D()
 		local data2D = pos:ToScreen()
 
-		if not data2D.visible then return end
+		if not data2D.visible then cam.End2D() return end
 
 		local font = "TargetIDSmall"
 
@@ -350,8 +350,6 @@ local function bezier(p0, p1, p2, p3, t)
 end
 
 local function DrawBezier( startpos, midpos, endpos )
-	local ply = 
-
 	cam.Start2D()
 		local p0 = LocalPlayer():GetPos()
 		local p1 = startpos
@@ -360,9 +358,16 @@ local function DrawBezier( startpos, midpos, endpos )
 
 		local oldpos = p0:ToScreen()
 
+		if not oldpos.visible then cam.End2D() return end
+
 		local num = 100
 		for i = 0, num do
 			local newpos = bezier(p0,p1,p2,p3, i / num):ToScreen()
+
+			if not newpos.visible then
+				oldpos = newpos
+				continue
+			end
 
 			surface.SetDrawColor( 255, 255, 255, math.abs( math.cos( -CurTime() * 5 + i * 0.05 ) ) * 255 )
 
