@@ -157,14 +157,14 @@ hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 		{
 			name = "CAR_MENU",
 			category = "LVS-Car",
-			name_menu = "Open Signal Menu",
+			name_menu = "Turn Signals",
 			default = "+zoom",
 			cmd = "lvs_car_menu"
 		},
 		{
 			name = "CAR_SIREN",
 			category = "LVS-Car",
-			name_menu = "Open Siren Menu",
+			name_menu = "Siren",
 			default = "phys_swap",
 			cmd = "lvs_car_siren"
 		},
@@ -221,6 +221,12 @@ hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 			category = "LVS-Car",
 			name_menu = "Shift Down",
 			cmd = "lvs_car_shift_dn"
+		},
+		{
+			name = "CAR_CLUTCH",
+			category = "LVS-Car",
+			name_menu = "Shift Menu",
+			cmd = "lvs_car_clutch"
 		},
 	}
 

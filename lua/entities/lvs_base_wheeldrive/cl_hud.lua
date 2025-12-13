@@ -1,5 +1,6 @@
 
 include("cl_hud_speedometer.lua")
+include("cl_hud_shiftmenu.lua")
 
 ENT.IconEngine = Material( "lvs/engine.png" )
 ENT.IconFuel = Material( "lvs/fuel.png" )
