@@ -275,7 +275,7 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 	if ply._lvsIsInVehicle then
 		net.Start( "lvs_player_enterexit" )
 			net.WriteBool( false )
-			net.WriteEntity( ply:lvsGetVehicle() )
+			net.WriteEntity( Pod:lvsGetVehicle() )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = nil
