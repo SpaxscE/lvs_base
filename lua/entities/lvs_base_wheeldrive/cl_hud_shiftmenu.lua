@@ -11,12 +11,33 @@ LVS:AddHudEditor( "CarShiftMenu",  50, ScrH() * 0.5 - H * 0.5,  W, H, W, H, "CAR
 	end
 )
 
+local mDeltaX = 0
+local mDeltaY = 0
+
+function ENT:InputMouseApply( ply, cmd, x, y, ang )
+	if not ply:lvsKeyDown( "CAR_CLUTCH" ) then return end
+
+	mDeltaX = x
+	mDeltaY = y
+
+	return true
+end
+
+local SelectorX = 0
+local SelectorY = 0
+
 function ENT:LVSHudPaintCarShiftMenu( X, Y, w, h, ScrX, ScrY, ply )
 	if self:GetDriver() ~= ply then return end
 
-	local MenuOpen = self:IsManualTransmission() and ply:lvsKeyDown( "CAR_CLUTCH" )
+	local MenuOpen = ply:lvsKeyDown( "CAR_CLUTCH" )
 
-	if not MenuOpen then return end
+	if not MenuOpen then
+
+		SelectorX = X + w * 0.5
+		SelectorY = Y + h * 0.5
+
+		return
+	end
 
 	draw.RoundedBox( R, X, Y, w, h, Color(0,0,0,200) )
 
@@ -60,13 +81,13 @@ function ENT:LVSHudPaintCarShiftMenu( X, Y, w, h, ScrX, ScrY, ply )
 		}
 	end
 
-	for id, data in pairs( pattern ) do
+	for id, data in ipairs( pattern ) do
 		data.x = ((data.x - 1) / (xpos - 1)) - 0.5
 	end
 
 	local oldX
 
-	for index, data in pairs( pattern ) do
+	for index, data in ipairs( pattern ) do
 		local originX = CenterX + data.x * (W - S)
 		local originY = CenterY + data.y * (H - S) * 0.5
 
@@ -86,4 +107,17 @@ function ENT:LVSHudPaintCarShiftMenu( X, Y, w, h, ScrX, ScrY, ply )
 
 		oldX = originX
 	end
+
+
+	if MouseXDelta ~= 0 then
+		SelectorX = math.Clamp( SelectorX + MouseXDelta, X, X + W )
+		MouseXDelta = 0
+	end
+
+	if MouseYDelta ~= 0 then
+		SelectorY = math.Clamp( SelectorY + MouseYDelta, Y, Y + H )
+		MouseYDelta = 0
+	end
+
+	draw.RoundedBox( 10, SelectorX - 10, SelectorY - 10, 20, 20, Color(255,0,0,255) )
 end

@@ -9,8 +9,10 @@ include("cl_seatswitcher.lua")
 include("cl_trailsystem.lua")
 include("cl_boneposeparemeter.lua")
 
-local Zoom = 0
+function ENT:InputMouseApply( ply, cmd, x, y, ang )
+end
 
+local Zoom = 0
 function ENT:LVSCalcFov( fov, ply )
 
 	local TargetZoom = ply:lvsKeyDown( "ZOOM" ) and 0 or 1

@@ -137,10 +137,22 @@ if CLIENT then
 		if hide[ name ] then return false end
 	end
 
+	local CurVehicle
+	local function InputMouseApplyLVS( cmd, x, y, ang )
+		local ply = LocalPlayer()
+
+		if not IsValid( CurVehicle ) then return end
+
+		return CurVehicle:InputMouseApply( ply, cmd, x, y, ang )
+	end
+
 	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, veh )
 		hook.Add( "HUDShouldDraw", "!!!!lvs_hidehud", HUDShouldDrawLVS )
+		hook.Add( "InputMouseApply", "!!!!lvs_inputmouseapply", InputMouseApplyLVS )
 
 		if not IsValid( veh ) then return end
+
+		CurVehicle = veh
 
 		local cvar = GetConVar( "lvs_mouseaim_type" )
 
@@ -158,6 +170,9 @@ if CLIENT then
 
 	hook.Add( "LVS.PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, veh )
 		hook.Remove( "HUDShouldDraw", "!!!!lvs_hidehud" )
+		hook.Remove( "InputMouseApply", "!!!!lvs_inputmouseapply" )
+
+		CurVehicle = nil
 	end )
 
 	hook.Add( "InitPostEntity", "!!!lvs_infmap_velocity_fixer", function()
