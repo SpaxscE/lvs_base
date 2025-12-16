@@ -108,15 +108,14 @@ function ENT:LVSHudPaintCarShiftMenu( X, Y, w, h, ScrX, ScrY, ply )
 		oldX = originX
 	end
 
-
-	if MouseXDelta ~= 0 then
-		SelectorX = math.Clamp( SelectorX + MouseXDelta, X, X + W )
-		MouseXDelta = 0
+	if mDeltaX ~= 0 then
+		SelectorX = math.Clamp( SelectorX + mDeltaX, X, X + W )
+		mDeltaX = 0
 	end
 
-	if MouseYDelta ~= 0 then
-		SelectorY = math.Clamp( SelectorY + MouseYDelta, Y, Y + H )
-		MouseYDelta = 0
+	if mDeltaY ~= 0 then
+		SelectorY = math.Clamp( SelectorY + mDeltaY, Y, Y + H )
+		mDeltaY = 0
 	end
 
 	draw.RoundedBox( 10, SelectorX - 10, SelectorY - 10, 20, 20, Color(255,0,0,255) )
