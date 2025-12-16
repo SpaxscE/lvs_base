@@ -44,9 +44,11 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 	surface.SetDrawColor( 0, 0, 0, 200 )
 	surface.DrawTexturedRectRotated( hX + 4, hY + 1, H * 0.5, H * 0.5, 0 )
 
-	if ( self:IsManualTransmission() ) then
-		local engine = self:GetEngine()
-		if ( not IsValid( engine ) or not isnumber( self.EngineMaxRPM ) ) then return end
+	local IsManual = self:IsManualTransmission()
+
+	if ( IsManual ) then
+		local Engine = self:GetEngine()
+		if ( not IsValid( Engine ) or not isnumber( self.EngineMaxRPM ) ) then return end
 
 		local RPM = engine:GetRPM() / self.EngineMaxRPM
 		if ( RPM > 0.95 ) then
@@ -75,7 +77,6 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 			WaveScale = 1
 		end
 
-		local IsManual = self:IsManualTransmission()
 		local Gear = self:GetGear()
 
 		if oldGear ~= Gear then
