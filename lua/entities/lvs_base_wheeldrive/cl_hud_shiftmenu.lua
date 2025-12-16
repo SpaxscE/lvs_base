@@ -20,8 +20,8 @@ LVS:AddHudEditor( "CarShiftMenu",  50, ScrH() * 0.5 - H * 0.5,  W, H, W, H, "CAR
 function ENT:InputMouseApply( ply, cmd, x, y, ang )
 	if not self:IsManualTransmission() or not ply:lvsKeyDown( "CAR_CLUTCH" ) then return end
 
-	MouseDeltaX = x
-	MouseDeltaY = y
+	MouseDeltaX = x * 0.7
+	MouseDeltaY = y * 0.7
 
 	return true
 end
