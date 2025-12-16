@@ -43,14 +43,30 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 
 	surface.SetDrawColor( 0, 0, 0, 200 )
 	surface.DrawTexturedRectRotated( hX + 4, hY + 1, H * 0.5, H * 0.5, 0 )
-	surface.SetDrawColor( color_white )
+
+	if ( self:IsManualTransmission() ) then
+		local engine = self:GetEngine()
+		if ( not IsValid( engine ) or not isnumber( self.EngineMaxRPM ) ) then return end
+
+		local RPM = engine:GetRPM() / self.EngineMaxRPM
+		if ( RPM > 0.95 ) then
+			local OverRev = math.min( ( RPM - 0.95 ) * 10, 1 )
+
+			surface.SetDrawColor( 255, 255 - (255 * OverRev), 0, 255 )
+		else
+			surface.SetDrawColor( 255, 255, 255, 255 )
+		end
+	else
+		surface.SetDrawColor( color_white )
+	end
+
 	surface.DrawTexturedRectRotated( hX + 2, hY - 1, H * 0.5, H * 0.5, 0 )
 
 	if not self:GetEngineActive() then
 		draw.SimpleText( "X" , "LVS_FONT",  hX, hY, Color(0,0,0,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 	else
 		oldThrottleActive = false
-	
+
 		local Reverse = self:GetReverse()
 
 		if oldReverse ~= Reverse then
