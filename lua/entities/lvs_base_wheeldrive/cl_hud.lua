@@ -48,9 +48,12 @@ function ENT:LVSHudPaintInfoText( X, Y, W, H, ScrX, ScrY, ply )
 
 	if ( IsManual ) then
 		local Engine = self:GetEngine()
-		if ( not IsValid( Engine ) or not isnumber( self.EngineMaxRPM ) ) then return end
+		if ( not IsValid( Engine ) or not isnumber( self.EngineMaxRPM ) or self.EngineMaxRPM <= 0 ) then
+			surface.SetDrawColor( color_white )
+			return
+		end
 
-		local RPM = engine:GetRPM() / self.EngineMaxRPM
+		local RPM = Engine:GetRPM() / self.EngineMaxRPM
 		if ( RPM > 0.95 ) then
 			local OverRev = math.min( ( RPM - 0.95 ) * 10, 1 )
 
