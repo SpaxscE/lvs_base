@@ -80,8 +80,8 @@ local function UpdateMouse( X, Y, W, H )
 	end
 end
 
-local OldX = 0
-local OldY = 0
+local OldX
+local OldY
 
 local HasPixelCaptured = false
 
@@ -91,12 +91,15 @@ function ENT:LVSHudPaintCarShiftMenu( CornerX, CornerY, w, h, ScrX, ScrY, ply )
 	local MenuOpen = self:IsManualTransmission() and ply:lvsKeyDown( "CAR_CLUTCH" )
 
 	if not MenuOpen then
-		OldX = CornerX + w * 0.5
-		OldY = CornerY + h * 0.5
 
 		HasPixelCaptured = false
 
 		return
+	end
+
+	if not OldX or not OldY then
+		OldX = CornerX + w * 0.5
+		OldY = CornerY + h * 0.5
 	end
 
 	draw.RoundedBox( R, CornerX, CornerY, w, h, Color(0,0,0,200) )
@@ -152,7 +155,7 @@ function ENT:LVSHudPaintCarShiftMenu( CornerX, CornerY, w, h, ScrX, ScrY, ply )
 	local ymin = Y - H * 0.5
 	local ymax = ymin + H
 
-	local Rate = 500 * RealFrameTime()
+	local Rate = 2000 * RealFrameTime()
 
 	for i = 1, Rate, 1 do
 		local mX = math.Clamp( OldX + math.Clamp(MousePosX - OldX,-1,1), xmin + R, xmax - R )
@@ -179,5 +182,5 @@ function ENT:LVSHudPaintCarShiftMenu( CornerX, CornerY, w, h, ScrX, ScrY, ply )
 	end
 
 	draw.RoundedBox( R, OldX - R, OldY - R, R * 2, R * 2, Color(0,0,0,255) )
-	draw.RoundedBox( 10, MousePosX - 10, MousePosY - 10, 20, 20, Color(100,100,100,255) )
+	surface.DrawCircle( MousePosX, MousePosY, 20, Color( 255, 255, 255, 255 ) )
 end
