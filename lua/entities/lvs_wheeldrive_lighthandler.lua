@@ -153,7 +153,18 @@ function ENT:InitializeLights( base, data )
 				end
 
 				if isstring( projdata.pos ) then
-					data[typeid].ProjectedTextures[ projid ].att = base:LookupAttachment( projdata.pos )
+					local attachID = base:LookupAttachment( projdata.pos )
+
+					data[typeid].ProjectedTextures[ projid ].att = attachID
+
+
+					-- detect if the attachment is upside down
+					local att = base:GetAttachment( attachID )
+					if att then
+						if base:WorldToLocalAngles( att.Ang ):Up().z < -0.9 then
+							data[typeid].ProjectedTextures[ projid ].FixRotation = true
+						end
+					end
 				else
 					data[typeid].ProjectedTextures[ projid ].pos = projdata.pos or vector_origin
 					data[typeid].ProjectedTextures[ projid ].ang = projdata.ang or angle_zero
@@ -328,6 +339,12 @@ function ENT:LightsThink( base )
 
 							if att then
 								proj:SetPos( att.Pos )
+
+								-- its upside down...
+								if projdata.FixRotation then
+									att.Ang:RotateAroundAxis( att.Ang:Forward(), 180 )
+								end
+
 								proj:SetAngles( att.Ang )
 							end
 						else
