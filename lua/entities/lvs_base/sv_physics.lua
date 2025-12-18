@@ -53,6 +53,7 @@ function ENT:PhysicsStartScrape( pos, dir )
 			dir = dir,
 			pos = pos,
 			sound = sound,
+			finishtime = CurTime() + 2,
 		}
 
 		self:CallOnRemove( "stop_scraping", function( self )
@@ -62,13 +63,21 @@ function ENT:PhysicsStartScrape( pos, dir )
 end
 
 function ENT:PhysicsThink()
-	if not self._lvsScrapeData then return end
+	local EntTable = self:GetTable()
 
-	local startpos = self:LocalToWorld( self._lvsScrapeData.pos )
+	if not EntTable._lvsScrapeData then return end
+
+	if EntTable._lvsScrapeData.finishtime < CurTime() then
+		self:PhysicsStopScape()
+
+		return
+	end
+
+	local startpos = self:LocalToWorld( EntTable._lvsScrapeData.pos )
 
 	local trace = util.TraceLine( {
-		start = startpos - self._lvsScrapeData.dir,
-		endpos = startpos + self._lvsScrapeData.dir * 5,
+		start = startpos - EntTable._lvsScrapeData.dir,
+		endpos = startpos + EntTable._lvsScrapeData.dir * 5,
 		filter = self:GetCrosshairFilterEnts()
 	} )
 
@@ -83,7 +92,7 @@ function ENT:PhysicsThink()
 		effectdata:SetMagnitude( vol )
 		util.Effect( "lvs_physics_scrape", effectdata, true, true )
 
-		self._lvsScrapeData.sound:ChangeVolume( vol, 0.1 )
+		EntTable._lvsScrapeData.sound:ChangeVolume( vol, 0.1 )
 	else
 		self:PhysicsStopScape()
 	end
