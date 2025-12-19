@@ -48,7 +48,7 @@ function ENT:OnFlyBy( Pitch )
 
 	local EntTable = self:GetTable()
 
-	EntTable.flybysnd = CreateSound( self, EntTable.FlyBySound )
+	EntTable.flybysnd = CreateSound( self, self.FlyBySound )
 	EntTable.flybysnd:SetSoundLevel( 95 )
 	EntTable.flybysnd:PlayEx( 1, Pitch )
 end
