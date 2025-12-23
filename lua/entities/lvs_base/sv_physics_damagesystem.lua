@@ -262,4 +262,6 @@ function ENT:PDSThink( data )
 	if vel < data.velocity then return end
 
 	DamagePart( self, data.part, vel )
+
+	return true
 end

@@ -307,7 +307,9 @@ function ENT:DamageThink()
 	end
 
 	if EntTable._pdsPartsAutoProgress then
-		self:PDSThink( EntTable._pdsPartsAutoProgress )
+		if self:PDSThink( EntTable._pdsPartsAutoProgress ) then
+			EntTable._pdsPartsAutoProgress = nil
+		end
 	end
 
 	if self:IsDestroyed() then
