@@ -300,8 +300,14 @@ function ENT:FindDS( PosToCheck, RadiusAdd )
 end
 
 function ENT:DamageThink()
-	if self.MarkForDestruction then
+	local EntTable = self:GetTable()
+
+	if EntTable.MarkForDestruction then
 		self:Explode()
+	end
+
+	if EntTable._pdsPartsAutoProgress then
+		self:PDSThink( EntTable._pdsPartsAutoProgress )
 	end
 
 	if self:IsDestroyed() then

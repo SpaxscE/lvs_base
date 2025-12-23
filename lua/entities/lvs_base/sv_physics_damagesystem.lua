@@ -15,6 +15,8 @@ function ENT:PDSHealthValueChanged( name, old, new)
 	
 	if not self:IsInitialized() or not istable( self._pdsParts ) or new ~= self:GetMaxHP() then return end
 
+	self._pdsPartsAutoProgress = nil
+
 	for _, part in pairs( self._pdsParts ) do
 		part:SetStage( 0 )
 
@@ -28,6 +30,10 @@ function ENT:PDSHealthValueChanged( name, old, new)
 end
 
 local function DamagePart( ent, part, speed )
+	if ent._pdsPartsAutoProgress and ent._pdsPartsAutoProgress.part == part then
+		ent._pdsPartsAutoProgress = nil
+	end
+
 	if not speed then
 		speed = 0
 	end
@@ -55,6 +61,13 @@ local function DamagePart( ent, part, speed )
 
 	if isstring( data.sound ) then
 		ent:EmitSound( data.sound, 75, 100, math.min(0.1 + speed / 700,1) )
+	end
+
+	if isnumber( data.maxvelocity ) then
+		ent._pdsPartsAutoProgress = {
+			part = part,
+			velocity = data.maxvelocity,
+		}
 	end
 
 	if isstring( data.effect ) then
@@ -241,4 +254,12 @@ function ENT:CalcPDS( physdata )
 	for _, part in pairs( parts ) do
 		DamagePart( self, part, VelDif )
 	end
+end
+
+function ENT:PDSThink( data )
+	local vel = self:GetVelocity():Length()
+
+	if vel < data.velocity then return end
+
+	DamagePart( self, data.part, vel )
 end
