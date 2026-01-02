@@ -1,5 +1,6 @@
 include("shared.lua")
 include("sh_weapons.lua")
+include("sh_velocity_changer.lua")
 include("sh_variables.lua")
 include("cl_effects.lua")
 include("cl_hud.lua")

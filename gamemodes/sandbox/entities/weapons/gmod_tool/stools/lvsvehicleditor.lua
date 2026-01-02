@@ -10,11 +10,11 @@ TOOL.Information = {
 }
 
 if CLIENT then
-	language.Add( "tool.lvstuner.name", "Vehicle Editor" )
-	language.Add( "tool.lvstuner.desc", "Edit internal variables of LVS-Vehicles" )
-	language.Add( "tool.lvstuner.left", "Select Vehicle" )
-	language.Add( "tool.lvstuner.right", "Edit Vehicle" )
-	language.Add( "tool.lvstuner.reload", "Open Editor" )
+	language.Add( "tool.lvsvehicleditor.name", "Vehicle Editor" )
+	language.Add( "tool.lvsvehicleditor.desc", "Edit internal variables of LVS-Vehicles" )
+	language.Add( "tool.lvsvehicleditor.left", "Select Vehicle" )
+	language.Add( "tool.lvsvehicleditor.right", "Edit Vehicle" )
+	language.Add( "tool.lvsvehicleditor.reload", "Open Editor" )
 
 	local function MakeSlider( parent, data )
 		if not data.name or not data.min or not data.max then return end
