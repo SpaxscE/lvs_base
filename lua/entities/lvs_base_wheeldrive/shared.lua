@@ -154,17 +154,17 @@ ENT.lvsEditables = {
 	[5] = {
 		Category = "Counter Steering",
 		Options = {
-			[6] = { name = "SteerAssistDeadZoneAngle", type = "float", min = 0, max = 90 },
-			[7] = { name = "SteerAssistMaxAngle", type = "float", min = 0, max = 90 },
-			[8] = { name = "SteerAssistExponent", type = "float", min = 0.1, max = 10 },
-			[9] = { name = "SteerAssistMultiplier", type = "float", min = 0.1, max = 10 },
+			[1] = { name = "SteerAssistDeadZoneAngle", type = "float", min = 0, max = 90 },
+			[2] = { name = "SteerAssistMaxAngle", type = "float", min = 0, max = 90 },
+			[3] = { name = "SteerAssistExponent", type = "float", min = 0.1, max = 10 },
+			[4] = { name = "SteerAssistMultiplier", type = "float", min = 0.1, max = 10 },
 		},
 	},
 	[6] = {
 		Category = "Mouse Steering",
 		Options = {
-			[10] = { name = "MouseSteerAngle", type = "float", min = 0.1, max = 90 },
-			[11] = { name = "MouseSteerExponent", type = "float", min = 0.1, max = 10 },
+			[1] = { name = "MouseSteerAngle", type = "float", min = 0.1, max = 90 },
+			[2] = { name = "MouseSteerExponent", type = "float", min = 0.1, max = 10 },
 		},
 	},
 	[7] = {
