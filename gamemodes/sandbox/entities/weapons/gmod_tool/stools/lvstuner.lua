@@ -26,6 +26,16 @@ if CLIENT then
 		frame:MakePopup()
 
 		--target.lvsEditables
+
+		local DScrollPanel = vgui.Create( "DScrollPanel", frame )
+		DScrollPanel:Dock( FILL )
+
+		for i=0, 100 do
+			local DButton = DScrollPanel:Add( "DButton" )
+			DButton:SetText( "Button #" .. i )
+			DButton:Dock( TOP )
+			DButton:DockMargin( 0, 0, 0, 5 )
+		end
 	end
 
 	function TOOL:Reload( trace )
