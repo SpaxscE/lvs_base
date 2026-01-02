@@ -106,6 +106,88 @@ ENT.DeleteOnExplode = false
 
 ENT.lvsAllowEngineTool = true
 ENT.lvsShowInSpawner = false
+ENT.lvsEditables = {
+	[1] = {
+		Category = "Body",
+		Options = {
+			[1] = {name = "MaxVelocity", type = "float" },
+			[2] = { name = "MaxVelocityReverse", type = "float" },
+			[3] = { name = "ThrottleRate", Category = "Body", type = "float" },
+			[4] = { name = "BrakeRate", Category = "Body", type = "float" },
+		},
+	},
+	[2] = {
+		Category = "Engine",
+		Options = {
+			[1] = { name = "EngineCurve", type = "float" },
+			[2] = { name = "EngineCurveBoostLow", type = "float" },
+			[3] = { name = "EngineTorque", type = "float" },
+			[4] = { name = "EngineIdleRPM", type = "float" },
+			[5] = { name = "EngineMaxRPM", type = "float" },
+		},
+	},
+	[3] = {
+		Category = "Transmission",
+		Options = {
+			[1] = { name = "TransGears", type = "int" },
+			[2] = { name = "TransGearsReverse", type = "int" },
+			[3] = { name = "TransMinGearHoldTime", type = "float" },
+			[4] = { name = "TransShiftSpeed", type = "float" },
+			[5] = { name = "TransShiftTorqueFactor", type = "float" },
+			[6] = { name = "TransWobble", type = "float" },
+			[7] = { name = "TransWobbleTime", type = "float" },
+			[8] = { name = "TransWobbleFrequencyMultiplier", type = "float" },
+			[9] = { name = "TransShiftSound", type = "string" },
+			[10] = { name = "AutoReverseVelocity", type = "float" },
+		},
+	},
+	[4] = {
+		Category = "Steering",
+		Options = {
+			[1] = { name = "SteerSpeed", type = "float" },
+			[2] = { name = "SteerReturnSpeed", type = "float" },
+			[3] = { name = "FastSteerActiveVelocity", type = "float" },
+			[4] = { name = "FastSteerAngleClamp", type = "float" },
+			[5] = { name = "FastSteerDeactivationDriftAngle", type = "float" },
+		},
+	},
+	[5] = {
+		Category = "Counter Steering",
+		Options = {
+			[6] = { name = "SteerAssistDeadZoneAngle", type = "float" },
+			[7] = { name = "SteerAssistMaxAngle", type = "float" },
+			[8] = { name = "SteerAssistExponent", type = "float" },
+			[9] = { name = "SteerAssistMultiplier", type = "float" },
+		},
+	},
+	[6] = {
+		Category = "Mouse Steering",
+		Options = {
+			[10] = { name = "MouseSteerAngle", type = "float" },
+			[11] = { name = "MouseSteerExponent", type = "float" },
+		},
+	},
+	[7] = {
+		Category = "Physics",
+		Options = {
+			[1] = { name = "ForceLinearMultiplier", type = "float" },
+			[2] = { name = "ForceLinearMultiplierRacingTires", type = "float" },
+			[3] = { name = "ForceAngleMultiplier", type = "float" },
+			[4] = { name = "PhysicsDampingSpeed", type = "float" },
+			[5] = { name = "PhysicsDampingForward", type = "bool" },
+			[6] = { name = "PhysicsDampingReverse", type = "bool" },
+		},
+	},
+	[8] = {
+		Category = "Wheel",
+		Options = {
+			[1] = { name = "WheelBrakeLockupRPM", type = "float" },
+			[2] = { name = "WheelBrakeForce", type = "float" },
+			[3] = { name = "WheelSideForce", type = "float" },
+			[4] = { name = "WheelDownForce", type = "float" },
+		},
+	},
+}
 
 function ENT:SetupDataTables()
 	self:CreateBaseDT()
