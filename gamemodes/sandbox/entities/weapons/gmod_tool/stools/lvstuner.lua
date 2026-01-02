@@ -112,7 +112,7 @@ if CLIENT then
 				Editor:SetValue( target[ entry.name ] )
 
 				function Editor:OnValueChanged( val )
-					PrintChat( val )
+					--PrintChat( val )
 				end
 			end
 		end
