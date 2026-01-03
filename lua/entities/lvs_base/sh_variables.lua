@@ -22,12 +22,18 @@ function ENT:UpdateVariable( categoryID, entryID, value )
 	if not EntTable.lvsEditables[ categoryID ].Options[ entryID ] then return end
 
 	local variable = EntTable.lvsEditables[ categoryID ].Options[ entryID ].name
+	local valueMin = EntTable.lvsEditables[ categoryID ].Options[ entryID ].min
+	local valueMax = EntTable.lvsEditables[ categoryID ].Options[ entryID ].max
 
 	if not variable then return end
 
 	if type( value ) ~= type( EntTable[ variable ] ) then return end
 
-	EntTable[ variable ] = value
+	if type( value ) == "number" and valueMin and valueMax then
+		EntTable[ variable ] = math.Clamp( value, valueMin, valueMax )
+	else
+		EntTable[ variable ] = value
+	end
 
 	if CLIENT then return end
 
