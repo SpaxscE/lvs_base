@@ -13,6 +13,27 @@ function ENT:GetQuickVar( name )
 	return self[ name ]
 end
 
+function ENT:UpdateVariable( categoryID, entryID, value )
+	local EntTable = self:GetTable()
+
+	if not istable( EntTable.lvsEditables ) then return end
+
+	local variable = EntTable.lvsEditables[ categoryID ].Options[ entryID ].name
+
+	if type( value ) ~= type( EntTable[ variable ] ) then return end
+
+	EntTable[ variable ] = value
+
+	if CLIENT then return end
+
+	net.Start( "lvs_variable_updater" )
+		net.WriteEntity( self )
+		net.WriteInt( categoryID, 8 )
+		net.WriteInt( entryID, 8 )
+		net.WriteString( tostring( value ) )
+	net.Broadcast()
+end
+
 if CLIENT then
 	function ENT:QuickLerp( name, target, rate )
 		name =  "_smValue"..name
@@ -26,8 +47,26 @@ if CLIENT then
 		return EntTable[ name ]
 	end
 
+	net.Receive( "lvs_variable_updater", function( len, ply )
+		local ent = net.ReadEntity()
+
+		if not IsValid( ent ) or not isfunction( ent.UpdateVariable ) then return end
+
+		local categoryID = net.ReadInt( 8 )
+		local entryID = net.ReadInt( 8 )
+		local value = net.ReadString()
+
+		value = tonumber( value ) or tobool( value )
+
+		if not value then return end
+
+		ent:UpdateVariable( categoryID, entryID, value )
+	end )
+
 	return
 end
+
+util.AddNetworkString( "lvs_variable_updater" )
 
 function ENT:QuickLerp( name, target, rate )
 	name =  "_smValue"..name
@@ -39,14 +78,5 @@ function ENT:QuickLerp( name, target, rate )
 	return self[ name ]
 end
 
-function ENT:UpdateVariable( categoryID, entryID, value )
-	local EntTable = self:GetTable()
-
-	if not istable( EntTable.lvsEditables ) then return end
-
-	print( EntTable.lvsEditables[ categoryID ].Options[ entryID ].name )
-end
-
 function ENT:ChangeVelocity( new )
-	print("dsfgdsf")
 end
