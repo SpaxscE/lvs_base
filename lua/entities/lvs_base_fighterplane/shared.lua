@@ -35,52 +35,6 @@ ENT.StallVelocity = 150
 ENT.StallForceMultiplier = 4
 ENT.StallForceMax = 40
 
-ENT.lvsEditables = {
-	[1] = {
-		Category = "Body",
-		Options = {
-			[1] = { name = "MaxVelocity", type = "float", min = 1, max = 4000 },
-			[2] = { name = "MaxPerfVelocity", type = "float", min = 1, max = 4000 },
-			[3] = { name = "ThrottleRateUp", Category = "Body", type = "float", min = 0.01, max = 10 },
-			[4] = { name = "ThrottleRateDown", Category = "Body", type = "float", min = 0.01, max = 10 },
-		},
-	},
-	[2] = {
-		Category = "Rotor",
-		Options = {
-			[1] = { name = "MaxThrust", type = "float", min = 1, max = 4000 },
-		},
-	},
-	[3] = {
-		Category = "Turning",
-		Options = {
-			[1] = { name = "TurnRatePitch", type = "float", min = 0, max = 10 },
-			[2] = { name = "TurnRateYaw", type = "float", min = 0, max = 10 },
-			[3] = { name = "TurnRateRoll", type = "float", min = 0, max = 10 },
-			[4] = { name = "GravityTurnRatePitch", type = "float", min = 0, max = 10 },
-			[5] = { name = "GravityTurnRateYaw", type = "float", min = 0, max = 10 },
-		},
-	},
-	[4] = {
-		Category = "Physics",
-		Options = {
-			[1] = { name = "ForceLinearMultiplier", type = "float", min = 0, max = 10 },
-			[2] = { name = "ForceAngleMultiplier", type = "float", min = 0, max = 10 },
-			[3] = { name = "ForceAngleDampingMultiplier", type = "float", min = 0, max = 10 },
-		},
-	},
-	[5] = {
-		Category = "Aerodynamics",
-		Options = {
-			[1] = { name = "MaxSlipAnglePitch", type = "float", min = 0, max = 90 },
-			[2] = { name = "MaxSlipAngleYaw", type = "float", min = 0, max = 90 },
-			[3] = { name = "StallVelocity", type = "float", min = 0, max = 4000 },
-			[4] = { name = "StallForceMultiplier", type = "float", min = 0, max = 25 },
-			[5] = { name = "StallForceMax", type = "float", min = 0, max = 1000 },
-		},
-	},
-}
-
 function ENT:SetupDataTables()
 	self:CreateBaseDT()
 
