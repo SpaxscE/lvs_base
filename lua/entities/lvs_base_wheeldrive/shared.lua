@@ -122,8 +122,8 @@ ENT.lvsEditables = {
 			[1] = { name = "EngineCurve", type = "float", min = 0, max = 1 },
 			[2] = { name = "EngineCurveBoostLow", type = "float", min = 0, max = 10 },
 			[3] = { name = "EngineTorque", type = "float", min = 1, max = 1000 },
-			[4] = { name = "EngineIdleRPM", type = "float", min = 0, max = 25000 },
-			[5] = { name = "EngineMaxRPM", type = "float", min = 1, max = 25000 },
+			--[4] = { name = "EngineIdleRPM", type = "float", min = 0, max = 25000 },
+			--[5] = { name = "EngineMaxRPM", type = "float", min = 1, max = 25000 },
 		},
 	},
 	[3] = {
