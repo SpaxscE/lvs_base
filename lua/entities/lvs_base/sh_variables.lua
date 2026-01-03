@@ -17,8 +17,13 @@ function ENT:UpdateVariable( categoryID, entryID, value )
 	local EntTable = self:GetTable()
 
 	if not istable( EntTable.lvsEditables ) then return end
+	if not EntTable.lvsEditables[ categoryID ] then return end
+	if not EntTable.lvsEditables[ categoryID ].Options then return end
+	if not EntTable.lvsEditables[ categoryID ].Options[ entryID ] then return end
 
 	local variable = EntTable.lvsEditables[ categoryID ].Options[ entryID ].name
+
+	if not variable then return end
 
 	if type( value ) ~= type( EntTable[ variable ] ) then return end
 
