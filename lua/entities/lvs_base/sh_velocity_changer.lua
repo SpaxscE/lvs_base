@@ -1,4 +1,6 @@
 
+-- TODO: rewrite this to be universal for LVS viewer
+
 if CLIENT then
 	hook.Add( "InitPostEntity", "!!!lvsUpdateMaxVelocity", function()
 		net.Start( "lvs_maxvelocity_updater" )
