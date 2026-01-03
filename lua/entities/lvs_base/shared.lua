@@ -30,6 +30,14 @@ ENT.SpawnAngleOffset = 0
 ENT.HitGroundLength = 10
 
 ENT.lvsDisableZoom = true
+ENT.lvsEditables = {
+	[1] = {
+		Category = "Body",
+		Options = {
+			[1] = { name = "MaxVelocity", type = "float", min = 1, max = 4000 },
+		},
+	},
+}
 
 function ENT:AddDT( type, name, data )
 	if not self.DTlist then self.DTlist = {} end

@@ -38,3 +38,15 @@ function ENT:QuickLerp( name, target, rate )
 
 	return self[ name ]
 end
+
+function ENT:UpdateVariable( categoryID, entryID, value )
+	local EntTable = self:GetTable()
+
+	if not istable( EntTable.lvsEditables ) then return end
+
+	print( EntTable.lvsEditables[ categoryID ].Options[ entryID ].name )
+end
+
+function ENT:ChangeVelocity( new )
+	print("dsfgdsf")
+end

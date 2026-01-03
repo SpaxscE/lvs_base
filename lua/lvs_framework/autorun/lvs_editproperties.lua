@@ -11,9 +11,7 @@ if SERVER then
 
 		local ent = net.ReadEntity()
 
-		if not IsValid( ent ) or not istable( ent.lvsEditables ) or not gamemode.Call( "CanProperty", ply, "lvs_edit_vehicle", ent ) then return end
-
-		local EditedVariables = {}
+		if not IsValid( ent ) or not gamemode.Call( "CanProperty", ply, "lvs_edit_vehicle", ent ) then return end
 
 		for _, entry in pairs( string.Explode( "/", net.ReadString() ) ) do
 			local data = string.Explode( ":", entry )
@@ -26,16 +24,9 @@ if SERVER then
 
 			if not categoryID or not entryID or not value then continue end
 
-			table.Empty( data )
-
-			data.categoryID = categoryID
-			data.entryID = entryID
-			data.value = value
-
-			table.insert( EditedVariables, data )
+			ent:UpdateVariable( categoryID, entryID, value )
 		end
 
-		--- more later...
 	end )
 
 	return
