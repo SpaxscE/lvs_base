@@ -35,7 +35,7 @@ function EFFECT:Init( data )
 		local pod = ply:GetVehicle()
 
 		if IsValid( pod ) and not pod:GetThirdPersonMode() then
-			sound.Play( "lvs/vehicles/generic/exhaust_pop_interior"..math.random(1,12)..".ogg", Pos, 75, math.random(98,105), volume )
+			sound.Play( "lvs/vehicles/generic/exhaust_pop"..math.random(1,16)..".ogg", Pos, 75, math.random(98,105), volume )
 
 			return
 		end
