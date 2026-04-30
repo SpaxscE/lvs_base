@@ -129,12 +129,10 @@ function ENT:PostInitialize( PObj )
 
 	SetMinimumAngularVelocityTo( 24000 )
 
-	if BRANCH == "dev" or BRANCH == "x86-64" then
-		for _, wheel in pairs( self:GetWheels() ) do
-			if not IsValid( wheel ) then continue end
+	for _, wheel in pairs( self:GetWheels() ) do
+		if not IsValid( wheel ) then continue end
 
-			wheel:SetLightingOriginEntity( self )
-		end
+		wheel:SetLightingOriginEntity( self )
 	end
 
 	self:EnableHandbrake()
