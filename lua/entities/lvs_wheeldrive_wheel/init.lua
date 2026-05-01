@@ -47,7 +47,7 @@ function ENT:SetSuspensionStiffness( new )
 end
 
 function ENT:DisableSuspension()
-	if self._IsSuspensionDisabled then return end
+	if self._IsSuspensionDisabled or self._OriginalMass then return end
 
 	local PhysObj = self:GetPhysicsObject()
 
@@ -207,6 +207,8 @@ function ENT:PhysicsCollide( data, physobj )
 	local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
 	local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
 	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
+
+	if self:GetRPM() < 175 then return end
 
 	physobj:SetPos( physobj:GetPos() + Up * BumpHeight )
 	physobj:SetVelocityInstantaneous( data.OurOldVelocity )
