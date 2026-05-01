@@ -46,6 +46,36 @@ function ENT:SetSuspensionStiffness( new )
 	self.SuspensionConstraintElastic:Fire( "SetSpringDamping", damping + damping * new, 0 )
 end
 
+function ENT:DisableSuspension()
+	if self._IsSuspensionDisabled then return end
+
+	local PhysObj = self:GetPhysicsObject()
+
+	if not IsValid( PhysObj ) then return end
+
+	self._IsSuspensionDisabled = true
+	self._SuspensionDisabledOldValue = self:GetSuspensionStiffness()
+	self._SuspensionDisabledOldMass = PhysObj:GetMass()
+
+	self:SetSuspensionStiffness( -0.5 )
+	PhysObj:SetMass( self._SuspensionDisabledOldMass * 0.5 )
+end
+
+function ENT:EnableSuspension()
+	if not self._IsSuspensionDisabled then return end
+
+	local PhysObj = self:GetPhysicsObject()
+
+	if not IsValid( PhysObj ) then return end
+
+	self:SetSuspensionStiffness( self._SuspensionDisabledOldValue )
+	PhysObj:SetMass( self._SuspensionDisabledOldMass )
+
+	self._IsSuspensionDisabled = nil
+	self._SuspensionDisabledOldValue = nil
+	self._SuspensionDisabledOldMass = nil
+end
+
 function ENT:GetSuspensionStiffness()
 	return self._SuspensionStiffnessMultiplier or 0
 end
@@ -117,16 +147,17 @@ function ENT:PhysicsOnGround()
 	return EntLoad > 0
 end
 
+function ENT:AntiSlingshot()
+	self:DisableSuspension()
+
+	timer.Simple(0.1, function()
+		if not IsValid( self ) then return end
+
+		self:EnableSuspension()
+	end)
+end
+
 function ENT:PhysicsCollide( data, physobj )
-
-	if data.Speed > 150 and data.DeltaTime > 0.2 then
-		local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
-
-		local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
-
-		self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
-	end
-
 	local HitEntity = data.HitEntity
 	local HitObject = data.HitObject
 
@@ -138,13 +169,47 @@ function ENT:PhysicsCollide( data, physobj )
 		end
 	end
 
-	if math.abs(data.OurNewVelocity.z - data.OurOldVelocity.z) > 100 then
-		physobj:SetVelocityInstantaneous( data.OurOldVelocity )
-	end
-
 	local base = self:GetBase()
 
-	if IsValid( base ) then
-		base:OnWheelCollision( data, physobj )
+	if not IsValid( base ) then return end
+
+	base:OnWheelCollision( data, physobj )
+
+	if base.PhysicsWeightScale > 1.6 then
+		if data.Speed > 150 and data.DeltaTime > 0.2 then
+			local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
+			local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
+
+			self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
+		end
+
+		if math.abs(data.OurNewVelocity.z - data.OurOldVelocity.z) > 100 then
+			physobj:SetVelocityInstantaneous( data.OurOldVelocity )
+		end
+
+		return
 	end
+
+	local Up = base:GetUp()
+
+	if Up.z < 0.9 then return end
+
+	local Radius = self:GetRadius()
+	local BumpPos = data.HitPos + Up * Radius
+	local SurfacePos = self:GetPos()
+	local ToBump = BumpPos - SurfacePos
+	local BumpHeight = ToBump.z
+
+	if BumpHeight < 2 or BumpHeight > Radius * 0.9 then return end
+
+	if base:AngleBetweenNormal( ToBump:GetNormalized(), data.OurOldVelocity:GetNormalized() ) > 65 then return end
+
+	local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
+	local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
+	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
+
+	physobj:SetPos( physobj:GetPos() + Up * BumpHeight )
+	physobj:SetVelocityInstantaneous( data.OurOldVelocity )
+
+	self:AntiSlingshot()
 end
