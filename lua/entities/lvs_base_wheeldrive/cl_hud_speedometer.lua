@@ -218,8 +218,6 @@ local CurRPM = 0
 local CurSpeed = 0
 
 function ENT:LVSHudPaintTach( X, Y, w, h, ScrX, ScrY, ply )
-	if ply ~= self:GetDriver() then return end
-
 	if not self:GetRacingHud() then return end
 
 	local Engine = self:GetEngine()
