@@ -158,6 +158,10 @@ function ENT:AntiSlingshot()
 end
 
 function ENT:PhysicsCollide( data, physobj )
+	if data.Speed > 100 and data.DeltaTime > 0.2 then
+		self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, 0.2 )
+	end
+
 	local HitEntity = data.HitEntity
 	local HitObject = data.HitObject
 
@@ -175,21 +179,6 @@ function ENT:PhysicsCollide( data, physobj )
 
 	base:OnWheelCollision( data, physobj )
 
-	if base.PhysicsWeightScale > 1.6 then
-		if data.Speed > 150 and data.DeltaTime > 0.2 then
-			local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
-			local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
-
-			self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
-		end
-
-		if math.abs(data.OurNewVelocity.z - data.OurOldVelocity.z) > 100 then
-			physobj:SetVelocityInstantaneous( data.OurOldVelocity )
-		end
-
-		return
-	end
-
 	local Up = base:GetUp()
 
 	if Up.z < 0.9 then return end
@@ -204,9 +193,15 @@ function ENT:PhysicsCollide( data, physobj )
 
 	if base:AngleBetweenNormal( ToBump:GetNormalized(), data.OurOldVelocity:GetNormalized() ) > 65 then return end
 
-	local VelDif = data.OurOldVelocity:Length() - data.OurNewVelocity:Length()
-	local Volume = math.min( math.abs( VelDif ) / 300 , 1 )
-	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, Volume ^ 2 )
+	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, math.min( BumpHeight / 5, 1 ) ^ 2 )
+
+	if base.PhysicsWeightScale > 1.6 then
+		if math.abs(data.OurNewVelocity.z - data.OurOldVelocity.z) > 100 then
+			physobj:SetVelocityInstantaneous( data.OurOldVelocity )
+		end
+
+		return
+	end
 
 	if self:GetRPM() < 175 then return end
 
