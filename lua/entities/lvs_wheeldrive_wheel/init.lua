@@ -200,7 +200,7 @@ function ENT:PhysicsCollide( data, physobj )
 	local ToBump = BumpPos - SurfacePos
 	local BumpHeight = ToBump.z
 
-	if BumpHeight < 2 or BumpHeight > Radius * 0.9 then return end
+	if BumpHeight < 2 or BumpHeight > math.max( Radius - 1, 1 ) then return end
 
 	if base:AngleBetweenNormal( ToBump:GetNormalized(), data.OurOldVelocity:GetNormalized() ) > 65 then return end
 
