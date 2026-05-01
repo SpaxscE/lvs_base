@@ -193,8 +193,6 @@ function ENT:PhysicsCollide( data, physobj )
 
 	if base:AngleBetweenNormal( ToBump:GetNormalized(), data.OurOldVelocity:GetNormalized() ) > 65 then return end
 
-	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, math.min( BumpHeight / 5, 1 ) ^ 2 )
-
 	if base.PhysicsWeightScale > 1.6 then
 		if math.abs(data.OurNewVelocity.z - data.OurOldVelocity.z) > 100 then
 			physobj:SetVelocityInstantaneous( data.OurOldVelocity )
@@ -204,6 +202,8 @@ function ENT:PhysicsCollide( data, physobj )
 	end
 
 	if self:GetRPM() < 175 then return end
+
+	self:EmitSound( "lvs/vehicles/generic/suspension_hit_".. math.random(1,17) ..".ogg", 70, 100, math.min( BumpHeight / 5, 1 ) ^ 2 )
 
 	physobj:SetPos( physobj:GetPos() + Up * BumpHeight )
 	physobj:SetVelocityInstantaneous( data.OurOldVelocity )
