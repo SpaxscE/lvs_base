@@ -73,11 +73,12 @@ else
 	net.Receive( "lvs_player_enterexit", function( len )
 		local Enable = net.ReadBool()
 		local Vehicle = net.ReadEntity()
+		local Pod = net.ReadEntity()
 
 		if Enable then
-			hook.Run( "LVS.PlayerEnteredVehicle", LocalPlayer(), Vehicle )
+			hook.Run( "LVS.PlayerEnteredVehicle", LocalPlayer(), Vehicle, Pod )
 		else
-			hook.Run( "LVS.PlayerLeaveVehicle", LocalPlayer(), Vehicle )
+			hook.Run( "LVS.PlayerLeaveVehicle", LocalPlayer(), Vehicle, Pod )
 		end
 	end )
 end

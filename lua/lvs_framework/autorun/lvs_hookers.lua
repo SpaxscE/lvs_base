@@ -138,7 +138,7 @@ if CLIENT then
 		if hide[ name ] then return false end
 	end
 
-	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, veh )
+	hook.Add( "LVS.PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, veh, pod )
 		hook.Add( "HUDShouldDraw", "!!!!lvs_hidehud", HUDShouldDrawLVS )
 
 		if not IsValid( veh ) then return end
@@ -149,8 +149,12 @@ if CLIENT then
 
 		local vehicletype = veh:GetVehicleType()
 
-		if ply ~= veh:GetDriver() then
-			vehicletype = "gunner"
+		if IsValid( pod ) then
+			local weapon = pod:lvsGetWeapon()
+
+			if IsValid( weapon ) and isfunction( weapon.GetVehicleType ) then
+				vehicletype = weapon:GetVehicleType()
+			end
 		end
 
 		local cvar_type = GetConVar( "lvs_mouseaim_type_"..vehicletype )
@@ -161,7 +165,7 @@ if CLIENT then
 		cvar_mouseaim:SetInt( cvar_type:GetInt() )
 	end )
 
-	hook.Add( "LVS.PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, veh )
+	hook.Add( "LVS.PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, veh, pod )
 		hook.Remove( "HUDShouldDraw", "!!!!lvs_hidehud" )
 	end )
 
@@ -244,6 +248,7 @@ hook.Add( "PlayerEnteredVehicle", "!!!!lvs_player_enter", function( ply, Pod )
 		net.Start( "lvs_player_enterexit" )
 			net.WriteBool( true )
 			net.WriteEntity( veh )
+			net.WriteEntity( Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = true
@@ -281,6 +286,7 @@ hook.Add( "PlayerLeaveVehicle", "!!!!lvs_player_exit", function( ply, Pod )
 		net.Start( "lvs_player_enterexit" )
 			net.WriteBool( false )
 			net.WriteEntity( Pod:lvsGetVehicle() )
+			net.WriteEntity( Pod )
 		net.Send( ply )
 
 		ply._lvsIsInVehicle = nil
