@@ -18,7 +18,7 @@ hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
 		["lvs_mouseaim_type_walker"] = 0,
 		["lvs_mouseaim_type_starfighter"] = 1,
 		["lvs_mouseaim_type_fakehover"] = 0,
-		["lvs_mouseaim_type_gunner"] = 1,
+		["lvs_mouseaim_type_gunner"] = 0,
 	}
 
 	-- this needs to be here to make sure all sents are registered
