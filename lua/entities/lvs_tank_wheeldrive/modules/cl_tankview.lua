@@ -67,7 +67,9 @@ end
 
 function ENT:CalcViewPassenger( ply, pos, angles, fov, pod )
 	if not pod:GetThirdPersonMode() then
-		angles = pod:LocalToWorldAngles( ply:EyeAngles() )
+		if not pod:IsAimVectorUnlocked() then
+			angles = pod:LocalToWorldAngles( ply:EyeAngles() )
+		end
 	end
 
 	return self:CalcTankView( ply, pos, angles, fov, pod )

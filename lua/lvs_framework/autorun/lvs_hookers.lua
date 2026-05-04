@@ -18,6 +18,7 @@ hook.Add( "InitPostEntity", "!!!lvsBullshitFixer", function()
 		["lvs_mouseaim_type_walker"] = 0,
 		["lvs_mouseaim_type_starfighter"] = 1,
 		["lvs_mouseaim_type_fakehover"] = 0,
+		["lvs_mouseaim_type_gunner"] = 1,
 	}
 
 	-- this needs to be here to make sure all sents are registered
@@ -147,6 +148,10 @@ if CLIENT then
 		if not cvar or cvar:GetInt() ~= 1 or not veh.GetVehicleType then return end
 
 		local vehicletype = veh:GetVehicleType()
+
+		if ply ~= veh:GetDriver() then
+			vehicletype = "gunner"
+		end
 
 		local cvar_type = GetConVar( "lvs_mouseaim_type_"..vehicletype )
 		local cvar_mouseaim = GetConVar( "lvs_mouseaim" )

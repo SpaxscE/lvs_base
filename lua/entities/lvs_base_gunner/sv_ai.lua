@@ -11,7 +11,7 @@ function ENT:GetAimVector()
 	local Driver = self:GetDriver()
 
 	if IsValid( Driver ) then
-		if self._AimVectorUnlocked then
+		if self:IsAimVectorUnlocked() then
 			local pod = self:GetDriverSeat()
 
 			if IsValid( pod ) then

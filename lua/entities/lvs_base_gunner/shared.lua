@@ -23,6 +23,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Float", 0, "NWHeat" )
 
 	self:NetworkVar( "Bool", 0, "NWOverheated" )
+	self:NetworkVar( "Bool", 1, "NWAimVectorUnlocked" )
 
 	self:NetworkVar( "Vector", 0, "NWAimVector" )
 
@@ -31,12 +32,21 @@ function ENT:SetupDataTables()
 	end
 end
 
+function ENT:IsAimVectorUnlocked()
+	local ply = self:GetDriver()
+
+	if not IsValid( ply ) then
+		return self:GetNWAimVectorUnlocked()
+	end
+	return self:GetNWAimVectorUnlocked() or ply:lvsMouseAim()
+end
+
 function ENT:UnlockAimVector()
-	self._AimVectorUnlocked = true
+	self:SetNWAimVectorUnlocked( true )
 end
 
 function ENT:LockAimVector()
-	self._AimVectorUnlocked = nil
+	self:SetNWAimVectorUnlocked( false )
 end
 
 function ENT:GetEyeTrace()
@@ -170,5 +180,5 @@ function ENT:AngleBetweenNormal( Dir1, Dir2 )
 end
 
 function ENT:GetVehicleType()
-	return "LBaseGunner"
+	return "gunner"
 end

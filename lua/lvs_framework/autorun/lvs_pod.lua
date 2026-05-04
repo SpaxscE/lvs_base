@@ -25,6 +25,14 @@ function meta:lvsGetVehicle()
 	end
 end
 
+function meta:IsAimVectorUnlocked()
+	local weapon = self:lvsGetWeapon()
+
+	if not IsValid( weapon ) then return false end
+
+	return weapon:IsAimVectorUnlocked()
+end
+
 if CLIENT then
 	function meta:lvsGetPodIndex()
 		local id = self:GetNWInt( "pPodIndex", -1 )

@@ -54,6 +54,10 @@ hook.Add( "CalcView", "!!!!LVS_calcview", function(ply, pos, angles, fov)
 	if IsValid( base ) then
 		local weapon = base:GetActiveWeapon()
 
+		if base:IsAimVectorUnlocked() then
+			angles = ply:EyeAngles()
+		end
+
 		if weapon and weapon.CalcView then
 			return ply:lvsSetView( weapon.CalcView( base, ply, pos, angles, newfov, pod ) )
 		else
