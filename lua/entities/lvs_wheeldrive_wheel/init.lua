@@ -57,8 +57,8 @@ function ENT:DisableSuspension()
 	self._SuspensionDisabledOldValue = self:GetSuspensionStiffness()
 	self._SuspensionDisabledOldMass = PhysObj:GetMass()
 
-	self:SetSuspensionStiffness( -0.5 )
-	PhysObj:SetMass( self._SuspensionDisabledOldMass * 0.5 )
+	self:SetSuspensionStiffness( -0.75 )
+	PhysObj:SetMass( self._SuspensionDisabledOldMass * 0.25 )
 end
 
 function ENT:EnableSuspension()
