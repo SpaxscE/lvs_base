@@ -9,6 +9,9 @@ include("cl_seatswitcher.lua")
 include("cl_trailsystem.lua")
 include("cl_boneposeparemeter.lua")
 
+function ENT:InputMouseApply( ply, cmd, x, y, ang )
+end
+
 local Zoom = 0
 
 function ENT:LVSCalcFov( fov, ply )
