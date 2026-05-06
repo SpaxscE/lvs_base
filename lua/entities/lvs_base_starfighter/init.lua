@@ -131,11 +131,7 @@ function ENT:CalcAero( phys, deltatime, EntTable )
 	else
 		local ply = self:GetDriver()
 		if IsValid( ply ) then
-			if ply:lvsMouseAim() then
-				self:PlayerMouseAim( ply )
-			else
-				self:ApproachSteerAngle()
-			end
+			self:ApproachSteerAngle()
 		end
 	end
 
