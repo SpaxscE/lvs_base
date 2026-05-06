@@ -56,8 +56,9 @@ function ENT:PlayerDirectInput( ply, cmd )
 	local KeyPitchUp = ply:lvsKeyDown( "+PITCH_SF" )
 	local KeyPitchDown = ply:lvsKeyDown( "-PITCH_SF" )
 
-	local MouseX = cmd:GetMouseX()
-	local MouseY = cmd:GetMouseY()
+	local EntTable = self:GetTable()
+	local MouseX = cmd:GetMouseX() / EntTable.TurnRateYaw
+	local MouseY = cmd:GetMouseY() / EntTable.TurnRatePitch
 
 	if ply:lvsKeyDown( "FREELOOK" ) and not Pod:GetThirdPersonMode() then
 		MouseX = 0
