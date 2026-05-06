@@ -44,7 +44,7 @@ function ENT:LVSHudPaint( X, Y, ply )
 	self:PaintCrosshairCenter( HitPlane )
 	self:PaintCrosshairOuter( HitPilot )
 
-	if ply:lvsMouseAim() and not ply:lvsKeyDown( "FREELOOK" ) then
+	if not ply:lvsKeyDown( "FREELOOK" ) then
 		self:LVSHudPaintMouseAim( HitPlane, HitPilot )
 	end
 

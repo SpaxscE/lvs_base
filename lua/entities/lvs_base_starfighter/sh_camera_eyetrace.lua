@@ -30,29 +30,17 @@ function ENT:GetAimVector()
 
 	if not IsValid( Driver ) then return self:GetForward() end
 
-	if not Driver:lvsMouseAim() then
-		if Driver:lvsKeyDown( "FREELOOK" ) then
-			local pod = self:GetDriverSeat()
-
-			if not IsValid( pod ) then return Driver:EyeAngles():Forward() end
-
-			if pod:GetThirdPersonMode() then
-				return -self:GetForward()
-			else
-				return Driver:GetAimVector()
-			end
-		else
-			return self:GetForward()
-		end
-	end
-
-	if SERVER then
+	if Driver:lvsKeyDown( "FREELOOK" ) then
 		local pod = self:GetDriverSeat()
 
 		if not IsValid( pod ) then return Driver:EyeAngles():Forward() end
 
-		return pod:WorldToLocalAngles( Driver:EyeAngles() ):Forward()
+		if pod:GetThirdPersonMode() then
+			return -self:GetForward()
+		else
+			return Driver:GetAimVector()
+		end
 	else
-		return Driver:EyeAngles():Forward()
+		return self:GetSteerAngle():Forward()
 	end
 end

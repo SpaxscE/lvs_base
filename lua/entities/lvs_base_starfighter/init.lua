@@ -96,6 +96,28 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	self:SetSteer( Vector( math.Clamp(Roll * 1.25,-1,1), math.Clamp(-Pitch * 1.25,-1,1), -Yaw) )
 end
 
+function ENT:ApproachSteerAngle()
+	local TargetAngle = self:GetSteerAngle()
+
+	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
+
+	local LocalAngPitch = LocalAngles.p
+	local LocalAngYaw = LocalAngles.y
+	local LocalAngRoll = LocalAngles.r
+
+	local AngVel = self:GetPhysicsObject():GetAngleVelocity()
+
+	local SmoothPitch = math.Clamp( math.Clamp(AngVel.y / 100,-0.5,0.5) / math.abs( LocalAngPitch ), -1, 1 )
+	local SmoothYaw = math.Clamp( math.Clamp(AngVel.z / 100,-0.5,0.5) / math.abs( LocalAngYaw ), -1, 1 )
+	local SmoothRoll = math.Clamp( math.Clamp(AngVel.x / 100,-0.5,0.5) / math.abs( LocalAngRoll ), -1, 1 )
+
+	local Pitch = math.Clamp( -LocalAngPitch * 0.1 + SmoothPitch, -1, 1 )
+	local Yaw = math.Clamp( -LocalAngYaw * 0.5 + SmoothYaw,-1,1)
+	local Roll = math.Clamp( -LocalAngRoll * 0.025 + SmoothRoll, -1, 1 )
+
+	self:SetSteer( -Vector(Roll,Pitch,Yaw) )
+end
+
 function ENT:CalcAero( phys, deltatime, EntTable )
 	if not EntTable then
 		EntTable = self:GetTable()
@@ -108,8 +130,12 @@ function ENT:CalcAero( phys, deltatime, EntTable )
 		end
 	else
 		local ply = self:GetDriver()
-		if IsValid( ply ) and ply:lvsMouseAim() then
-			self:PlayerMouseAim( ply )
+		if IsValid( ply ) then
+			if ply:lvsMouseAim() then
+				self:PlayerMouseAim( ply )
+			else
+				self:ApproachSteerAngle()
+			end
 		end
 	end
 

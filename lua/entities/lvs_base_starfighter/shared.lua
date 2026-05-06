@@ -35,6 +35,7 @@ function ENT:SetupDataTables()
 	self:AddDT( "Vector", "NWVtolMove" )
 	self:AddDT( "Float", "NWThrottle" )
 	self:AddDT( "Float", "MaxThrottle" )
+	self:AddDT( "Angle", "SteerAngle" )
 
 	if SERVER then
 		self:SetMaxThrottle( 1 )
@@ -43,7 +44,7 @@ function ENT:SetupDataTables()
 	self:CreateBaseDT()
 end
 
-function ENT:PlayerDirectInput( ply, cmd )
+function ENT:CalcPlayerInput( ply, cmd )
 	local Pod = self:GetDriverSeat()
 
 	local Delta = FrameTime()
@@ -55,45 +56,38 @@ function ENT:PlayerDirectInput( ply, cmd )
 	local KeyRollRight = ply:lvsKeyDown( "+YAW_SF" )
 	local KeyRollLeft = ply:lvsKeyDown( "-YAW_SF" )
 
-	local MouseX = cmd:GetMouseX()
-	local MouseY = cmd:GetMouseY()
+	local FreeLook = ply:lvsKeyDown( "FREELOOK" )
+	local ThirdPerson = Pod:GetThirdPersonMode()
 
-	if ply:lvsKeyDown( "FREELOOK" ) and not Pod:GetThirdPersonMode() then
-		MouseX = 0
-		MouseY = 0
-	else
-		ply:SetEyeAngles( Angle(0,90,0) )
+	if not (ThirdPerson or (not ThirdPerson and not FreeLook)) then return end
+
+	local PitchOverride = (KeyPitchDown and 10 or 0) - (KeyPitchUp and 10 or 0)
+	local YawOverride = (KeyRollRight and 10 or 0) - (KeyRollLeft and 10 or 0)
+	local RollOverride = (KeyRight and 2 or 0) - (KeyLeft and 2 or 0)
+
+	local TargetAngle = cmd:GetViewAngles() - Angle(0,90,0)
+
+	local NewAngles = self:GetSteerAngle()
+	NewAngles:Normalize()
+
+	local LAngles = self:WorldToLocalAngles( NewAngles ) + Angle(TargetAngle.p,TargetAngle.y,0)
+	LAngles.p = math.Clamp( LAngles.p + PitchOverride, -25, 25 )
+	LAngles.y = math.Clamp( LAngles.y + YawOverride, -25, 25 )
+
+	local AutoRoll = self:GetAngles().r * 0.01
+	if math.abs( LAngles.y ) > 1 or math.abs( LAngles.p ) > 1 then
+		AutoRoll = (math.abs( LAngles.y ) / 5) ^ 2 * self:Sign( LAngles.y )
+	end
+	if RollOverride ~= 0 then
+		AutoRoll = 0
 	end
 
-	local SensX, SensY, ReturnDelta = ply:lvsMouseSensitivity()
+	LAngles.r = math.Clamp( LAngles.r - AutoRoll + RollOverride, -25, 25 )
 
-	if KeyPitchDown then MouseY = (10 / SensY) * ReturnDelta end
-	if KeyPitchUp then MouseY = -(10 / SensY) * ReturnDelta end
-	if KeyRollRight or KeyRollLeft then
-		local NewX = (KeyRollRight and 10 or 0) - (KeyRollLeft and 10 or 0)
+	if CLIENT then return end
 
-		MouseX = (NewX / SensX) * ReturnDelta
-	end
-
-	local Input = Vector( MouseX * 0.4 * SensX, MouseY * SensY, 0 )
-
-	local Cur = self:GetSteer()
-
-	local Rate = Delta * 3 * ReturnDelta
-
-	local New = Vector(Cur.x, Cur.y, 0) - Vector( math.Clamp(Cur.x * Delta * 5 * ReturnDelta,-Rate,Rate), math.Clamp(Cur.y * Delta * 5 * ReturnDelta,-Rate,Rate), 0)
-
-	local Target = New + Input * Delta * 0.8
-
-	local Fx = math.Clamp( Target.x, -1, 1 )
-	local Fy = math.Clamp( Target.y, -1, 1 )
-
-	local TargetFz = (KeyLeft and 1 or 0) - (KeyRight and 1 or 0)
-	local Fz = Cur.z + math.Clamp(TargetFz - Cur.z,-Rate * 3,Rate * 3)
-
-	local F = Cur + (Vector( Fx, Fy, Fz ) - Cur) * math.min(Delta * 100,1)
-
-	self:SetSteer( F )
+	self:SetSteerAngle( self:LocalToWorldAngles( LAngles ) )
+	ply:SetEyeAngles( Angle(0,90,0) )
 end
 
 function ENT:CalcThrottle( ply, cmd )
@@ -175,10 +169,7 @@ function ENT:StartCommand( ply, cmd )
 		end
 	end
 
-	if not ply:lvsMouseAim() then
-		self:PlayerDirectInput( ply, cmd )
-	end
-
+	self:CalcPlayerInput( ply, cmd )
 	self:CalcThrottle( ply, cmd )
 	self:CalcVtolThrottle( ply, cmd )
 end
