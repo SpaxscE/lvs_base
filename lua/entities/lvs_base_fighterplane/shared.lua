@@ -136,14 +136,31 @@ end
 function ENT:StartCommand( ply, cmd )
 	if self:GetDriver() ~= ply then return end
 
-	if SERVER and not self.WheelAutoRetract then
-		local KeyJump = ply:lvsKeyDown( "VSPEC" )
+	if SERVER then
+		local EntTable = self:GetTable()
 
-		if self._lvsOldKeyJump ~= KeyJump then
-			self._lvsOldKeyJump = KeyJump
-			if KeyJump then
-				self:ToggleLandingGear()
-				self:PhysWake()
+		if not EntTable.WheelAutoRetract then
+			local KeyJump = ply:lvsKeyDown( "VSPEC" )
+
+			-- i have seen too many youtube videos where people just fly with landing gear down which causes very bad handling...
+			-- so we make it auto retract the first time...
+			if not EntTable._FirstTimeAutoRaise then
+				if not EntTable.LandingGearUp and self:GetStability() >= 1 and self:GetThrottle() >= 1 then
+
+					self:RaiseLandingGear()
+
+					EntTable._FirstTimeAutoRaise = true
+				end
+			end
+
+			if EntTable._lvsOldKeyJump ~= KeyJump then
+				EntTable._lvsOldKeyJump = KeyJump
+				if KeyJump then
+					self:ToggleLandingGear()
+					self:PhysWake()
+
+					EntTable._FirstTimeAutoRaise = true
+				end
 			end
 		end
 	end

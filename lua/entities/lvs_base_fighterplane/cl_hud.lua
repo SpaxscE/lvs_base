@@ -46,18 +46,6 @@ function ENT:LVSHudPaint( X, Y, ply )
 	if self:IsDrawingReflectorSight() then
 		self:DrawReflectorSight( HitPlane )
 
-		if MouseAim then
-			local LineVisible = false
-
-			if not ply:lvsKeyDown( "FREELOOK" ) then
-				LineVisible = self:LVSHudPaintMouseAim( HitPlane, HitPilot )
-			end
-
-			if LineVisible then
-				self:PaintCrosshairOuter( HitPilot )
-			end
-		end
-
 		self:LVSPaintHitMarker( HitPilot )
 
 		return

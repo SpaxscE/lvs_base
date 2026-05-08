@@ -26,7 +26,10 @@ function ENT:OnRemoveAI()
 end
 
 function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, OverrideRoll, FreeMovement )
-	local LocalAngles = self:WorldToLocalAngles( TargetAngle )
+	local Forward = self:GetForward()
+	local TargetForward = TargetAngle:Forward()
+
+	local LocalAngles = self:WorldToLocalAngles( (Forward + TargetForward * 0.25):GetNormalized():Angle() )
 
 	if self:GetAI() then self:SetAIAimVector( LocalAngles:Forward() ) end
 
@@ -34,25 +37,24 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local LocalAngYaw = LocalAngles.y
 	local LocalAngRoll = LocalAngles.r
 
-	local TargetForward = TargetAngle:Forward()
-	local Forward = self:GetForward()
-
 	local AngDiff = math.deg( math.acos( math.Clamp( Forward:Dot( TargetForward ) ,-1,1) ) )
 
-	local WingFinFadeOut = math.max( (90 - AngDiff ) / 90, 0 )
-	local RudderFadeOut = math.min( math.max( (120 - AngDiff ) / 120, 0 ) * 3, 1 )
+	local RudderFadeOut = math.max( (45 - AngDiff ) / 45, 0 )
 
 	local AngVel = self:GetPhysicsObject():GetAngleVelocity()
 
+	local RollAlign = 1 + (math.Clamp(AngDiff,0,1) ^ 1.5) * 24
+
 	local SmoothPitch = math.Clamp( math.Clamp(AngVel.y / 100,-0.25,0.25) / math.abs( LocalAngPitch ), -1, 1 )
 	local SmoothYaw = math.Clamp( math.Clamp(AngVel.z / 100,-0.25,0.25) / math.abs( LocalAngYaw ), -1, 1 )
+	local SmoothRoll = math.Clamp(AngVel.x / 100,-0.25,0.25)
 
-	local Pitch = math.Clamp( -LocalAngPitch / 10 + SmoothPitch, -1, 1 )
-	local Yaw = math.Clamp( -LocalAngYaw / 2 + SmoothYaw,-1,1) * RudderFadeOut
-	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * 16,-90,90) + LocalAngRoll * RudderFadeOut * 0.75) * WingFinFadeOut / 180 , -1 , 1 )
+	local Pitch = math.Clamp( -LocalAngPitch + SmoothPitch, -1, 1 )
+	local Yaw = math.Clamp( -LocalAngYaw + SmoothYaw,-1,1)
+	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * RollAlign,-180,180) + LocalAngRoll * RudderFadeOut * 0.5) / 45 - SmoothRoll, -1 , 1 )
 
 	if FreeMovement then
-		Roll = math.Clamp( -LocalAngYaw * WingFinFadeOut / 180 , -1 , 1 )
+		Roll = 0
 	end
 
 	if OverridePitch and OverridePitch ~= 0 then
