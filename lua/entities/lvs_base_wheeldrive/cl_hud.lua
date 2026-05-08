@@ -1,6 +1,35 @@
 
 include("cl_hud_speedometer.lua")
 
+LVS:AddHudEditor( "CarMouseSteerInfo",  0, ScrH() * 0.5 - 30,  ScrW(), 60, ScrW(), 60, "CAR MOUSE STEER INFO",
+	function( self, vehicle, X, Y, W, H, ScrX, ScrY, ply )
+		if not vehicle.LVSHudPaintMouseSteerInfo then return end
+		vehicle:LVSHudPaintMouseSteerInfo( X, Y, W, H, ScrX, ScrY, ply )
+	end
+)
+
+local Mat = Material("lvs/circle_filled.png")
+function ENT:LVSHudPaintMouseSteerInfo( X, Y, w, h, ScrX, ScrY, ply )
+	if not ply:lvsMouseAim() then return end
+
+	local pod = ply:GetVehicle()
+
+	if pod:GetThirdPersonMode() then return end
+
+	local CurAngle = ply:EyeAngles()
+	local TargetAngle = pod:LocalToWorldAngles( Angle(0,90,0) )
+
+	local Focus = (1 - math.min( math.max( self:AngleBetweenNormal( CurAngle:Right(), TargetAngle:Right() ) - 5, 0 ) / 65, 1 )) ^ 2
+
+	local SteerOffset = (pod:WorldToLocalAngles( Angle(0,CurAngle.y,0) ).y - 90) / 90
+
+	surface.SetMaterial( Mat )
+	surface.SetDrawColor( Color(0,0,0,255 * Focus) )
+	surface.DrawTexturedRectRotated( X + w * 0.5 - w * 0.5 * SteerOffset, Y + h * 0.5, 8, 8, 0 )
+	surface.SetDrawColor( Color(255,255,255,255 * Focus) )
+	surface.DrawTexturedRectRotated( X + w * 0.5 - w * 0.5 * SteerOffset, Y + h * 0.5, 6, 6, 0 )
+end
+
 ENT.IconEngine = Material( "lvs/engine.png" )
 ENT.IconFuel = Material( "lvs/fuel.png" )
 
