@@ -69,7 +69,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	local AngVel = self:GetPhysicsObject():GetAngleVelocity()
 
-	local Throttle = self:GetThrottle()
+	local Throttle = math.min( self:GetThrottle(), 1 )
 
 	local RollAlign = 1 + (math.Clamp(AngDiff,0,1) ^ 1.5) * 24 * Throttle
 
