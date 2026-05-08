@@ -45,8 +45,7 @@ function ENT:LVSHudPaint( X, Y, ply )
 
 	if self:IsDrawingReflectorSight() then
 		self:DrawReflectorSight( HitPlane )
-
-		self:LVSPaintHitMarker( HitPilot )
+		self:LVSPaintHitMarker( HitPlane )
 
 		return
 	end
