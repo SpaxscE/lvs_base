@@ -140,7 +140,7 @@ function ENT:HitGround()
 		filter = self:GetCrosshairFilterEnts()
 	} )
 	
-	return trace.Hit 
+	return trace.Hit, trace
 end
 
 function ENT:Sign( n )

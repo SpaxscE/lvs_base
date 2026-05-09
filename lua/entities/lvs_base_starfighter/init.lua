@@ -179,7 +179,29 @@ function ENT:PhysicsSimulate( phys, deltatime )
 	if self:GetEngineActive() then
 		phys:Wake()
 	else
-		return vector_origin, vector_origin, SIM_NOTHING
+		local EntTable = self:GetTable()
+
+		if not EntTable.PhysicsDampingWhenInactive then
+			return vector_origin, vector_origin, SIM_NOTHING
+		end
+
+		local Simulate = SIM_NOTHING
+		local ForceAngle = vector_origin
+
+		-- makes it seem less cheap when on ground. Fixes the wobble and makes it go sleepmode quicker.
+		local HitGround, Trace = self:HitGround()
+
+		if istable( Trace ) and HitGround and Trace.HitNormal.z > 0.99 and self:GetVelocity():LengthSqr() < 10000 then
+			Simulate = SIM_LOCAL_ACCELERATION
+
+			local Ang = self:GetAngles()
+
+			local Torque = Vector(-Ang.r,-Ang.p,0)
+
+			ForceAngle = (Torque * 15 * EntTable.ForceAngleMultiplier - phys:GetAngleVelocity() * 5 * EntTable.ForceAngleDampingMultiplier) * deltatime * 250
+		end
+
+		return ForceAngle, vector_origin, Simulate
 	end
 
 	local EntTable = self:GetTable()

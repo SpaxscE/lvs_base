@@ -27,6 +27,8 @@ ENT.ForceLinearMultiplier = 1
 ENT.ForceAngleMultiplier = 1
 ENT.ForceAngleDampingMultiplier = 1
 
+ENT.PhysicsDampingWhenInactive = true
+
 ENT.DisableBallistics = true
 
 function ENT:SetupDataTables()
