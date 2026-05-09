@@ -20,10 +20,10 @@ TOOL.ClientConVar[ "bodygroup6" ] = 0
 TOOL.ClientConVar[ "bodygroup7" ] = 0
 TOOL.ClientConVar[ "bodygroup8" ] = 0
 TOOL.ClientConVar[ "bodygroup9" ] = 0
-TOOL.ClientConVar[ "pp0" ] = 0
-TOOL.ClientConVar[ "pp1" ] = 0
-TOOL.ClientConVar[ "pp2" ] = 0
-TOOL.ClientConVar[ "pp3" ] = 0
+TOOL.ClientConVar[ "pp0" ] = 3
+TOOL.ClientConVar[ "pp1" ] = 3
+TOOL.ClientConVar[ "pp2" ] = 3
+TOOL.ClientConVar[ "pp3" ] = 3
 TOOL.ClientConVar[ "pp4" ] = 0
 TOOL.ClientConVar[ "pp5" ] = 0
 TOOL.ClientConVar[ "pp6" ] = 0
@@ -81,7 +81,7 @@ if CLIENT then
 		icon:SetAnimated( true )
 		icon:SetModel( GetConVar( "lvscarwheelchanger_model" ):GetString() )
 		icon:Dock( TOP )
-		icon:SetCamPos( Vector(80,0,0) )
+		icon:SetCamPos( Vector(100,0,0) )
 		icon:SetLookAt( vector_origin )
 		icon.Angles = angle_zero
 		function icon:DragMousePress()
