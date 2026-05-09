@@ -59,6 +59,8 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 
 	if OverridePitch and OverridePitch ~= 0 then
 		Pitch = OverridePitch
+		Yaw = 0
+		Roll = 0
 	end
 
 	if OverrideYaw and OverrideYaw ~= 0 then
