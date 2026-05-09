@@ -47,7 +47,7 @@ function ENT:LockRotation( TimedLock )
 
 	local PhysObj = self:GetPhysicsObject()
 
-	if self._OriginalMass or not IsValid( PhysObj ) then return end
+	if self._OriginalMass or self._IsSuspensionDisabled or not IsValid( PhysObj ) then return end
 
 	local Mass = PhysObj:GetMass()
 
