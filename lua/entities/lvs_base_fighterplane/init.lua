@@ -50,7 +50,7 @@ function ENT:ApproachTargetAngle( TargetAngle, OverridePitch, OverrideYaw, Overr
 	local SmoothRoll = math.Clamp(AngVel.x / 100,-0.25,0.25)
 
 	local Pitch = math.Clamp( -LocalAngPitch + SmoothPitch, -1, 1 )
-	local Yaw = math.Clamp( -LocalAngYaw + SmoothYaw,-1,1)
+	local Yaw = math.Clamp( -LocalAngYaw * 2.5 + SmoothYaw,-1,1)
 	local Roll = math.Clamp( (-math.Clamp(LocalAngYaw * RollAlign,-180,180) + LocalAngRoll * RudderFadeOut * 0.5) / 45 - SmoothRoll, -1 , 1 )
 
 	if FreeMovement then
