@@ -23,6 +23,7 @@ include("sv_physics_damagesystem.lua")
 include("sv_damagesystem.lua")
 include("sv_shieldsystem.lua")
 include("sv_doorsystem.lua")
+include("sv_missilesystem.lua")
 
 ENT.WaterLevelPreventStart = 1
 ENT.WaterLevelAutoStop = 2
@@ -318,10 +319,6 @@ end
 
 function ENT:UpdateTransmitState() 
 	return TRANSMIT_ALWAYS
-end
-
-function ENT:GetMissileOffset()
-	return self:OBBCenter()
 end
 
 function ENT:RebuildCrosshairFilterEnts()

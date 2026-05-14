@@ -70,6 +70,10 @@ if SERVER then
 
 		self:SetTarget( Target )
 
+		if isfunction( Target.OnMissileSeek ) then
+			Target:OnMissileSeek( self )
+		end
+
 		local ply = self:GetAttacker()
 
 		if not IsValid( ply ) or not ply:IsPlayer() then return end
@@ -198,6 +202,12 @@ if SERVER then
 		self.SpawnTime = CurTime()
 
 		self:SetActive( true )
+
+		local Target = self:GetTarget()
+
+		if not IsValid( Target ) or not isfunction( Target.OnMissileLock ) then return end
+
+		Target:OnMissileLock( self )
 	end
 
 	function ENT:PhysicsSimulate( phys, deltatime )
