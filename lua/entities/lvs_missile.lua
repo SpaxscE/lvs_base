@@ -74,13 +74,27 @@ if SERVER then
 			Target:OnMissileSeek( self )
 		end
 
-		local ply = self:GetAttacker()
+		self:SendToHUD( self:GetAttacker() )
+	end
 
-		if not IsValid( ply ) or not ply:IsPlayer() then return end
+	function ENT:SendToHUD( data )
+		if istable( data ) then
+			for _, ply in pairs( data ) do
+				if not IsValid( ply ) or not ply:IsPlayer() then continue end
+
+				net.Start( "lvs_missile_hud", true )
+					net.WriteEntity( self )
+				net.Send( ply )
+			end
+
+			return
+		end
+
+		if not IsValid( data ) or not data:IsPlayer() then return end
 
 		net.Start( "lvs_missile_hud", true )
 			net.WriteEntity( self )
-		net.Send( ply )
+		net.Send( data )
 	end
 
 	function ENT:SetEntityFilter( filter )

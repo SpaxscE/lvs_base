@@ -7,22 +7,7 @@ function ENT:CalcViewDirectInput( ply, pos, angles, fov, pod )
 	return LVS:CalcView( self, ply, pos, angles,  fov, pod )
 end
 
-ENT._lvsSmoothFreeLook = 0
 function ENT:CalcViewMouseAim( ply, pos, angles, fov, pod )
-	if pod:GetThirdPersonMode() then
-		return LVS:CalcView( self, ply, pos, angles,  fov, pod )
-	end
-
-	local FreeLook = ply:lvsKeyDown( "FREELOOK" )
-	local CurAngle = angles
-	local TargetAngle = pod:LocalToWorldAngles( Angle(0,90,0) )
-
-	local Focus = (1 - math.min( math.max( self:AngleBetweenNormal( CurAngle:Right(), TargetAngle:Right() ) - 5, 0 ) / 90, 1 ))
-
-	self._lvsSmoothFreeLook = self._lvsSmoothFreeLook + ((FreeLook and 0 or Focus) - self._lvsSmoothFreeLook) * RealFrameTime() * 10
-
-	angles.y = LerpAngle( self._lvsSmoothFreeLook, CurAngle, TargetAngle ).y
-
 	return LVS:CalcView( self, ply, pos, angles,  fov, pod )
 end
 
