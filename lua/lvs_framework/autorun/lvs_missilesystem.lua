@@ -1,7 +1,6 @@
 
 if SERVER then
 	util.AddNetworkString( "lvs_missile_hud" )
-	util.AddNetworkString( "lvs_missile_alert" )
 
 	local function MissileChase( vehicle, missile )
 		if not IsValid( vehicle ) or not isfunction( vehicle.GetEveryone ) or not IsValid( missile ) or not isfunction( missile.GetLockTarget ) then return end
