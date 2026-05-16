@@ -50,7 +50,7 @@ if SERVER then
 			PhysObj:SetVelocityInstantaneous( ply:GetAimVector() * 2500 )
 		end
 
-		ent:SetLifeTime( 100 )
+		ent:SetLifeTime( 15 )
 
 		return ent
 	end
