@@ -4,7 +4,7 @@ ENT.SkidmarkMaterialDamaged = Material("sprites/lvs/skidmark_damaged")
 
 ENT.SkidmarkTraceAdd = Vector(0,0,10)
 ENT.SkidmarkDelay = 0.05
-ENT.SkidmarkLifetime = 10
+ENT.SkidmarkLifetime = 12
 
 ENT.SkidmarkRed = 0
 ENT.SkidmarkGreen = 0
@@ -58,11 +58,21 @@ function ENT:StartSkidmark( pos )
 end
 
 function ENT:FinishSkidmark()
-	if not self._SkidMarkID then return end
+	local EntTable = self:GetTable()
 
-	self._activeSkidMarks[ self._SkidMarkID ].active = false
+	if not EntTable._SkidMarkID then return end
 
-	self._SkidMarkID = nil
+	self._activeSkidMarks[ EntTable._SkidMarkID ].active = false
+
+	local Num = #EntTable._activeSkidMarks[ EntTable._SkidMarkID ].positions
+
+	for i = 0, 3 do
+		if not EntTable._activeSkidMarks[ EntTable._SkidMarkID ].positions[ Num - i ] then break end
+
+		EntTable._activeSkidMarks[ self._SkidMarkID ].positions[ Num - i ].alpha = EntTable._activeSkidMarks[ self._SkidMarkID ].positions[ Num - i ].alpha * ((1 + i) / 4)
+	end
+
+	EntTable._SkidMarkID = nil
 end
 
 function ENT:RemoveSkidmark( id )
