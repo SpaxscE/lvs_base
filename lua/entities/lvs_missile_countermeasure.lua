@@ -10,7 +10,7 @@ ENT.Category = "[LVS]"
 ENT.Spawnable		= true
 ENT.AdminOnly		= true
 
-ENT.PhysicsSounds = false
+ENT.lvsFlare = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float",0, "DieTime" )
@@ -50,7 +50,7 @@ if SERVER then
 			PhysObj:SetVelocityInstantaneous( ply:GetAimVector() * 2500 )
 		end
 
-		ent:SetLifeTime( 3 )
+		ent:SetLifeTime( 100 )
 
 		return ent
 	end
@@ -62,6 +62,8 @@ if SERVER then
 		self:PhysWake()
 		self:DrawShadow( false )
 		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
+
+		LVS:AddFlare( self )
 	end
 
 	function ENT:Think()
@@ -97,6 +99,16 @@ else
 		LVS:AddFlareToHUD( self )
 	end
 
+	function ENT:IsVisible()
+		local EntTable = self:GetTable()
+
+		if not EntTable.PixVis then
+			EntTable.PixVis = util.GetPixelVisibleHandle()
+		end
+
+		return util.PixelVisible( self:GetPos(), 256, EntTable.PixVis ) > 0.1
+	end
+
 	function ENT:Draw()
 	end
 
@@ -130,20 +142,24 @@ else
 	end
 
 	function ENT:Think()
-		if self.snd then
-			local Intensity = self:GetIntensity()
-			self.snd:ChangeVolume( Intensity, 0.1 )
-			self.snd:ChangePitch( 100 * self:CalcDoppler() )
-		end
+		local EntTable = self:GetTable()
+
+		if not EntTable.snd then return end
+
+		local Intensity = self:GetIntensity()
+		EntTable.snd:ChangeVolume( Intensity, 0.1 )
+		EntTable.snd:ChangePitch( 100 * self:CalcDoppler() )
 	end
 
 	function ENT:SoundStop()
-		if self.snd then
-			self.snd:Stop()
-		end
+		if not self.snd then return end
+
+		self.snd:Stop()
 	end
 
 	function ENT:OnRemove()
 		self:SoundStop()
+
+		self.PixVis = nil
 	end
 end

@@ -8,6 +8,30 @@ if SERVER then
 		net.Send( self )
 	end
 
+	local HudTargetsFlare = {}
+
+	function LVS:AddFlare( flare )
+		if not IsValid( flare ) then return end
+
+		table.insert( HudTargetsFlare, flare )
+	end
+
+	function LVS:GetFlares()
+		local Flares = {}
+
+		for ID, Flare in pairs( HudTargetsFlare ) do
+			if not IsValid( Flare ) or not Flare.lvsFlare then
+				HudTargetsFlare[ ID ] = nil
+
+				continue
+			end
+
+			table.insert( Flares, Flare )
+		end
+
+		return Flares
+	end
+
 	return
 end
 
@@ -24,7 +48,7 @@ function LVS:GetMissiles()
 	for ID, _ in pairs( HudTargetsMissile ) do
 		local Missile = Entity( ID )
 
-		if not IsValid( Missile ) then
+		if not IsValid( Missile ) or not Missile.lvsProjectile then
 			HudTargetsMissile[ ID ] = nil
 
 			continue
@@ -42,7 +66,7 @@ function LVS:GetFlares()
 	for ID, _ in pairs( HudTargetsFlare ) do
 		local Flare = Entity( ID )
 
-		if not IsValid( Flare ) then
+		if not IsValid( Flare ) or not Flare.lvsFlare or not isfunction( Flare.IsVisible ) then
 			HudTargetsFlare[ ID ] = nil
 
 			continue
@@ -57,11 +81,15 @@ end
 function LVS:AddMissileToHUD( missile )
 	if not IsValid( missile ) then return end
 
+	LVS:GetMissiles()
+
 	HudTargetsMissile[ missile:EntIndex() ] = true
 end
 
 function LVS:AddFlareToHUD( flare )
 	if not IsValid( flare ) then return end
+
+	LVS:GetFlares()
 
 	HudTargetsFlare[ flare:EntIndex() ] = true
 end
@@ -114,6 +142,8 @@ end
 
 local function FlareHUD()
 	for _, Flare in pairs( LVS:GetFlares() ) do
+		if not Flare:IsVisible() then continue end
+
 		local FlarePos = Flare:GetPos():ToScreen()
 
 		if not FlarePos.visible then continue end

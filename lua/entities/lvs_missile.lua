@@ -28,6 +28,7 @@ if SERVER then
 			[1] = player.GetAll(),
 			[2] = LVS:GetVehicles(),
 			[3] = LVS:GetNPCs(),
+			[4] = LVS:GetFlares(),
 		}
 
 		return targets
@@ -45,6 +46,8 @@ if SERVER then
 		for _, tbl in ipairs( targets ) do
 			for _, ent in pairs( tbl ) do
 				if not IsValid( ent ) or ent == Parent or ent == Owner or Target == ent or Attacker == ent then continue end
+
+				if isfunction( ent.GetMissileNoTarget ) and ent:GetMissileNoTarget() then continue end
 
 				local pos_ent = ent:GetPos()
 				local dir = (pos_ent - pos):GetNormalized()
