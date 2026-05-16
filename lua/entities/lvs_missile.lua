@@ -20,9 +20,11 @@ function ENT:SetupDataTables()
 	self:NetworkVar( "Entity", 0, "NWTarget" )
 end
 
-if SERVER then
-	util.AddNetworkString( "lvs_missile_hud" )
+function ENT:GetLockTarget()
+	return self:GetNWTarget()
+end
 
+if SERVER then
 	function ENT:GetAvailableTargets()
 		local targets = {
 			[1] = player.GetAll(),
@@ -46,6 +48,13 @@ if SERVER then
 		for _, tbl in ipairs( targets ) do
 			for _, ent in pairs( tbl ) do
 				if not IsValid( ent ) or ent == Parent or ent == Owner or Target == ent or Attacker == ent then continue end
+
+				if ent:IsPlayer() and ent:InVehicle() then
+					ent = ent:lvsGetVehicle()
+
+					if not IsValid( ent ) then continue end
+
+				end
 
 				if isfunction( ent.GetMissileNoTarget ) and ent:GetMissileNoTarget() then continue end
 
@@ -96,6 +105,14 @@ if SERVER then
 		data:lvsAddMissileToHud( self )
 	end
 
+	function ENT:NotifyTarget()
+		local Target = self:GetTarget()
+
+		if not IsValid( Target ) or not isfunction( Target.OnMissileLock ) then return end
+
+		Target:OnMissileLock( self )
+	end
+
 	function ENT:SetEntityFilter( filter )
 		if not istable( filter ) then return end
 
@@ -122,7 +139,9 @@ if SERVER then
 	function ENT:GetTurnSpeed() return (self._turnspeed or 1) * 100 end
 	function ENT:GetThrust() return (self._thrust or 500) end
 	function ENT:GetTarget()
-		if IsValid( self:GetNWTarget() ) then
+		local Target = self:GetNWTarget()
+
+		if IsValid( Target ) then
 			local Pos = self:GetPos()
 			local tPos = self:GetTargetPos()
 
@@ -135,7 +154,10 @@ if SERVER then
 
 			local LooseAng = math.min( Len / 100, 90 )
 
-			if AngToTarget > LooseAng then
+			local Notarget = isfunction( Target.GetMissileNoTarget ) and Target:GetMissileNoTarget()
+			local OutOfRange = AngToTarget > LooseAng
+
+			if Notarget or OutOfRange then
 				self:SetNWTarget( NULL )
 			end
 		end
@@ -216,11 +238,11 @@ if SERVER then
 
 		self:SetActive( true )
 
-		local Target = self:GetTarget()
+		timer.Simple(0, function()
+			if not IsValid( self ) then return end
 
-		if not IsValid( Target ) or not isfunction( Target.OnMissileLock ) then return end
-
-		Target:OnMissileLock( self )
+			self:NotifyTarget()
+		end)
 	end
 
 	function ENT:PhysicsSimulate( phys, deltatime )

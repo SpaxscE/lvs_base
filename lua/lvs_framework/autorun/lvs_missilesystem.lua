@@ -1,7 +1,68 @@
 
 if SERVER then
-	local meta = FindMetaTable( "Player" )
+	util.AddNetworkString( "lvs_missile_hud" )
+	util.AddNetworkString( "lvs_missile_alert" )
 
+	local function MissileChase( vehicle, missile )
+		if not IsValid( vehicle ) or not isfunction( vehicle.GetEveryone ) or not IsValid( missile ) or not isfunction( missile.GetLockTarget ) then return end
+
+		if missile:GetLockTarget() ~= vehicle then return end
+
+		local players = vehicle:GetEveryone()
+
+		if table.Count( players ) <= 0 then return end
+
+		local soundLevel = 0
+		local pitchPercent = 100
+		local volume = 1
+		local channel = CHAN_STATIC
+		local soundFlags = 0
+		local dsp = 1
+		local CRecipientFilter = RecipientFilter()
+		CRecipientFilter:AddPlayers( players )
+
+		vehicle:EmitSound("lvs/missile_chase.wav", soundLevel, pitchPercent, volume , channel, soundFlags, dsp, CRecipientFilter )
+
+		local dist = math.Clamp((missile:GetPos() - vehicle:GetPos()):Length() / 20000,0.05,0.4)
+
+		timer.Simple(dist, function()
+			MissileChase( vehicle, missile )
+		end)
+	end
+
+	function LVS:SendMissileAlert( vehicle, missile )
+		if not IsValid( vehicle ) or not vehicle.LVS or not IsValid( missile ) or not isfunction( missile.GetActive ) or not isfunction( missile.GetLockTarget ) then return end
+
+		local Active = missile:GetActive()
+
+		if Active then
+			MissileChase( vehicle, missile )
+
+			return
+		end
+
+		local T = CurTime()
+
+		if (vehicle._lvsNextMissileAlert or 0) > T then return end
+
+		vehicle._lvsNextMissileAlert = T + 0.28
+
+		local players = vehicle:GetEveryone()
+		if table.Count( players ) <= 0 then return end
+
+		local soundLevel = 0
+		local pitchPercent = 100
+		local volume = 1
+		local channel = CHAN_STATIC
+		local soundFlags = 0
+		local dsp = 1
+		local CRecipientFilter = RecipientFilter()
+		CRecipientFilter:AddPlayers( players )
+
+		vehicle:EmitSound("lvs/missile_seek.wav", soundLevel, pitchPercent, volume , channel, soundFlags, dsp, CRecipientFilter )
+	end
+
+	local meta = FindMetaTable( "Player" )
 	function meta:lvsAddMissileToHud( missile )
 		net.Start( "lvs_missile_hud", true )
 			net.WriteEntity( missile )
@@ -9,7 +70,6 @@ if SERVER then
 	end
 
 	local HudTargetsFlare = {}
-
 	function LVS:AddFlare( flare )
 		if not IsValid( flare ) then return end
 
@@ -66,7 +126,7 @@ function LVS:GetFlares()
 	for ID, _ in pairs( HudTargetsFlare ) do
 		local Flare = Entity( ID )
 
-		if not IsValid( Flare ) or not Flare.lvsFlare or not isfunction( Flare.IsVisible ) then
+		if not IsValid( Flare ) or not Flare.lvsFlare or not isfunction( Flare.IsVisible ) or not isfunction( Flare.GetVehicle ) then
 			HudTargetsFlare[ ID ] = nil
 
 			continue
@@ -141,12 +201,20 @@ local function MissileHUD()
 end
 
 local function FlareHUD()
+	local ply = LocalPlayer()
+
+	if not IsValid( ply ) then return end
+
+	local MyVehicle = ply:lvsGetVehicle()
+
 	for _, Flare in pairs( LVS:GetFlares() ) do
 		if not Flare:IsVisible() then continue end
 
 		local FlarePos = Flare:GetPos():ToScreen()
 
 		if not FlarePos.visible then continue end
+
+		if Flare:GetVehicle() == MyVehicle then continue end
 
 		DrawDiamond( FlarePos.x, FlarePos.y, 8, 0 )
 	end

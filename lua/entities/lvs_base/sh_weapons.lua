@@ -247,8 +247,18 @@ if SERVER then
 		CurWeapon._NextFire = time
 	end
 
+	function ENT:AIWeaponsForceFire( shouldfire )
+		if shouldfire then self._AIFireInputOverride = true return end
+
+		self._AIFireInputOverride = nil
+	end
+
 	function ENT:WeaponsShouldFire()
-		if self:GetAI() then return self._AIFireInput end
+		if self:GetAI() then
+			local EntTable = self:GetTable()
+
+			return (EntTable._AIFireInput or EntTable._AIFireInputOverride)
+		end
 
 		local ply = self:GetDriver()
 

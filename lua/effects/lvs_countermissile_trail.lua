@@ -2,7 +2,7 @@
 local FlareColor = Color( 255, 255, 255, 255 )
 local FlareMat = Material( "sprites/physg_glow1" )
 
-local GlowColor = Color( 255, 150, 100, 255 )
+local GlowColor = Color( 255, 120, 70, 255 )
 local GlowMat = Material( "sprites/light_glow02_add" )
 
 local SmokeColor = Vector(100,100,100)
@@ -37,6 +37,7 @@ function EFFECT:GetIntensity()
 end
 
 function EFFECT:Init( data )
+	self.StartTime = CurTime()
 	self.RandomOffset = math.random(0,1337)
 	self.Entity = data:GetEntity()
 
@@ -50,14 +51,18 @@ end
 function EFFECT:doFX( pos, scale, fxTable )
 	if not IsValid( fxTable.Emitter ) then return end
 
+	local T = CurTime()
 	local scaleClamped = math.max( scale, 0.35 )
+
+	--Quicker Dietime for the first few milliseconds of spawn.This is the smoke doesnt stack up if multiple flares are spawned at the same pos 
+	local DieTime = math.max( 1 * math.min( (T - (fxTable.StartTime or 0)) * 2.5, 1 ), 0.25 )
 
 	local particle = fxTable.Emitter:Add( Materials[ math.random(1, #Materials ) ], pos )
 	if particle then
 		particle:SetGravity( (Vector(0,0,250) + VectorRand() * 50) * scaleClamped ) 
 		particle:SetVelocity( vector_origin )
 		particle:SetAirResistance( 600 * scaleClamped ) 
-		particle:SetDieTime( 1 )
+		particle:SetDieTime( DieTime )
 		particle:SetStartAlpha( 150 )
 		particle:SetStartSize( 20 * scaleClamped )
 		particle:SetEndSize( 80 * scaleClamped )
@@ -102,27 +107,6 @@ function EFFECT:UpdateTrail( fxTable )
 
 		self:doFX( pos, scale, fxTable )
 	end
-
-	for i = 1, 10 do
-		local spark = fxTable.Emitter:Add("effects/spark", newpos )
-
-		if not spark then continue end
-
-		spark:SetStartAlpha( 255 )
-		spark:SetEndAlpha( 0 )
-		spark:SetCollide( true )
-		spark:SetBounce( math.Rand(0,1) )
-		spark:SetColor( 255, 255, 255 )
-		spark:SetGravity( Vector(0,0,-600) )
-		spark:SetEndLength(0)
-
-		spark:SetEndSize( 4 )
-		spark:SetStartSize( 1 )
-
-		spark:SetStartLength( math.Rand(10,20) )
-		spark:SetDieTime( 0.2 )
-		spark:SetVelocity( VectorRand() * 40 + VectorRand() * 400 * scale )
-	end
 end
 
 function EFFECT:Think()
@@ -160,7 +144,7 @@ function EFFECT:Render()
 	local pos = ent:GetPos()
 
 	render.SetMaterial( GlowMat )
-	render.DrawSprite( pos, 320 * scale, 320 * scale, Color(GlowColor.r * 0.5,GlowColor.g * 0.5, GlowColor.b * 0.5, GlowColor.a * 0.5) )
+	render.DrawSprite( pos, 320 * scale, 320 * scale, GlowColor )
 
 	if not self.RandomOffset then return end
 

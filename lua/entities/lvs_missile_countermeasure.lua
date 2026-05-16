@@ -15,6 +15,7 @@ ENT.lvsFlare = true
 function ENT:SetupDataTables()
 	self:NetworkVar( "Float",0, "DieTime" )
 	self:NetworkVar( "Float",1, "NWLifeTime" )
+	self:NetworkVar( "Entity",0, "Vehicle" )
 
 	if SERVER then
 		self:SetDieTime( CurTime() + 5 )
@@ -50,7 +51,7 @@ if SERVER then
 			PhysObj:SetVelocityInstantaneous( ply:GetAimVector() * 2500 )
 		end
 
-		ent:SetLifeTime( 15 )
+		ent:SetLifeTime( 2 )
 
 		return ent
 	end
@@ -89,7 +90,7 @@ else
 	function ENT:Initialize()
 		self.snd = CreateSound(self, "weapons/flaregun/burn.wav")
 		self.snd:SetSoundLevel( 80 )
-		self.snd:Play()
+		self.snd:PlayEx(0.5,100)
 
 		local effectdata = EffectData()
 			effectdata:SetOrigin( self:GetPos() )
@@ -147,7 +148,7 @@ else
 		if not EntTable.snd then return end
 
 		local Intensity = self:GetIntensity()
-		EntTable.snd:ChangeVolume( Intensity, 0.1 )
+		EntTable.snd:ChangeVolume( Intensity * 0.5, 0.1 )
 		EntTable.snd:ChangePitch( 100 * self:CalcDoppler() )
 	end
 
