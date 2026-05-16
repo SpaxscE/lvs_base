@@ -1,0 +1,149 @@
+AddCSLuaFile()
+
+ENT.Type            = "anim"
+
+ENT.PrintName = "Flare"
+ENT.Author = "Luna"
+ENT.Information = "LVS Flare"
+ENT.Category = "[LVS]"
+
+ENT.Spawnable		= true
+ENT.AdminOnly		= true
+
+ENT.PhysicsSounds = false
+
+function ENT:SetupDataTables()
+	self:NetworkVar( "Float",0, "DieTime" )
+	self:NetworkVar( "Float",1, "NWLifeTime" )
+
+	if SERVER then
+		self:SetDieTime( CurTime() + 5 )
+		self:SetNWLifeTime( 5 )
+	end
+end
+
+function ENT:SetLifeTime( time )
+	self:SetDieTime( CurTime() + time )
+	self:SetNWLifeTime( time )
+end
+
+function ENT:GetLifeTime()
+	return self:GetNWLifeTime()
+end
+
+function ENT:GetIntensity()
+	return math.Clamp( ((self:GetDieTime() - CurTime()) / self:GetLifeTime()) * 8,0,1) ^ 2
+end
+
+if SERVER then
+	function ENT:SpawnFunction( ply, tr, ClassName )
+
+		local ent = ents.Create( ClassName )
+		ent:SetPos( ply:GetShootPos() )
+		ent:SetAngles( ply:EyeAngles() )
+		ent:Spawn()
+		ent:Activate()
+
+		local PhysObj = ent:GetPhysicsObject()
+
+		if IsValid( PhysObj ) then
+			PhysObj:SetVelocityInstantaneous( ply:GetAimVector() * 2500 )
+		end
+
+		ent:SetLifeTime( 3 )
+
+		return ent
+	end
+
+	function ENT:Initialize()	
+		self:SetModel( "models/maxofs2d/hover_classic.mdl" )
+		self:PhysicsInit( SOLID_VPHYSICS )
+		self:SetMoveType( MOVETYPE_VPHYSICS )
+		self:PhysWake()
+		self:DrawShadow( false )
+		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
+	end
+
+	function ENT:Think()
+		local T = CurTime()
+
+		if self:GetDieTime() < T or self:WaterLevel() >= 2 then
+			self:Remove()
+
+			return false
+		end
+
+		self:NextThink( T + 0.1 )
+
+		return true
+	end
+
+	function ENT:PhysicsCollide( data )
+	end
+
+	function ENT:OnTakeDamage( dmginfo )	
+	end
+else
+	function ENT:Initialize()
+		self.snd = CreateSound(self, "weapons/flaregun/burn.wav")
+		self.snd:SetSoundLevel( 80 )
+		self.snd:Play()
+
+		local effectdata = EffectData()
+			effectdata:SetOrigin( self:GetPos() )
+			effectdata:SetEntity( self )
+		util.Effect( "lvs_countermissile_trail", effectdata )
+
+		LVS:AddFlareToHUD( self )
+	end
+
+	function ENT:Draw()
+	end
+
+	function ENT:CalcDoppler()
+		local Ent = LocalPlayer()
+
+		local ViewEnt = Ent:GetViewEntity()
+
+		if Ent:lvsGetVehicle() == self then
+			if ViewEnt == Ent then
+				Ent = self
+			else
+				Ent = ViewEnt
+			end
+		else
+			Ent = ViewEnt
+		end
+
+		local sVel = self:GetVelocity()
+		local oVel = Ent:GetVelocity()
+
+		local SubVel = oVel - sVel
+		local SubPos = self:GetPos() - Ent:GetPos()
+
+		local DirPos = SubPos:GetNormalized()
+		local DirVel = SubVel:GetNormalized()
+
+		local A = math.acos( math.Clamp( DirVel:Dot( DirPos ) ,-1,1) )
+
+		return (1 + math.cos( A ) * SubVel:Length() / 13503.9)
+	end
+
+	function ENT:Think()
+		if self.snd then
+			local Intensity = self:GetIntensity()
+			self.snd:ChangeVolume( Intensity, 0.1 )
+			self.snd:ChangePitch( 100 * self:CalcDoppler() )
+		end
+	end
+
+	function ENT:SoundStop()
+		if self.snd then
+			self.snd:Stop()
+		end
+	end
+
+	function ENT:OnRemove()
+		self:SoundStop()
+	end
+end

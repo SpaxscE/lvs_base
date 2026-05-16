@@ -82,9 +82,7 @@ if SERVER then
 			for _, ply in pairs( data ) do
 				if not IsValid( ply ) or not ply:IsPlayer() then continue end
 
-				net.Start( "lvs_missile_hud", true )
-					net.WriteEntity( self )
-				net.Send( ply )
+				ply:lvsAddMissileToHud( self )
 			end
 
 			return
@@ -92,9 +90,7 @@ if SERVER then
 
 		if not IsValid( data ) or not data:IsPlayer() then return end
 
-		net.Start( "lvs_missile_hud", true )
-			net.WriteEntity( self )
-		net.Send( data )
+		data:lvsAddMissileToHud( self )
 	end
 
 	function ENT:SetEntityFilter( filter )
@@ -386,71 +382,4 @@ else
 	function ENT:OnRemove()
 		self:SoundStop()
 	end
-
-	local function DrawDiamond( X, Y, radius, angoffset )
-		angoffset = angoffset or 0
-
-		local segmentdist = 90
-		local radius2 = radius + 1
-
-		for ang = 0, 360, segmentdist do
-			local a = ang + angoffset
-			surface.DrawLine( X + math.cos( math.rad( a ) ) * radius, Y - math.sin( math.rad( a ) ) * radius, X + math.cos( math.rad( a + segmentdist ) ) * radius, Y - math.sin( math.rad( a + segmentdist ) ) * radius )
-			surface.DrawLine( X + math.cos( math.rad( a ) ) * radius2, Y - math.sin( math.rad( a ) ) * radius2, X + math.cos( math.rad( a + segmentdist ) ) * radius2, Y - math.sin( math.rad( a + segmentdist ) ) * radius2 )
-		end
-	end
-
-	local color_red = Color(255,0,0,255)
-	local HudTargets = {}
-	hook.Add( "HUDPaint", "!!!!lvs_missile_hud", function()
-		local T = CurTime()
-
-		local Index = 0
-
-		surface.SetDrawColor( 255, 0, 0, 255 )
-
-		for ID, _ in pairs( HudTargets ) do
-			local Missile = Entity( ID )
-
-			if not IsValid( Missile ) then
-				HudTargets[ ID ] = nil
-
-				continue
-			end
-
-			local Target = Missile:GetNWTarget()
-
-			if not IsValid( Target ) then
-				HudTargets[ ID ] = nil
-
-				continue
-			end
-
-			local MissilePos = Missile:GetPos():ToScreen()
-			local TargetPos = Target:LocalToWorld( Target:OBBCenter() ):ToScreen()
-
-			Index =  Index + 1
-
-			if not TargetPos.visible then continue end
-
-			DrawDiamond( TargetPos.x, TargetPos.y, 40, ID * 1337 - T * 100 )
-
-			draw.DrawText("LOCK", "LVS_FONT", TargetPos.x + 20, TargetPos.y + 20, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
-			if not MissilePos.visible then continue end
-
-			DrawDiamond( MissilePos.x, MissilePos.y, 16, ID * 1337 - T * 100 )
-			draw.DrawText( Index, "LVS_FONT", MissilePos.x + 10, MissilePos.y + 10, color_red, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-		
-			surface.DrawLine( MissilePos.x, MissilePos.y, TargetPos.x, TargetPos.y )
-		end
-	end )
-
-	net.Receive( "lvs_missile_hud", function( len )
-		local ent = net.ReadEntity()
-
-		if not IsValid( ent ) then return end
-
-		HudTargets[ ent:EntIndex() ] = true
-	end )
 end
