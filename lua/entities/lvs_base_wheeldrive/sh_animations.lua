@@ -25,6 +25,16 @@ function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
 
 	if CLIENT then
 		if ply == self:GetDriver() then
+			if ply:lvsMouseAim() then
+				local LocalAngles = ply:GetVehicle():WorldToLocalAngles( ply:EyeAngles() - Angle(0,90,0) )
+
+				ply:SetPoseParameter( "head_pitch", LocalAngles.p )
+				ply:SetPoseParameter( "head_yaw", LocalAngles.y )
+
+				ply:SetPoseParameter("aim_pitch", 0 )
+				ply:SetPoseParameter("aim_yaw", 0 )
+			end
+
 			ply:SetPoseParameter( "vehicle_steer", self:GetSteer() /  self:GetMaxSteerAngle() )
 			ply:InvalidateBoneCache()
 		end

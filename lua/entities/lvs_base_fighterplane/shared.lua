@@ -198,3 +198,28 @@ end
 function ENT:GetVehicleType()
 	return "plane"
 end
+
+function ENT:UpdateAnimation( ply, velocity, maxseqgroundspeed )
+	ply:SetPlaybackRate( 1 )
+
+	if CLIENT then
+		if ply == self:GetDriver() then
+			if ply:lvsMouseAim() then
+				local LocalAngles = ply:GetVehicle():WorldToLocalAngles( ply:EyeAngles() - Angle(0,90,0) )
+
+				ply:SetPoseParameter( "head_pitch", LocalAngles.p )
+				ply:SetPoseParameter( "head_yaw", LocalAngles.y )
+
+				ply:SetPoseParameter("aim_pitch", 0 )
+				ply:SetPoseParameter("aim_yaw", 0 )
+			end
+
+			ply:InvalidateBoneCache()
+		end
+
+		GAMEMODE:GrabEarAnimation( ply )
+		GAMEMODE:MouthMoveAnimation( ply )
+	end
+
+	return false
+end
