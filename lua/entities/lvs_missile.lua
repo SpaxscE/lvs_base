@@ -159,13 +159,13 @@ if SERVER then
 
 			if Notarget then
 				if IsValid( Target._LastMissileFlare ) then
-					self:SetNWTarget( Target._LastMissileFlare )
+					self:SetTarget( Target._LastMissileFlare )
 				else
-					self:SetNWTarget( NULL )
+					self:SetTarget( NULL )
 				end
 			else
 				if OutOfRange then
-					self:SetNWTarget( NULL )
+					self:SetTarget( NULL )
 				end
 			end
 		end
