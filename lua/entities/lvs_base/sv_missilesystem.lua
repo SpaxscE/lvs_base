@@ -75,7 +75,7 @@ function ENT:CreateFlares( PosOffset, AngOffset, NumBursts )
 	if NumBursts <= 1 then return end
 
 	for i = 2, NumBursts do
-		timer.Simple( i * 0.5, function()
+		timer.Simple( (i - 1) * 0.5, function()
 			if not IsValid( self ) then return end
 
 			local Pos = self:LocalToWorld( PosOffset )
