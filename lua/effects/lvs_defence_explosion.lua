@@ -139,30 +139,6 @@ function EFFECT:Init( data )
 		particle:SetAirResistance( 300 )
 	end
 
-	if dir.z > 0.8 then
-		for i = 0,60 do
-			local particle = emitter:Add( "effects/fleck_cement"..math.random(1,2), pos )
-			local vel = dir * math.Rand(600,1000) + VectorRand() * 200
-
-			if not particle then continue end
-
-			particle:SetVelocity( vel * scale )
-			particle:SetDieTime( math.Rand(10,15) )
-			particle:SetAirResistance( 10 ) 
-			particle:SetStartAlpha( 255 )
-
-			local size = math.Rand(2, 4) * scale
-			particle:SetEndSize( size )
-			particle:SetStartSize( size )
-
-			particle:SetRoll( math.Rand(-1,1) )
-			particle:SetColor( math.min( VecCol.r, 255 ), math.min( VecCol.g, 255 ), math.min( VecCol.b, 255 ) )
-			particle:SetGravity( Vector( 0, 0, -600 ) )
-			particle:SetCollide( true )
-			particle:SetBounce( 0.3 )
-		end
-	end
-
 	emitter:Finish()
 end
 
