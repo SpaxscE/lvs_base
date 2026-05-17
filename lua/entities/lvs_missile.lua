@@ -227,6 +227,7 @@ if SERVER then
 		pObj:EnableGravity( false ) 
 		pObj:EnableMotion( true )
 		pObj:EnableDrag( false )
+		pObj:SetInertia( Vector(1,1,1) )
 
 		self:SetTrigger( true )
 
@@ -263,7 +264,7 @@ if SERVER then
 
 		local AngForce = -self:WorldToLocalAngles( (self:GetTargetPos() - Pos):Angle() )
 
-		local ForceAngle = (Vector(AngForce.r,-AngForce.p,-AngForce.y) * self:GetTurnSpeed() - phys:GetAngleVelocity() * 5 ) * 250 * deltatime
+		local ForceAngle = (Vector(-AngForce.r,-AngForce.p,-AngForce.y) * self:GetTurnSpeed() - phys:GetAngleVelocity() * 5 ) * 250 * deltatime
 
 		return ForceAngle, ForceLinear, SIM_LOCAL_ACCELERATION
 	end
