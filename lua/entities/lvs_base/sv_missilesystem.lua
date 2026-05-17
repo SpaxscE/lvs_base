@@ -16,6 +16,24 @@ function ENT:GetMissileNoTarget()
 	return (self._MissileNoTargetTime or 0) > CurTime()
 end
 
+function ENT:CreateFlare( Pos, Dir, Vel )
+	local ent = ents.Create( "lvs_missile_countermeasure" )
+	ent:SetPos( Pos )
+	ent:SetAngles( Dir:Angle() )
+	ent:Spawn()
+	ent:Activate()
+	ent:SetLifeTime( math.Rand(2.5,3.5) )
+	ent:SetVehicle( self )
+
+	local PhysObj = ent:GetPhysicsObject()
+
+	if IsValid( PhysObj ) then
+		PhysObj:SetVelocityInstantaneous( Dir * Vel )
+	end
+
+	return ent
+end
+
 function ENT:CreateFlares( PosOffset, AngOffset, NumBursts )
 	if not NumBursts then NumBursts = 1 end
 	if not PosOffset then PosOffset = Vector(0,0,0) end
@@ -50,24 +68,6 @@ function ENT:CreateFlares( PosOffset, AngOffset, NumBursts )
 			self:EmitSound("weapons/flaregun/fire.wav",85,125,0.15)
 		end )
 	end
-end
-
-function ENT:CreateFlare( Pos, Dir, Vel )
-	local ent = ents.Create( "lvs_missile_countermeasure" )
-	ent:SetPos( Pos )
-	ent:SetAngles( Dir:Angle() )
-	ent:Spawn()
-	ent:Activate()
-	ent:SetLifeTime( math.Rand(2.5,3.5) )
-	ent:SetVehicle( self )
-
-	local PhysObj = ent:GetPhysicsObject()
-
-	if IsValid( PhysObj ) then
-		PhysObj:SetVelocityInstantaneous( Dir * Vel )
-	end
-
-	return ent
 end
 
 function ENT:OnMissileSeek( missile )
