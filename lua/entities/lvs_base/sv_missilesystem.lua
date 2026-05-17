@@ -1,4 +1,9 @@
 
+ENT.MissileAlert = true
+ENT.MissileAlertDelayMin = 0.05
+ENT.MissileAlertDelayMax = 0.4
+ENT.MissileAlertDistance = 20000
+
 function ENT:MissileDetected()
 	return (self._MissileAlertTime or 0) > CurTime()
 end

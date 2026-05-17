@@ -3,38 +3,65 @@ if SERVER then
 	util.AddNetworkString( "lvs_missile_hud" )
 
 	local function MissileChase( vehicle, missile )
-		if not IsValid( vehicle ) or not isfunction( vehicle.GetEveryone ) or not IsValid( missile ) or not isfunction( missile.GetLockTarget ) then return end
+		if not IsValid( vehicle ) or not isfunction( vehicle.GetEveryone ) or not IsValid( missile ) or not isfunction( missile.GetLockTarget ) or missile:GetLockTarget() ~= vehicle then
+			vehicle._ChasingMissiles[ missile ] = nil
 
-		if missile:GetLockTarget() ~= vehicle then return end
+			return
+		end
+
+		local EntTable = vehicle:GetTable()
+	
+		EntTable._ChasingMissiles[ missile ] = true
 
 		local players = vehicle:GetEveryone()
 
-		if table.Count( players ) <= 0 then return end
+		local mPos = missile:GetPos()
+		local vPos = vehicle:GetPos()
 
-		local soundLevel = 0
-		local pitchPercent = 100
-		local volume = 1
-		local channel = CHAN_STATIC
-		local soundFlags = 0
-		local dsp = 1
-		local CRecipientFilter = RecipientFilter()
-		CRecipientFilter:AddPlayers( players )
+		local beepDelay = math.Clamp((mPos - vPos):Length() / EntTable.MissileAlertDistance,EntTable.MissileAlertDelayMin,EntTable.MissileAlertDelayMax)
 
-		vehicle:EmitSound("lvs/missile_chase.wav", soundLevel, pitchPercent, volume , channel, soundFlags, dsp, CRecipientFilter )
+		if table.Count( players ) > 0 then
+			local soundLevel = 0
+			local pitchPercent = 100
+			local volume = 1
+			local channel = CHAN_STATIC
+			local soundFlags = 0
+			local dsp = 1
+			local CRecipientFilter = RecipientFilter()
+			CRecipientFilter:AddPlayers( players )
 
-		local dist = math.Clamp((missile:GetPos() - vehicle:GetPos()):Length() / 20000,0.05,0.4)
+			local dist = (mPos - vPos):LengthSqr()
+			local isClosest = true
 
-		timer.Simple(dist, function()
+			for otherMissile, _ in pairs( EntTable._ChasingMissiles ) do
+				if otherMissile == missile or not IsValid( otherMissile ) then continue end
+
+				if (otherMissile:GetPos() - vPos):LengthSqr() < dist then
+					isClosest = false
+					break
+				end
+			end
+
+			if isClosest then
+				vehicle:EmitSound("lvs/missile_chase.wav", soundLevel, pitchPercent, volume , channel, soundFlags, dsp, CRecipientFilter )
+			end
+		end
+
+		timer.Simple(beepDelay, function()
 			MissileChase( vehicle, missile )
 		end)
 	end
 
 	function LVS:SendMissileAlert( vehicle, missile )
-		if not IsValid( vehicle ) or not vehicle.LVS or not IsValid( missile ) or not isfunction( missile.GetActive ) or not isfunction( missile.GetLockTarget ) then return end
+		if not IsValid( vehicle ) or not vehicle.MissileAlert or not IsValid( missile ) or not isfunction( missile.GetActive ) or not isfunction( missile.GetLockTarget ) then return end
 
 		local Active = missile:GetActive()
 
 		if Active then
+			if not istable( vehicle._ChasingMissiles ) then
+				vehicle._ChasingMissiles = {}
+			end
+
 			MissileChase( vehicle, missile )
 
 			return
