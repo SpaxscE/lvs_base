@@ -320,15 +320,17 @@ if SERVER then
 
 		self.IsDetonated = true
 
-		local Pos =  self:GetPos() 
+		local Pos = self:GetPos() 
+		local Dir = self:GetForward()
 
 		local effectdata = EffectData()
 			effectdata:SetOrigin( Pos )
+			effectdata:SetNormal( Dir )
 		util.Effect( self.ExplosionEffect, effectdata, true, true )
 
 		local attacker = self:GetAttacker()
 
-		LVS:BlastDamage( Pos, self:GetForward(), IsValid( attacker ) and attacker or game.GetWorld(), self, self:GetDamage(), DMG_BLAST, self:GetRadius(), self:GetForce() )
+		LVS:BlastDamage( Pos, Dir, IsValid( attacker ) and attacker or game.GetWorld(), self, self:GetDamage(), DMG_BLAST, self:GetRadius(), self:GetForce() )
 
 		SafeRemoveEntityDelayed( self, FrameTime() )
 	end

@@ -4,8 +4,30 @@ ENT.MissileAlertDelayMin = 0.05
 ENT.MissileAlertDelayMax = 0.4
 ENT.MissileAlertDistance = 20000
 
-function ENT:MissileDetected()
-	return (self._MissileAlertTime or 0) > CurTime()
+function ENT:DoMissileDistraction()
+	--[[
+	if not self:CanDoMissileDistraction() then return end
+
+	self:CreateFlares( Vector(50,0,-50), Angle(0,0,0), 4 )
+
+	self:SetNextMissileDistraction( 4 )
+	]]
+end
+
+function ENT:AIDoMissileDistraction()
+	timer.Simple( math.Rand(0,0.5), function()
+		if not IsValid( self ) then return end
+
+		self:DoMissileDistraction()
+	end )
+end
+
+function ENT:CanDoMissileDistraction()
+	return (self._NextMissileDistraction or 0) < CurTime()
+end
+
+function ENT:SetNextMissileDistraction( T )
+	self._NextMissileDistraction = CurTime() + T
 end
 
 function ENT:SetMissileNoTarget( T )
@@ -52,7 +74,7 @@ function ENT:CreateFlares( PosOffset, AngOffset, NumBursts )
 
 	if NumBursts <= 1 then return end
 
-	for i = 1, NumBursts do
+	for i = 2, NumBursts do
 		timer.Simple( i * 0.5, function()
 			if not IsValid( self ) then return end
 
@@ -72,12 +94,18 @@ end
 
 function ENT:OnMissileSeek( missile )
 	LVS:SendMissileAlert( self, missile )
-	self._MissileAlertTime = CurTime() + 0.5
+
+	if self:GetAI() then
+		self:AIDoMissileDistraction()
+	end
 end
 
 function ENT:OnMissileLock( missile )
 	LVS:SendMissileAlert( self, missile )
-	self._MissileAlertTime = CurTime() + 0.5
+
+	if self:GetAI() then
+		self:AIDoMissileDistraction()
+	end
 end
 
 function ENT:GetMissileOffset()

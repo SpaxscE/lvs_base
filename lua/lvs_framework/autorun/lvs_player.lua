@@ -397,6 +397,11 @@ hook.Add( "PlayerButtonDown", "!!!lvsButtonDown", function( ply, button )
 				end
 			end
 
+			if KeyName == "FLARES" then
+				vehicle:DoMissileDistraction()
+				continue
+			end
+
 			if KeyName == "EXIT" then
 				if vehicle:GetDriver() == ply and vehicle:GetlvsLockedStatus() then vehicle:UnLock() end
 

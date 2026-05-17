@@ -78,7 +78,7 @@ hook.Add( "LVS:Initialize", "!!11lvs_default_keys", function()
 		{
 			name = "FREELOOK",
 			category = "Misc",
-			name_menu = "Freelook (Hold)",
+			name_menu = "Freelook / Look Back (Hold)",
 			default = "+walk",
 			cmd = "lvs_freelook"
 		},
@@ -95,6 +95,13 @@ hook.Add( "LVS:Initialize", "!!11lvs_default_keys", function()
 			name_menu = "Toggle Vehicle-specific Function",
 			default = "+jump",
 			cmd = "lvs_special"
+		},
+		{
+			name = "FLARES",
+			category = "Misc",
+			name_menu = "Deploy Countermeasures",
+			default = MOUSE_MIDDLE,
+			cmd = "lvs_antimissile"
 		},
 	}
 
@@ -164,7 +171,7 @@ hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 		{
 			name = "CAR_SIREN",
 			category = "LVS-Car",
-			name_menu = "Open Siren Menu",
+			name_menu = "Toggle Siren",
 			default = "phys_swap",
 			cmd = "lvs_car_siren"
 		},
