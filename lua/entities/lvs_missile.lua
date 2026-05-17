@@ -157,8 +157,16 @@ if SERVER then
 			local Notarget = isfunction( Target.GetMissileNoTarget ) and Target:GetMissileNoTarget()
 			local OutOfRange = AngToTarget > LooseAng
 
-			if Notarget or OutOfRange then
-				self:SetNWTarget( NULL )
+			if Notarget then
+				if IsValid( Target._LastMissileFlare ) then
+					self:SetNWTarget( Target._LastMissileFlare )
+				else
+					self:SetNWTarget( NULL )
+				end
+			else
+				if OutOfRange then
+					self:SetNWTarget( NULL )
+				end
 			end
 		end
 

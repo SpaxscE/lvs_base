@@ -235,15 +235,26 @@ local function FlareHUD()
 	if not IsValid( ply ) then return end
 
 	local MyVehicle = ply:lvsGetVehicle()
+	local MyPos = MyVehicle:GetPos()
+	local VehicleIdentifierRange = MyVehicle.VehicleIdentifierRange
 
 	for _, Flare in pairs( LVS:GetFlares() ) do
 		if not Flare:IsVisible() then continue end
 
-		local FlarePos = Flare:GetPos():ToScreen()
+		local FlarePosWorld = Flare:GetPos()
+		local FlarePos = FlarePosWorld:ToScreen()
 
 		if not FlarePos.visible then continue end
 
 		if Flare:GetVehicle() == MyVehicle then continue end
+
+		local Dist = (MyPos - FlarePosWorld):Length()
+
+		if Dist > VehicleIdentifierRange then continue end
+
+		local Alpha = 255 * (1 - (Dist / VehicleIdentifierRange) ^ 2)
+
+		surface.SetDrawColor( Color(255,0,0,Alpha) )
 
 		DrawDiamond( FlarePos.x, FlarePos.y, 8, 0 )
 	end

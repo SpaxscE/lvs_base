@@ -53,6 +53,8 @@ function ENT:CreateFlare( Pos, Dir, Vel )
 		PhysObj:SetVelocityInstantaneous( Dir * Vel )
 	end
 
+	self._LastMissileFlare = ent
+
 	return ent
 end
 
