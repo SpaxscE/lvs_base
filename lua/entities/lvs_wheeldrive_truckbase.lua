@@ -177,6 +177,8 @@ end
 function ENT:GetEngineTorque()
 	local EntTable = self:GetTable()
 
+	if not EntTable.EngineRevLimited then return BaseClass.GetEngineTorque( self ) end
+
 	local MaxVelocity = EntTable.MaxVelocity
 	local Velocity = self:GetVelocity():Length()
 	local Geared = (MaxVelocity / EntTable.TransGears) * 0.5
