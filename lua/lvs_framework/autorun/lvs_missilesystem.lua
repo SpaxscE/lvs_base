@@ -235,6 +235,9 @@ local function FlareHUD()
 	if not IsValid( ply ) then return end
 
 	local MyVehicle = ply:lvsGetVehicle()
+
+	if not IsValid( MyVehicle ) then return end
+
 	local MyPos = MyVehicle:GetPos()
 	local VehicleIdentifierRange = MyVehicle.VehicleIdentifierRange
 
