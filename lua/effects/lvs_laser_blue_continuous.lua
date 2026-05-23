@@ -37,6 +37,8 @@ function EFFECT:Render()
 	local bullet = LVS:GetBullet( self.ID )
 
 	if bullet then
+		if not IsValid( bullet.Entity ) then return end
+
 		self.StartPos = bullet.Entity:LocalToWorld( bullet.SrcEntity )
 		self.EndPos = bullet:GetPos()
 		self.BulletAlive = true
