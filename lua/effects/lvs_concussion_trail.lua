@@ -116,6 +116,9 @@ end
 
 function EFFECT:Render()
 	local ent = self.Entity
+
+	if not IsValid( ent ) then return end
+
 	local pos = ent:LocalToWorld( self.Offset )
 
 	render.SetMaterial( GlowMat )
