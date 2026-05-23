@@ -558,7 +558,7 @@ else
 
 		local ply = LocalPlayer()
 
-		if IsValid( ply ) then
+		if IsValid( ply ) and IsValid( bullet.Entity ) then
 			bullet.Muted = bullet.Entity == ply:lvsGetVehicle() or bullet.Entity:GetOwner() == ply
 		end
 
