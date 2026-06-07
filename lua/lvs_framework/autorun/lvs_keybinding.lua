@@ -162,6 +162,13 @@ hook.Add( "LVS:Initialize", "[LVS] - Cars - Keys", function()
 			cmd = "lvs_car_toggle_lights"
 		},
 		{
+			name = "CAR_HORN",
+			category = "LVS-Car",
+			name_menu = "Horn",
+			default = MOUSE_LEFT,
+			cmd = "lvs_car_horn"
+		},
+		{
 			name = "CAR_MENU",
 			category = "LVS-Car",
 			name_menu = "Open Signal Menu",

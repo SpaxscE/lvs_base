@@ -312,7 +312,7 @@ end
 
 function ENT:CalcSiren( ply, T )
 	local mode = self:GetSirenMode()
-	local horn = ply:lvsKeyDown( "ATTACK" ) and not ply:lvsKeyDown( "ZOOM" )
+	local horn = ply:lvsKeyDown( "CAR_HORN" ) and not ply:lvsKeyDown( "ZOOM" )
 
 	local EntTable = self:GetTable()
 
