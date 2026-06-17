@@ -165,12 +165,15 @@ function ENT:PhysicsCollide( data, physobj )
 	local HitEntity = data.HitEntity
 	local HitObject = data.HitObject
 
+	local IsHittingSmallProp = false
+
 	if IsValid( HitEntity ) and IsValid( HitObject ) then
 		physobj:SetVelocityInstantaneous( data.OurOldVelocity )
 
 		if HitObject:IsMotionEnabled() and HitObject:GetMass() < physobj:GetMass() then
 			HitObject:SetVelocityInstantaneous( data.OurOldVelocity * 2 )
 		end
+		IsHittingSmallProp = true
 	end
 
 	local base = self:GetBase()
@@ -181,7 +184,7 @@ function ENT:PhysicsCollide( data, physobj )
 
 	local Up = base:GetUp()
 
-	if Up.z < 0.9 then return end
+	if Up.z < 0.9 or IsHittingSmallProp then return end
 
 	local Radius = self:GetRadius()
 	local BumpPos = data.HitPos + Up * Radius
