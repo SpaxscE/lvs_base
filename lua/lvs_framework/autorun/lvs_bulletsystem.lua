@@ -88,6 +88,8 @@ function NewBullet:HandleWaterImpact( traceStart, traceEnd, Filter )
 
 	self.HasHitWater = true
 
+	if traceWater.Fraction == 0 then return end
+
 	local effectdata = EffectData()
 	effectdata:SetOrigin( traceWater.HitPos )
 	effectdata:SetScale( 10 + self.HullSize * 0.5 )
