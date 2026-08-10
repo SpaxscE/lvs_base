@@ -56,6 +56,38 @@ end
 function ENT:TracksCreate( PObj )
 end
 
+function ENT:OnSpawnFinish( PObj )
+	if self._WheelInitBarrierActive and (self._WheelInitPending or 0) > 0 then
+		self._WheelInitReleasePhys = PObj
+
+		return
+	end
+
+	self._WheelInitBarrierActive = false
+	self._WheelInitReleasePhys = nil
+
+	BaseClass.OnSpawnFinish( self, PObj )
+end
+
+function ENT:OnWheelInitializationFinished()
+	if not self._WheelInitBarrierActive then return end
+
+	self._WheelInitPending = math.max( (self._WheelInitPending or 0) - 1, 0 )
+
+	if self._WheelInitPending > 0 then return end
+
+	local PObj = self._WheelInitReleasePhys
+
+	-- The wheel timers normally finish after OnSpawnFinish stores PObj. If they
+	-- finish first, OnSpawnFinish will observe zero pending wheels and release it.
+	if not IsValid( PObj ) then return end
+
+	self._WheelInitBarrierActive = false
+	self._WheelInitReleasePhys = nil
+
+	BaseClass.OnSpawnFinish( self, PObj )
+end
+
 local function DontDuplicatePaintSheme( ply, ent, data )
 	ent.RandomColor = nil
 
@@ -69,6 +101,9 @@ if duplicator and duplicator.RegisterEntityModifier then
 end
 
 function ENT:PostInitialize( PObj )
+	self._WheelInitBarrierActive = true
+	self._WheelInitPending = 0
+	self._WheelInitReleasePhys = nil
 
 	self:TracksCreate( PObj )
 
