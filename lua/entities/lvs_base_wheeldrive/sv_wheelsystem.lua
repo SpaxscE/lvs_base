@@ -119,8 +119,25 @@ function ENT:AddWheel( data )
 	PhysObj:EnableDrag( false )
 	PhysObj:EnableMotion( false )
 
-	local nocollide_constraint = constraint.NoCollide(self,Wheel,0,0)
-	nocollide_constraint.DoNotDuplicate = true
+	local DeferRootWheelNoCollide = self.DeferRootWheelNoCollideUntilMotion == true
+
+	if DeferRootWheelNoCollide then
+		local EntTable = self:GetTable()
+
+		if not isnumber( EntTable._DeferredRootWheelNoCollideScheduled ) then
+			EntTable._DeferredRootWheelNoCollideScheduled = 0
+			EntTable._DeferredRootWheelNoCollidePending = 0
+			EntTable._DeferredRootWheelNoCollideCreated = 0
+			EntTable._DeferredRootWheelNoCollideFailed = false
+			EntTable._DeferredRootWheelNoCollideSeconds = 0
+		end
+
+		EntTable._DeferredRootWheelNoCollideScheduled = EntTable._DeferredRootWheelNoCollideScheduled + 1
+		EntTable._DeferredRootWheelNoCollidePending = EntTable._DeferredRootWheelNoCollidePending + 1
+	else
+		local nocollide_constraint = constraint.NoCollide(self,Wheel,0,0)
+		nocollide_constraint.DoNotDuplicate = true
+	end
 
 	debugoverlay.Line( self:GetPos(), self:LocalToWorld( data.pos ), 5, Color(150,150,150), true )
 
@@ -158,7 +175,14 @@ function ENT:AddWheel( data )
 	Wheel:SetMaster( Master )
 
 	timer.Simple(0, function()
-		if not IsValid( self ) or not IsValid( Wheel ) or not IsValid( PhysObj ) then return end
+		if not IsValid( self ) or not IsValid( Wheel ) or not IsValid( PhysObj ) or (DeferRootWheelNoCollide and not IsValid( Master )) then
+			if DeferRootWheelNoCollide and IsValid( self ) then
+				self._DeferredRootWheelNoCollideFailed = true
+				self:Remove()
+			end
+
+			return
+		end
 
 		Master:SetAngles( self:GetAngles() )
 		Wheel:SetAngles( self:LocalToWorldAngles( Angle(0,-90,0) ) )
@@ -166,6 +190,29 @@ function ENT:AddWheel( data )
 		self:AddToMotionController( PhysObj )
 
 		PhysObj:EnableMotion( true )
+
+		if not DeferRootWheelNoCollide then return end
+
+		local StartTime = SysTime()
+		local Success, NoCollide = pcall( constraint.NoCollide, self, Wheel, 0, 0 )
+		local EntTable = self:GetTable()
+
+		EntTable._DeferredRootWheelNoCollideSeconds = (EntTable._DeferredRootWheelNoCollideSeconds or 0) + (SysTime() - StartTime)
+		EntTable._DeferredRootWheelNoCollideLastTick = engine.TickCount()
+
+		if Success and IsValid( NoCollide ) then
+			Success = pcall( function() NoCollide.DoNotDuplicate = true end )
+		end
+
+		if not Success or not IsValid( NoCollide ) then
+			EntTable._DeferredRootWheelNoCollideFailed = true
+			self:Remove()
+
+			return
+		end
+
+		EntTable._DeferredRootWheelNoCollideCreated = (EntTable._DeferredRootWheelNoCollideCreated or 0) + 1
+		EntTable._DeferredRootWheelNoCollidePending = math.max( (EntTable._DeferredRootWheelNoCollidePending or 1) - 1, 0 )
 	end )
 
 	if isnumber( self._WheelSkin ) then Wheel:SetSkin( self._WheelSkin ) end
