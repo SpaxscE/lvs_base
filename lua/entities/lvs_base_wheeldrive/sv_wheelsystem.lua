@@ -276,12 +276,13 @@ function ENT:CreateSuspension( Wheel, CenterPos, DirectionAngle, data )
 
 	local height = data.Height
 	local maxtravel = data.MaxTravel
+	local limitertravel = data.LimiterTravel or maxtravel
 	local constant = data.SpringConstant
 	local damping = data.SpringDamping
 	local rdamping = data.SpringRelativeDamping
 
 	local LimiterLength = 60
-	local LimiterRopeLength = math.sqrt( maxtravel ^ 2 + LimiterLength ^ 2 )
+	local LimiterRopeLength = math.sqrt( limitertravel ^ 2 + LimiterLength ^ 2 )
 
 	local Pos = Wheel:GetPos()
 
