@@ -1,0 +1,28 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/shared/optic_glass"
+	"$bumpmap" "models/diggercars/shared/skin_nm"	
+	"$halflambert" 1
+	"$phong" "1" 
+	"$phongboost" "5" 
+	"$phongfresnelranges" "[.3 .5 1]" 
+	"$phongexponent" 20
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.02 0.02 0.02]"
+	"$envmapfrensel" "1"
+	"$colorfix" "{255 255 255}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}
+
+
+
+
+

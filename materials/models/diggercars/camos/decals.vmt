@@ -1,0 +1,43 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/diggercars/camos/decals"
+	"$bumpmap" "models/diggercars/camos/decals_nm"		
+	
+	"$detail" "models/diggercars/shared/panzerivg_detail_d"
+	"$detailscale" "20"
+	"$detailblendfactor" "2.5"
+	"$detailblendmode" "0"
+
+	"$alphatest" "1"
+	"$allowalphatocoverage" "1"
+	
+	"$phong" "1"						
+	"$phongboost"	"0.5" 		
+	"$phongexponent" "10"	
+	"$phongfresnelranges"	"[1.35 2.65 1.25]" 					
+	"$phongtint" 			"[1 1 1.1]"			
+	"$colorfix" "{155 155 155}"
+	"Proxies"
+	{
+		"Equals"
+		{
+			srcVar1 $colorfix
+			resultVar	$color
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
